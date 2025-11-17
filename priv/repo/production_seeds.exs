@@ -1,5 +1,5 @@
 # Production data export
-# Generated on 2025-11-17 16:28:41.100853Z
+# Generated on 2025-11-17 16:39:35.563023Z
 # Run with: mix run priv/repo/production_seeds.exs
 
 import Ecto.Query
@@ -236,43 +236,50 @@ watched_videos_data = [
     user_id: 3,
     inserted_at: ~U[2025-11-15 18:25:44Z],
     updated_at: ~U[2025-11-15 18:25:44Z],
-    video_id: 8
+    video_id: 8,
+    watched_at: ~U[2025-11-15 18:25:44Z]
   },
   %{
     user_id: 3,
     inserted_at: ~U[2025-11-15 18:27:16Z],
     updated_at: ~U[2025-11-15 18:27:16Z],
-    video_id: 3
+    video_id: 3,
+    watched_at: ~U[2025-11-15 18:27:16Z]
   },
   %{
     user_id: 4,
     inserted_at: ~U[2025-11-15 18:30:25Z],
     updated_at: ~U[2025-11-15 18:30:25Z],
-    video_id: 6
+    video_id: 6,
+    watched_at: ~U[2025-11-15 18:30:25Z]
   },
   %{
     user_id: 4,
     inserted_at: ~U[2025-11-15 18:31:08Z],
     updated_at: ~U[2025-11-15 18:31:08Z],
-    video_id: 2
+    video_id: 2,
+    watched_at: ~U[2025-11-15 18:31:08Z]
   },
   %{
     user_id: 6,
     inserted_at: ~U[2025-11-15 18:52:02Z],
     updated_at: ~U[2025-11-15 18:52:02Z],
-    video_id: 4
+    video_id: 4,
+    watched_at: ~U[2025-11-15 18:52:02Z]
   },
   %{
     user_id: 6,
     inserted_at: ~U[2025-11-15 18:52:07Z],
     updated_at: ~U[2025-11-15 18:52:07Z],
-    video_id: 5
+    video_id: 5,
+    watched_at: ~U[2025-11-15 18:52:07Z]
   },
   %{
     user_id: 4,
     inserted_at: ~U[2025-11-16 08:45:36Z],
     updated_at: ~U[2025-11-16 08:45:36Z],
-    video_id: 9
+    video_id: 9,
+    watched_at: ~U[2025-11-16 08:45:36Z]
   }
 ]
 
@@ -286,6 +293,7 @@ Enum.each(watched_videos_data, fn watched_data ->
         Repo.insert!(%WatchedVideo{
           user_id: new_user_id,
           video_id: new_video_id,
+          watched_at: watched_data.watched_at,
           inserted_at: watched_data.inserted_at,
           updated_at: watched_data.updated_at
         })

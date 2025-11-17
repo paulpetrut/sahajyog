@@ -89,6 +89,7 @@ defmodule Mix.Tasks.ExportData do
             Repo.insert!(%WatchedVideo{
               user_id: new_user_id,
               video_id: new_video_id,
+              watched_at: watched_data.watched_at,
               inserted_at: watched_data.inserted_at,
               updated_at: watched_data.updated_at
             })
@@ -154,6 +155,7 @@ defmodule Mix.Tasks.ExportData do
       %{
         user_id: watched.user_id,
         video_id: watched.video_id,
+        watched_at: watched.watched_at,
         inserted_at: watched.inserted_at,
         updated_at: watched.updated_at
       }
