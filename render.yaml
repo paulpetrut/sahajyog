@@ -23,5 +23,5 @@ services:
 databases:
   - name: sahajyog-db
     databaseName: sahajyog
-    plan: starter
+    plan: free
     region: oregon

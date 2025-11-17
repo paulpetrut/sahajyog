@@ -39,7 +39,7 @@ git push origin main
    - Click "New +" → "PostgreSQL"
    - Name: `sahajyog-db`
    - Database: `sahajyog`
-   - Plan: Choose your plan (Starter is fine for testing)
+   - Plan: Choose your plan (Free for testing, or paid plans for production)
    - Click "Create Database"
 
 2. **Create Web Service:**
@@ -47,7 +47,7 @@ git push origin main
    - Connect your Git repository
    - Name: `sahajyog`
    - Runtime: Docker
-   - Plan: Choose your plan (Starter is fine for testing)
+   - Plan: Choose your plan (Free for testing, or paid plans for production)
    - Click "Create Web Service"
 
 ## Step 3: Configure Environment Variables
@@ -183,9 +183,10 @@ To scale your application:
 
 ## Cost Optimization
 
-- Start with Starter plans ($7/month for web service, $7/month for database)
+- Start with Free tier for testing (web service and database)
+- Upgrade to paid plans for production ($7+/month for web service, $7+/month for database)
 - Monitor usage and scale as needed
-- Use Render's free tier for staging environments
+- Note: Free tier databases expire after 90 days of inactivity
 
 ## Security Checklist
 
