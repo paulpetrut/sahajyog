@@ -95,13 +95,8 @@ echo "Running migrations..."
 /app/bin/migrate
 echo "Running seeds..."
 /app/bin/seed
-echo "Checking for production data..."
-if [ -f /app/lib/sahajyog-*/priv/repo/production_seeds.exs ]; then
-  echo "Running production data import..."
-  /app/bin/sahajyog eval 'Code.eval_file(Path.join([:code.priv_dir(:sahajyog), "repo", "production_seeds.exs"]))'
-else
-  echo "No production data file found, skipping..."
-fi
+echo "Running production data import..."
+/app/bin/seed_production
 echo "Starting server..."
 exec /app/bin/server
 EOF

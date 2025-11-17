@@ -35,8 +35,7 @@ if config_env() == :prod do
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "20"),
     queue_target: 5000,
     queue_interval: 1000,
-    ssl: true,
-    ssl_opts: [
+    ssl: [
       verify: :verify_none,
       versions: [:"tlsv1.2", :"tlsv1.3"]
     ],

@@ -37,6 +37,25 @@ defmodule Sahajyog.Release do
     end
   end
 
+  def seed_production do
+    load_app()
+
+    for repo <- repos() do
+      {:ok, _, _} =
+        Ecto.Migrator.with_repo(repo, fn _repo ->
+          # Run the production seed script
+          seed_script = Path.join([:code.priv_dir(@app), "repo", "production_seeds.exs"])
+
+          if File.exists?(seed_script) do
+            IO.puts("Running production data import...")
+            Code.eval_file(seed_script)
+          else
+            IO.puts("Production seed script not found, skipping...")
+          end
+        end)
+    end
+  end
+
   defp repos do
     Application.fetch_env!(@app, :ecto_repos)
   end
