@@ -1,0 +1,274 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0||(n%100>0 && n%100<20)) ? 1 : 2);\n"
+
+#: lib/sahajyog_web/components/core_components.ex:342
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr "Acțiuni"
+
+#: lib/sahajyog_web/components/layouts.ex:72
+#: lib/sahajyog_web/components/layouts.ex:84
+#, elixir-autogen, elixir-format
+msgid "Attempting to reconnect"
+msgstr "Se încearcă reconectarea"
+
+#: lib/sahajyog_web/components/layouts.ex:79
+#, elixir-autogen, elixir-format
+msgid "Something went wrong!"
+msgstr "Ceva nu a mers bine!"
+
+#: lib/sahajyog_web/components/layouts.ex:67
+#, elixir-autogen, elixir-format
+msgid "We can't find the internet"
+msgstr "Nu putem găsi internetul"
+
+#: lib/sahajyog_web/components/core_components.ex:74
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "închide"
+
+#: lib/sahajyog_web/live/welcome_live.ex:89
+#, elixir-autogen, elixir-format
+msgid "Browse All Talks"
+msgstr "Răsfoiește toate discursurile"
+
+#: lib/sahajyog_web/live/welcome_live.ex:43
+#, elixir-autogen, elixir-format
+msgid "Discover inner peace through meditation"
+msgstr "Descoperă pacea interioară prin meditație"
+
+#: lib/sahajyog_web/live/welcome_live.ex:75
+#, elixir-autogen, elixir-format
+msgid "Explore our complete collection of talks and guided meditations"
+msgstr "Explorează colecția noastră completă de discursuri și meditații ghidate"
+
+#: lib/sahajyog_web/live/steps_live.ex:194
+#, elixir-autogen, elixir-format
+msgid "Hide sidebar"
+msgstr "Ascunde bara laterală"
+
+#: lib/sahajyog_web/live/steps_live.ex:224
+#, elixir-autogen, elixir-format
+msgid "Mark as Watched"
+msgstr "Marchează ca vizionat"
+
+#: lib/sahajyog_web/live/welcome_live.ex:72
+#, elixir-autogen, elixir-format
+msgid "Ready to Begin Your Journey?"
+msgstr "Gata să începi călătoria ta?"
+
+#: lib/sahajyog_web/live/steps_live.ex:263
+#: lib/sahajyog_web/live/steps_live.ex:284
+#, elixir-autogen, elixir-format
+msgid "Reset all progress"
+msgstr "Resetează tot progresul"
+
+#: lib/sahajyog_web/live/steps_live.ex:257
+#: lib/sahajyog_web/live/steps_live.ex:279
+#, elixir-autogen, elixir-format
+msgid "SahajYog Content"
+msgstr "Conținut SahajYog"
+
+#: lib/sahajyog_web/live/steps_live.ex:194
+#, elixir-autogen, elixir-format
+msgid "Show sidebar"
+msgstr "Arată bara laterală"
+
+#: lib/sahajyog_web/live/welcome_live.ex:82
+#, elixir-autogen, elixir-format
+msgid "Start Learning"
+msgstr "Începe să înveți"
+
+#: lib/sahajyog_web/live/welcome_live.ex:41
+#, elixir-autogen, elixir-format
+msgid "Welcome to Sahaja Yoga"
+msgstr "Bine ai venit la Sahaja Yoga"
+
+#: lib/sahajyog_web/live/steps_live.ex:141
+#, elixir-autogen, elixir-format
+msgid "Advanced Topics"
+msgstr "Subiecte avansate"
+
+#: lib/sahajyog_web/live/steps_live.ex:142
+#, elixir-autogen, elixir-format
+msgid "Excerpts"
+msgstr "Extrase"
+
+#: lib/sahajyog_web/live/steps_live.ex:140
+#, elixir-autogen, elixir-format
+msgid "Getting Started"
+msgstr "Primii pași"
+
+#: lib/sahajyog_web/live/talks_live.ex:711
+#, elixir-autogen, elixir-format
+msgid "Active filters:"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:655
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Advanced Filters"
+msgstr "Filtre avansate"
+
+#: lib/sahajyog_web/live/talks_live.ex:676
+#, elixir-autogen, elixir-format
+msgid "All Categories"
+msgstr "Toate categoriile"
+
+#: lib/sahajyog_web/live/talks_live.ex:614
+#, elixir-autogen, elixir-format
+msgid "All Countries"
+msgstr "Toate țările"
+
+#: lib/sahajyog_web/live/talks_live.ex:695
+#, elixir-autogen, elixir-format
+msgid "All Languages"
+msgstr "Toate limbile"
+
+#: lib/sahajyog_web/live/talks_live.ex:633
+#, elixir-autogen, elixir-format
+msgid "All Years"
+msgstr "Toți anii"
+
+#: lib/sahajyog_web/live/talks_live.ex:669
+#, elixir-autogen, elixir-format
+msgid "Category"
+msgstr "Categorie"
+
+#: lib/sahajyog_web/live/talks_live.ex:741
+#, elixir-autogen, elixir-format
+msgid "Clear all"
+msgstr "Șterge tot"
+
+#: lib/sahajyog_web/live/talks_live.ex:607
+#, elixir-autogen, elixir-format
+msgid "Country"
+msgstr "Țară"
+
+#: lib/sahajyog_web/live/talks_live.ex:765
+#, elixir-autogen, elixir-format
+msgid "Error Loading Talks"
+msgstr "Eroare la încărcarea discursurilor"
+
+#: lib/sahajyog_web/live/talks_live.ex:545
+#, elixir-autogen, elixir-format
+msgid "Explore spiritual teachings and wisdom"
+msgstr "Explorează învățături spirituale și înțelepciune"
+
+#: lib/sahajyog_web/live/talks_live.ex:655
+#, elixir-autogen, elixir-format
+msgid "Hide"
+msgstr "Ascunde"
+
+#: lib/sahajyog_web/live/talks_live.ex:757
+#, elixir-autogen, elixir-format
+msgid "Loading talks..."
+msgstr "Se încarcă discursurile..."
+
+#: lib/sahajyog_web/live/talks_live.ex:599
+#, elixir-autogen, elixir-format
+msgid "Newest"
+msgstr "Cele mai noi"
+
+#: lib/sahajyog_web/live/talks_live.ex:920
+#, elixir-autogen, elixir-format
+msgid "Next"
+msgstr "Următorul"
+
+#: lib/sahajyog_web/live/talks_live.ex:773
+#, elixir-autogen, elixir-format
+msgid "No talks available"
+msgstr "Nu sunt discursuri disponibile"
+
+#: lib/sahajyog_web/live/talks_live.ex:600
+#, elixir-autogen, elixir-format
+msgid "Oldest"
+msgstr "Cele mai vechi"
+
+#: lib/sahajyog_web/live/talks_live.ex:882
+#, elixir-autogen, elixir-format
+msgid "Previous"
+msgstr "Anterior"
+
+#: lib/sahajyog_web/live/talks_live.ex:560
+#, elixir-autogen, elixir-format
+msgid "Refresh"
+msgstr "Reîmprospătează"
+
+#: lib/sahajyog_web/live/talks_live.ex:598
+#, elixir-autogen, elixir-format
+msgid "Relevance"
+msgstr "Relevanță"
+
+#: lib/sahajyog_web/live/talks_live.ex:544
+#, elixir-autogen, elixir-format
+msgid "Sahaja Yoga Talks"
+msgstr "Discursuri Sahaja Yoga"
+
+#: lib/sahajyog_web/live/talks_live.ex:571
+#: lib/sahajyog_web/live/talks_live.ex:714
+#, elixir-autogen, elixir-format
+msgid "Search"
+msgstr "Căutare"
+
+#: lib/sahajyog_web/live/talks_live.ex:578
+#, elixir-autogen, elixir-format
+msgid "Search talks..."
+msgstr "Caută discursuri..."
+
+#: lib/sahajyog_web/live/talks_live.ex:655
+#, elixir-autogen, elixir-format
+msgid "Show"
+msgstr "Arată"
+
+#: lib/sahajyog_web/live/talks_live.ex:855
+#, elixir-autogen, elixir-format
+msgid "Showing"
+msgstr "Se afișează"
+
+#: lib/sahajyog_web/live/talks_live.ex:591
+#, elixir-autogen, elixir-format
+msgid "Sort By"
+msgstr "Sortează după"
+
+#: lib/sahajyog_web/live/talks_live.ex:688
+#, elixir-autogen, elixir-format
+msgid "Spoken Language"
+msgstr "Limba vorbită"
+
+#: lib/sahajyog_web/live/talks_live.ex:841
+#, elixir-autogen, elixir-format
+msgid "View Talk"
+msgstr "Vezi discursul"
+
+#: lib/sahajyog_web/live/talks_live.ex:626
+#, elixir-autogen, elixir-format
+msgid "Year"
+msgstr "An"
+
+#: lib/sahajyog_web/live/talks_live.ex:863
+#, elixir-autogen, elixir-format
+msgid "of"
+msgstr "din"
+
+#: lib/sahajyog_web/live/talks_live.ex:864
+#, elixir-autogen, elixir-format
+msgid "talk"
+msgid_plural "talks"
+msgstr[0] "discurs"
+msgstr[1] "discursuri"
+msgstr[2] "discursuri"
+
+#: lib/sahajyog_web/live/talks_live.ex:859
+#, elixir-autogen, elixir-format
+msgid "to"
+msgstr "la"

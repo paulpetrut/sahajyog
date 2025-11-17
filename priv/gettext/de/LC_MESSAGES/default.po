@@ -1,0 +1,273 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/sahajyog_web/components/core_components.ex:342
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr "Aktionen"
+
+#: lib/sahajyog_web/components/layouts.ex:72
+#: lib/sahajyog_web/components/layouts.ex:84
+#, elixir-autogen, elixir-format
+msgid "Attempting to reconnect"
+msgstr "Verbindungsversuch"
+
+#: lib/sahajyog_web/components/layouts.ex:79
+#, elixir-autogen, elixir-format
+msgid "Something went wrong!"
+msgstr "Etwas ist schief gelaufen!"
+
+#: lib/sahajyog_web/components/layouts.ex:67
+#, elixir-autogen, elixir-format
+msgid "We can't find the internet"
+msgstr "Wir können das Internet nicht finden"
+
+#: lib/sahajyog_web/components/core_components.ex:74
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "schließen"
+
+#: lib/sahajyog_web/live/welcome_live.ex:89
+#, elixir-autogen, elixir-format
+msgid "Browse All Talks"
+msgstr "Alle Vorträge durchsuchen"
+
+#: lib/sahajyog_web/live/welcome_live.ex:43
+#, elixir-autogen, elixir-format
+msgid "Discover inner peace through meditation"
+msgstr "Entdecke inneren Frieden durch Meditation"
+
+#: lib/sahajyog_web/live/welcome_live.ex:75
+#, elixir-autogen, elixir-format
+msgid "Explore our complete collection of talks and guided meditations"
+msgstr "Erkunde unsere vollständige Sammlung von Vorträgen und geführten Meditationen"
+
+#: lib/sahajyog_web/live/steps_live.ex:194
+#, elixir-autogen, elixir-format
+msgid "Hide sidebar"
+msgstr "Seitenleiste ausblenden"
+
+#: lib/sahajyog_web/live/steps_live.ex:224
+#, elixir-autogen, elixir-format
+msgid "Mark as Watched"
+msgstr "Als angesehen markieren"
+
+#: lib/sahajyog_web/live/welcome_live.ex:72
+#, elixir-autogen, elixir-format
+msgid "Ready to Begin Your Journey?"
+msgstr "Bereit, deine Reise zu beginnen?"
+
+#: lib/sahajyog_web/live/steps_live.ex:263
+#: lib/sahajyog_web/live/steps_live.ex:284
+#, elixir-autogen, elixir-format
+msgid "Reset all progress"
+msgstr "Alle Fortschritte zurücksetzen"
+
+#: lib/sahajyog_web/live/steps_live.ex:257
+#: lib/sahajyog_web/live/steps_live.ex:279
+#, elixir-autogen, elixir-format
+msgid "SahajYog Content"
+msgstr "SahajYog Inhalt"
+
+#: lib/sahajyog_web/live/steps_live.ex:194
+#, elixir-autogen, elixir-format
+msgid "Show sidebar"
+msgstr "Seitenleiste anzeigen"
+
+#: lib/sahajyog_web/live/welcome_live.ex:82
+#, elixir-autogen, elixir-format
+msgid "Start Learning"
+msgstr "Beginne zu lernen"
+
+#: lib/sahajyog_web/live/welcome_live.ex:41
+#, elixir-autogen, elixir-format
+msgid "Welcome to Sahaja Yoga"
+msgstr "Willkommen bei Sahaja Yoga"
+
+#: lib/sahajyog_web/live/steps_live.ex:141
+#, elixir-autogen, elixir-format
+msgid "Advanced Topics"
+msgstr "Fortgeschrittene Themen"
+
+#: lib/sahajyog_web/live/steps_live.ex:142
+#, elixir-autogen, elixir-format
+msgid "Excerpts"
+msgstr "Auszüge"
+
+#: lib/sahajyog_web/live/steps_live.ex:140
+#, elixir-autogen, elixir-format
+msgid "Getting Started"
+msgstr "Erste Schritte"
+
+#: lib/sahajyog_web/live/talks_live.ex:711
+#, elixir-autogen, elixir-format
+msgid "Active filters:"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:655
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Advanced Filters"
+msgstr "Fortgeschrittene Themen"
+
+#: lib/sahajyog_web/live/talks_live.ex:676
+#, elixir-autogen, elixir-format
+msgid "All Categories"
+msgstr "Alle Kategorien"
+
+#: lib/sahajyog_web/live/talks_live.ex:614
+#, elixir-autogen, elixir-format
+msgid "All Countries"
+msgstr "Alle Länder"
+
+#: lib/sahajyog_web/live/talks_live.ex:695
+#, elixir-autogen, elixir-format
+msgid "All Languages"
+msgstr "Alle Sprachen"
+
+#: lib/sahajyog_web/live/talks_live.ex:633
+#, elixir-autogen, elixir-format
+msgid "All Years"
+msgstr "Alle Jahre"
+
+#: lib/sahajyog_web/live/talks_live.ex:669
+#, elixir-autogen, elixir-format
+msgid "Category"
+msgstr "Kategorie"
+
+#: lib/sahajyog_web/live/talks_live.ex:741
+#, elixir-autogen, elixir-format
+msgid "Clear all"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:607
+#, elixir-autogen, elixir-format
+msgid "Country"
+msgstr "Land"
+
+#: lib/sahajyog_web/live/talks_live.ex:765
+#, elixir-autogen, elixir-format
+msgid "Error Loading Talks"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:545
+#, elixir-autogen, elixir-format
+msgid "Explore spiritual teachings and wisdom"
+msgstr "Spirituelle Lehren und Weisheit erkunden"
+
+#: lib/sahajyog_web/live/talks_live.ex:655
+#, elixir-autogen, elixir-format
+msgid "Hide"
+msgstr "Verbergen"
+
+#: lib/sahajyog_web/live/talks_live.ex:757
+#, elixir-autogen, elixir-format
+msgid "Loading talks..."
+msgstr "Vorträge werden geladen..."
+
+#: lib/sahajyog_web/live/talks_live.ex:599
+#, elixir-autogen, elixir-format
+msgid "Newest"
+msgstr "Neueste"
+
+#: lib/sahajyog_web/live/talks_live.ex:920
+#, elixir-autogen, elixir-format
+msgid "Next"
+msgstr "Weiter"
+
+#: lib/sahajyog_web/live/talks_live.ex:773
+#, elixir-autogen, elixir-format
+msgid "No talks available"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:600
+#, elixir-autogen, elixir-format
+msgid "Oldest"
+msgstr "Älteste"
+
+#: lib/sahajyog_web/live/talks_live.ex:882
+#, elixir-autogen, elixir-format
+msgid "Previous"
+msgstr "Zurück"
+
+#: lib/sahajyog_web/live/talks_live.ex:560
+#, elixir-autogen, elixir-format
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+#: lib/sahajyog_web/live/talks_live.ex:598
+#, elixir-autogen, elixir-format
+msgid "Relevance"
+msgstr "Relevanz"
+
+#: lib/sahajyog_web/live/talks_live.ex:544
+#, elixir-autogen, elixir-format
+msgid "Sahaja Yoga Talks"
+msgstr "Sahaja Yoga Vorträge"
+
+#: lib/sahajyog_web/live/talks_live.ex:571
+#: lib/sahajyog_web/live/talks_live.ex:714
+#, elixir-autogen, elixir-format
+msgid "Search"
+msgstr "Suchen"
+
+#: lib/sahajyog_web/live/talks_live.ex:578
+#, elixir-autogen, elixir-format
+msgid "Search talks..."
+msgstr "Vorträge suchen..."
+
+#: lib/sahajyog_web/live/talks_live.ex:655
+#, elixir-autogen, elixir-format
+msgid "Show"
+msgstr "Zeigen"
+
+#: lib/sahajyog_web/live/talks_live.ex:855
+#, elixir-autogen, elixir-format
+msgid "Showing"
+msgstr "Zeige"
+
+#: lib/sahajyog_web/live/talks_live.ex:591
+#, elixir-autogen, elixir-format
+msgid "Sort By"
+msgstr "Sortieren nach"
+
+#: lib/sahajyog_web/live/talks_live.ex:688
+#, elixir-autogen, elixir-format
+msgid "Spoken Language"
+msgstr "Gesprochene Sprache"
+
+#: lib/sahajyog_web/live/talks_live.ex:841
+#, elixir-autogen, elixir-format
+msgid "View Talk"
+msgstr "Vortrag ansehen"
+
+#: lib/sahajyog_web/live/talks_live.ex:626
+#, elixir-autogen, elixir-format
+msgid "Year"
+msgstr "Jahr"
+
+#: lib/sahajyog_web/live/talks_live.ex:863
+#, elixir-autogen, elixir-format
+msgid "of"
+msgstr "von"
+
+#: lib/sahajyog_web/live/talks_live.ex:864
+#, elixir-autogen, elixir-format
+msgid "talk"
+msgid_plural "talks"
+msgstr[0] "Vortrag"
+msgstr[1] "Vorträge"
+
+#: lib/sahajyog_web/live/talks_live.ex:859
+#, elixir-autogen, elixir-format
+msgid "to"
+msgstr "bis"

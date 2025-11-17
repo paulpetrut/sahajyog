@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang={assigns[:locale] || "en"}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="Sahajyog" suffix=" · Phoenix Framework">
+      {assigns[:page_title]}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    </script>
+    <script>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.removeItem("phx:theme");
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+        if (!document.documentElement.hasAttribute("data-theme")) {
+          setTheme(localStorage.getItem("phx:theme") || "system");
+        }
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        
+        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="w-full relative z-10 flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <a
+        href="/"
+        class="p-2 text-gray-300 hover:text-white transition-colors home-icon"
+        title="Home"
+        style="visibility: hidden;"
+      >
+        <svg
+          class="w-5 h-5"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+      <ul class="menu menu-horizontal flex items-center gap-4">
+        <li>
+          <.locale_switcher current_locale={assigns[:locale] || "en"} />
+        </li>
+        <%= if assigns[:current_scope] do %>
+          <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
+            <li>
+              <.link href={~p"/admin/videos"}>Admin Videos</.link>
+            </li>
+          <% end %>
+          <li>
+            <.link href={~p"/users/settings"}>Settings</.link>
+          </li>
+          <li>
+            {@current_scope.user.email}
+          </li>
+          <li>
+            <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+          </li>
+        <% else %>
+          <li>
+            <.link href={~p"/users/register"}>Register</.link>
+          </li>
+          <li>
+            <.link href={~p"/users/log-in"}>Log in</.link>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <script>
+      // Function to update home icon visibility based on current path
+      const updateHomeIconVisibility = () => {
+        const homeIcon = document.querySelector('.home-icon');
+        if (homeIcon) {
+          homeIcon.style.visibility = window.location.pathname !== '/' ? 'visible' : 'hidden';
+        }
+      };
+
+      // Update on initial load
+      updateHomeIconVisibility();
+
+      // Update on LiveView navigation
+      window.addEventListener('phx:page-loading-stop', updateHomeIconVisibility);
+    </script>
+    {@inner_content}
+  </body>
+</html>

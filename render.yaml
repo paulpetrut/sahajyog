@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: sahajyog
+    runtime: docker
+    plan: starter
+    region: oregon
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sahajyog-db
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: PHX_HOST
+        sync: false
+      - key: POOL_SIZE
+        value: 10
+      - key: PHX_SERVER
+        value: true
+    buildCommand: "./bin/migrate"
+    healthCheckPath: /
+
+databases:
+  - name: sahajyog-db
+    databaseName: sahajyog
+    plan: starter
+    region: oregon
