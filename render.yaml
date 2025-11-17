@@ -17,7 +17,6 @@ services:
         value: 10
       - key: PHX_SERVER
         value: true
-    buildCommand: "./bin/migrate"
     healthCheckPath: /
 
 databases:

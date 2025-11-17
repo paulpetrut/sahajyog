@@ -94,4 +94,14 @@ USER nobody
 # above and adding an entrypoint. See https://github.com/krallin/tini for details
 # ENTRYPOINT ["/tini", "--"]
 
-CMD ["/app/bin/server"]
+# Create a startup script that runs migrations then starts the server
+COPY --chown=nobody:root --chmod=755 <<EOF /app/bin/docker-entrypoint.sh
+#!/bin/sh
+set -e
+echo "Running migrations..."
+/app/bin/migrate
+echo "Starting server..."
+exec /app/bin/server
+EOF
+
+CMD ["/app/bin/docker-entrypoint.sh"]
