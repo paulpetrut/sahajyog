@@ -32,7 +32,7 @@ if config_env() == :prod do
 
   config :sahajyog, Sahajyog.Repo,
     ssl: true,
-    ssl_opts: [
+    ssl: [
       verify: :verify_none
     ],
     url: database_url,
@@ -58,6 +58,16 @@ if config_env() == :prod do
 
   config :sahajyog, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
+  # Build allowed origins list from PHX_HOST and additional domains
+  allowed_origins = [
+    "https://#{host}",
+    "//#{host}",
+    "https://sahajyog.onrender.com",
+    "//sahajyog.onrender.com",
+    "https://www.sahajaonline.xyz",
+    "//www.sahajaonline.xyz"
+  ]
+
   config :sahajyog, SahajyogWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
@@ -68,7 +78,7 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    check_origin: ["https://#{host}", "//#{host}"],
+    check_origin: allowed_origins,
     secret_key_base: secret_key_base
 
   # ## SSL Support
