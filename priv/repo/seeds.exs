@@ -10,8 +10,11 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
+import Ecto.Query
+
 alias Sahajyog.Repo
 alias Sahajyog.Accounts.User
+alias Sahajyog.Content.Video
 
 # Create default admin user
 admin_attrs = %{
@@ -102,8 +105,6 @@ case Repo.get_by(User, email: test_admin_attrs.email) do
 end
 
 # Create sample videos from /steps page
-alias Sahajyog.Content.Video
-
 sample_videos = [
   %{
     step_number: 1,
