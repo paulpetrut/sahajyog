@@ -174,7 +174,9 @@ defmodule SahajyogWeb.StepsLive do
     >
       <%!-- Mobile header with menu button --%>
       <div class="lg:hidden flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
-        <h1 class="text-lg font-bold truncate flex-1">{@current_video.title}</h1>
+        <h1 class="text-lg font-bold truncate flex-1">
+          {if @current_video, do: @current_video.title, else: "No video selected"}
+        </h1>
         <button
           phx-click="toggle_sidebar"
           class="ml-4 p-2 hover:bg-gray-700 rounded-lg transition-colors"
@@ -185,44 +187,56 @@ defmodule SahajyogWeb.StepsLive do
 
       <%!-- Video player section --%>
       <div class="flex-1 flex flex-col p-4 md:p-6">
-        <%!-- Desktop title with toggle button --%>
-        <div class="hidden lg:flex items-center justify-between mb-4">
-          <h1 class="text-2xl md:text-3xl font-bold">{@current_video.title}</h1>
-          <button
-            phx-click="toggle_sidebar_visibility"
-            class="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-            title={if @sidebar_visible, do: gettext("Hide sidebar"), else: gettext("Show sidebar")}
-          >
-            <.icon
-              name={if @sidebar_visible, do: "hero-chevron-right", else: "hero-chevron-left"}
-              class="w-6 h-6"
-            />
-          </button>
-        </div>
-
-        <%!-- Video player --%>
-        <div class="flex-1 bg-black rounded-lg overflow-hidden aspect-video lg:aspect-auto">
-          <iframe
-            src={"https://www.youtube.com/embed/#{@current_video.youtube_id}?rel=0&modestbranding=1&showinfo=0&controls=1"}
-            class="w-full h-full"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          >
-          </iframe>
-        </div>
-
-        <%!-- Mark as watched button --%>
-        <%= if not MapSet.member?(@watched_videos, @current_video.id) do %>
-          <div class="mt-4">
+        <%= if @current_video do %>
+          <%!-- Desktop title with toggle button --%>
+          <div class="hidden lg:flex items-center justify-between mb-4">
+            <h1 class="text-2xl md:text-3xl font-bold">{@current_video.title}</h1>
             <button
-              phx-click="mark_watched"
-              phx-value-id={@current_video.id}
-              class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              phx-click="toggle_sidebar_visibility"
+              class="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              title={if @sidebar_visible, do: gettext("Hide sidebar"), else: gettext("Show sidebar")}
             >
-              <.icon name="hero-check-circle" class="w-5 h-5" />
-              <span>{gettext("Mark as Watched")}</span>
+              <.icon
+                name={if @sidebar_visible, do: "hero-chevron-right", else: "hero-chevron-left"}
+                class="w-6 h-6"
+              />
             </button>
+          </div>
+
+          <%!-- Video player --%>
+          <div class="flex-1 bg-black rounded-lg overflow-hidden aspect-video lg:aspect-auto">
+            <iframe
+              src={
+                "https://www.youtube.com/embed/#{@current_video.youtube_id}?rel=0&modestbranding=1&showinfo=0&controls=1"
+              }
+              class="w-full h-full"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            >
+            </iframe>
+          </div>
+
+          <%!-- Mark as watched button --%>
+          <%= if not MapSet.member?(@watched_videos, @current_video.id) do %>
+            <div class="mt-4">
+              <button
+                phx-click="mark_watched"
+                phx-value-id={@current_video.id}
+                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              >
+                <.icon name="hero-check-circle" class="w-5 h-5" />
+                <span>{gettext("Mark as Watched")}</span>
+              </button>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="flex-1 flex items-center justify-center">
+            <div class="text-center text-gray-400">
+              <.icon name="hero-video-camera-slash" class="w-16 h-16 mx-auto mb-4" />
+              <p class="text-xl">{gettext("No videos available")}</p>
+              <p class="mt-2">{gettext("Please add videos to get started")}</p>
+            </div>
           </div>
         <% end %>
       </div>
@@ -322,7 +336,7 @@ defmodule SahajyogWeb.StepsLive do
                       phx-value-id={video.id}
                       class={[
                         "w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-t border-gray-700 flex items-start gap-3",
-                        @current_video.id == video.id && "bg-gray-700"
+                        @current_video && @current_video.id == video.id && "bg-gray-700"
                       ]}
                     >
                       <div class="flex-1">
@@ -338,7 +352,7 @@ defmodule SahajyogWeb.StepsLive do
                             name="hero-check-circle"
                             class="w-5 h-5 text-green-500 flex-shrink-0"
                           />
-                        <% @current_video.id == video.id -> %>
+                        <% @current_video && @current_video.id == video.id -> %>
                           <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
                         <% true -> %>
                           <div class="w-5 h-5"></div>
