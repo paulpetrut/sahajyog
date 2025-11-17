@@ -87,13 +87,6 @@ ENV MIX_ENV="prod"
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/sahajyog ./
 
-USER nobody
-
-# If using an environment that doesn't automatically reap zombie processes, it is
-# advised to add an init process such as tini via `apt-get install`
-# above and adding an entrypoint. See https://github.com/krallin/tini for details
-# ENTRYPOINT ["/tini", "--"]
-
 # Create a startup script that runs migrations then starts the server
 COPY --chown=nobody:root --chmod=755 <<EOF /app/bin/docker-entrypoint.sh
 #!/bin/sh
@@ -103,5 +96,15 @@ echo "Running migrations..."
 echo "Starting server..."
 exec /app/bin/server
 EOF
+
+# Ensure all bin scripts are executable
+RUN chmod +x /app/bin/*
+
+USER nobody
+
+# If using an environment that doesn't automatically reap zombie processes, it is
+# advised to add an init process such as tini via `apt-get install`
+# above and adding an entrypoint. See https://github.com/krallin/tini for details
+# ENTRYPOINT ["/tini", "--"]
 
 CMD ["/app/bin/docker-entrypoint.sh"]
