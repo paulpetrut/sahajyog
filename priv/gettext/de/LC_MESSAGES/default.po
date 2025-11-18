@@ -294,6 +294,7 @@ msgstr "Noch kein Konto?"
 
 #: lib/sahajyog_web/live/user_live/login.ex:48
 #: lib/sahajyog_web/live/user_live/login.ex:123
+#: lib/sahajyog_web/live/user_live/registration.ex:29
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-Mail"
@@ -368,3 +369,38 @@ msgstr "Willkommen zurück"
 #, elixir-autogen, elixir-format
 msgid "you@example.com"
 msgstr "sie@beispiel.de"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:16
+#, elixir-autogen, elixir-format
+msgid "Already registered?"
+msgstr "Bereits registriert?"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:72
+#, elixir-autogen, elixir-format
+msgid "An email was sent to %{email}, please access it to confirm your account."
+msgstr "Eine E-Mail wurde an %{email} gesendet. Bitte öffnen Sie diese, um Ihr Konto zu bestätigen."
+
+#: lib/sahajyog_web/live/user_live/registration.ex:36
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr "Konto erstellen"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:35
+#, elixir-autogen, elixir-format
+msgid "Creating account..."
+msgstr "Konto wird erstellt..."
+
+#: lib/sahajyog_web/live/user_live/registration.ex:18
+#, elixir-autogen, elixir-format
+msgid "Log in"
+msgstr "Anmelden"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:14
+#, elixir-autogen, elixir-format
+msgid "Register for an account"
+msgstr "Für ein Konto registrieren"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:20
+#, elixir-autogen, elixir-format
+msgid "to your account now."
+msgstr "jetzt bei Ihrem Konto."

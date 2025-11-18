@@ -295,6 +295,7 @@ msgstr "Nu ai un cont?"
 
 #: lib/sahajyog_web/live/user_live/login.ex:48
 #: lib/sahajyog_web/live/user_live/login.ex:123
+#: lib/sahajyog_web/live/user_live/registration.ex:29
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "Email"
@@ -369,3 +370,38 @@ msgstr "Bine ai revenit"
 #, elixir-autogen, elixir-format
 msgid "you@example.com"
 msgstr "tu@exemplu.com"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:16
+#, elixir-autogen, elixir-format
+msgid "Already registered?"
+msgstr "Deja înregistrat?"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:72
+#, elixir-autogen, elixir-format
+msgid "An email was sent to %{email}, please access it to confirm your account."
+msgstr "Un email a fost trimis la %{email}, te rugăm să îl accesezi pentru a confirma contul."
+
+#: lib/sahajyog_web/live/user_live/registration.ex:36
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr "Creează un cont"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:35
+#, elixir-autogen, elixir-format
+msgid "Creating account..."
+msgstr "Se creează contul..."
+
+#: lib/sahajyog_web/live/user_live/registration.ex:18
+#, elixir-autogen, elixir-format
+msgid "Log in"
+msgstr "Autentificare"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:14
+#, elixir-autogen, elixir-format
+msgid "Register for an account"
+msgstr "Înregistrează-te pentru un cont"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:20
+#, elixir-autogen, elixir-format
+msgid "to your account now."
+msgstr "în contul tău acum."
