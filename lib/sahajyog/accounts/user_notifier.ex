@@ -13,8 +13,12 @@ defmodule Sahajyog.Accounts.UserNotifier do
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
+    require Logger
     from_email = System.get_env("FROM_EMAIL") || "noreply@sahajaonline.xyz"
     from_name = System.get_env("FROM_NAME") || "SahajYog"
+
+    Logger.info("Attempting to send email to #{recipient} with subject: #{subject}")
+    Logger.debug("From: #{from_name} <#{from_email}>")
 
     email =
       new()
@@ -23,8 +27,14 @@ defmodule Sahajyog.Accounts.UserNotifier do
       |> subject(subject)
       |> text_body(body)
 
-    with {:ok, _metadata} <- Mailer.deliver(email) do
-      {:ok, email}
+    case Mailer.deliver(email) do
+      {:ok, _metadata} ->
+        Logger.info("Email sent successfully to #{recipient}")
+        {:ok, email}
+
+      {:error, reason} = error ->
+        Logger.error("Failed to send email to #{recipient}: #{inspect(reason)}")
+        error
     end
   end
 

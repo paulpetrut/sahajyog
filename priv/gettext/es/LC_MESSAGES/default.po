@@ -459,3 +459,71 @@ msgstr "No se pueden cargar las charlas. Por favor, inténtalo de nuevo más tar
 #, elixir-autogen, elixir-format
 msgid "Account created but we couldn't send the confirmation email. Please contact support."
 msgstr "Cuenta creada pero no pudimos enviar el correo de confirmación. Por favor, contacta con soporte."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Update email instructions"
+msgstr "Instrucciones de actualización de correo"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Hi"
+msgstr "Hola"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "You can change your email by visiting the URL below:"
+msgstr "Puedes cambiar tu correo visitando la URL a continuación:"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "If you didn't request this change, please ignore this."
+msgstr "Si no solicitaste este cambio, por favor ignora este mensaje."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Your SahajYog Login Link"
+msgstr "Tu enlace de inicio de sesión de SahajYog"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Hello"
+msgstr "Hola"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "You requested a secure login link for your SahajYog account."
+msgstr "Solicitaste un enlace seguro de inicio de sesión para tu cuenta de SahajYog."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Click the link below to log in:"
+msgstr "Haz clic en el enlace a continuación para iniciar sesión:"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "This link will expire in 1 hour for security reasons."
+msgstr "Este enlace expirará en 1 hora por razones de seguridad."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Si no solicitaste esto, puedes ignorar este correo de forma segura."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Best regards"
+msgstr "Saludos cordiales"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "The SahajYog Team"
+msgstr "El equipo de SahajYog"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Welcome to SahajYog - Confirm Your Account"
+msgstr "Bienvenido a SahajYog - Confirma tu cuenta"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Welcome to SahajYog!"
+msgstr "¡Bienvenido a SahajYog!"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
+msgstr "Gracias por registrarte. Para completar tu registro y acceder a tu cuenta, por favor confirma tu dirección de correo haciendo clic en el enlace a continuación:"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "This link will expire in 24 hours for security reasons."
+msgstr "Este enlace expirará en 24 horas por razones de seguridad."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "If you didn't create an account with us, you can safely ignore this email."
+msgstr "Si no creaste una cuenta con nosotros, puedes ignorar este correo de forma segura."
