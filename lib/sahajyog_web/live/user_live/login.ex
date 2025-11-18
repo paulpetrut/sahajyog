@@ -192,7 +192,9 @@ defmodule SahajyogWeb.UserLive.Login do
     end
 
     info =
-      "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
+      gettext(
+        "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
+      )
 
     {:noreply,
      socket

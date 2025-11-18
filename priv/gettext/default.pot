@@ -459,3 +459,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Account created but we couldn't send the confirmation email. Please contact support."
 msgstr ""
+
+#: lib/sahajyog_web/live/user_live/login.ex:195
+#, elixir-autogen, elixir-format
+msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
+msgstr ""
