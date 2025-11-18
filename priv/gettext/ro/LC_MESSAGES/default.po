@@ -521,3 +521,38 @@ msgstr "Salvează parola"
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Se salvează..."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:51
+#, elixir-autogen, elixir-format
+msgid "Invalid email or password"
+msgstr "Email sau parolă invalidă"
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:72
+#, elixir-autogen, elixir-format
+msgid "Logged out successfully."
+msgstr "Deconectat cu succes."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:67
+#, elixir-autogen, elixir-format
+msgid "Password updated successfully!"
+msgstr "Parolă actualizată cu succes!"
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:35
+#, elixir-autogen, elixir-format
+msgid "The link is invalid or it has expired."
+msgstr "Link-ul este invalid sau a expirat."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:8
+#, elixir-autogen, elixir-format
+msgid "User confirmed successfully."
+msgstr "Utilizator confirmat cu succes."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:12
+#, elixir-autogen, elixir-format
+msgid "Welcome back!"
+msgstr "Bine ai revenit!"
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:29
+#, elixir-autogen, elixir-format
+msgid "Your account has been confirmed! Please log in with your password."
+msgstr "Contul tău a fost confirmat! Te rugăm să te autentifici cu parola ta."

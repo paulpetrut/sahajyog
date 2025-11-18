@@ -520,3 +520,38 @@ msgstr "Passwort speichern"
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Wird gespeichert..."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:51
+#, elixir-autogen, elixir-format
+msgid "Invalid email or password"
+msgstr "Ungültige E-Mail oder Passwort"
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:72
+#, elixir-autogen, elixir-format
+msgid "Logged out successfully."
+msgstr "Erfolgreich abgemeldet."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:67
+#, elixir-autogen, elixir-format
+msgid "Password updated successfully!"
+msgstr "Passwort erfolgreich aktualisiert!"
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:35
+#, elixir-autogen, elixir-format
+msgid "The link is invalid or it has expired."
+msgstr "Der Link ist ungültig oder abgelaufen."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:8
+#, elixir-autogen, elixir-format
+msgid "User confirmed successfully."
+msgstr "Benutzer erfolgreich bestätigt."
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:12
+#, elixir-autogen, elixir-format
+msgid "Welcome back!"
+msgstr "Willkommen zurück!"
+
+#: lib/sahajyog_web/controllers/user_session_controller.ex:29
+#, elixir-autogen, elixir-format
+msgid "Your account has been confirmed! Please log in with your password."
+msgstr "Ihr Konto wurde bestätigt! Bitte melden Sie sich mit Ihrem Passwort an."
