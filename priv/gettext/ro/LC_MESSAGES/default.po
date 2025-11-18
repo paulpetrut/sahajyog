@@ -296,6 +296,7 @@ msgstr "Nu ai un cont?"
 #: lib/sahajyog_web/live/user_live/login.ex:48
 #: lib/sahajyog_web/live/user_live/login.ex:123
 #: lib/sahajyog_web/live/user_live/registration.ex:29
+#: lib/sahajyog_web/live/user_live/settings.ex:23
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "Email"
@@ -466,54 +467,101 @@ msgstr "Contul a fost creat dar nu am putut trimite emailul de confirmare. Te ru
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Verifică-ți emailul! Dacă adresa ta este în sistemul nostru, vei primi în curând un link de autentificare."
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Welcome to SahajYog!"
-msgstr "Bine ai venit la SahajYog!"
+#: lib/sahajyog_web/live/user_live/settings.ex:127
+#, elixir-autogen, elixir-format
+msgid "A link to confirm your email change has been sent to the new address."
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Welcome to SahajYog - Confirm Your Account"
-msgstr "Bine ai venit la SahajYog - Confirmă-ți contul"
+#: lib/sahajyog_web/live/user_live/settings.ex:14
+#, elixir-autogen, elixir-format
+msgid "Account Settings"
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
-msgstr "Mulțumim pentru înregistrare. Pentru a finaliza înregistrarea și a accesa contul, te rugăm să confirmi adresa de email apăsând pe link-ul de mai jos:"
+#: lib/sahajyog_web/live/user_live/settings.ex:28
+#, elixir-autogen, elixir-format
+msgid "Change Email"
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "This link will expire in 24 hours for security reasons."
-msgstr "Acest link va expira în 24 de ore din motive de securitate."
+#: lib/sahajyog_web/live/user_live/settings.ex:27
+#, elixir-autogen, elixir-format
+msgid "Changing..."
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "If you didn't create an account with us, you can safely ignore this email."
-msgstr "Dacă nu ai creat un cont la noi, poți ignora în siguranță acest email."
+#: lib/sahajyog_web/live/user_live/settings.ex:60
+#, elixir-autogen, elixir-format
+msgid "Confirm new password"
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Best regards"
-msgstr "Cu stimă"
+#: lib/sahajyog_web/live/user_live/settings.ex:79
+#, elixir-autogen, elixir-format
+msgid "Email change link is invalid or it has expired."
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "The SahajYog Team"
-msgstr "Echipa SahajYog"
+#: lib/sahajyog_web/live/user_live/settings.ex:76
+#, elixir-autogen, elixir-format
+msgid "Email changed successfully."
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Hello"
-msgstr "Bună ziua"
+#: lib/sahajyog_web/live/user_live/settings.ex:15
+#, elixir-autogen, elixir-format
+msgid "Manage your account email address and password settings"
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Your SahajYog Login Link"
-msgstr "Link-ul tău de autentificare SahajYog"
+#: lib/sahajyog_web/live/user_live/settings.ex:53
+#, elixir-autogen, elixir-format
+msgid "New password"
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "You requested a secure login link for your SahajYog account."
-msgstr "Ai solicitat un link securizat de autentificare pentru contul tău SahajYog."
+#: lib/sahajyog_web/live/user_live/settings.ex:64
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Save Password"
+msgstr "Parolă"
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Click the link below to log in:"
-msgstr "Apasă pe link-ul de mai jos pentru a te autentifica:"
+#: lib/sahajyog_web/live/user_live/settings.ex:63
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "This link will expire in 1 hour for security reasons."
-msgstr "Acest link va expira în 1 oră din motive de securitate."
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "A link to confirm your email change has been sent to the new address."
+msgstr "Un link pentru confirmarea schimbării emailului a fost trimis la noua adresă."
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "If you didn't request this, you can safely ignore this email."
-msgstr "Dacă nu ai solicitat acest lucru, poți ignora în siguranță acest email."
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Account Settings"
+msgstr "Setări cont"
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Change Email"
+msgstr "Schimbă emailul"
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Changing..."
+msgstr "Se schimbă..."
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Confirm new password"
+msgstr "Confirmă parola nouă"
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Email change link is invalid or it has expired."
+msgstr "Link-ul de schimbare email este invalid sau a expirat."
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Email changed successfully."
+msgstr "Email schimbat cu succes."
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Manage your account email address and password settings"
+msgstr "Gestionează adresa de email și setările parolei contului tău"
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "New password"
+msgstr "Parolă nouă"
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Save Password"
+msgstr "Salvează parola"
+
+#: lib/sahajyog_web/live/user_live/settings.ex
+msgid "Saving..."
+msgstr "Se salvează..."

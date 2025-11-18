@@ -295,6 +295,7 @@ msgstr ""
 #: lib/sahajyog_web/live/user_live/login.ex:48
 #: lib/sahajyog_web/live/user_live/login.ex:123
 #: lib/sahajyog_web/live/user_live/registration.ex:29
+#: lib/sahajyog_web/live/user_live/settings.ex:23
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
@@ -463,4 +464,59 @@ msgstr ""
 #: lib/sahajyog_web/live/user_live/login.ex:195
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:127
+#, elixir-autogen, elixir-format
+msgid "A link to confirm your email change has been sent to the new address."
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:14
+#, elixir-autogen, elixir-format
+msgid "Account Settings"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:28
+#, elixir-autogen, elixir-format
+msgid "Change Email"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:27
+#, elixir-autogen, elixir-format
+msgid "Changing..."
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:60
+#, elixir-autogen, elixir-format
+msgid "Confirm new password"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:79
+#, elixir-autogen, elixir-format
+msgid "Email change link is invalid or it has expired."
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:76
+#, elixir-autogen, elixir-format
+msgid "Email changed successfully."
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:15
+#, elixir-autogen, elixir-format
+msgid "Manage your account email address and password settings"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:53
+#, elixir-autogen, elixir-format
+msgid "New password"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:64
+#, elixir-autogen, elixir-format
+msgid "Save Password"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:63
+#, elixir-autogen, elixir-format
+msgid "Saving..."
 msgstr ""
