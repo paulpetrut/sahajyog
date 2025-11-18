@@ -4,6 +4,7 @@ defmodule SahajyogWeb.TalksLive do
   def mount(_params, _session, socket) do
     socket =
       socket
+      |> assign(:page_title, "Talks")
       |> assign(:search_query, "")
       |> assign(:selected_country, "")
       |> assign(:selected_year, "")
@@ -126,10 +127,10 @@ defmodule SahajyogWeb.TalksLive do
 
       {:error, %Req.TransportError{reason: :timeout}} ->
         {:error, "Connection timeout. Please try again later."}
-      
+
       {:error, %Req.TransportError{reason: :econnrefused}} ->
         {:error, "Unable to connect to the talks service."}
-      
+
       {:error, _exception} ->
         {:error, "Unable to load talks. Please try again later."}
     end
@@ -231,7 +232,11 @@ defmodule SahajyogWeb.TalksLive do
     ]
 
     Enum.find_value(endpoints, {:error, "No endpoint worked"}, fn url ->
-      case Req.get(url, connect_options: [timeout: 5000], receive_timeout: 8000, retry: :transient) do
+      case Req.get(url,
+             connect_options: [timeout: 5000],
+             receive_timeout: 8000,
+             retry: :transient
+           ) do
         {:ok, %{status: 200, body: talk}} when is_map(talk) ->
           {:ok, talk}
 
@@ -296,7 +301,11 @@ defmodule SahajyogWeb.TalksLive do
 
   defp load_filter_options(socket) do
     countries =
-      case Req.get("https://learnsahajayoga.org/api/meta/countries", connect_options: [timeout: 5000], receive_timeout: 8000, retry: :transient) do
+      case Req.get("https://learnsahajayoga.org/api/meta/countries",
+             connect_options: [timeout: 5000],
+             receive_timeout: 8000,
+             retry: :transient
+           ) do
         {:ok, %{status: 200, body: %{"languages" => languages}}} when is_list(languages) ->
           languages
           |> Enum.find(fn lang -> lang["code"] == "en" end)
@@ -315,7 +324,11 @@ defmodule SahajyogWeb.TalksLive do
       end
 
     years =
-      case Req.get("https://learnsahajayoga.org/api/meta/years", connect_options: [timeout: 5000], receive_timeout: 8000, retry: :transient) do
+      case Req.get("https://learnsahajayoga.org/api/meta/years",
+             connect_options: [timeout: 5000],
+             receive_timeout: 8000,
+             retry: :transient
+           ) do
         {:ok, %{status: 200, body: %{"years" => years}}} when is_list(years) ->
           years
           |> Enum.sort_by(fn year -> -String.to_integer(year["year"]) end)
@@ -326,7 +339,11 @@ defmodule SahajyogWeb.TalksLive do
       end
 
     categories =
-      case Req.get("https://learnsahajayoga.org/api/meta/categories", connect_options: [timeout: 5000], receive_timeout: 8000, retry: :transient) do
+      case Req.get("https://learnsahajayoga.org/api/meta/categories",
+             connect_options: [timeout: 5000],
+             receive_timeout: 8000,
+             retry: :transient
+           ) do
         {:ok, %{status: 200, body: %{"languages" => languages}}} when is_list(languages) ->
           languages
           |> Enum.find(fn lang -> lang["language_code"] == "en" end)
@@ -345,7 +362,11 @@ defmodule SahajyogWeb.TalksLive do
       end
 
     spoken_languages =
-      case Req.get("https://learnsahajayoga.org/api/meta/spoken-languages", connect_options: [timeout: 5000], receive_timeout: 8000, retry: :transient) do
+      case Req.get("https://learnsahajayoga.org/api/meta/spoken-languages",
+             connect_options: [timeout: 5000],
+             receive_timeout: 8000,
+             retry: :transient
+           ) do
         {:ok, %{status: 200, body: %{"spoken_languages" => languages}}} when is_list(languages) ->
           languages
           |> Enum.sort_by(fn lang -> -lang["talk_count"] end)

@@ -9,6 +9,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
     socket =
       socket
+      |> assign(:page_title, "Welcome")
       |> assign(:current_video, current_video)
 
     {:ok, socket}

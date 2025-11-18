@@ -9,7 +9,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:page_title, "Manage Videos")
+     |> assign(:page_title, "Admin Videos")
      |> assign(:videos, Content.list_videos_ordered())
      |> assign(:form, nil)
      |> assign(:editing_video, nil)

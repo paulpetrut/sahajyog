@@ -11,12 +11,12 @@ defmodule SahajyogWeb.UserLive.Login do
         <div class="w-full max-w-md">
           <%!-- Header --%>
           <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-3">Welcome back</h1>
+            <h1 class="text-4xl font-bold mb-3">{gettext("Welcome back")}</h1>
             <p class="text-base-content/70">
               <%= if @current_scope do %>
-                Please reauthenticate to continue
+                {gettext("Please reauthenticate to continue")}
               <% else %>
-                Sign in to your account to continue
+                {gettext("Sign in to your account to continue")}
               <% end %>
             </p>
           </div>
@@ -25,8 +25,8 @@ defmodule SahajyogWeb.UserLive.Login do
           <div :if={local_mail_adapter?()} class="alert alert-warning mb-6">
             <.icon name="hero-exclamation-triangle" class="size-5 shrink-0" />
             <div class="text-sm">
-              <span class="font-medium">Dev mode:</span>
-              <.link href="/dev/mailbox" class="underline ml-1">View mailbox</.link>
+              <span class="font-medium">{gettext("Dev mode:")}</span>
+              <.link href="/dev/mailbox" class="underline ml-1">{gettext("View mailbox")}</.link>
             </div>
           </div>
 
@@ -45,8 +45,8 @@ defmodule SahajyogWeb.UserLive.Login do
                   readonly={!!@current_scope}
                   field={@form[:email]}
                   type="email"
-                  label="Email"
-                  placeholder="you@example.com"
+                  label={gettext("Email")}
+                  placeholder={gettext("you@example.com")}
                   autocomplete="username"
                   required
                   phx-mounted={JS.focus()}
@@ -55,8 +55,8 @@ defmodule SahajyogWeb.UserLive.Login do
                 <.input
                   field={@form[:password]}
                   type="password"
-                  label="Password"
-                  placeholder="Enter your password"
+                  label={gettext("Password")}
+                  placeholder={gettext("Enter your password")}
                   autocomplete="current-password"
                   required
                 />
@@ -70,7 +70,7 @@ defmodule SahajyogWeb.UserLive.Login do
                       phx-click="toggle_remember"
                       class="checkbox checkbox-primary"
                     />
-                    <span class="label-text">Keep me signed in</span>
+                    <span class="label-text">{gettext("Keep me signed in")}</span>
                   </label>
                 </div>
 
@@ -80,13 +80,13 @@ defmodule SahajyogWeb.UserLive.Login do
                   value={if @remember_me, do: "true", else: "false"}
                 >
                   <span class="flex items-center justify-center gap-2 font-semibold">
-                    <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" /> Sign in
+                    <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" /> {gettext("Sign in")}
                   </span>
                 </.button>
               </.form>
 
               <%!-- Divider --%>
-              <div class="divider">OR</div>
+              <div class="divider">{gettext("OR")}</div>
 
               <%!-- Magic Link Form --%>
               <.form
@@ -105,28 +105,30 @@ defmodule SahajyogWeb.UserLive.Login do
                   ]}
                 >
                   <span class="flex items-center justify-center gap-2">
-                    <.icon name="hero-envelope" class="w-5 h-5" /> Magic link (passwordless)
+                    <.icon name="hero-envelope" class="w-5 h-5" /> {gettext(
+                      "Magic link (passwordless)"
+                    )}
                   </span>
                 </button>
 
                 <div :if={@show_magic_form} class="mt-4 p-4 bg-base-200 rounded-lg space-y-4">
                   <p class="text-sm text-base-content/70">
-                    We'll email you a secure link to sign in without a password.
+                    {gettext("We'll email you a secure link to sign in without a password.")}
                   </p>
 
                   <.input
                     readonly={!!@current_scope}
                     field={@form[:email]}
                     type="email"
-                    label="Email"
-                    placeholder="you@example.com"
+                    label={gettext("Email")}
+                    placeholder={gettext("you@example.com")}
                     autocomplete="username"
                     required
                   />
 
                   <.button class="btn btn-primary w-full text-lg h-12 rounded-full shadow-lg hover:shadow-xl transition-all">
                     <span class="flex items-center justify-center gap-2 font-semibold">
-                      <.icon name="hero-paper-airplane" class="w-5 h-5" /> Send magic link
+                      <.icon name="hero-paper-airplane" class="w-5 h-5" /> {gettext("Send magic link")}
                     </span>
                   </.button>
                 </div>
@@ -136,9 +138,9 @@ defmodule SahajyogWeb.UserLive.Login do
 
           <%!-- Sign up link --%>
           <p :if={!@current_scope} class="mt-6 text-center text-sm">
-            Don't have an account?
+            {gettext("Don't have an account?")}
             <.link navigate={~p"/users/register"} class="link link-primary font-semibold">
-              Sign up
+              {gettext("Sign up")}
             </.link>
           </p>
         </div>
@@ -157,6 +159,7 @@ defmodule SahajyogWeb.UserLive.Login do
 
     {:ok,
      assign(socket,
+       page_title: "Log in",
        form: form,
        trigger_submit: false,
        remember_me: true,

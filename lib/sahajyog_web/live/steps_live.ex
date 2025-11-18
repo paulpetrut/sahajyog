@@ -5,6 +5,8 @@ defmodule SahajyogWeb.StepsLive do
   alias Sahajyog.Content
 
   def mount(_params, _session, socket) do
+    socket = assign(socket, :page_title, "Steps")
+
     # Fetch videos from database
     db_videos = Content.list_videos_ordered()
 

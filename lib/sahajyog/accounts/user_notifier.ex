@@ -6,10 +6,13 @@ defmodule Sahajyog.Accounts.UserNotifier do
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
+    from_email = System.get_env("FROM_EMAIL") || "noreply@sahajaonline.xyz"
+    from_name = System.get_env("FROM_NAME") || "SahajYog"
+
     email =
       new()
       |> to(recipient)
-      |> from({"Sahajyog", "contact@example.com"})
+      |> from({from_name, from_email})
       |> subject(subject)
       |> text_body(body)
 

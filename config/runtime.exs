@@ -115,19 +115,28 @@ if config_env() == :prod do
 
   # ## Configuring the mailer
   #
-  # In production you need to configure the mailer to use a different adapter.
-  # Here is an example configuration for Mailgun:
-  #
-  #     config :sahajyog, Sahajyog.Mailer,
-  #       adapter: Swoosh.Adapters.Mailgun,
-  #       api_key: System.get_env("MAILGUN_API_KEY"),
-  #       domain: System.get_env("MAILGUN_DOMAIN")
-  #
-  # Most non-SMTP adapters require an API client. Swoosh supports Req, Hackney,
-  # and Finch out-of-the-box. This configuration is typically done at
-  # compile-time in your config/prod.exs:
-  #
-  #     config :swoosh, :api_client, Swoosh.ApiClient.Req
-  #
-  # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+  # Configure mailer for production
+  # Using Resend (https://resend.com) - simple, reliable, generous free tier
+  # Alternative options: Mailgun, SendGrid, Postmark, AWS SES
+
+  if System.get_env("RESEND_API_KEY") do
+    config :sahajyog, Sahajyog.Mailer,
+      adapter: Swoosh.Adapters.Resend,
+      api_key: System.get_env("RESEND_API_KEY")
+  else
+    # Fallback to SMTP if RESEND_API_KEY is not set
+    # You can use Gmail, Outlook, or any SMTP server
+    if System.get_env("SMTP_HOST") do
+      config :sahajyog, Sahajyog.Mailer,
+        adapter: Swoosh.Adapters.SMTP,
+        relay: System.get_env("SMTP_HOST"),
+        username: System.get_env("SMTP_USERNAME"),
+        password: System.get_env("SMTP_PASSWORD"),
+        port: String.to_integer(System.get_env("SMTP_PORT") || "587"),
+        ssl: System.get_env("SMTP_SSL") == "true",
+        tls: :always,
+        auth: :always,
+        retries: 2
+    end
+  end
 end
