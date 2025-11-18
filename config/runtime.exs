@@ -117,15 +117,13 @@ if config_env() == :prod do
   #
   # Configure mailer for production
   # Using Resend (https://resend.com) - simple, reliable, generous free tier
-  # Alternative options: Mailgun, SendGrid, Postmark, AWS SES
 
   if System.get_env("RESEND_API_KEY") do
     config :sahajyog, Sahajyog.Mailer,
-      adapter: Swoosh.Adapters.Resend,
+      adapter: Resend.Swoosh.Adapter,
       api_key: System.get_env("RESEND_API_KEY")
   else
     # Fallback to SMTP if RESEND_API_KEY is not set
-    # You can use Gmail, Outlook, or any SMTP server
     if System.get_env("SMTP_HOST") do
       config :sahajyog, Sahajyog.Mailer,
         adapter: Swoosh.Adapters.SMTP,
