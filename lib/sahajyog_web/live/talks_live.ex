@@ -36,7 +36,10 @@ defmodule SahajyogWeb.TalksLive do
             |> assign(:loading, false)
             |> assign(:error, nil)
 
-          {:error, _reason} ->
+          {:error, reason} ->
+            require Logger
+            Logger.error("Failed to load talks in mount: #{inspect(reason)}")
+
             socket
             |> stream(:talks, [], reset: true)
             |> assign(:talks_empty?, true)
@@ -50,6 +53,18 @@ defmodule SahajyogWeb.TalksLive do
       end
 
     {:ok, socket}
+  rescue
+    error ->
+      require Logger
+      Logger.error("Error in TalksLive mount: #{inspect(error)}")
+      Logger.error("Stacktrace: #{inspect(__STACKTRACE__)}")
+
+      {:ok,
+       socket
+       |> stream(:talks, [], reset: true)
+       |> assign(:talks_empty?, true)
+       |> assign(:loading, false)
+       |> assign(:error, "An error occurred. Please try again later.")}
   end
 
   defp fetch_talks(filters) do
@@ -120,18 +135,28 @@ defmodule SahajyogWeb.TalksLive do
         {:ok, paginated_results, total_after_filter}
 
       {:ok, %{status: 200, body: body}} ->
-        {:error, "Unexpected API response format: #{inspect(body)}"}
+        require Logger
+        Logger.error("Unexpected API response format: #{inspect(body)}")
+        {:error, "Unexpected API response format"}
 
-      {:ok, %{status: status}} ->
+      {:ok, %{status: status, body: body}} ->
+        require Logger
+        Logger.error("API returned status #{status}, body: #{inspect(body)}")
         {:error, "API returned status #{status}"}
 
-      {:error, %Req.TransportError{reason: :timeout}} ->
+      {:error, %Req.TransportError{reason: :timeout} = error} ->
+        require Logger
+        Logger.error("Connection timeout: #{inspect(error)}")
         {:error, "Connection timeout. Please try again later."}
 
-      {:error, %Req.TransportError{reason: :econnrefused}} ->
+      {:error, %Req.TransportError{reason: :econnrefused} = error} ->
+        require Logger
+        Logger.error("Connection refused: #{inspect(error)}")
         {:error, "Unable to connect to the talks service."}
 
-      {:error, _exception} ->
+      {:error, exception} ->
+        require Logger
+        Logger.error("Error fetching talks: #{inspect(exception)}")
         {:error, "Unable to load talks. Please try again later."}
     end
   end
