@@ -75,9 +75,19 @@ defmodule Sahajyog.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.email_changeset(attrs)
-    |> Repo.insert()
+    changeset =
+      if Map.has_key?(attrs, "password") && attrs["password"] != nil && attrs["password"] != "" do
+        # User provided a password, use both email and password changesets
+        %User{}
+        |> User.email_changeset(attrs)
+        |> User.password_changeset(attrs)
+      else
+        # Passwordless registration, only use email changeset
+        %User{}
+        |> User.email_changeset(attrs)
+      end
+
+    Repo.insert(changeset)
   end
 
   ## Settings
