@@ -391,6 +391,7 @@ msgstr "Crear una cuenta"
 msgid "Creating account..."
 msgstr "Creando cuenta..."
 
+#: lib/sahajyog_web/components/layouts/root.html.heex:78
 #: lib/sahajyog_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
@@ -426,6 +427,7 @@ msgstr "Solo si estableciste una contraseña arriba"
 msgid "Password (optional)"
 msgstr "Contraseña (opcional)"
 
+#: lib/sahajyog_web/components/layouts/root.html.heex:75
 #: lib/sahajyog_web/live/user_live/registration.ex:69
 #, elixir-autogen, elixir-format
 msgid "Register"
@@ -555,3 +557,18 @@ msgstr "¡Bienvenido de nuevo!"
 #, elixir-autogen, elixir-format
 msgid "Your account has been confirmed! Please log in with your password."
 msgstr "¡Tu cuenta ha sido confirmada! Por favor inicia sesión con tu contraseña."
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "Admin Videos"
+msgstr "Admin Videos"
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:71
+#, elixir-autogen, elixir-format
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "Settings"
+msgstr "Configuración"

@@ -392,6 +392,7 @@ msgstr "Creează un cont"
 msgid "Creating account..."
 msgstr "Se creează contul..."
 
+#: lib/sahajyog_web/components/layouts/root.html.heex:78
 #: lib/sahajyog_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
@@ -427,6 +428,7 @@ msgstr "Doar dacă ai setat o parolă mai sus"
 msgid "Password (optional)"
 msgstr "Parolă (opțional)"
 
+#: lib/sahajyog_web/components/layouts/root.html.heex:75
 #: lib/sahajyog_web/live/user_live/registration.ex:69
 #, elixir-autogen, elixir-format
 msgid "Register"
@@ -556,3 +558,18 @@ msgstr "Bine ai revenit!"
 #, elixir-autogen, elixir-format
 msgid "Your account has been confirmed! Please log in with your password."
 msgstr "Contul tău a fost confirmat! Te rugăm să te autentifici cu parola ta."
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "Admin Videos"
+msgstr "Admin Videos"
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:71
+#, elixir-autogen, elixir-format
+msgid "Log out"
+msgstr "Deconectare"
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "Settings"
+msgstr "Setări"
