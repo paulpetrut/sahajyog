@@ -87,16 +87,14 @@ ENV MIX_ENV="prod"
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/sahajyog ./
 
-# Create a startup script that runs migrations, seeds, then starts the server
+# Create a startup script that runs migrations then starts the server
+# Note: Seeds are NOT run automatically to preserve production data
+# To run seeds manually: docker exec <container> /app/bin/seed
 COPY --chown=nobody:root --chmod=755 <<EOF /app/bin/docker-entrypoint.sh
 #!/bin/sh
 set -e
 echo "Running migrations..."
 /app/bin/migrate
-echo "Running seeds..."
-/app/bin/seed
-echo "Running production data import..."
-/app/bin/seed_production
 echo "Starting server..."
 exec /app/bin/server
 EOF
