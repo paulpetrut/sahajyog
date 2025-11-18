@@ -375,17 +375,17 @@ msgstr ""
 msgid "Already registered?"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/registration.ex:72
+#: lib/sahajyog_web/live/user_live/registration.ex:88
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/registration.ex:36
+#: lib/sahajyog_web/live/user_live/registration.ex:52
 #, elixir-autogen, elixir-format
 msgid "Create an account"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/registration.ex:35
+#: lib/sahajyog_web/live/user_live/registration.ex:51
 #, elixir-autogen, elixir-format
 msgid "Creating account..."
 msgstr ""
@@ -403,4 +403,29 @@ msgstr ""
 #: lib/sahajyog_web/live/user_live/registration.ex:20
 #, elixir-autogen, elixir-format
 msgid "to your account now."
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/registration.ex:46
+#, elixir-autogen, elixir-format
+msgid "Confirm password (optional)"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/registration.ex:39
+#, elixir-autogen, elixir-format
+msgid "Leave blank to use magic link login"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/registration.ex:47
+#, elixir-autogen, elixir-format
+msgid "Only if you set a password above"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/registration.ex:38
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Password (optional)"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/registration.ex:69
+#, elixir-autogen, elixir-format
+msgid "Register"
 msgstr ""

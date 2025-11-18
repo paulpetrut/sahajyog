@@ -32,6 +32,22 @@ defmodule SahajyogWeb.UserLive.Registration do
             phx-mounted={JS.focus()}
           />
 
+          <.input
+            field={@form[:password]}
+            type="password"
+            label={gettext("Password (optional)")}
+            placeholder={gettext("Leave blank to use magic link login")}
+            autocomplete="new-password"
+          />
+
+          <.input
+            field={@form[:password_confirmation]}
+            type="password"
+            label={gettext("Confirm password (optional)")}
+            placeholder={gettext("Only if you set a password above")}
+            autocomplete="new-password"
+          />
+
           <.button phx-disable-with={gettext("Creating account...")} class="btn btn-primary w-full">
             {gettext("Create an account")}
           </.button>
@@ -48,9 +64,9 @@ defmodule SahajyogWeb.UserLive.Registration do
   end
 
   def mount(_params, _session, socket) do
-    changeset = Accounts.change_user_email(%User{}, %{}, validate_unique: false)
+    changeset = Accounts.change_user_email(%User{}, %{})
 
-    socket = assign(socket, :page_title, "Register")
+    socket = assign(socket, :page_title, gettext("Register"))
 
     {:ok, assign_form(socket, changeset), temporary_assigns: [form: nil]}
   end
@@ -81,7 +97,15 @@ defmodule SahajyogWeb.UserLive.Registration do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Accounts.change_user_email(%User{}, user_params, validate_unique: false)
+    # If password is empty, remove it from params to allow passwordless registration
+    user_params =
+      if user_params["password"] == "" or user_params["password"] == nil do
+        Map.drop(user_params, ["password", "password_confirmation"])
+      else
+        user_params
+      end
+
+    changeset = Accounts.change_user_email(%User{}, user_params)
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 

@@ -52,36 +52,41 @@ defmodule Sahajyog.Accounts.UserNotifier do
   end
 
   defp deliver_magic_link_instructions(user, url) do
-    deliver(user.email, "Log in instructions", """
+    deliver(user.email, "Your SahajYog Login Link", """
 
-    ==============================
+    Hello,
 
-    Hi #{user.email},
+    You requested a secure login link for your SahajYog account.
 
-    You can log into your account by visiting the URL below:
+    Click the link below to log in:
 
     #{url}
 
-    If you didn't request this email, please ignore this.
+    This link will expire in 1 hour for security reasons.
 
-    ==============================
+    If you didn't request this, you can safely ignore this email.
+
+    Best regards,
+    The SahajYog Team
     """)
   end
 
   defp deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Confirmation instructions", """
+    deliver(user.email, "Welcome to SahajYog - Confirm Your Account", """
 
-    ==============================
+    Welcome to SahajYog!
 
-    Hi #{user.email},
-
-    You can confirm your account by visiting the URL below:
+    Thank you for registering. To complete your registration and access your account,
+    please confirm your email address by clicking the link below:
 
     #{url}
 
-    If you didn't create an account with us, please ignore this.
+    This link will expire in 24 hours for security reasons.
 
-    ==============================
+    If you didn't create an account with us, you can safely ignore this email.
+
+    Best regards,
+    The SahajYog Team
     """)
   end
 end

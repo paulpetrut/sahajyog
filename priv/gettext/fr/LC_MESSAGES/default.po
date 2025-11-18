@@ -112,7 +112,7 @@ msgstr "Pour commencer"
 #: lib/sahajyog_web/live/talks_live.ex:744
 #, elixir-autogen, elixir-format
 msgid "Active filters:"
-msgstr ""
+msgstr "Filtres actifs :"
 
 #: lib/sahajyog_web/live/talks_live.ex:688
 #, elixir-autogen, elixir-format, fuzzy
@@ -147,7 +147,7 @@ msgstr "Catégorie"
 #: lib/sahajyog_web/live/talks_live.ex:774
 #, elixir-autogen, elixir-format
 msgid "Clear all"
-msgstr ""
+msgstr "Tout effacer"
 
 #: lib/sahajyog_web/live/talks_live.ex:640
 #, elixir-autogen, elixir-format
@@ -157,7 +157,7 @@ msgstr "Pays"
 #: lib/sahajyog_web/live/talks_live.ex:798
 #, elixir-autogen, elixir-format
 msgid "Error Loading Talks"
-msgstr ""
+msgstr "Erreur lors du chargement des discours"
 
 #: lib/sahajyog_web/live/talks_live.ex:578
 #, elixir-autogen, elixir-format
@@ -187,7 +187,7 @@ msgstr "Suivant"
 #: lib/sahajyog_web/live/talks_live.ex:806
 #, elixir-autogen, elixir-format
 msgid "No talks available"
-msgstr ""
+msgstr "Aucun discours disponible"
 
 #: lib/sahajyog_web/live/talks_live.ex:633
 #, elixir-autogen, elixir-format
@@ -275,12 +275,12 @@ msgstr "à"
 #: lib/sahajyog_web/live/steps_live.ex:239
 #, elixir-autogen, elixir-format
 msgid "No videos available"
-msgstr ""
+msgstr "Aucune vidéo disponible"
 
 #: lib/sahajyog_web/live/steps_live.ex:240
 #, elixir-autogen, elixir-format
 msgid "Please add videos to get started"
-msgstr ""
+msgstr "Veuillez ajouter des vidéos pour commencer"
 
 #: lib/sahajyog_web/live/user_live/login.ex:28
 #, elixir-autogen, elixir-format
@@ -375,17 +375,17 @@ msgstr "vous@exemple.fr"
 msgid "Already registered?"
 msgstr "Déjà inscrit ?"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:72
+#: lib/sahajyog_web/live/user_live/registration.ex:88
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr "Un e-mail a été envoyé à %{email}, veuillez y accéder pour confirmer votre compte."
 
-#: lib/sahajyog_web/live/user_live/registration.ex:36
+#: lib/sahajyog_web/live/user_live/registration.ex:52
 #, elixir-autogen, elixir-format
 msgid "Create an account"
 msgstr "Créer un compte"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:35
+#: lib/sahajyog_web/live/user_live/registration.ex:51
 #, elixir-autogen, elixir-format
 msgid "Creating account..."
 msgstr "Création du compte..."
@@ -404,3 +404,28 @@ msgstr "S'inscrire pour un compte"
 #, elixir-autogen, elixir-format
 msgid "to your account now."
 msgstr "à votre compte maintenant."
+
+#: lib/sahajyog_web/live/user_live/registration.ex:46
+#, elixir-autogen, elixir-format
+msgid "Confirm password (optional)"
+msgstr "Confirmer le mot de passe (optionnel)"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:39
+#, elixir-autogen, elixir-format
+msgid "Leave blank to use magic link login"
+msgstr "Laisser vide pour utiliser la connexion par lien magique"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:47
+#, elixir-autogen, elixir-format
+msgid "Only if you set a password above"
+msgstr "Seulement si vous avez défini un mot de passe ci-dessus"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:38
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Password (optional)"
+msgstr "Mot de passe (optionnel)"
+
+#: lib/sahajyog_web/live/user_live/registration.ex:69
+#, elixir-autogen, elixir-format
+msgid "Register"
+msgstr "S'inscrire"
