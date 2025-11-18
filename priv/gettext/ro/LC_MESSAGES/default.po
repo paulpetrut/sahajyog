@@ -470,98 +470,54 @@ msgstr "Verifică-ți emailul! Dacă adresa ta este în sistemul nostru, vei pri
 #: lib/sahajyog_web/live/user_live/settings.ex:127
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
-msgstr ""
+msgstr "Un link pentru confirmarea schimbării emailului a fost trimis la noua adresă."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:14
 #, elixir-autogen, elixir-format
 msgid "Account Settings"
-msgstr ""
+msgstr "Setări cont"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:28
 #, elixir-autogen, elixir-format
 msgid "Change Email"
-msgstr ""
+msgstr "Schimbă emailul"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:27
 #, elixir-autogen, elixir-format
 msgid "Changing..."
-msgstr ""
+msgstr "Se schimbă..."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:60
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
-msgstr ""
+msgstr "Confirmă parola nouă"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:79
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
-msgstr ""
+msgstr "Link-ul de schimbare email este invalid sau a expirat."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:76
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
-msgstr ""
+msgstr "Email schimbat cu succes."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:15
 #, elixir-autogen, elixir-format
 msgid "Manage your account email address and password settings"
-msgstr ""
+msgstr "Gestionează adresa de email și setările parolei contului tău"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:53
 #, elixir-autogen, elixir-format
 msgid "New password"
-msgstr ""
-
-#: lib/sahajyog_web/live/user_live/settings.ex:64
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Save Password"
-msgstr "Parolă"
-
-#: lib/sahajyog_web/live/user_live/settings.ex:63
-#, elixir-autogen, elixir-format
-msgid "Saving..."
-msgstr ""
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "A link to confirm your email change has been sent to the new address."
-msgstr "Un link pentru confirmarea schimbării emailului a fost trimis la noua adresă."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Account Settings"
-msgstr "Setări cont"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Change Email"
-msgstr "Schimbă emailul"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Changing..."
-msgstr "Se schimbă..."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Confirm new password"
-msgstr "Confirmă parola nouă"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Email change link is invalid or it has expired."
-msgstr "Link-ul de schimbare email este invalid sau a expirat."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Email changed successfully."
-msgstr "Email schimbat cu succes."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Manage your account email address and password settings"
-msgstr "Gestionează adresa de email și setările parolei contului tău"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "New password"
 msgstr "Parolă nouă"
 
-#: lib/sahajyog_web/live/user_live/settings.ex
+#: lib/sahajyog_web/live/user_live/settings.ex:64
+#, elixir-autogen, elixir-format
 msgid "Save Password"
 msgstr "Salvează parola"
 
-#: lib/sahajyog_web/live/user_live/settings.ex
+#: lib/sahajyog_web/live/user_live/settings.ex:63
+#, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Se salvează..."

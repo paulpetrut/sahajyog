@@ -469,98 +469,54 @@ msgstr "Controlla la tua email! Se il tuo indirizzo è nel nostro sistema, ricev
 #: lib/sahajyog_web/live/user_live/settings.ex:127
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
-msgstr ""
+msgstr "Un link per confermare la modifica dell'email è stato inviato al nuovo indirizzo."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:14
 #, elixir-autogen, elixir-format
 msgid "Account Settings"
-msgstr ""
+msgstr "Impostazioni account"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:28
 #, elixir-autogen, elixir-format
 msgid "Change Email"
-msgstr ""
+msgstr "Cambia email"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:27
 #, elixir-autogen, elixir-format
 msgid "Changing..."
-msgstr ""
+msgstr "Modifica in corso..."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:60
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
-msgstr ""
+msgstr "Conferma nuova password"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:79
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
-msgstr ""
+msgstr "Il link di modifica email non è valido o è scaduto."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:76
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
-msgstr ""
+msgstr "Email modificata con successo."
 
 #: lib/sahajyog_web/live/user_live/settings.ex:15
 #, elixir-autogen, elixir-format
 msgid "Manage your account email address and password settings"
-msgstr ""
+msgstr "Gestisci l'indirizzo email e le impostazioni della password del tuo account"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:53
 #, elixir-autogen, elixir-format
 msgid "New password"
-msgstr ""
-
-#: lib/sahajyog_web/live/user_live/settings.ex:64
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Save Password"
-msgstr "Password"
-
-#: lib/sahajyog_web/live/user_live/settings.ex:63
-#, elixir-autogen, elixir-format
-msgid "Saving..."
-msgstr ""
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "A link to confirm your email change has been sent to the new address."
-msgstr "Un link per confermare la modifica dell'email è stato inviato al nuovo indirizzo."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Account Settings"
-msgstr "Impostazioni account"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Change Email"
-msgstr "Cambia email"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Changing..."
-msgstr "Modifica in corso..."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Confirm new password"
-msgstr "Conferma nuova password"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Email change link is invalid or it has expired."
-msgstr "Il link di modifica email non è valido o è scaduto."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Email changed successfully."
-msgstr "Email modificata con successo."
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "Manage your account email address and password settings"
-msgstr "Gestisci l'indirizzo email e le impostazioni della password del tuo account"
-
-#: lib/sahajyog_web/live/user_live/settings.ex
-msgid "New password"
 msgstr "Nuova password"
 
-#: lib/sahajyog_web/live/user_live/settings.ex
+#: lib/sahajyog_web/live/user_live/settings.ex:64
+#, elixir-autogen, elixir-format
 msgid "Save Password"
 msgstr "Salva password"
 
-#: lib/sahajyog_web/live/user_live/settings.ex
+#: lib/sahajyog_web/live/user_live/settings.ex:63
+#, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Salvataggio..."
