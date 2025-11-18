@@ -182,9 +182,12 @@ defmodule SahajyogWeb.UserLive.Login do
 
   def handle_event("submit_magic", %{"user" => %{"email" => email}}, socket) do
     if user = Accounts.get_user_by_email(email) do
+      locale = Gettext.get_locale(SahajyogWeb.Gettext)
+
       Accounts.deliver_login_instructions(
         user,
-        &url(~p"/users/log-in/#{&1}")
+        &url(~p"/users/log-in/#{&1}"),
+        locale
       )
     end
 

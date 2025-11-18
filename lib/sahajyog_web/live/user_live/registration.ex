@@ -75,10 +75,13 @@ defmodule SahajyogWeb.UserLive.Registration do
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
+        locale = Gettext.get_locale(SahajyogWeb.Gettext)
+
         {:ok, _} =
           Accounts.deliver_login_instructions(
             user,
-            &url(~p"/users/log-in/#{&1}")
+            &url(~p"/users/log-in/#{&1}"),
+            locale
           )
 
         {:noreply,

@@ -4,6 +4,13 @@ defmodule Sahajyog.Accounts.UserNotifier do
   alias Sahajyog.Mailer
   alias Sahajyog.Accounts.User
 
+  # Helper to translate strings with the given locale
+  defp t(msgid, locale) do
+    Gettext.with_locale(SahajyogWeb.Gettext, locale, fn ->
+      Gettext.dgettext(SahajyogWeb.Gettext, "default", msgid)
+    end)
+  end
+
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
     from_email = System.get_env("FROM_EMAIL") || "noreply@sahajaonline.xyz"
@@ -24,69 +31,80 @@ defmodule Sahajyog.Accounts.UserNotifier do
   @doc """
   Deliver instructions to update a user email.
   """
-  def deliver_update_email_instructions(user, url) do
-    deliver(user.email, "Update email instructions", """
+  def deliver_update_email_instructions(user, url, locale \\ "en") do
+    subject = t("Update email instructions", locale)
+
+    body = """
 
     ==============================
 
-    Hi #{user.email},
+    #{t("Hi", locale)} #{user.email},
 
-    You can change your email by visiting the URL below:
+    #{t("You can change your email by visiting the URL below:", locale)}
 
     #{url}
 
-    If you didn't request this change, please ignore this.
+    #{t("If you didn't request this change, please ignore this.", locale)}
 
     ==============================
-    """)
+    """
+
+    deliver(user.email, subject, body)
   end
 
   @doc """
   Deliver instructions to log in with a magic link.
   """
-  def deliver_login_instructions(user, url) do
+  def deliver_login_instructions(user, url, locale \\ "en") do
     case user do
-      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url)
-      _ -> deliver_magic_link_instructions(user, url)
+      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url, locale)
+      _ -> deliver_magic_link_instructions(user, url, locale)
     end
   end
 
-  defp deliver_magic_link_instructions(user, url) do
-    deliver(user.email, "Your SahajYog Login Link", """
+  defp deliver_magic_link_instructions(user, url, locale) do
+    subject = t("Your SahajYog Login Link", locale)
 
-    Hello,
+    body = """
 
-    You requested a secure login link for your SahajYog account.
+    #{t("Hello", locale)},
 
-    Click the link below to log in:
+    #{t("You requested a secure login link for your SahajYog account.", locale)}
+
+    #{t("Click the link below to log in:", locale)}
 
     #{url}
 
-    This link will expire in 1 hour for security reasons.
+    #{t("This link will expire in 1 hour for security reasons.", locale)}
 
-    If you didn't request this, you can safely ignore this email.
+    #{t("If you didn't request this, you can safely ignore this email.", locale)}
 
-    Best regards,
-    The SahajYog Team
-    """)
+    #{t("Best regards", locale)},
+    #{t("The SahajYog Team", locale)}
+    """
+
+    deliver(user.email, subject, body)
   end
 
-  defp deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Welcome to SahajYog - Confirm Your Account", """
+  defp deliver_confirmation_instructions(user, url, locale) do
+    subject = t("Welcome to SahajYog - Confirm Your Account", locale)
 
-    Welcome to SahajYog!
+    body = """
 
-    Thank you for registering. To complete your registration and access your account,
-    please confirm your email address by clicking the link below:
+    #{t("Welcome to SahajYog!", locale)}
+
+    #{t("Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:", locale)}
 
     #{url}
 
-    This link will expire in 24 hours for security reasons.
+    #{t("This link will expire in 24 hours for security reasons.", locale)}
 
-    If you didn't create an account with us, you can safely ignore this email.
+    #{t("If you didn't create an account with us, you can safely ignore this email.", locale)}
 
-    Best regards,
-    The SahajYog Team
-    """)
+    #{t("Best regards", locale)},
+    #{t("The SahajYog Team", locale)}
+    """
+
+    deliver(user.email, subject, body)
   end
 end
