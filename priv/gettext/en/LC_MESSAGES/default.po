@@ -464,3 +464,55 @@ msgstr "Account created but we couldn't send the confirmation email. Please cont
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Welcome to SahajYog!"
+msgstr "Welcome to SahajYog!"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Welcome to SahajYog - Confirm Your Account"
+msgstr "Welcome to SahajYog - Confirm Your Account"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
+msgstr "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "This link will expire in 24 hours for security reasons."
+msgstr "This link will expire in 24 hours for security reasons."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "If you didn't create an account with us, you can safely ignore this email."
+msgstr "If you didn't create an account with us, you can safely ignore this email."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Best regards"
+msgstr "Best regards"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "The SahajYog Team"
+msgstr "The SahajYog Team"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Hello"
+msgstr "Hello"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Your SahajYog Login Link"
+msgstr "Your SahajYog Login Link"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "You requested a secure login link for your SahajYog account."
+msgstr "You requested a secure login link for your SahajYog account."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Click the link below to log in:"
+msgstr "Click the link below to log in:"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "This link will expire in 1 hour for security reasons."
+msgstr "This link will expire in 1 hour for security reasons."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "If you didn't request this, you can safely ignore this email."

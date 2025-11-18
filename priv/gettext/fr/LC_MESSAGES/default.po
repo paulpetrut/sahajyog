@@ -464,3 +464,55 @@ msgstr "Compte créé mais nous n'avons pas pu envoyer l'e-mail de confirmation.
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Vérifiez votre e-mail ! Si votre adresse est dans notre système, vous recevrez bientôt un lien de connexion."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Welcome to SahajYog!"
+msgstr "Bienvenue à SahajYog !"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Welcome to SahajYog - Confirm Your Account"
+msgstr "Bienvenue à SahajYog - Confirmez votre compte"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
+msgstr "Merci de vous être inscrit. Pour compléter votre inscription et accéder à votre compte, veuillez confirmer votre adresse e-mail en cliquant sur le lien ci-dessous :"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "This link will expire in 24 hours for security reasons."
+msgstr "Ce lien expirera dans 24 heures pour des raisons de sécurité."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "If you didn't create an account with us, you can safely ignore this email."
+msgstr "Si vous n'avez pas créé de compte chez nous, vous pouvez ignorer cet e-mail en toute sécurité."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Best regards"
+msgstr "Cordialement"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "The SahajYog Team"
+msgstr "L'équipe SahajYog"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Hello"
+msgstr "Bonjour"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Your SahajYog Login Link"
+msgstr "Votre lien de connexion SahajYog"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "You requested a secure login link for your SahajYog account."
+msgstr "Vous avez demandé un lien de connexion sécurisé pour votre compte SahajYog."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "Click the link below to log in:"
+msgstr "Cliquez sur le lien ci-dessous pour vous connecter :"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "This link will expire in 1 hour for security reasons."
+msgstr "Ce lien expirera dans 1 heure pour des raisons de sécurité."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Si vous n'avez pas demandé cela, vous pouvez ignorer cet e-mail en toute sécurité."
