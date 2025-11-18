@@ -375,7 +375,7 @@ msgstr "tu@ejemplo.com"
 msgid "Already registered?"
 msgstr "¿Ya estás registrado?"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:91
+#: lib/sahajyog_web/live/user_live/registration.ex:90
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr "Se envió un correo a %{email}, por favor accede a él para confirmar tu cuenta."
@@ -454,3 +454,8 @@ msgstr "No se puede conectar al servicio de charlas. Por favor, inténtalo de nu
 #, elixir-autogen, elixir-format
 msgid "Unable to load talks. Please try again later."
 msgstr "No se pueden cargar las charlas. Por favor, inténtalo de nuevo más tarde."
+
+#: lib/sahajyog_web/live/user_live/registration.ex:104
+#, elixir-autogen, elixir-format
+msgid "Account created but we couldn't send the confirmation email. Please contact support."
+msgstr "Cuenta creada pero no pudimos enviar el correo de confirmación. Por favor, contacta con soporte."

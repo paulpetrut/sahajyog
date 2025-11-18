@@ -375,7 +375,7 @@ msgstr "sie@beispiel.de"
 msgid "Already registered?"
 msgstr "Bereits registriert?"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:91
+#: lib/sahajyog_web/live/user_live/registration.ex:90
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr "Eine E-Mail wurde an %{email} gesendet. Bitte öffnen Sie diese, um Ihr Konto zu bestätigen."
@@ -454,3 +454,8 @@ msgstr "Verbindung zum Vorträge-Dienst nicht möglich. Bitte versuchen Sie es s
 #, elixir-autogen, elixir-format
 msgid "Unable to load talks. Please try again later."
 msgstr "Vorträge können nicht geladen werden. Bitte versuchen Sie es später erneut."
+
+#: lib/sahajyog_web/live/user_live/registration.ex:104
+#, elixir-autogen, elixir-format
+msgid "Account created but we couldn't send the confirmation email. Please contact support."
+msgstr "Konto erstellt, aber wir konnten die Bestätigungs-E-Mail nicht senden. Bitte kontaktieren Sie den Support."

@@ -77,22 +77,36 @@ defmodule SahajyogWeb.UserLive.Registration do
       {:ok, user} ->
         locale = Gettext.get_locale(SahajyogWeb.Gettext)
 
-        {:ok, _} =
-          Accounts.deliver_login_instructions(
-            user,
-            &url(~p"/users/log-in/#{&1}"),
-            locale
-          )
+        case Accounts.deliver_login_instructions(
+               user,
+               &url(~p"/users/log-in/#{&1}"),
+               locale
+             ) do
+          {:ok, _} ->
+            {:noreply,
+             socket
+             |> put_flash(
+               :info,
+               gettext("An email was sent to %{email}, please access it to confirm your account.",
+                 email: user.email
+               )
+             )
+             |> push_navigate(to: ~p"/users/log-in")}
 
-        {:noreply,
-         socket
-         |> put_flash(
-           :info,
-           gettext("An email was sent to %{email}, please access it to confirm your account.",
-             email: user.email
-           )
-         )
-         |> push_navigate(to: ~p"/users/log-in")}
+          {:error, _reason} ->
+            require Logger
+            Logger.error("Failed to send confirmation email to #{user.email}")
+
+            {:noreply,
+             socket
+             |> put_flash(
+               :error,
+               gettext(
+                 "Account created but we couldn't send the confirmation email. Please contact support."
+               )
+             )
+             |> push_navigate(to: ~p"/users/log-in")}
+        end
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
