@@ -20,6 +20,8 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:show_advanced_filters, false)
       |> assign(:current_page, 1)
       |> assign(:per_page, 21)
+      |> assign(:loading, false)
+      |> assign(:error, nil)
       |> stream_configure(:talks, dom_id: fn talk -> "talk-#{talk["id"]}" end)
       |> stream(:talks, [])
 
@@ -42,9 +44,9 @@ defmodule SahajyogWeb.TalksLive do
 
             socket
             |> stream(:talks, [], reset: true)
-            |> assign(:talks_empty?, true)
+            |> assign(:talks_empty?, false)
             |> assign(:loading, false)
-            |> assign(:error, "Unable to load talks. Please try again later.")
+            |> assign(:error, reason)
         end
       else
         socket
