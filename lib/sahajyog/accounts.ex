@@ -75,8 +75,16 @@ defmodule Sahajyog.Accounts do
 
   """
   def register_user(attrs) do
+    # Check if password is provided (handle both string and atom keys)
+    has_password? =
+      case Map.get(attrs, "password") || Map.get(attrs, :password) do
+        nil -> false
+        "" -> false
+        _password -> true
+      end
+
     changeset =
-      if Map.has_key?(attrs, "password") && attrs["password"] != nil && attrs["password"] != "" do
+      if has_password? do
         # User provided a password, use both email and password changesets
         %User{}
         |> User.email_changeset(attrs)
