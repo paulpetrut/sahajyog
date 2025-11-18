@@ -22,6 +22,11 @@ defmodule SahajyogWeb.UserSessionController do
         |> put_flash(:info, info)
         |> UserAuth.log_in_user(user, user_params)
 
+      {:error, :password_required} ->
+        conn
+        |> put_flash(:info, "Your account has been confirmed! Please log in with your password.")
+        |> redirect(to: ~p"/users/log-in")
+
       _ ->
         conn
         |> put_flash(:error, "The link is invalid or it has expired.")

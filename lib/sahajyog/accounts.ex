@@ -240,15 +240,20 @@ defmodule Sahajyog.Accounts do
     {:ok, query} = UserToken.verify_magic_link_token_query(token)
 
     case Repo.one(query) do
-      # Prevent session fixation attacks by disallowing magic links for unconfirmed users with password
-      {%User{confirmed_at: nil, hashed_password: hash}, _token} when not is_nil(hash) ->
-        raise """
-        magic link log in is not allowed for unconfirmed users with a password set!
+      # For unconfirmed users with password: confirm them but don't log them in automatically
+      # They need to log in with their password after confirmation
+      {%User{confirmed_at: nil, hashed_password: hash} = user, token} when not is_nil(hash) ->
+        Repo.delete!(token)
 
-        This cannot happen with the default implementation, which indicates that you
-        might have adapted the code to a different use case. Please make sure to read the
-        "Mixing magic link and password registration" section of `mix help phx.gen.auth`.
-        """
+        case user |> User.confirm_changeset() |> Repo.update() do
+          {:ok, confirmed_user} ->
+            # Delete all tokens for this user after confirmation
+            Repo.delete_all(from(UserToken, where: [user_id: ^confirmed_user.id]))
+            {:error, :password_required}
+
+          {:error, changeset} ->
+            {:error, changeset}
+        end
 
       {%User{confirmed_at: nil} = user, _token} ->
         user
