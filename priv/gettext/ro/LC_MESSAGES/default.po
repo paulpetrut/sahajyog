@@ -109,158 +109,158 @@ msgstr "Extrase"
 msgid "Getting Started"
 msgstr "Primii pași"
 
-#: lib/sahajyog_web/live/talks_live.ex:744
+#: lib/sahajyog_web/live/talks_live.ex:773
 #, elixir-autogen, elixir-format
 msgid "Active filters:"
 msgstr "Filtre active:"
 
-#: lib/sahajyog_web/live/talks_live.ex:688
+#: lib/sahajyog_web/live/talks_live.ex:717
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Advanced Filters"
 msgstr "Filtre avansate"
 
-#: lib/sahajyog_web/live/talks_live.ex:709
+#: lib/sahajyog_web/live/talks_live.ex:738
 #, elixir-autogen, elixir-format
 msgid "All Categories"
 msgstr "Toate categoriile"
 
-#: lib/sahajyog_web/live/talks_live.ex:647
+#: lib/sahajyog_web/live/talks_live.ex:676
 #, elixir-autogen, elixir-format
 msgid "All Countries"
 msgstr "Toate țările"
 
-#: lib/sahajyog_web/live/talks_live.ex:728
+#: lib/sahajyog_web/live/talks_live.ex:757
 #, elixir-autogen, elixir-format
 msgid "All Languages"
 msgstr "Toate limbile"
 
-#: lib/sahajyog_web/live/talks_live.ex:666
+#: lib/sahajyog_web/live/talks_live.ex:695
 #, elixir-autogen, elixir-format
 msgid "All Years"
 msgstr "Toți anii"
 
-#: lib/sahajyog_web/live/talks_live.ex:702
+#: lib/sahajyog_web/live/talks_live.ex:731
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr "Categorie"
 
-#: lib/sahajyog_web/live/talks_live.ex:774
+#: lib/sahajyog_web/live/talks_live.ex:803
 #, elixir-autogen, elixir-format
 msgid "Clear all"
 msgstr "Șterge toate"
 
-#: lib/sahajyog_web/live/talks_live.ex:640
+#: lib/sahajyog_web/live/talks_live.ex:669
 #, elixir-autogen, elixir-format
 msgid "Country"
 msgstr "Țară"
 
-#: lib/sahajyog_web/live/talks_live.ex:798
+#: lib/sahajyog_web/live/talks_live.ex:827
 #, elixir-autogen, elixir-format
 msgid "Error Loading Talks"
 msgstr "Eroare la încărcarea discursurilor"
 
-#: lib/sahajyog_web/live/talks_live.ex:578
+#: lib/sahajyog_web/live/talks_live.ex:607
 #, elixir-autogen, elixir-format
 msgid "Explore spiritual teachings and wisdom"
 msgstr "Explorează învățături spirituale și înțelepciune"
 
-#: lib/sahajyog_web/live/talks_live.ex:688
+#: lib/sahajyog_web/live/talks_live.ex:717
 #, elixir-autogen, elixir-format
 msgid "Hide"
 msgstr "Ascunde"
 
-#: lib/sahajyog_web/live/talks_live.ex:790
+#: lib/sahajyog_web/live/talks_live.ex:819
 #, elixir-autogen, elixir-format
 msgid "Loading talks..."
 msgstr "Se încarcă discursurile..."
 
-#: lib/sahajyog_web/live/talks_live.ex:632
+#: lib/sahajyog_web/live/talks_live.ex:661
 #, elixir-autogen, elixir-format
 msgid "Newest"
 msgstr "Cele mai noi"
 
-#: lib/sahajyog_web/live/talks_live.ex:953
+#: lib/sahajyog_web/live/talks_live.ex:982
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "Următorul"
 
-#: lib/sahajyog_web/live/talks_live.ex:806
+#: lib/sahajyog_web/live/talks_live.ex:835
 #, elixir-autogen, elixir-format
 msgid "No talks available"
 msgstr "Nu sunt discursuri disponibile"
 
-#: lib/sahajyog_web/live/talks_live.ex:633
+#: lib/sahajyog_web/live/talks_live.ex:662
 #, elixir-autogen, elixir-format
 msgid "Oldest"
 msgstr "Cele mai vechi"
 
-#: lib/sahajyog_web/live/talks_live.ex:915
+#: lib/sahajyog_web/live/talks_live.ex:944
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr "Anterior"
 
-#: lib/sahajyog_web/live/talks_live.ex:593
+#: lib/sahajyog_web/live/talks_live.ex:622
 #, elixir-autogen, elixir-format
 msgid "Refresh"
 msgstr "Reîmprospătează"
 
-#: lib/sahajyog_web/live/talks_live.ex:631
+#: lib/sahajyog_web/live/talks_live.ex:660
 #, elixir-autogen, elixir-format
 msgid "Relevance"
 msgstr "Relevanță"
 
-#: lib/sahajyog_web/live/talks_live.ex:577
+#: lib/sahajyog_web/live/talks_live.ex:606
 #, elixir-autogen, elixir-format
 msgid "Sahaja Yoga Talks"
 msgstr "Discursuri Sahaja Yoga"
 
-#: lib/sahajyog_web/live/talks_live.ex:604
-#: lib/sahajyog_web/live/talks_live.ex:747
+#: lib/sahajyog_web/live/talks_live.ex:633
+#: lib/sahajyog_web/live/talks_live.ex:776
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr "Căutare"
 
-#: lib/sahajyog_web/live/talks_live.ex:611
+#: lib/sahajyog_web/live/talks_live.ex:640
 #, elixir-autogen, elixir-format
 msgid "Search talks..."
 msgstr "Caută discursuri..."
 
-#: lib/sahajyog_web/live/talks_live.ex:688
+#: lib/sahajyog_web/live/talks_live.ex:717
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr "Arată"
 
-#: lib/sahajyog_web/live/talks_live.ex:888
+#: lib/sahajyog_web/live/talks_live.ex:917
 #, elixir-autogen, elixir-format
 msgid "Showing"
 msgstr "Se afișează"
 
-#: lib/sahajyog_web/live/talks_live.ex:624
+#: lib/sahajyog_web/live/talks_live.ex:653
 #, elixir-autogen, elixir-format
 msgid "Sort By"
 msgstr "Sortează după"
 
-#: lib/sahajyog_web/live/talks_live.ex:721
+#: lib/sahajyog_web/live/talks_live.ex:750
 #, elixir-autogen, elixir-format
 msgid "Spoken Language"
 msgstr "Limba vorbită"
 
-#: lib/sahajyog_web/live/talks_live.ex:874
+#: lib/sahajyog_web/live/talks_live.ex:903
 #, elixir-autogen, elixir-format
 msgid "View Talk"
 msgstr "Vezi discursul"
 
-#: lib/sahajyog_web/live/talks_live.ex:659
+#: lib/sahajyog_web/live/talks_live.ex:688
 #, elixir-autogen, elixir-format
 msgid "Year"
 msgstr "An"
 
-#: lib/sahajyog_web/live/talks_live.ex:896
+#: lib/sahajyog_web/live/talks_live.ex:925
 #, elixir-autogen, elixir-format
 msgid "of"
 msgstr "din"
 
-#: lib/sahajyog_web/live/talks_live.ex:897
+#: lib/sahajyog_web/live/talks_live.ex:926
 #, elixir-autogen, elixir-format
 msgid "talk"
 msgid_plural "talks"
@@ -268,7 +268,7 @@ msgstr[0] "discurs"
 msgstr[1] "discursuri"
 msgstr[2] "discursuri"
 
-#: lib/sahajyog_web/live/talks_live.ex:892
+#: lib/sahajyog_web/live/talks_live.ex:921
 #, elixir-autogen, elixir-format
 msgid "to"
 msgstr "la"
@@ -431,70 +431,27 @@ msgstr "Parolă (opțional)"
 msgid "Register"
 msgstr "Înregistrează-te"
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Update email instructions"
-msgstr "Instrucțiuni actualizare email"
+#: lib/sahajyog_web/live/talks_live.ex:154
+#, elixir-autogen, elixir-format
+msgid "Connection timeout. Please try again later."
+msgstr "Timp de conexiune expirat. Te rugăm să încerci din nou mai târziu."
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Hi"
-msgstr "Bună"
+#: lib/sahajyog_web/live/talks_live.ex:149
+#, elixir-autogen, elixir-format
+msgid "The talks service is temporarily unavailable. Please try again later."
+msgstr "Serviciul de discursuri este temporar indisponibil. Te rugăm să încerci din nou mai târziu."
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "You can change your email by visiting the URL below:"
-msgstr "Poți schimba emailul accesând URL-ul de mai jos:"
+#: lib/sahajyog_web/live/talks_live.ex:144
+#, elixir-autogen, elixir-format
+msgid "The talks service returned an unexpected response. Please try again later."
+msgstr "Serviciul de discursuri a returnat un răspuns neașteptat. Te rugăm să încerci din nou mai târziu."
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "If you didn't request this change, please ignore this."
-msgstr "Dacă nu ai solicitat această schimbare, te rugăm să ignori acest mesaj."
+#: lib/sahajyog_web/live/talks_live.ex:159
+#, elixir-autogen, elixir-format
+msgid "Unable to connect to the talks service. Please try again later."
+msgstr "Nu se poate conecta la serviciul de discursuri. Te rugăm să încerci din nou mai târziu."
 
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Your SahajYog Login Link"
-msgstr "Link-ul tău de autentificare SahajYog"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Hello"
-msgstr "Bună ziua"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "You requested a secure login link for your SahajYog account."
-msgstr "Ai solicitat un link securizat de autentificare pentru contul tău SahajYog."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Click the link below to log in:"
-msgstr "Apasă pe link-ul de mai jos pentru a te autentifica:"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "This link will expire in 1 hour for security reasons."
-msgstr "Acest link va expira în 1 oră din motive de securitate."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "If you didn't request this, you can safely ignore this email."
-msgstr "Dacă nu ai solicitat acest lucru, poți ignora în siguranță acest email."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Best regards"
-msgstr "Cu stimă"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "The SahajYog Team"
-msgstr "Echipa SahajYog"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Welcome to SahajYog - Confirm Your Account"
-msgstr "Bine ai venit la SahajYog - Confirmă-ți contul"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Welcome to SahajYog!"
-msgstr "Bine ai venit la SahajYog!"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
-msgstr "Mulțumim pentru înregistrare. Pentru a finaliza înregistrarea și a accesa contul, te rugăm să confirmi adresa de email apăsând pe link-ul de mai jos:"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "This link will expire in 24 hours for security reasons."
-msgstr "Acest link va expira în 24 de ore din motive de securitate."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-msgid "If you didn't create an account with us, you can safely ignore this email."
-msgstr "Dacă nu ai creat un cont la noi, poți ignora în siguranță acest email."
+#: lib/sahajyog_web/live/talks_live.ex:164
+#, elixir-autogen, elixir-format
+msgid "Unable to load talks. Please try again later."
+msgstr "Nu se pot încărca discursurile. Te rugăm să încerci din nou mai târziu."

@@ -109,165 +109,165 @@ msgstr ""
 msgid "Getting Started"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:744
+#: lib/sahajyog_web/live/talks_live.ex:773
 #, elixir-autogen, elixir-format
 msgid "Active filters:"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:688
+#: lib/sahajyog_web/live/talks_live.ex:717
 #, elixir-autogen, elixir-format
 msgid "Advanced Filters"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:709
+#: lib/sahajyog_web/live/talks_live.ex:738
 #, elixir-autogen, elixir-format
 msgid "All Categories"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:647
+#: lib/sahajyog_web/live/talks_live.ex:676
 #, elixir-autogen, elixir-format
 msgid "All Countries"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:728
+#: lib/sahajyog_web/live/talks_live.ex:757
 #, elixir-autogen, elixir-format
 msgid "All Languages"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:666
+#: lib/sahajyog_web/live/talks_live.ex:695
 #, elixir-autogen, elixir-format
 msgid "All Years"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:702
+#: lib/sahajyog_web/live/talks_live.ex:731
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:774
+#: lib/sahajyog_web/live/talks_live.ex:803
 #, elixir-autogen, elixir-format
 msgid "Clear all"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:640
+#: lib/sahajyog_web/live/talks_live.ex:669
 #, elixir-autogen, elixir-format
 msgid "Country"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:798
+#: lib/sahajyog_web/live/talks_live.ex:827
 #, elixir-autogen, elixir-format
 msgid "Error Loading Talks"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:578
+#: lib/sahajyog_web/live/talks_live.ex:607
 #, elixir-autogen, elixir-format
 msgid "Explore spiritual teachings and wisdom"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:688
+#: lib/sahajyog_web/live/talks_live.ex:717
 #, elixir-autogen, elixir-format
 msgid "Hide"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:790
+#: lib/sahajyog_web/live/talks_live.ex:819
 #, elixir-autogen, elixir-format
 msgid "Loading talks..."
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:632
+#: lib/sahajyog_web/live/talks_live.ex:661
 #, elixir-autogen, elixir-format
 msgid "Newest"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:953
+#: lib/sahajyog_web/live/talks_live.ex:982
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:806
+#: lib/sahajyog_web/live/talks_live.ex:835
 #, elixir-autogen, elixir-format
 msgid "No talks available"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:633
+#: lib/sahajyog_web/live/talks_live.ex:662
 #, elixir-autogen, elixir-format
 msgid "Oldest"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:915
+#: lib/sahajyog_web/live/talks_live.ex:944
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:593
+#: lib/sahajyog_web/live/talks_live.ex:622
 #, elixir-autogen, elixir-format
 msgid "Refresh"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:631
+#: lib/sahajyog_web/live/talks_live.ex:660
 #, elixir-autogen, elixir-format
 msgid "Relevance"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:577
+#: lib/sahajyog_web/live/talks_live.ex:606
 #, elixir-autogen, elixir-format
 msgid "Sahaja Yoga Talks"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:604
-#: lib/sahajyog_web/live/talks_live.ex:747
+#: lib/sahajyog_web/live/talks_live.ex:633
+#: lib/sahajyog_web/live/talks_live.ex:776
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:611
+#: lib/sahajyog_web/live/talks_live.ex:640
 #, elixir-autogen, elixir-format
 msgid "Search talks..."
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:688
+#: lib/sahajyog_web/live/talks_live.ex:717
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:888
+#: lib/sahajyog_web/live/talks_live.ex:917
 #, elixir-autogen, elixir-format
 msgid "Showing"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:624
+#: lib/sahajyog_web/live/talks_live.ex:653
 #, elixir-autogen, elixir-format
 msgid "Sort By"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:721
+#: lib/sahajyog_web/live/talks_live.ex:750
 #, elixir-autogen, elixir-format
 msgid "Spoken Language"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:874
+#: lib/sahajyog_web/live/talks_live.ex:903
 #, elixir-autogen, elixir-format
 msgid "View Talk"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:659
+#: lib/sahajyog_web/live/talks_live.ex:688
 #, elixir-autogen, elixir-format
 msgid "Year"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:896
+#: lib/sahajyog_web/live/talks_live.ex:925
 #, elixir-autogen, elixir-format
 msgid "of"
 msgstr ""
 
-#: lib/sahajyog_web/live/talks_live.ex:897
+#: lib/sahajyog_web/live/talks_live.ex:926
 #, elixir-autogen, elixir-format
 msgid "talk"
 msgid_plural "talks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/sahajyog_web/live/talks_live.ex:892
+#: lib/sahajyog_web/live/talks_live.ex:921
 #, elixir-autogen, elixir-format
 msgid "to"
 msgstr ""
@@ -428,4 +428,29 @@ msgstr ""
 #: lib/sahajyog_web/live/user_live/registration.ex:69
 #, elixir-autogen, elixir-format
 msgid "Register"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:154
+#, elixir-autogen, elixir-format
+msgid "Connection timeout. Please try again later."
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:149
+#, elixir-autogen, elixir-format
+msgid "The talks service is temporarily unavailable. Please try again later."
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:144
+#, elixir-autogen, elixir-format
+msgid "The talks service returned an unexpected response. Please try again later."
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:159
+#, elixir-autogen, elixir-format
+msgid "Unable to connect to the talks service. Please try again later."
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:164
+#, elixir-autogen, elixir-format
+msgid "Unable to load talks. Please try again later."
 msgstr ""

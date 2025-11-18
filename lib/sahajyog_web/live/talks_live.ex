@@ -139,27 +139,29 @@ defmodule SahajyogWeb.TalksLive do
       {:ok, %{status: 200, body: body}} ->
         require Logger
         Logger.error("Unexpected API response format: #{inspect(body)}")
-        {:error, "Unexpected API response format"}
+
+        {:error,
+         gettext("The talks service returned an unexpected response. Please try again later.")}
 
       {:ok, %{status: status, body: body}} ->
         require Logger
         Logger.error("API returned status #{status}, body: #{inspect(body)}")
-        {:error, "API returned status #{status}"}
+        {:error, gettext("The talks service is temporarily unavailable. Please try again later.")}
 
       {:error, %Req.TransportError{reason: :timeout} = error} ->
         require Logger
         Logger.error("Connection timeout: #{inspect(error)}")
-        {:error, "Connection timeout. Please try again later."}
+        {:error, gettext("Connection timeout. Please try again later.")}
 
       {:error, %Req.TransportError{reason: :econnrefused} = error} ->
         require Logger
         Logger.error("Connection refused: #{inspect(error)}")
-        {:error, "Unable to connect to the talks service."}
+        {:error, gettext("Unable to connect to the talks service. Please try again later.")}
 
       {:error, exception} ->
         require Logger
         Logger.error("Error fetching talks: #{inspect(exception)}")
-        {:error, "Unable to load talks. Please try again later."}
+        {:error, gettext("Unable to load talks. Please try again later.")}
     end
   end
 
