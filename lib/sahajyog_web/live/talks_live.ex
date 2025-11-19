@@ -112,7 +112,7 @@ defmodule SahajyogWeb.TalksLive do
         {:ok, paginated_results, total_after_filter}
 
       {:error, reason} ->
-        {:error, gettext(reason)}
+        {:error, reason}
     end
   end
 
