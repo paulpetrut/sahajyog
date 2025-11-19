@@ -20,19 +20,6 @@ defmodule SahajyogWeb.WelcomeLive do
     {:noreply, assign(socket, :locale, locale)}
   end
 
-  defp extract_youtube_id(url) do
-    cond do
-      String.contains?(url, "youtube.com/watch?v=") ->
-        url |> String.split("v=") |> List.last() |> String.split("&") |> List.first()
-
-      String.contains?(url, "youtu.be/") ->
-        url |> String.split("youtu.be/") |> List.last() |> String.split("?") |> List.first()
-
-      true ->
-        nil
-    end
-  end
-
   def render(assigns) do
     ~H"""
     <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -50,7 +37,7 @@ defmodule SahajyogWeb.WelcomeLive do
           <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 shadow-2xl">
             <div class="aspect-video bg-black">
               <iframe
-                src={"https://www.youtube.com/embed/#{extract_youtube_id(@current_video.url)}?rel=0&modestbranding=1&showinfo=0&controls=1"}
+                src={"https://www.youtube.com/embed/#{Sahajyog.YouTube.extract_video_id(@current_video.url)}?rel=0&modestbranding=1&showinfo=0&controls=1"}
                 class="w-full h-full"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

@@ -17,7 +17,7 @@ defmodule SahajyogWeb.StepsLive do
           id: video.id,
           title: video.title,
           folder: video.category,
-          youtube_id: extract_youtube_id(video.url),
+          youtube_id: Sahajyog.YouTube.extract_video_id(video.url) || "",
           duration: video.duration || "N/A"
         }
       end)
@@ -143,27 +143,6 @@ defmodule SahajyogWeb.StepsLive do
       "Advanced Topics" -> gettext("Advanced Topics")
       "Excerpts" -> gettext("Excerpts")
       _ -> category
-    end
-  end
-
-  defp extract_youtube_id(url) do
-    cond do
-      String.contains?(url, "youtube.com/watch?v=") ->
-        url
-        |> String.split("watch?v=")
-        |> List.last()
-        |> String.split("&")
-        |> List.first()
-
-      String.contains?(url, "youtu.be/") ->
-        url
-        |> String.split("youtu.be/")
-        |> List.last()
-        |> String.split("?")
-        |> List.first()
-
-      true ->
-        ""
     end
   end
 

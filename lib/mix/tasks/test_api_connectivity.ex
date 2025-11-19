@@ -30,7 +30,7 @@ defmodule Mix.Tasks.TestApiConnectivity do
   defp test_basic_connectivity do
     IO.puts("\n📡 Testing basic connectivity...")
 
-    case :inet.gethostbyname('learnsahajayoga.org') do
+    case :inet.gethostbyname(~c"learnsahajayoga.org") do
       {:ok, {:hostent, _name, _aliases, :inet, 4, addresses}} ->
         IO.puts("✅ DNS resolution successful")
         IO.puts("   IP addresses: #{inspect(addresses)}")
@@ -44,7 +44,7 @@ defmodule Mix.Tasks.TestApiConnectivity do
     IO.puts("\n🔍 Testing DNS resolution with different methods...")
 
     # Test with :inet.getaddr
-    case :inet.getaddr('learnsahajayoga.org', :inet) do
+    case :inet.getaddr(~c"learnsahajayoga.org", :inet) do
       {:ok, ip} ->
         IO.puts("✅ inet.getaddr successful: #{:inet.ntoa(ip)}")
 

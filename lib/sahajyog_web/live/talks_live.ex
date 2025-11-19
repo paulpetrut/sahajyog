@@ -71,16 +71,11 @@ defmodule SahajyogWeb.TalksLive do
 
   defp fetch_talks(filters) do
     case Sahajyog.ExternalApi.fetch_talks(filters) do
-      {:ok, results, total} ->
+      {:ok, results, _total} ->
         search_query = filters[:search_query]
 
-        # Enrich search results with full details
-        enriched_results =
-          if search_query != nil and search_query != "" do
-            enrich_search_results(results)
-          else
-            results
-          end
+        # Use results as-is since API returns complete data
+        enriched_results = results
 
         # Apply client-side filtering if searching
         filtered_results =
@@ -114,116 +109,6 @@ defmodule SahajyogWeb.TalksLive do
       {:error, reason} ->
         {:error, reason}
     end
-  end
-
-  defp maybe_add_param(params, _key, nil), do: params
-  defp maybe_add_param(params, _key, ""), do: params
-  defp maybe_add_param(params, key, value), do: Map.put(params, key, value)
-
-  defp enrich_search_results(results) do
-    # If search results already have full data, return as-is
-    if Enum.any?(results, fn talk -> Map.has_key?(talk, "category") end) do
-      results
-    else
-      # Fetch all talks and match by title/date
-      case fetch_all_talks_for_enrichment() do
-        {:ok, all_talks} ->
-          enrich_with_full_talks(results, all_talks)
-
-        {:error, _} ->
-          # Fallback: try individual fetches
-          fetch_individual_talk_details(results)
-      end
-    end
-  end
-
-  defp fetch_all_talks_for_enrichment do
-    url = "https://learnsahajayoga.org/api/talks?lang=en&sort_by=date&sort_order=ASC"
-
-    case Req.get(url, connect_options: [timeout: 8000], receive_timeout: 12000, retry: :transient) do
-      {:ok, %{status: 200, body: %{"results" => talks}}} when is_list(talks) ->
-        {:ok, talks}
-
-      {:ok, %{status: status}} ->
-        {:error, "API returned status #{status}"}
-
-      {:error, %Req.TransportError{reason: :timeout}} ->
-        {:error, "Connection timeout while fetching talks"}
-
-      {:error, _exception} ->
-        {:error, "Unable to fetch talks for enrichment"}
-    end
-  end
-
-  defp enrich_with_full_talks(search_results, all_talks) do
-    # Create a lookup map by title and date
-    talks_map =
-      all_talks
-      |> Enum.group_by(fn talk ->
-        {Map.get(talk, "title"), Map.get(talk, "date")}
-      end)
-      |> Map.new(fn {key, [talk | _]} -> {key, talk} end)
-
-    # Match search results with full talks
-    Enum.map(search_results, fn search_result ->
-      key = {Map.get(search_result, "title"), Map.get(search_result, "date")}
-
-      case Map.get(talks_map, key) do
-        nil -> search_result
-        full_talk -> full_talk
-      end
-    end)
-  end
-
-  defp fetch_individual_talk_details(results) do
-    results
-    |> Task.async_stream(
-      fn talk ->
-        talk_id = Map.get(talk, "id") || Map.get(talk, "talk_id") || Map.get(talk, "slug")
-
-        case talk_id do
-          nil ->
-            talk
-
-          id ->
-            case fetch_talk_details(id) do
-              {:ok, full_talk} -> Map.merge(talk, full_talk)
-              {:error, _} -> talk
-            end
-        end
-      end,
-      max_concurrency: 10,
-      timeout: 10000,
-      on_timeout: :kill_task
-    )
-    |> Enum.map(fn
-      {:ok, talk} -> talk
-      {:exit, _} -> nil
-    end)
-    |> Enum.reject(&is_nil/1)
-  end
-
-  defp fetch_talk_details(talk_id) do
-    # Try multiple possible API endpoints
-    endpoints = [
-      "https://learnsahajayoga.org/api/talks/#{talk_id}?lang=en",
-      "https://learnsahajayoga.org/api/talks/#{talk_id}",
-      "https://learnsahajayoga.org/api/talk/#{talk_id}?lang=en"
-    ]
-
-    Enum.find_value(endpoints, {:error, "No endpoint worked"}, fn url ->
-      case Req.get(url,
-             connect_options: [timeout: 5000],
-             receive_timeout: 8000,
-             retry: :transient
-           ) do
-        {:ok, %{status: 200, body: talk}} when is_map(talk) ->
-          {:ok, talk}
-
-        _ ->
-          nil
-      end
-    end)
   end
 
   defp apply_sorting(results, "date_asc") do
