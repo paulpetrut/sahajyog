@@ -100,6 +100,3 @@ msgstr "debe ser mayor o igual a %{number}"
 
 msgid "must be equal to %{number}"
 msgstr "debe ser igual a %{number}"
-
-msgid "does not match password"
-msgstr "no coincide con la contraseña"

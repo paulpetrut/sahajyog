@@ -86,3 +86,21 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Cloudflare R2 Configuration for development
+# You can set these in your environment or use .env file
+config :ex_aws,
+  access_key_id: System.get_env("R2_ACCESS_KEY_ID"),
+  secret_access_key: System.get_env("R2_SECRET_ACCESS_KEY"),
+  region: "auto"
+
+config :ex_aws, :s3,
+  scheme: "https://",
+  host:
+    System.get_env("R2_ACCOUNT_ID") &&
+      "#{System.get_env("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com",
+  region: "auto"
+
+config :sahajyog, :r2,
+  bucket: System.get_env("R2_BUCKET_NAME") || "sahajyog-dev",
+  public_url: System.get_env("R2_PUBLIC_URL")

@@ -67,8 +67,13 @@ defmodule SahajyogWeb.Router do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/admin/videos", Admin.VideosLive
+      live "/admin/resources", Admin.ResourcesLive, :index
+      live "/admin/resources/new", Admin.ResourcesLive, :new
+      live "/admin/resources/:id/edit", Admin.ResourcesLive, :edit
+      live "/resources", ResourcesLive
     end
 
+    get "/resources/:id/download", ResourceController, :download
     post "/users/update-password", UserSessionController, :update_password
   end
 

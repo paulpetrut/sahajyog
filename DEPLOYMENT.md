@@ -62,6 +62,19 @@ After creating the web service, go to the service's "Environment" tab and add:
 - `PHX_SERVER` - Set to `true`
 - `POOL_SIZE` - Set to `10` (or adjust based on your database plan)
 
+### Cloudflare R2 Variables (for Resources):
+
+- `R2_ACCOUNT_ID` - Your Cloudflare Account ID
+- `R2_ACCESS_KEY_ID` - From your R2 API token
+- `R2_SECRET_ACCESS_KEY` - From your R2 API token
+- `R2_BUCKET_NAME` - Your bucket name (e.g., `sahajaonline`)
+- `R2_PUBLIC_URL` - (Optional) Custom domain for resources
+
+### Email Variables (Optional):
+
+- `RESEND_API_KEY` - If using Resend for emails
+- Or SMTP settings if using SMTP
+
 ### Optional Variables:
 
 - `ECTO_IPV6` - Set to `true` if you need IPv6 support

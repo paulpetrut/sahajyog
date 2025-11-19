@@ -12,6 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/sahajyog_web/components/core_components.ex:342
+#: lib/sahajyog_web/live/admin/resources_live.ex:192
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Aktionen"
@@ -391,7 +392,7 @@ msgstr "Konto erstellen"
 msgid "Creating account..."
 msgstr "Konto wird erstellt..."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:78
+#: lib/sahajyog_web/components/layouts/root.html.heex:107
 #: lib/sahajyog_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
@@ -427,7 +428,7 @@ msgstr "Nur wenn Sie oben ein Passwort festgelegt haben"
 msgid "Password (optional)"
 msgstr "Passwort (optional)"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:75
+#: lib/sahajyog_web/components/layouts/root.html.heex:104
 #: lib/sahajyog_web/live/user_live/registration.ex:69
 #, elixir-autogen, elixir-format
 msgid "Register"
@@ -558,17 +559,159 @@ msgstr "Willkommen zurück!"
 msgid "Your account has been confirmed! Please log in with your password."
 msgstr "Ihr Konto wurde bestätigt! Bitte melden Sie sich mit Ihrem Passwort an."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:61
-#, elixir-autogen, elixir-format
-msgid "Admin Videos"
-msgstr "Admin Videos"
-
-#: lib/sahajyog_web/components/layouts/root.html.heex:71
+#: lib/sahajyog_web/components/layouts/root.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "Abmelden"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:65
+#: lib/sahajyog_web/components/layouts/root.html.heex:94
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Einstellungen"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:168
+#, elixir-autogen, elixir-format
+msgid "+ Upload New Resource"
+msgstr "+ Neue Ressource Hochladen"
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:62
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Admin"
+msgstr "Admin Videos"
+
+#: lib/sahajyog_web/live/resources_live.ex:72
+#, elixir-autogen, elixir-format
+msgid "All"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:230
+#, elixir-autogen, elixir-format
+msgid "Are you sure?"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:151
+#, elixir-autogen, elixir-format
+msgid "Back to Resources"
+msgstr "Zurück zu Ressourcen"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:337
+#, elixir-autogen, elixir-format
+msgid "Cancel"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:302
+#, elixir-autogen, elixir-format
+msgid "Click to upload or drag and drop"
+msgstr "Klicken Sie zum Hochladen oder ziehen Sie per Drag & Drop"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:233
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:264
+#, elixir-autogen, elixir-format
+msgid "Description"
+msgstr ""
+
+#: lib/sahajyog_web/live/resources_live.ex:127
+#, elixir-autogen, elixir-format
+msgid "Download"
+msgstr "Herunterladen"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:189
+#, elixir-autogen, elixir-format
+msgid "Downloads"
+msgstr "Downloads"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:225
+#, elixir-autogen, elixir-format
+msgid "Edit"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:254
+#, elixir-autogen, elixir-format
+msgid "Edit Resource"
+msgstr "Ressource Bearbeiten"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:292
+#, elixir-autogen, elixir-format
+msgid "File"
+msgstr "Datei"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:180
+#: lib/sahajyog_web/live/admin/resources_live.ex:271
+#, elixir-autogen, elixir-format
+msgid "Level"
+msgstr "Level"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:304
+#, elixir-autogen, elixir-format
+msgid "Max 500MB"
+msgstr "Maximal 500 MB"
+
+#: lib/sahajyog_web/live/resources_live.ex:136
+#, elixir-autogen, elixir-format
+msgid "No resources available for your level"
+msgstr "Keine Ressourcen für Ihr Level verfügbar"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:317
+#, elixir-autogen, elixir-format
+msgid "Remove"
+msgstr ""
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:84
+#: lib/sahajyog_web/components/layouts/root.html.heex:90
+#: lib/sahajyog_web/live/admin/resources_live.ex:162
+#: lib/sahajyog_web/live/resources_live.ex:49
+#, elixir-autogen, elixir-format
+msgid "Resources"
+msgstr "Ressourcen"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:273
+#, elixir-autogen, elixir-format
+msgid "Select a level"
+msgstr "Wählen Sie ein Level"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:284
+#, elixir-autogen, elixir-format
+msgid "Select a type"
+msgstr "Wählen Sie einen Typ"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:186
+#, elixir-autogen, elixir-format
+msgid "Size"
+msgstr "Größe"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:177
+#: lib/sahajyog_web/live/admin/resources_live.ex:260
+#, elixir-autogen, elixir-format
+msgid "Title"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:183
+#: lib/sahajyog_web/live/admin/resources_live.ex:282
+#, elixir-autogen, elixir-format
+msgid "Type"
+msgstr "Typ"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:331
+#, elixir-autogen, elixir-format
+msgid "Update Resource"
+msgstr "Ressource Aktualisieren"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:254
+#: lib/sahajyog_web/live/admin/resources_live.ex:330
+#, elixir-autogen, elixir-format
+msgid "Upload Resource"
+msgstr "Ressource Hochladen"
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:81
+#, elixir-autogen, elixir-format
+msgid "Videos"
+msgstr "Videos"
+
+#: lib/sahajyog_web/live/resources_live.ex:52
+#, elixir-autogen, elixir-format
+msgid "Your Level"
+msgstr "Ihr Level"

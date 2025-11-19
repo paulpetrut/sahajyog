@@ -9,13 +9,16 @@ defmodule Sahajyog.Accounts.User do
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
     field :role, :string, default: "regular"
+    field :level, :string, default: "Level1"
 
     timestamps(type: :utc_datetime)
   end
 
   @roles ~w(admin manager regular)
+  @levels ~w(Level1 Level2 Level3)
 
   def roles, do: @roles
+  def levels, do: @levels
 
   def admin?(%__MODULE__{role: "admin"}), do: true
   def admin?(_), do: false

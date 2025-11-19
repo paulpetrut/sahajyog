@@ -109,6 +109,3 @@ msgstr "trebuie să fie mai mare sau egal cu %{number}"
 
 msgid "must be equal to %{number}"
 msgstr "trebuie să fie egal cu %{number}"
-
-msgid "does not match password"
-msgstr "nu se potrivește cu parola"

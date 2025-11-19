@@ -93,15 +93,15 @@ videos_data = [
   },
   %{
     id: 5,
-    description: "Understanding the process of Kundalini awakening and its significance.",
-    title: "Kundalini Awakening",
+    description: "Learn about the subtle energy system and how it affects your well-being.",
+    title: "The Subtle System Explained",
     category: "Advanced Topics",
-    url: "https://www.youtube.com/watch?v=example2",
+    url: "https://www.youtube.com/watch?v=Jyy0ra2WcQQ",
     inserted_at: ~U[2025-11-15 16:51:12Z],
     updated_at: ~U[2025-11-15 16:51:12Z],
     step_number: 1,
-    thumbnail_url: nil,
-    duration: "18:30"
+    thumbnail_url: "https://img.youtube.com/vi/Jyy0ra2WcQQ/maxresdefault.jpg",
+    duration: "15:20"
   },
   %{
     id: 15,
