@@ -306,16 +306,52 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
               </div>
 
               <%= for entry <- @uploads.file.entries do %>
-                <div class="mt-2 flex items-center justify-between bg-gray-700 p-3 rounded-lg">
-                  <span class="text-sm text-gray-300">{entry.client_name}</span>
-                  <button
-                    type="button"
-                    phx-click="cancel-upload"
-                    phx-value-ref={entry.ref}
-                    class="text-red-400 hover:text-red-300"
-                  >
-                    {gettext("Remove")}
-                  </button>
+                <div class="mt-4 bg-gray-700 p-4 rounded-lg">
+                  <div class="flex items-start justify-between mb-3">
+                    <div class="flex-1">
+                      <p class="text-sm font-medium text-white">{entry.client_name}</p>
+                      <p class="text-xs text-gray-400 mt-1">
+                        {format_file_size(entry.client_size)}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      phx-click="cancel-upload"
+                      phx-value-ref={entry.ref}
+                      class="text-red-400 hover:text-red-300 ml-4"
+                    >
+                      <.icon name="hero-x-mark" class="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <%!-- File type indicator --%>
+                  <div class="mt-3 flex items-center gap-2 text-gray-400">
+                    <.icon
+                      name={
+                        cond do
+                          String.starts_with?(entry.client_type, "image/") -> "hero-photo"
+                          String.contains?(entry.client_type, "pdf") -> "hero-document-text"
+                          String.contains?(entry.client_type, "audio") -> "hero-musical-note"
+                          String.contains?(entry.client_type, "video") -> "hero-video-camera"
+                          true -> "hero-document"
+                        end
+                      }
+                      class="w-8 h-8"
+                    />
+                    <span class="text-sm">{entry.client_type}</span>
+                  </div>
+
+                  <%!-- Upload progress --%>
+                  <div class="mt-3">
+                    <div class="w-full bg-gray-600 rounded-full h-2">
+                      <div
+                        class="bg-orange-600 h-2 rounded-full transition-all duration-300"
+                        style={"width: #{entry.progress}%"}
+                      >
+                      </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">{entry.progress}%</p>
+                  </div>
                 </div>
               <% end %>
             </div>
