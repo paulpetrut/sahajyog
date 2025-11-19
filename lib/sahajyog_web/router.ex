@@ -32,10 +32,13 @@ defmodule SahajyogWeb.Router do
     end
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SahajyogWeb do
-  #   pipe_through :api
-  # end
+  # Health check and API test endpoints
+  scope "/api", SahajyogWeb do
+    pipe_through :api
+
+    get "/health", HealthController, :index
+    get "/health/api-test", HealthController, :api_test
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:sahajyog, :dev_routes) do

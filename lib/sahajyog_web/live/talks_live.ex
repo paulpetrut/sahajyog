@@ -70,35 +70,10 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   defp fetch_talks(filters) do
-    search_query = filters[:search_query]
+    case Sahajyog.ExternalApi.fetch_talks(filters) do
+      {:ok, results, total} ->
+        search_query = filters[:search_query]
 
-    url =
-      if search_query != nil and search_query != "" do
-        # Search endpoint - only send query and lang
-        params = %{"q" => search_query, "lang" => "en"}
-
-        "https://learnsahajayoga.org/api/search"
-        |> URI.parse()
-        |> URI.append_query(URI.encode_query(params))
-        |> URI.to_string()
-      else
-        # Regular talks endpoint with filters
-        params =
-          %{"lang" => "en", "sort_by" => "date", "sort_order" => "ASC"}
-          |> maybe_add_param("country", filters[:country])
-          |> maybe_add_param("year", filters[:year])
-          |> maybe_add_param("category", filters[:category])
-          |> maybe_add_param("spoken-languages", filters[:spoken_language])
-
-        "https://learnsahajayoga.org/api/talks"
-        |> URI.parse()
-        |> URI.append_query(URI.encode_query(params))
-        |> URI.to_string()
-      end
-
-    case Req.get(url, connect_options: [timeout: 8000], receive_timeout: 12000, retry: :transient) do
-      {:ok, %{status: 200, body: %{"results" => results, "total_results" => _total}}}
-      when is_list(results) ->
         # Enrich search results with full details
         enriched_results =
           if search_query != nil and search_query != "" do
@@ -136,32 +111,8 @@ defmodule SahajyogWeb.TalksLive do
 
         {:ok, paginated_results, total_after_filter}
 
-      {:ok, %{status: 200, body: body}} ->
-        require Logger
-        Logger.error("Unexpected API response format: #{inspect(body)}")
-
-        {:error,
-         gettext("The talks service returned an unexpected response. Please try again later.")}
-
-      {:ok, %{status: status, body: body}} ->
-        require Logger
-        Logger.error("API returned status #{status}, body: #{inspect(body)}")
-        {:error, gettext("The talks service is temporarily unavailable. Please try again later.")}
-
-      {:error, %Req.TransportError{reason: :timeout} = error} ->
-        require Logger
-        Logger.error("Connection timeout: #{inspect(error)}")
-        {:error, gettext("Connection timeout. Please try again later.")}
-
-      {:error, %Req.TransportError{reason: :econnrefused} = error} ->
-        require Logger
-        Logger.error("Connection refused: #{inspect(error)}")
-        {:error, gettext("Unable to connect to the talks service. Please try again later.")}
-
-      {:error, exception} ->
-        require Logger
-        Logger.error("Error fetching talks: #{inspect(exception)}")
-        {:error, gettext("Unable to load talks. Please try again later.")}
+      {:error, reason} ->
+        {:error, gettext(reason)}
     end
   end
 
@@ -330,41 +281,15 @@ defmodule SahajyogWeb.TalksLive do
 
   defp load_filter_options(socket) do
     countries =
-      case Req.get("https://learnsahajayoga.org/api/meta/countries",
-             connect_options: [timeout: 5000],
-             receive_timeout: 8000,
-             retry: :transient
-           ) do
-        {:ok, %{status: 200, body: %{"languages" => languages}}} when is_list(languages) ->
-          languages
-          |> Enum.find(fn lang -> lang["code"] == "en" end)
-          |> case do
-            %{"countries" => countries} when is_list(countries) ->
-              countries
-              |> Enum.sort_by(fn country -> country["name"] end)
-              |> Enum.map(fn country -> country["name"] end)
-
-            _ ->
-              []
-          end
-
-        _ ->
-          []
+      case Sahajyog.ExternalApi.fetch_countries() do
+        {:ok, countries} -> countries
+        {:error, _} -> []
       end
 
     years =
-      case Req.get("https://learnsahajayoga.org/api/meta/years",
-             connect_options: [timeout: 5000],
-             receive_timeout: 8000,
-             retry: :transient
-           ) do
-        {:ok, %{status: 200, body: %{"years" => years}}} when is_list(years) ->
-          years
-          |> Enum.sort_by(fn year -> -String.to_integer(year["year"]) end)
-          |> Enum.map(fn year -> year["year"] end)
-
-        _ ->
-          []
+      case Sahajyog.ExternalApi.fetch_years() do
+        {:ok, years} -> years
+        {:error, _} -> []
       end
 
     categories =
