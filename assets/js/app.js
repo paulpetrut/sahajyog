@@ -68,6 +68,14 @@ Hooks.LocaleSelector = {
   },
 }
 
+Hooks.PreviewHandler = {
+  mounted() {
+    this.handleEvent("open_preview", ({ url }) => {
+      window.open(url, "_blank")
+    })
+  },
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

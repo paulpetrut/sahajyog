@@ -27,13 +27,32 @@ defmodule Sahajyog.Resources.R2Storage do
   def generate_download_url(key, opts \\ []) do
     bucket = get_bucket()
     expires_in = Keyword.get(opts, :expires_in, 3600)
+    force_download = Keyword.get(opts, :force_download, false)
 
     config = ExAws.Config.new(:s3)
 
+    query_params =
+      if force_download do
+        filename = extract_filename(key)
+        [{"response-content-disposition", "attachment; filename=\"#{filename}\""}]
+      else
+        []
+      end
+
     {:ok, url} =
-      ExAws.S3.presigned_url(config, :get, bucket, key, expires_in: expires_in)
+      ExAws.S3.presigned_url(config, :get, bucket, key,
+        expires_in: expires_in,
+        query_params: query_params
+      )
 
     url
+  end
+
+  defp extract_filename(key) do
+    key
+    |> String.split("/")
+    |> List.last()
+    |> String.replace(~r/^[a-f0-9]{8}-/, "")
   end
 
   @doc """

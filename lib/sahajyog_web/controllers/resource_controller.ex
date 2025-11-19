@@ -13,8 +13,8 @@ defmodule SahajyogWeb.ResourceController do
       # Increment download counter asynchronously
       Task.start(fn -> Resources.increment_downloads(resource) end)
 
-      # Generate presigned URL and redirect
-      download_url = R2Storage.generate_download_url(resource.r2_key)
+      # Generate presigned URL with forced download
+      download_url = R2Storage.generate_download_url(resource.r2_key, force_download: true)
 
       conn
       |> redirect(external: download_url)

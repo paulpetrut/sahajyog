@@ -13,6 +13,8 @@ defmodule SahajyogWeb.ResourcesLive do
      |> assign(:page_title, "Resources")
      |> assign(:selected_type, "all")
      |> assign(:user_level, user.level)
+     |> assign(:preview_resource, nil)
+     |> assign(:preview_url, nil)
      |> assign(:resources, Resources.list_resources_for_user(user))}
   end
 
@@ -32,6 +34,33 @@ defmodule SahajyogWeb.ResourcesLive do
     {:noreply, push_patch(socket, to: ~p"/resources?type=#{resource_type}")}
   end
 
+  @impl true
+  def handle_event("preview", %{"id" => id}, socket) do
+    resource = Resources.get_resource!(id)
+
+    try do
+      preview_url = Sahajyog.Resources.R2Storage.generate_download_url(resource.r2_key)
+
+      {:noreply,
+       socket
+       |> assign(preview_resource: resource, preview_url: preview_url)}
+    rescue
+      e ->
+        require Logger
+        Logger.error("Preview failed: #{inspect(e)}")
+
+        {:noreply,
+         socket
+         |> put_flash(:error, "Preview not available. Please check R2 configuration.")
+         |> assign(preview_resource: nil, preview_url: nil)}
+    end
+  end
+
+  @impl true
+  def handle_event("close_preview", _, socket) do
+    {:noreply, assign(socket, preview_resource: nil, preview_url: nil)}
+  end
+
   defp list_resources(user, "all"), do: Resources.list_resources_for_user(user)
 
   defp list_resources(user, resource_type),
@@ -40,7 +69,11 @@ defmodule SahajyogWeb.ResourcesLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gray-900 text-white">
+    <div
+      class="min-h-screen bg-gray-900 text-white"
+      phx-hook="PreviewHandler"
+      id="resources-container"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <div class="mb-6 sm:mb-8">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -91,9 +124,9 @@ defmodule SahajyogWeb.ResourcesLive do
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div
             :for={resource <- @resources}
-            class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors"
+            class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors flex flex-col"
           >
-            <div class="p-4 sm:p-6">
+            <div class="p-4 sm:p-6 flex flex-col flex-1">
               <div class="flex items-start justify-between mb-3">
                 <div style="color: #D4A574;">
                   <.icon name={type_icon(resource.resource_type)} class="w-10 h-10 sm:w-12 sm:h-12" />
@@ -119,13 +152,22 @@ defmodule SahajyogWeb.ResourcesLive do
                 </span>
               </div>
 
-              <.link
-                href={~p"/resources/#{resource.id}/download"}
-                class="block w-full text-center px-4 py-2 sm:py-2.5 text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-sm sm:text-base"
-                style="background-color: #D4A574;"
-              >
-                {gettext("Download")}
-              </.link>
+              <div class="flex gap-2 mt-auto">
+                <button
+                  phx-click="preview"
+                  phx-value-id={resource.id}
+                  class="flex-1 text-center px-4 py-2 sm:py-2.5 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium text-sm sm:text-base"
+                >
+                  {gettext("Preview")}
+                </button>
+                <.link
+                  href={~p"/resources/#{resource.id}/download"}
+                  class="flex-1 text-center px-4 py-2 sm:py-2.5 text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-sm sm:text-base"
+                  style="background-color: #D4A574;"
+                >
+                  {gettext("Download")}
+                </.link>
+              </div>
             </div>
           </div>
         </div>
@@ -137,6 +179,56 @@ defmodule SahajyogWeb.ResourcesLive do
           </div>
         <% end %>
       </div>
+
+      <%!-- Preview Modal --%>
+      <%= if @preview_resource do %>
+        <div
+          class="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4"
+          phx-click="close_preview"
+        >
+          <div class="bg-gray-800 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div class="flex items-center justify-between p-4 border-b border-gray-700">
+              <h3 class="text-xl font-semibold text-white">{@preview_resource.title}</h3>
+              <button
+                phx-click="close_preview"
+                class="text-gray-400 hover:text-white transition-colors"
+              >
+                <.icon name="hero-x-mark" class="w-6 h-6" />
+              </button>
+            </div>
+            <div class="p-4 overflow-auto max-h-[calc(90vh-80px)]">
+              <%= cond do %>
+                <% String.starts_with?(@preview_resource.content_type, "image/") -> %>
+                  <img src={@preview_url} alt={@preview_resource.title} class="max-w-full mx-auto" />
+                <% String.contains?(@preview_resource.content_type, "pdf") -> %>
+                  <iframe src={@preview_url} class="w-full h-[70vh]" />
+                <% String.starts_with?(@preview_resource.content_type, "audio/") -> %>
+                  <audio controls class="w-full">
+                    <source src={@preview_url} type={@preview_resource.content_type} />
+                  </audio>
+                <% String.starts_with?(@preview_resource.content_type, "video/") -> %>
+                  <video controls class="w-full max-h-[70vh]">
+                    <source src={@preview_url} type={@preview_resource.content_type} />
+                  </video>
+                <% true -> %>
+                  <div class="text-center py-12">
+                    <.icon name="hero-document" class="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                    <p class="text-gray-400 mb-4">
+                      {gettext("Preview not available for this file type")}
+                    </p>
+                    <.link
+                      href={~p"/resources/#{@preview_resource.id}/download"}
+                      class="inline-block px-6 py-3 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+                      style="background-color: #D4A574;"
+                    >
+                      {gettext("Download")}
+                    </.link>
+                  </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
     """
   end
