@@ -6,6 +6,7 @@ defmodule SahajyogWeb.Layouts do
   use SahajyogWeb, :html
 
   import SahajyogWeb.LocaleSwitcher
+  import SahajyogWeb.MobileMenu
 
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML

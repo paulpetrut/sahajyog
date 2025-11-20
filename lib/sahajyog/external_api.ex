@@ -19,15 +19,11 @@ defmodule Sahajyog.ExternalApi do
         build_talks_url(filters)
       end
 
-    Logger.info("Fetching talks from: #{url}")
-
     case make_request(url) do
       {:ok, %{"results" => results, "total_results" => total}} when is_list(results) ->
-        Logger.info("Successfully fetched #{length(results)} talks (total: #{total})")
         {:ok, results, total}
 
       {:ok, %{"results" => results}} when is_list(results) ->
-        Logger.info("Successfully fetched #{length(results)} talks")
         {:ok, results, length(results)}
 
       {:ok, unexpected_body} ->
@@ -42,7 +38,6 @@ defmodule Sahajyog.ExternalApi do
 
   def fetch_countries do
     url = "#{@base_url}/meta/countries"
-    Logger.info("Fetching countries from: #{url}")
 
     case make_request(url) do
       {:ok, %{"languages" => languages}} when is_list(languages) ->
@@ -59,7 +54,6 @@ defmodule Sahajyog.ExternalApi do
               []
           end
 
-        Logger.info("Successfully fetched #{length(countries)} countries")
         {:ok, countries}
 
       {:ok, unexpected_body} ->
@@ -74,7 +68,6 @@ defmodule Sahajyog.ExternalApi do
 
   def fetch_years do
     url = "#{@base_url}/meta/years"
-    Logger.info("Fetching years from: #{url}")
 
     case make_request(url) do
       {:ok, %{"years" => years}} when is_list(years) ->
@@ -83,7 +76,6 @@ defmodule Sahajyog.ExternalApi do
           |> Enum.sort_by(fn year -> -String.to_integer(year["year"]) end)
           |> Enum.map(fn year -> year["year"] end)
 
-        Logger.info("Successfully fetched #{length(year_list)} years")
         {:ok, year_list}
 
       {:ok, unexpected_body} ->
@@ -146,7 +138,6 @@ defmodule Sahajyog.ExternalApi do
 
     case result do
       {:ok, %{status: 200, body: body}} ->
-        Logger.info("Request successful - #{duration}ms")
         {:ok, body}
 
       {:ok, %{status: status, body: body}} ->

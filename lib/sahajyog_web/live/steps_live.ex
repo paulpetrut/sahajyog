@@ -157,19 +157,6 @@ defmodule SahajyogWeb.StepsLive do
       phx-hook="WatchedVideos"
       id="watched-videos-container"
     >
-      <%!-- Mobile header with menu button --%>
-      <div class="lg:hidden flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
-        <h1 class="text-lg font-bold truncate flex-1">
-          {if @current_video, do: @current_video.title, else: "No video selected"}
-        </h1>
-        <button
-          phx-click="toggle_sidebar"
-          class="ml-4 p-2 hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          <.icon name="hero-bars-3" class="w-6 h-6" />
-        </button>
-      </div>
-
       <%!-- Video player section --%>
       <div class="flex-1 flex flex-col p-4 md:p-6">
         <%= if @current_video do %>

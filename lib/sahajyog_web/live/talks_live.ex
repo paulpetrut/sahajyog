@@ -404,21 +404,25 @@ defmodule SahajyogWeb.TalksLive do
   def render(assigns) do
     ~H"""
     <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <%!-- Header --%>
-        <div class="mb-8">
-          <div class="mb-6">
-            <h1 class="text-4xl font-bold text-white mb-2">{gettext("Sahaja Yoga Talks")}</h1>
-            <p class="text-gray-400">{gettext("Explore spiritual teachings and wisdom")}</p>
+        <div class="mb-6 sm:mb-8">
+          <div class="mb-4 sm:mb-6">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+              {gettext("Sahaja Yoga Talks")}
+            </h1>
+            <p class="text-sm sm:text-base text-gray-400">
+              {gettext("Explore spiritual teachings and wisdom")}
+            </p>
           </div>
 
           <%!-- Search and Filters --%>
-          <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div class="bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-700">
             <form phx-change="apply_all_filters">
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <%!-- Search --%>
-                <div class="lg:col-span-2">
-                  <label class="block text-sm font-medium text-gray-300 mb-2">
+                <div class="sm:col-span-2 lg:col-span-2">
+                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
                     {gettext("Search")}
                   </label>
                   <div class="relative">
@@ -427,24 +431,24 @@ defmodule SahajyogWeb.TalksLive do
                       name="search"
                       value={@search_query}
                       placeholder={gettext("Search talks...")}
-                      class="w-full px-4 py-2 pl-10 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      class="w-full px-3 sm:px-4 py-2 pl-9 sm:pl-10 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     <.icon
                       name="hero-magnifying-glass"
-                      class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+                      class="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-500"
                     />
                   </div>
                 </div>
 
                 <%!-- Sort By --%>
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">
+                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
                     {gettext("Sort By")}
                   </label>
                   <select
                     name="sort_by"
                     value={@sort_by}
-                    class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="relevance">{gettext("Relevance")}</option>
                     <option value="date_desc">{gettext("Newest")}</option>
@@ -454,13 +458,13 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Country Filter --%>
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">
+                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
                     {gettext("Country")}
                   </label>
                   <select
                     name="country"
                     value={@selected_country}
-                    class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">{gettext("All Countries")}</option>
                     <%= for country <- @countries do %>
@@ -473,13 +477,13 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Year Filter --%>
                 <div>
-                  <label class="block text-sm font-medium text-gray-300 mb-2">
+                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
                     {gettext("Year")}
                   </label>
                   <select
                     name="year"
                     value={@selected_year}
-                    class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">{gettext("All Years")}</option>
                     <%= for year <- @years do %>
@@ -492,15 +496,15 @@ defmodule SahajyogWeb.TalksLive do
               </div>
 
               <%!-- Advanced Filters Toggle --%>
-              <div class="mt-4">
+              <div class="mt-3 sm:mt-4">
                 <button
                   type="button"
                   phx-click="toggle_advanced_filters"
-                  class="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
+                  class="text-xs sm:text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
                 >
                   <.icon
                     name={if @show_advanced_filters, do: "hero-chevron-up", else: "hero-chevron-down"}
-                    class="w-4 h-4"
+                    class="w-3 h-3 sm:w-4 sm:h-4"
                   />
                   <span>
                     {if @show_advanced_filters, do: gettext("Hide"), else: gettext("Show")} {gettext(
@@ -512,17 +516,17 @@ defmodule SahajyogWeb.TalksLive do
 
               <%!-- Advanced Filters --%>
               <%= if @show_advanced_filters do %>
-                <div class="mt-4 pt-4 border-t border-gray-700">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-700">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <%!-- Category Filter --%>
                     <div>
-                      <label class="block text-sm font-medium text-gray-300 mb-2">
+                      <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
                         {gettext("Category")}
                       </label>
                       <select
                         name="category"
                         value={@selected_category}
-                        class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="">{gettext("All Categories")}</option>
                         <%= for category <- @categories do %>
@@ -535,13 +539,13 @@ defmodule SahajyogWeb.TalksLive do
 
                     <%!-- Spoken Language Filter --%>
                     <div>
-                      <label class="block text-sm font-medium text-gray-300 mb-2">
+                      <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
                         {gettext("Spoken Language")}
                       </label>
                       <select
                         name="spoken_language"
                         value={@selected_spoken_language}
-                        class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="">{gettext("All Languages")}</option>
                         <%= for language <- @spoken_languages do %>
@@ -558,36 +562,36 @@ defmodule SahajyogWeb.TalksLive do
 
             <%!-- Active filters and clear button --%>
             <%= if @search_query != "" or @selected_country != "" or @selected_year != "" or @selected_category != "" or @selected_spoken_language != "" do %>
-              <div class="mt-4 flex items-center gap-2 flex-wrap">
-                <span class="text-sm text-gray-400">{gettext("Active filters:")}</span>
+              <div class="mt-3 sm:mt-4 flex items-center gap-2 flex-wrap">
+                <span class="text-xs sm:text-sm text-gray-400">{gettext("Active filters:")}</span>
                 <%= if @search_query != "" do %>
-                  <span class="px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
+                  <span class="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded-full">
                     {gettext("Search")}: {@search_query}
                   </span>
                 <% end %>
                 <%= if @selected_country != "" do %>
-                  <span class="px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
+                  <span class="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded-full">
                     {@selected_country}
                   </span>
                 <% end %>
                 <%= if @selected_year != "" do %>
-                  <span class="px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
+                  <span class="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded-full">
                     {@selected_year}
                   </span>
                 <% end %>
                 <%= if @selected_category != "" do %>
-                  <span class="px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
+                  <span class="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded-full">
                     {@selected_category}
                   </span>
                 <% end %>
                 <%= if @selected_spoken_language != "" do %>
-                  <span class="px-3 py-1 bg-blue-600 text-white text-sm rounded-full">
+                  <span class="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded-full">
                     {@selected_spoken_language}
                   </span>
                 <% end %>
                 <button
                   phx-click="clear_filters"
-                  class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-full transition-colors"
+                  class="px-2 sm:px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-sm rounded-full transition-colors"
                 >
                   {gettext("Clear all")}
                 </button>
@@ -628,21 +632,21 @@ defmodule SahajyogWeb.TalksLive do
             <div
               id="talks-list"
               phx-update="stream"
-              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
             >
               <%= for {id, talk} <- @streams.talks do %>
                 <div
                   id={id}
                   class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all hover:shadow-lg hover:shadow-blue-500/20 group flex flex-col"
                 >
-                  <div class="p-6 flex flex-col flex-1">
+                  <div class="p-4 sm:p-6 flex flex-col flex-1">
                     <%!-- Title - fixed height --%>
-                    <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors line-clamp-2 min-h-[3.5rem]">
+                    <h3 class="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 group-hover:text-blue-400 transition-colors line-clamp-2 min-h-[3rem] sm:min-h-[3.5rem]">
                       {Map.get(talk, "title", "Untitled")}
                     </h3>
 
                     <%!-- Metadata --%>
-                    <div class="space-y-2 text-sm text-gray-400 mb-4">
+                    <div class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
                       <%= if date = Map.get(talk, "date") do %>
                         <div class="flex items-center gap-2">
                           <.icon name="hero-calendar" class="w-4 h-4 flex-shrink-0" />
@@ -687,10 +691,10 @@ defmodule SahajyogWeb.TalksLive do
                         href={web_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="mt-auto inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium self-start"
+                        class="mt-auto inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-xs sm:text-sm font-medium self-start"
                       >
                         <span>{gettext("View Talk")}</span>
-                        <.icon name="hero-arrow-top-right-on-square" class="w-4 h-4" />
+                        <.icon name="hero-arrow-top-right-on-square" class="w-3 h-3 sm:w-4 sm:h-4" />
                       </a>
                     <% end %>
                   </div>
@@ -699,10 +703,10 @@ defmodule SahajyogWeb.TalksLive do
             </div>
 
             <%!-- Pagination --%>
-            <div class="mt-8">
-              <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="mt-6 sm:mt-8">
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
                 <%!-- Stats --%>
-                <p class="text-gray-400 text-sm">
+                <p class="text-gray-400 text-xs sm:text-sm">
                   {gettext("Showing")}
                   <span class="text-white font-semibold">
                     {(@current_page - 1) * @per_page + 1}
@@ -717,33 +721,33 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Pagination controls --%>
                 <%= if @total_results > @per_page do %>
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-1 sm:gap-2">
                     <%!-- Previous button --%>
                     <button
                       phx-click="prev_page"
                       disabled={@current_page == 1}
                       class={[
-                        "px-4 py-2 rounded-lg transition-colors flex items-center gap-2",
+                        "px-2 sm:px-4 py-2 rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-xs sm:text-sm",
                         @current_page == 1 &&
                           "opacity-50 cursor-not-allowed bg-gray-700 text-gray-500",
                         @current_page > 1 && "bg-gray-700 hover:bg-gray-600 text-white"
                       ]}
                     >
-                      <.icon name="hero-chevron-left" class="w-4 h-4" />
-                      <span>{gettext("Previous")}</span>
+                      <.icon name="hero-chevron-left" class="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span class="hidden sm:inline">{gettext("Previous")}</span>
                     </button>
 
                     <%!-- Page numbers --%>
                     <div class="flex items-center gap-1">
                       <%= for page_num <- page_numbers(@current_page, ceil(@total_results / @per_page)) do %>
                         <%= if page_num == "..." do %>
-                          <span class="px-3 py-2 text-gray-500">...</span>
+                          <span class="px-2 sm:px-3 py-2 text-gray-500 text-xs sm:text-sm">...</span>
                         <% else %>
                           <button
                             phx-click="goto_page"
                             phx-value-page={page_num}
                             class={[
-                              "px-3 py-2 rounded-lg transition-colors",
+                              "px-2 sm:px-3 py-2 rounded-lg transition-colors text-xs sm:text-sm",
                               @current_page == page_num &&
                                 "bg-blue-600 text-white font-semibold",
                               @current_page != page_num &&
@@ -761,15 +765,15 @@ defmodule SahajyogWeb.TalksLive do
                       phx-click="next_page"
                       disabled={@current_page >= ceil(@total_results / @per_page)}
                       class={[
-                        "px-4 py-2 rounded-lg transition-colors flex items-center gap-2",
+                        "px-2 sm:px-4 py-2 rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-xs sm:text-sm",
                         @current_page >= ceil(@total_results / @per_page) &&
                           "opacity-50 cursor-not-allowed bg-gray-700 text-gray-500",
                         @current_page < ceil(@total_results / @per_page) &&
                           "bg-gray-700 hover:bg-gray-600 text-white"
                       ]}
                     >
-                      <span>{gettext("Next")}</span>
-                      <.icon name="hero-chevron-right" class="w-4 h-4" />
+                      <span class="hidden sm:inline">{gettext("Next")}</span>
+                      <.icon name="hero-chevron-right" class="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                   </div>
                 <% end %>
