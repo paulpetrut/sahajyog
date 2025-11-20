@@ -10,6 +10,7 @@ defmodule Sahajyog.Content.Video do
     field :thumbnail_url, :string
     field :duration, :string
     field :step_number, :integer
+    field :provider, :string, default: "youtube"
     field :user_id, :id
 
     timestamps(type: :utc_datetime)
@@ -27,10 +28,12 @@ defmodule Sahajyog.Content.Video do
       :description,
       :thumbnail_url,
       :duration,
-      :step_number
+      :step_number,
+      :provider
     ])
-    |> validate_required([:title, :url, :category])
+    |> validate_required([:title, :url, :category, :provider])
     |> validate_inclusion(:category, @categories)
+    |> validate_inclusion(:provider, ["youtube", "vimeo"])
   end
 
   def categories, do: @categories

@@ -108,7 +108,12 @@
               class="dropdown-content menu bg-base-200 rounded-box z-[1] w-64 p-2 shadow mt-2"
             >
               <li class="border-b border-base-300 mb-1">
-                <.link href="#" tabindex="-1" aria-disabled="true" class="flex items-center gap-2 px-0 pointer-events-none select-none">
+                <.link
+                  href="#"
+                  tabindex="-1"
+                  aria-disabled="true"
+                  class="flex items-center gap-2 px-0 pointer-events-none select-none"
+                >
                   <div class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold">
                     {String.upcase(String.first(@current_scope.user.email))}
                   </div>
@@ -233,7 +238,10 @@
                 </li>
               <% end %>
               <li>
-                <.locale_switcher id="locale-select-mobile" current_locale={assigns[:locale] || "en"} />
+                <.locale_switcher
+                  id="locale-select-mobile"
+                  current_locale={assigns[:locale] || "en"}
+                />
               </li>
               <li>
                 <.link href={~p"/users/settings"} class="flex items-center gap-2">

@@ -7,9 +7,11 @@ case Req.get(url, connect_options: [timeout: 8000], receive_timeout: 12000, retr
   {:ok, %{status: 200, body: body}} ->
     IO.puts("Success!")
     IO.inspect(Map.keys(body))
+
   {:ok, %{status: status, body: body}} ->
     IO.puts("Failed with status: #{status}")
     IO.inspect(body)
+
   {:error, reason} ->
     IO.puts("Error: #{inspect(reason)}")
 end

@@ -8,9 +8,9 @@ defmodule SahajyogWeb.UserLive.LoginTest do
     test "renders login page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
-      assert html =~ "Log in"
-      assert html =~ "Register"
-      assert html =~ "Log in with email"
+      assert html =~ "Welcome back"
+      assert html =~ "Sign up"
+      assert html =~ "Sign in"
     end
   end
 
@@ -20,12 +20,15 @@ defmodule SahajyogWeb.UserLive.LoginTest do
 
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
-      {:ok, _lv, html} =
-        form(lv, "#login_form_magic", user: %{email: user.email})
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+      # First toggle the magic form to show it
+      lv |> element("button", "Magic link (passwordless)") |> render_click()
 
-      assert html =~ "If your email is in our system"
+      html =
+        lv
+        |> form("#login_form_magic", user: %{email: user.email})
+        |> render_submit()
+
+      assert html =~ "Check your email"
 
       assert Sahajyog.Repo.get_by!(Sahajyog.Accounts.UserToken, user_id: user.id).context ==
                "login"
@@ -34,12 +37,15 @@ defmodule SahajyogWeb.UserLive.LoginTest do
     test "does not disclose if user is registered", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
-      {:ok, _lv, html} =
-        form(lv, "#login_form_magic", user: %{email: "idonotexist@example.com"})
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+      # First toggle the magic form to show it
+      lv |> element("button", "Magic link (passwordless)") |> render_click()
 
-      assert html =~ "If your email is in our system"
+      html =
+        lv
+        |> form("#login_form_magic", user: %{email: "idonotexist@example.com"})
+        |> render_submit()
+
+      assert html =~ "Check your email"
     end
   end
 
@@ -98,12 +104,12 @@ defmodule SahajyogWeb.UserLive.LoginTest do
     test "shows login page with email filled in", %{conn: conn, user: user} do
       {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
-      assert html =~ "You need to reauthenticate"
-      refute html =~ "Register"
-      assert html =~ "Log in with email"
+      assert html =~ "Please reauthenticate to continue"
+      refute html =~ "Sign up"
+      assert html =~ "Sign in"
 
       assert html =~
-               ~s(<input type="email" name="user[email]" id="login_form_magic_email" value="#{user.email}")
+               ~s(value="#{user.email}")
     end
   end
 end

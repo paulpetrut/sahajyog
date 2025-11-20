@@ -13,11 +13,15 @@ defmodule SahajyogWeb.StepsLive do
     # Transform database videos to match the expected format
     videos =
       Enum.map(db_videos, fn video ->
+        provider = String.to_atom(video.provider || "youtube")
+        video_id = Sahajyog.VideoProvider.extract_video_id(video.url, provider) || ""
+
         %{
           id: video.id,
           title: video.title,
           folder: video.category,
-          youtube_id: Sahajyog.YouTube.extract_video_id(video.url) || "",
+          video_id: video_id,
+          provider: provider,
           duration: video.duration || "N/A"
         }
       end)
@@ -187,13 +191,12 @@ defmodule SahajyogWeb.StepsLive do
           <%!-- Video player --%>
           <div class="flex-1 bg-black rounded-lg overflow-hidden aspect-video lg:aspect-auto">
             <iframe
-              src={
-                "https://www.youtube.com/embed/#{@current_video.youtube_id}?rel=0&modestbranding=1&showinfo=0&controls=1"
-              }
+              src={Sahajyog.VideoProvider.embed_url(@current_video.video_id, @current_video.provider)}
               class="w-full h-full"
               frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
               allowfullscreen
+              referrerpolicy="strict-origin-when-cross-origin"
             >
             </iframe>
           </div>

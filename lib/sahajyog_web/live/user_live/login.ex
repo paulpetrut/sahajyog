@@ -50,6 +50,7 @@ defmodule SahajyogWeb.UserLive.Login do
                   autocomplete="username"
                   required
                   phx-mounted={JS.focus()}
+                  id="user_email"
                 />
 
                 <.input
@@ -124,6 +125,7 @@ defmodule SahajyogWeb.UserLive.Login do
                     placeholder={gettext("you@example.com")}
                     autocomplete="username"
                     required
+                    id="user_email_magic"
                   />
 
                   <.button class="btn btn-primary w-full text-lg h-12 rounded-full shadow-lg hover:shadow-xl transition-all">

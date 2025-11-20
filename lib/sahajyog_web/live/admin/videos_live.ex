@@ -3,7 +3,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
 
   alias Sahajyog.Content
   alias Sahajyog.Content.Video
-  alias Sahajyog.YouTube
+  alias Sahajyog.VideoProvider
 
   @impl true
   def mount(_params, _session, socket) do
@@ -71,14 +71,35 @@ defmodule SahajyogWeb.Admin.VideosLive do
         video_params
       end
 
+    # Ensure provider is always set based on URL
+    video_params =
+      if video_params["url"] && video_params["url"] != "" do
+        provider = VideoProvider.detect_provider(video_params["url"])
+        Map.put(video_params, "provider", to_string(provider))
+      else
+        video_params
+      end
+
     # Check if URL changed and fetch metadata
     current_url = if socket.assigns.form, do: socket.assigns.form.params["url"], else: nil
     new_url = video_params["url"]
 
     socket =
-      if new_url && new_url != "" && new_url != current_url &&
-           String.contains?(new_url, "youtube") do
-        fetch_youtube_metadata(socket, video_params)
+      if new_url && new_url != "" && new_url != current_url do
+        provider = String.to_atom(video_params["provider"])
+
+        if provider in [:youtube, :vimeo] do
+          fetch_video_metadata(socket, video_params, provider)
+        else
+          changeset =
+            video
+            |> Content.change_video(video_params)
+            |> Map.put(:action, :validate)
+
+          socket
+          |> assign(:form, to_form(changeset))
+          |> put_flash(:error, "Unsupported video provider. Please use YouTube or Vimeo.")
+        end
       else
         changeset =
           video
@@ -96,8 +117,20 @@ defmodule SahajyogWeb.Admin.VideosLive do
     video_params = socket.assigns.form.params
 
     socket =
-      if url && url != "" && String.contains?(url, "youtube") do
-        fetch_youtube_metadata(socket, Map.put(video_params, "url", url))
+      if url && url != "" do
+        provider = VideoProvider.detect_provider(url)
+
+        video_params =
+          video_params
+          |> Map.put("url", url)
+          |> Map.put("provider", to_string(provider))
+
+        if provider in [:youtube, :vimeo] do
+          fetch_video_metadata(socket, video_params, provider)
+        else
+          socket
+          |> put_flash(:error, "Unsupported video provider. Please use YouTube or Vimeo.")
+        end
       else
         socket
       end
@@ -107,18 +140,29 @@ defmodule SahajyogWeb.Admin.VideosLive do
 
   @impl true
   def handle_event("save", %{"video" => video_params}, socket) do
+    # Ensure provider is set based on URL before saving
+    video_params =
+      if video_params["url"] && video_params["url"] != "" do
+        provider = VideoProvider.detect_provider(video_params["url"])
+        Map.put(video_params, "provider", to_string(provider))
+      else
+        video_params
+      end
+
     save_video(socket, socket.assigns.editing_video, video_params)
   end
 
-  defp fetch_youtube_metadata(socket, video_params) do
+  defp fetch_video_metadata(socket, video_params, provider) do
     url = video_params["url"]
+    provider_name = provider |> to_string() |> String.capitalize()
 
-    case YouTube.fetch_metadata(url) do
+    case VideoProvider.fetch_metadata(url, provider) do
       {:ok, metadata} ->
         updated_params =
           video_params
           |> maybe_put_if_empty("title", metadata.title)
           |> maybe_put_if_empty("thumbnail_url", metadata.thumbnail_url)
+          |> maybe_put_if_empty("duration", metadata[:duration])
 
         video = socket.assigns.editing_video || %Video{}
 
@@ -129,7 +173,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
 
         socket
         |> assign(:form, to_form(changeset))
-        |> put_flash(:info, "Fetched video metadata from YouTube")
+        |> put_flash(:info, "Fetched video metadata from #{provider_name}")
 
       {:error, _} ->
         changeset =
@@ -139,7 +183,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
 
         socket
         |> assign(:form, to_form(changeset))
-        |> put_flash(:error, "Could not fetch video metadata")
+        |> put_flash(:error, "Could not fetch video metadata from #{provider_name}")
     end
   end
 
@@ -218,7 +262,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
                   field={@form[:url]}
                   type="text"
                   label="Video URL"
-                  placeholder="https://youtube.com/watch?v=..."
+                  placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
                 />
                 <button
                   type="button"
@@ -228,6 +272,9 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 >
                   <.icon name="hero-arrow-down-tray" class="w-4 h-4 inline mr-1" /> Fetch Video Info
                 </button>
+                <p :if={@form[:provider].value} class="text-sm text-gray-400 mt-1">
+                  Provider: {String.capitalize(@form[:provider].value || "unknown")}
+                </p>
               </div>
 
               <div>
