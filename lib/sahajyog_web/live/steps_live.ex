@@ -153,167 +153,68 @@ defmodule SahajyogWeb.StepsLive do
   def render(assigns) do
     ~H"""
     <div
-      class="flex flex-col lg:flex-row h-screen bg-gray-900 text-white"
+      class="bg-gray-900 text-white"
       phx-hook="WatchedVideos"
       id="watched-videos-container"
     >
-      <%!-- Video player section --%>
-      <div class="flex-1 flex flex-col p-4 md:p-6">
+      <%!-- Mobile Layout --%>
+      <div class="lg:hidden">
         <%= if @current_video do %>
-          <%!-- Desktop title with toggle button --%>
-          <div class="hidden lg:flex items-center justify-between mb-4">
-            <h1 class="text-2xl md:text-3xl font-bold">{@current_video.title}</h1>
-            <button
-              phx-click="toggle_sidebar_visibility"
-              class="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-              title={if @sidebar_visible, do: gettext("Hide sidebar"), else: gettext("Show sidebar")}
-            >
-              <.icon
-                name={if @sidebar_visible, do: "hero-chevron-right", else: "hero-chevron-left"}
-                class="w-6 h-6"
-              />
-            </button>
-          </div>
-
-          <%!-- Video player --%>
-          <div class="flex-1 bg-black rounded-lg overflow-hidden aspect-video lg:aspect-auto">
-            <iframe
-              src={Sahajyog.VideoProvider.embed_url(@current_video.video_id, @current_video.provider)}
-              class="w-full h-full"
-              frameborder="0"
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-              allowfullscreen
-              referrerpolicy="strict-origin-when-cross-origin"
-            >
-            </iframe>
-          </div>
-
-          <%!-- Mark as watched button --%>
-          <%= if not MapSet.member?(@watched_videos, @current_video.id) do %>
-            <div class="mt-4">
-              <button
-                phx-click="mark_watched"
-                phx-value-id={@current_video.id}
-                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+          <%!-- Current video player --%>
+          <div class="sticky top-0 z-10 bg-gray-900">
+            <div class="aspect-video bg-black">
+              <iframe
+                src={
+                  Sahajyog.VideoProvider.embed_url(@current_video.video_id, @current_video.provider)
+                }
+                class="w-full h-full"
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
               >
-                <.icon name="hero-check-circle" class="w-5 h-5" />
-                <span>{gettext("Mark as Watched")}</span>
-              </button>
+              </iframe>
             </div>
-          <% end %>
-        <% else %>
-          <div class="flex-1 flex items-center justify-center">
-            <div class="text-center text-gray-400">
-              <.icon name="hero-video-camera-slash" class="w-16 h-16 mx-auto mb-4" />
-              <p class="text-xl">{gettext("No videos available")}</p>
-              <p class="mt-2">{gettext("Please add videos to get started")}</p>
-            </div>
-          </div>
-        <% end %>
-      </div>
-
-      <%!-- Sidebar overlay for mobile/tablet --%>
-      <%= if @sidebar_open do %>
-        <div
-          phx-click="close_sidebar"
-          class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-        >
-        </div>
-      <% end %>
-
-      <%!-- Sidebar --%>
-      <div class={
-        [
-          "bg-gray-800 border-gray-700 overflow-y-auto z-50 transition-all duration-300",
-          "lg:relative lg:border-l",
-          "fixed inset-y-0 right-0 w-80 sm:w-96",
-          # Mobile behavior
-          "lg:translate-x-0",
-          @sidebar_open && "translate-x-0",
-          !@sidebar_open && "translate-x-full lg:translate-x-0",
-          # Desktop behavior
-          @sidebar_visible && "lg:w-80",
-          !@sidebar_visible && "lg:w-0 lg:border-0 lg:overflow-hidden"
-        ]
-      }>
-        <div class="p-4">
-          <%!-- Mobile close button --%>
-          <div class="lg:hidden flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold">{gettext("SahajYog Content")}</h2>
-            <div class="flex items-center gap-2">
-              <%= if MapSet.size(@watched_videos) > 0 do %>
+            <div class="p-4 border-b border-gray-700">
+              <h1 class="text-lg font-bold mb-2">{@current_video.title}</h1>
+              <%= if not MapSet.member?(@watched_videos, @current_video.id) do %>
                 <button
-                  phx-click="reset_progress"
-                  class="p-2 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-red-400"
-                  title={gettext("Reset all progress")}
+                  phx-click="mark_watched"
+                  phx-value-id={@current_video.id}
+                  class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm"
                 >
-                  <.icon name="hero-arrow-path" class="w-4 h-4" />
+                  <.icon name="hero-check-circle" class="w-4 h-4" />
+                  <span>{gettext("Mark as Watched")}</span>
                 </button>
               <% end %>
-              <button
-                phx-click="close_sidebar"
-                class="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <.icon name="hero-x-mark" class="w-6 h-6" />
-              </button>
             </div>
           </div>
 
-          <%!-- Desktop title --%>
-          <div class="hidden lg:flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold">{gettext("SahajYog Content")}</h2>
-            <%= if MapSet.size(@watched_videos) > 0 do %>
-              <button
-                phx-click="reset_progress"
-                class="text-xs text-gray-400 hover:text-red-400 transition-colors"
-                title={gettext("Reset all progress")}
-              >
-                <.icon name="hero-arrow-path" class="w-4 h-4" />
-              </button>
-            <% end %>
-          </div>
-
-          <div class="space-y-2">
+          <%!-- Video list --%>
+          <div class="p-4">
             <%= for {folder_name, folder_videos, _} <- @folders do %>
-              <div class="border border-gray-700 rounded-lg overflow-hidden">
-                <%!-- Folder header --%>
-                <button
-                  phx-click="toggle_folder"
-                  phx-value-folder={folder_name}
-                  class="w-full px-4 py-3 bg-gray-750 hover:bg-gray-700 flex items-center justify-between transition-colors"
-                  style="color: #c45e5eff;"
-                  #
-                  style="color: #D4A574;"
-                >
-                  <span class="font-semibold">{translate_category(folder_name)}</span>
-                  <.icon
-                    name={
-                      if MapSet.member?(@expanded_folders, folder_name),
-                        do: "hero-chevron-down",
-                        else: "hero-chevron-right"
-                    }
-                    class="w-5 h-5"
-                  />
-                </button>
-
-                <%!-- Folder videos --%>
-                <div class={[
-                  "transition-all duration-200",
-                  unless(MapSet.member?(@expanded_folders, folder_name), do: "hidden")
-                ]}>
+              <%!-- Category header --%>
+              <div class="mb-4">
+                <h2 class="text-lg font-semibold mb-3 text-gray-300">
+                  {translate_category(folder_name)}
+                </h2>
+                <div class="space-y-2">
                   <%= for video <- folder_videos do %>
                     <button
                       phx-click="select_video"
                       phx-value-id={video.id}
                       class={[
-                        "w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-t border-gray-700 flex items-start gap-3",
-                        @current_video && @current_video.id == video.id && "bg-gray-700"
+                        "w-full p-3 rounded-lg text-left transition-colors flex items-start gap-3",
+                        @current_video && @current_video.id == video.id &&
+                          "bg-gray-700 border border-blue-500",
+                        (!@current_video || @current_video.id != video.id) &&
+                          "bg-gray-800 hover:bg-gray-700 border border-gray-700"
                       ]}
                     >
-                      <div class="flex-1">
-                        <div class="text-sm font-medium">{video.title}</div>
-                        <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
-                          <.icon name="hero-play-circle" class="w-4 h-4" />
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium mb-1">{video.title}</div>
+                        <div class="text-xs text-gray-400 flex items-center gap-2">
+                          <.icon name="hero-play-circle" class="w-3 h-3" />
                           <span>{video.duration}</span>
                         </div>
                       </div>
@@ -333,6 +234,161 @@ defmodule SahajyogWeb.StepsLive do
                 </div>
               </div>
             <% end %>
+          </div>
+        <% else %>
+          <div class="flex items-center justify-center min-h-screen">
+            <div class="text-center text-gray-400 p-4">
+              <.icon name="hero-video-camera-slash" class="w-16 h-16 mx-auto mb-4" />
+              <p class="text-xl">{gettext("No videos available")}</p>
+              <p class="mt-2">{gettext("Please add videos to get started")}</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <%!-- Desktop Layout --%>
+      <div class="hidden lg:flex lg:flex-row h-screen">
+        <%!-- Video player section --%>
+        <div class="flex-1 flex flex-col p-4 md:p-6">
+          <%= if @current_video do %>
+            <%!-- Desktop title with toggle button --%>
+            <div class="flex items-center justify-between mb-4">
+              <h1 class="text-2xl md:text-3xl font-bold">{@current_video.title}</h1>
+              <button
+                phx-click="toggle_sidebar_visibility"
+                class="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                title={
+                  if @sidebar_visible, do: gettext("Hide sidebar"), else: gettext("Show sidebar")
+                }
+              >
+                <.icon
+                  name={if @sidebar_visible, do: "hero-chevron-right", else: "hero-chevron-left"}
+                  class="w-6 h-6"
+                />
+              </button>
+            </div>
+
+            <%!-- Video player --%>
+            <div class="flex-1 bg-black rounded-lg overflow-hidden">
+              <iframe
+                src={
+                  Sahajyog.VideoProvider.embed_url(@current_video.video_id, @current_video.provider)
+                }
+                class="w-full h-full"
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
+              >
+              </iframe>
+            </div>
+
+            <%!-- Mark as watched button --%>
+            <%= if not MapSet.member?(@watched_videos, @current_video.id) do %>
+              <div class="mt-4">
+                <button
+                  phx-click="mark_watched"
+                  phx-value-id={@current_video.id}
+                  class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <.icon name="hero-check-circle" class="w-5 h-5" />
+                  <span>{gettext("Mark as Watched")}</span>
+                </button>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="flex-1 flex items-center justify-center">
+              <div class="text-center text-gray-400">
+                <.icon name="hero-video-camera-slash" class="w-16 h-16 mx-auto mb-4" />
+                <p class="text-xl">{gettext("No videos available")}</p>
+                <p class="mt-2">{gettext("Please add videos to get started")}</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <%!-- Desktop Sidebar --%>
+        <div class={[
+          "bg-gray-800 border-l border-gray-700 overflow-y-auto transition-all duration-300",
+          @sidebar_visible && "w-80",
+          !@sidebar_visible && "w-0 border-0 overflow-hidden"
+        ]}>
+          <div class="p-4">
+            <%!-- Desktop title --%>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold">{gettext("SahajYog Content")}</h2>
+              <%= if MapSet.size(@watched_videos) > 0 do %>
+                <button
+                  phx-click="reset_progress"
+                  class="text-xs text-gray-400 hover:text-red-400 transition-colors"
+                  title={gettext("Reset all progress")}
+                >
+                  <.icon name="hero-arrow-path" class="w-4 h-4" />
+                </button>
+              <% end %>
+            </div>
+
+            <div class="space-y-2">
+              <%= for {folder_name, folder_videos, _} <- @folders do %>
+                <div class="border border-gray-700 rounded-lg overflow-hidden">
+                  <%!-- Folder header --%>
+                  <button
+                    phx-click="toggle_folder"
+                    phx-value-folder={folder_name}
+                    class="w-full px-4 py-3 bg-gray-750 hover:bg-gray-700 flex items-center justify-between transition-colors"
+                    style="color: #c45e5eff;"
+                    #
+                    style="color: #D4A574;"
+                  >
+                    <span class="font-semibold">{translate_category(folder_name)}</span>
+                    <.icon
+                      name={
+                        if MapSet.member?(@expanded_folders, folder_name),
+                          do: "hero-chevron-down",
+                          else: "hero-chevron-right"
+                      }
+                      class="w-5 h-5"
+                    />
+                  </button>
+
+                  <%!-- Folder videos --%>
+                  <div class={[
+                    "transition-all duration-200",
+                    unless(MapSet.member?(@expanded_folders, folder_name), do: "hidden")
+                  ]}>
+                    <%= for video <- folder_videos do %>
+                      <button
+                        phx-click="select_video"
+                        phx-value-id={video.id}
+                        class={[
+                          "w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-t border-gray-700 flex items-start gap-3",
+                          @current_video && @current_video.id == video.id && "bg-gray-700"
+                        ]}
+                      >
+                        <div class="flex-1">
+                          <div class="text-sm font-medium">{video.title}</div>
+                          <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
+                            <.icon name="hero-play-circle" class="w-4 h-4" />
+                            <span>{video.duration}</span>
+                          </div>
+                        </div>
+                        <%= cond do %>
+                          <% MapSet.member?(@watched_videos, video.id) -> %>
+                            <.icon
+                              name="hero-check-circle"
+                              class="w-5 h-5 text-green-500 flex-shrink-0"
+                            />
+                          <% @current_video && @current_video.id == video.id -> %>
+                            <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
+                          <% true -> %>
+                            <div class="w-5 h-5"></div>
+                        <% end %>
+                      </button>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
