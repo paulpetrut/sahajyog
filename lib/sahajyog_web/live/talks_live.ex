@@ -286,10 +286,6 @@ defmodule SahajyogWeb.TalksLive do
     apply_filters(socket)
   end
 
-  def handle_event("refresh", _params, socket) do
-    apply_filters(socket)
-  end
-
   def handle_event("goto_page", %{"page" => page}, socket) do
     page_num = String.to_integer(page)
     socket = assign(socket, :current_page, page_num)
@@ -411,26 +407,9 @@ defmodule SahajyogWeb.TalksLive do
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Header --%>
         <div class="mb-8">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h1 class="text-4xl font-bold text-white mb-2">{gettext("Sahaja Yoga Talks")}</h1>
-              <p class="text-gray-400">{gettext("Explore spiritual teachings and wisdom")}</p>
-            </div>
-            <button
-              phx-click="refresh"
-              disabled={@loading}
-              class={[
-                "px-4 py-2 rounded-lg transition-all flex items-center gap-2 self-start sm:self-auto",
-                @loading && "opacity-50 cursor-not-allowed bg-gray-700",
-                !@loading && "bg-blue-600 hover:bg-blue-700 text-white"
-              ]}
-            >
-              <.icon
-                name="hero-arrow-path"
-                class={if @loading, do: "w-5 h-5 animate-spin", else: "w-5 h-5"}
-              />
-              <span>{gettext("Refresh")}</span>
-            </button>
+          <div class="mb-6">
+            <h1 class="text-4xl font-bold text-white mb-2">{gettext("Sahaja Yoga Talks")}</h1>
+            <p class="text-gray-400">{gettext("Explore spiritual teachings and wisdom")}</p>
           </div>
 
           <%!-- Search and Filters --%>
