@@ -51,10 +51,8 @@
           />
         </svg>
       </a>
-      <ul class="menu menu-horizontal flex items-center gap-4">
-        <li>
-          <.locale_switcher current_locale={assigns[:locale] || "en"} />
-        </li>
+      <%!-- Desktop Navigation --%>
+      <ul class="menu menu-horizontal hidden md:flex items-center gap-4">
         <%= if assigns[:current_scope] do %>
           <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
             <li class="dropdown dropdown-end">
@@ -90,14 +88,48 @@
               <.link href={~p"/resources"}>{gettext("Resources")}</.link>
             </li>
           <% end %>
-          <li>
-            <.link href={~p"/users/settings"}>{gettext("Settings")}</.link>
-          </li>
-          <li>
-            {@current_scope.user.email}
-          </li>
-          <li>
-            <.link href={~p"/users/log-out"} method="delete">{gettext("Log out")}</.link>
+        <% end %>
+        <li>
+          <.locale_switcher id="locale-select-desktop" current_locale={assigns[:locale] || "en"} />
+        </li>
+        <%= if assigns[:current_scope] do %>
+          <%!-- User Avatar Dropdown --%>
+          <li class="dropdown dropdown-end">
+            <div
+              tabindex="0"
+              role="button"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold cursor-pointer hover:bg-base-200 transition-colors"
+              title={@current_scope.user.email}
+            >
+              {String.upcase(String.first(@current_scope.user.email))}
+            </div>
+            <ul
+              tabindex="0"
+              class="dropdown-content menu bg-base-200 rounded-box z-[1] w-64 p-2 shadow mt-2"
+            >
+              <li class="border-b border-base-300 mb-1">
+                <.link href="#" tabindex="-1" aria-disabled="true" class="flex items-center gap-2 px-0 pointer-events-none select-none">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold">
+                    {String.upcase(String.first(@current_scope.user.email))}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium truncate">{@current_scope.user.email}</p>
+                  </div>
+                </.link>
+              </li>
+              <li>
+                <.link href={~p"/users/settings"} class="flex items-center gap-2">
+                  <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
+                  <span>{gettext("Account settings")}</span>
+                </.link>
+              </li>
+              <li class="border-t border-base-300 mt-1 pt-1">
+                <.link href={~p"/users/log-out"} method="delete" class="flex items-center gap-2">
+                  <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" />
+                  <span>{gettext("Sign out")}</span>
+                </.link>
+              </li>
+            </ul>
           </li>
         <% else %>
           <li>
@@ -108,6 +140,124 @@
           </li>
         <% end %>
       </ul>
+      <%!-- Mobile Hamburger Button --%>
+      <button
+        id="mobile-menu-button"
+        class="md:hidden p-2 text-gray-300 hover:text-white transition-colors"
+        aria-label="Toggle menu"
+      >
+        <svg
+          class="w-6 h-6"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+    </div>
+    <%!-- Mobile Menu Overlay --%>
+    <div
+      id="mobile-menu-overlay"
+      class="fixed inset-0 z-40 hidden md:hidden backdrop-blur-sm"
+      style="background-color: rgba(0, 0, 0, 0.25);"
+    >
+    </div>
+    <%!-- Mobile Menu Sidebar --%>
+    <div
+      id="mobile-menu"
+      class="fixed top-0 right-0 h-full w-64 bg-base-200 shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden"
+    >
+      <div class="flex flex-col h-full">
+        <%!-- Close Button --%>
+        <div class="flex justify-end p-4">
+          <button
+            id="mobile-menu-close"
+            class="p-2 text-gray-300 hover:text-white transition-colors"
+            aria-label="Close menu"
+          >
+            <svg
+              class="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <%!-- Menu Items --%>
+        <nav class="flex-1 px-4 py-2 overflow-y-auto">
+          <ul class="menu menu-vertical w-full gap-2">
+            <%= if assigns[:current_scope] do %>
+              <%!-- User Info Section --%>
+              <li class="border-b border-base-300 mb-2">
+                <div class="flex items-center gap-3 px-4 py-3 pointer-events-none">
+                  <div class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold">
+                    {String.upcase(String.first(@current_scope.user.email))}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium truncate">{@current_scope.user.email}</p>
+                  </div>
+                </div>
+              </li>
+              <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
+                <li>
+                  <details>
+                    <summary>{gettext("Admin")}</summary>
+                    <ul>
+                      <li>
+                        <.link href={~p"/admin/videos"}>{gettext("Videos")}</.link>
+                      </li>
+                      <li>
+                        <.link href={~p"/admin/resources"}>{gettext("Resources")}</.link>
+                      </li>
+                    </ul>
+                  </details>
+                </li>
+              <% else %>
+                <li>
+                  <.link href={~p"/resources"}>{gettext("Resources")}</.link>
+                </li>
+              <% end %>
+              <li>
+                <.locale_switcher id="locale-select-mobile" current_locale={assigns[:locale] || "en"} />
+              </li>
+              <li>
+                <.link href={~p"/users/settings"} class="flex items-center gap-2">
+                  <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
+                  <span>{gettext("Account settings")}</span>
+                </.link>
+              </li>
+              <li class="border-t border-base-300 mt-2 pt-2">
+                <.link href={~p"/users/log-out"} method="delete" class="flex items-center gap-2">
+                  <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" />
+                  <span>{gettext("Sign out")}</span>
+                </.link>
+              </li>
+            <% else %>
+              <li>
+                <.link href={~p"/users/register"}>{gettext("Register")}</.link>
+              </li>
+              <li>
+                <.link href={~p"/users/log-in"}>{gettext("Log in")}</.link>
+              </li>
+            <% end %>
+          </ul>
+        </nav>
+      </div>
     </div>
     <script>
       // Function to update home icon visibility based on current path
@@ -123,6 +273,47 @@
 
       // Update on LiveView navigation
       window.addEventListener('phx:page-loading-stop', updateHomeIconVisibility);
+
+      // Mobile menu toggle functionality
+      const initMobileMenu = () => {
+        const menuButton = document.getElementById('mobile-menu-button');
+        const menuClose = document.getElementById('mobile-menu-close');
+        const menu = document.getElementById('mobile-menu');
+        const overlay = document.getElementById('mobile-menu-overlay');
+
+        const openMenu = () => {
+          menu.classList.remove('translate-x-full');
+          overlay.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        };
+
+        const closeMenu = () => {
+          menu.classList.add('translate-x-full');
+          overlay.classList.add('hidden');
+          document.body.style.overflow = '';
+        };
+
+        if (menuButton) {
+          menuButton.removeEventListener('click', openMenu);
+          menuButton.addEventListener('click', openMenu);
+        }
+
+        if (menuClose) {
+          menuClose.removeEventListener('click', closeMenu);
+          menuClose.addEventListener('click', closeMenu);
+        }
+
+        if (overlay) {
+          overlay.removeEventListener('click', closeMenu);
+          overlay.addEventListener('click', closeMenu);
+        }
+      };
+
+      // Initialize on load
+      initMobileMenu();
+
+      // Re-initialize after LiveView navigation
+      window.addEventListener('phx:page-loading-stop', initMobileMenu);
     </script>
     {@inner_content}
   </body>

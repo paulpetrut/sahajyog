@@ -223,7 +223,14 @@ defmodule SahajyogWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          Gettext.dgettext(
+            SahajyogWeb.Gettext,
+            "default",
+            "You must log in to access this page."
+          )
+        )
         |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
 
       {:halt, socket}
@@ -238,7 +245,14 @@ defmodule SahajyogWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must re-authenticate to access this page.")
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          Gettext.dgettext(
+            SahajyogWeb.Gettext,
+            "default",
+            "You must re-authenticate to access this page."
+          )
+        )
         |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
 
       {:halt, socket}
@@ -272,7 +286,14 @@ defmodule SahajyogWeb.UserAuth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
+      |> put_flash(
+        :error,
+        Gettext.dgettext(
+          SahajyogWeb.Gettext,
+          "default",
+          "You must log in to access this page."
+        )
+      )
       |> maybe_store_return_to()
       |> redirect(to: ~p"/users/log-in")
       |> halt()

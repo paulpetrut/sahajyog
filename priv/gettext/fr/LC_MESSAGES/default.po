@@ -715,3 +715,14 @@ msgstr "Vidéos"
 #, elixir-autogen, elixir-format
 msgid "Your Level"
 msgstr "Votre Niveau"
+
+#: lib/sahajyog_web/user_auth.ex:243
+#, elixir-autogen, elixir-format
+msgid "You must re-authenticate to access this page."
+msgstr "Vous devez vous authentifier à nouveau pour accéder à cette page."
+
+#: lib/sahajyog_web/user_auth.ex:226
+#: lib/sahajyog_web/user_auth.ex:286
+#, elixir-autogen, elixir-format
+msgid "You must log in to access this page."
+msgstr "Vous devez vous connecter pour accéder à cette page."
