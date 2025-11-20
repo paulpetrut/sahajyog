@@ -103,7 +103,8 @@ window.liveSocket = liveSocket
 //     1. stream server logs to the browser console
 //     2. click on elements to jump to their definitions in your code editor
 //
-if (process.env.NODE_ENV === "development") {
+// Check if we're in development mode by looking for Phoenix LiveReload
+if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
   window.addEventListener("phx:live_reload:attached", ({ detail: reloader }) => {
     // Enable server log streaming to client.
     // Disable with reloader.disableServerLogs()
