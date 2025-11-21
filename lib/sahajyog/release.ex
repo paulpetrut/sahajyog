@@ -66,76 +66,80 @@ defmodule Sahajyog.Release do
     IO.puts("🔄 Syncing R2 resources to database...")
     IO.puts("Dry run: #{dry_run}\n")
 
-    alias Sahajyog.Repo
-    alias Sahajyog.Resources.Resource
-    alias Sahajyog.Resources.R2Storage
+    for repo <- repos() do
+      {:ok, _, _} =
+        Ecto.Migrator.with_repo(repo, fn repo ->
+          alias Sahajyog.Resources.Resource
+          alias Sahajyog.Resources.R2Storage
 
-    case R2Storage.list_objects() do
-      {:ok, objects} ->
-        levels = Resource.levels()
-        types = Resource.types()
+          case R2Storage.list_objects() do
+            {:ok, objects} ->
+              levels = Resource.levels()
+              types = Resource.types()
 
-        objects
-        |> Enum.filter(fn obj ->
-          parts = String.split(obj.key, "/")
-          length(parts) == 3 && Enum.at(parts, 0) in levels && Enum.at(parts, 1) in types
-        end)
-        |> Enum.each(fn obj ->
-          key = obj.key
-          size = obj.size
-          parts = String.split(key, "/")
-          level = Enum.at(parts, 0)
-          resource_type = Enum.at(parts, 1)
-          file_name = Enum.at(parts, 2)
+              objects
+              |> Enum.filter(fn obj ->
+                parts = String.split(obj.key, "/")
+                length(parts) == 3 && Enum.at(parts, 0) in levels && Enum.at(parts, 1) in types
+              end)
+              |> Enum.each(fn obj ->
+                key = obj.key
+                size = obj.size
+                parts = String.split(key, "/")
+                level = Enum.at(parts, 0)
+                resource_type = Enum.at(parts, 1)
+                file_name = Enum.at(parts, 2)
 
-          # Check if already exists
-          existing = Repo.get_by(Resource, r2_key: key)
+                # Check if already exists
+                existing = repo.get_by(Resource, r2_key: key)
 
-          if existing do
-            IO.puts("⏭️  Skipping (exists): #{key}")
-          else
-            if dry_run do
-              IO.puts("📋 Would create: #{key}")
-            else
-              # Determine content type
-              content_type =
-                cond do
-                  String.ends_with?(file_name, ".pdf") -> "application/pdf"
-                  String.ends_with?(file_name, [".jpg", ".jpeg"]) -> "image/jpeg"
-                  String.ends_with?(file_name, ".png") -> "image/png"
-                  String.ends_with?(file_name, ".mp3") -> "audio/mpeg"
-                  String.ends_with?(file_name, ".mp4") -> "video/mp4"
-                  true -> "application/octet-stream"
+                if existing do
+                  IO.puts("⏭️  Skipping (exists): #{key}")
+                else
+                  if dry_run do
+                    IO.puts("📋 Would create: #{key}")
+                  else
+                    # Determine content type
+                    content_type =
+                      cond do
+                        String.ends_with?(file_name, ".pdf") -> "application/pdf"
+                        String.ends_with?(file_name, [".jpg", ".jpeg"]) -> "image/jpeg"
+                        String.ends_with?(file_name, ".png") -> "image/png"
+                        String.ends_with?(file_name, ".mp3") -> "audio/mpeg"
+                        String.ends_with?(file_name, ".mp4") -> "video/mp4"
+                        true -> "application/octet-stream"
+                      end
+
+                    # Create resource
+                    attrs = %{
+                      title: Path.rootname(file_name),
+                      file_name: file_name,
+                      file_size: size,
+                      content_type: content_type,
+                      r2_key: key,
+                      level: level,
+                      resource_type: resource_type,
+                      user_id: 1
+                    }
+
+                    case repo.insert(%Resource{} |> Resource.changeset(attrs)) do
+                      {:ok, _} ->
+                        IO.puts("✅ Created: #{key}")
+
+                      {:error, changeset} ->
+                        IO.puts("❌ Failed: #{key}")
+                        IO.inspect(changeset.errors)
+                    end
+                  end
                 end
+              end)
 
-              # Create resource
-              attrs = %{
-                title: Path.rootname(file_name),
-                file_name: file_name,
-                file_size: size,
-                content_type: content_type,
-                r2_key: key,
-                level: level,
-                resource_type: resource_type,
-                user_id: 1
-              }
+              IO.puts("\n✅ Sync complete!")
 
-              case Repo.insert(%Resource{} |> Resource.changeset(attrs)) do
-                {:ok, _} ->
-                  IO.puts("✅ Created: #{key}")
-
-                {:error, changeset} ->
-                  IO.puts("❌ Failed: #{key}")
-                  IO.inspect(changeset.errors)
-              end
-            end
+            {:error, reason} ->
+              IO.puts("❌ Failed to list R2 objects: #{inspect(reason)}")
           end
         end)
-
-        IO.puts("\n✅ Sync complete!")
-
-      {:error, reason} ->
-        IO.puts("❌ Failed to list R2 objects: #{inspect(reason)}")
     end
   end
 
