@@ -30,13 +30,21 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   end
 
   defp apply_action(socket, :new, _params) do
+    resource = %Resource{}
+    changeset = Resources.change_resource(resource)
+
     socket
-    |> assign(:resource, %Resource{})
+    |> assign(:resource, resource)
+    |> assign(:form, to_form(changeset))
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
+    resource = Resources.get_resource!(id)
+    changeset = Resources.change_resource(resource)
+
     socket
-    |> assign(:resource, Resources.get_resource!(id))
+    |> assign(:resource, resource)
+    |> assign(:form, to_form(changeset))
   end
 
   @impl true
@@ -46,12 +54,17 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
       |> Resources.change_resource(resource_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
   @impl true
   def handle_event("save", %{"resource" => resource_params}, socket) do
     save_resource(socket, socket.assigns.live_action, resource_params)
+  end
+
+  @impl true
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :file, ref)}
   end
 
   @impl true
@@ -73,50 +86,67 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   end
 
   defp save_resource(socket, :new, resource_params) do
-    uploaded_files =
-      consume_uploaded_entries(socket, :file, fn %{path: path}, entry ->
-        level = Map.get(resource_params, "level", "Level1")
-        resource_type = Map.get(resource_params, "resource_type", "Books")
-        key = R2Storage.generate_unique_key(entry.client_name, level, resource_type)
+    # First validate that we have uploaded files
+    if socket.assigns.uploads.file.entries == [] do
+      {:noreply, put_flash(socket, :error, "Please select a file to upload")}
+    else
+      uploaded_files =
+        consume_uploaded_entries(socket, :file, fn %{path: path}, entry ->
+          level = Map.get(resource_params, "level", "Level1")
+          resource_type = Map.get(resource_params, "resource_type", "Books")
+          key = R2Storage.generate_unique_key(entry.client_name, level, resource_type)
 
-        case R2Storage.upload(path, key, content_type: entry.client_type) do
-          {:ok, ^key} ->
-            {:ok,
-             %{
-               key: key,
-               file_name: entry.client_name,
-               file_size: entry.client_size,
-               content_type: entry.client_type
-             }}
+          require Logger
 
-          {:error, _reason} ->
-            {:postpone, :error}
-        end
-      end)
+          Logger.info("Uploading file: #{entry.client_name} to key: #{key}")
 
-    case uploaded_files do
-      [file_info | _] ->
-        resource_params =
-          resource_params
-          |> Map.put("r2_key", file_info.key)
-          |> Map.put("file_name", file_info.file_name)
-          |> Map.put("file_size", file_info.file_size)
-          |> Map.put("content_type", file_info.content_type)
-          |> Map.put("user_id", socket.assigns.current_scope.user.id)
+          case R2Storage.upload(path, key, content_type: entry.client_type) do
+            {:ok, ^key} ->
+              Logger.info("Successfully uploaded: #{key}")
 
-        case Resources.create_resource(resource_params) do
-          {:ok, _resource} ->
-            {:noreply,
-             socket
-             |> put_flash(:info, "Resource uploaded successfully")
-             |> push_navigate(to: ~p"/admin/resources")}
+              {:ok,
+               %{
+                 key: key,
+                 file_name: entry.client_name,
+                 file_size: entry.client_size,
+                 content_type: entry.client_type
+               }}
 
-          {:error, %Ecto.Changeset{} = changeset} ->
-            {:noreply, assign(socket, :changeset, changeset)}
-        end
+            {:error, reason} ->
+              Logger.error("Failed to upload: #{inspect(reason)}")
+              {:postpone, {:error, reason}}
+          end
+        end)
 
-      [] ->
-        {:noreply, put_flash(socket, :error, "Please select a file to upload")}
+      case uploaded_files do
+        [%{key: _} = file_info | _] ->
+          resource_params =
+            resource_params
+            |> Map.put("r2_key", file_info.key)
+            |> Map.put("file_name", file_info.file_name)
+            |> Map.put("file_size", file_info.file_size)
+            |> Map.put("content_type", file_info.content_type)
+            |> Map.put("user_id", socket.assigns.current_scope.user.id)
+
+          case Resources.create_resource(resource_params) do
+            {:ok, _resource} ->
+              {:noreply,
+               socket
+               |> put_flash(:info, "Resource uploaded successfully")
+               |> push_navigate(to: ~p"/admin/resources")}
+
+            {:error, %Ecto.Changeset{} = changeset} ->
+              {:noreply, assign(socket, :form, to_form(changeset))}
+          end
+
+        errors when is_list(errors) ->
+          require Logger
+          Logger.error("Upload errors: #{inspect(errors)}")
+          {:noreply, put_flash(socket, :error, "Failed to upload file to storage")}
+
+        [] ->
+          {:noreply, put_flash(socket, :error, "File upload was cancelled or failed")}
+      end
     end
   end
 
@@ -129,7 +159,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
          |> push_navigate(to: ~p"/admin/resources")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
 
@@ -151,7 +181,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
               ← {gettext("Back to Resources")}
             </.link>
             <.resource_form
-              resource={@resource}
+              form={@form}
               uploads={@uploads}
               live_action={@live_action}
             />
@@ -245,9 +275,6 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   end
 
   defp resource_form(assigns) do
-    changeset = Resources.change_resource(assigns.resource)
-    assigns = assign(assigns, :form, to_form(changeset))
-
     ~H"""
     <div class="bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-700">
       <h2 class="text-2xl font-bold text-white mb-6">

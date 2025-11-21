@@ -20,6 +20,25 @@ if System.get_env("PHX_SERVER") do
   config :sahajyog, SahajyogWeb.Endpoint, server: true
 end
 
+# Cloudflare R2 Configuration (for all environments)
+if System.get_env("R2_ACCESS_KEY_ID") && System.get_env("R2_SECRET_ACCESS_KEY") do
+  config :ex_aws,
+    access_key_id: System.get_env("R2_ACCESS_KEY_ID"),
+    secret_access_key: System.get_env("R2_SECRET_ACCESS_KEY"),
+    region: "auto"
+
+  config :ex_aws, :s3,
+    scheme: "https://",
+    host:
+      System.get_env("R2_ACCOUNT_ID") &&
+        "#{System.get_env("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com",
+    region: "auto"
+
+  config :sahajyog, :r2,
+    bucket: System.get_env("R2_BUCKET_NAME"),
+    public_url: System.get_env("R2_PUBLIC_URL")
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
@@ -137,21 +156,4 @@ if config_env() == :prod do
         retries: 2
     end
   end
-
-  # ## Cloudflare R2 Configuration
-  config :ex_aws,
-    access_key_id: System.get_env("R2_ACCESS_KEY_ID"),
-    secret_access_key: System.get_env("R2_SECRET_ACCESS_KEY"),
-    region: "auto"
-
-  config :ex_aws, :s3,
-    scheme: "https://",
-    host:
-      System.get_env("R2_ACCOUNT_ID") &&
-        "#{System.get_env("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com",
-    region: "auto"
-
-  config :sahajyog, :r2,
-    bucket: System.get_env("R2_BUCKET_NAME"),
-    public_url: System.get_env("R2_PUBLIC_URL")
 end
