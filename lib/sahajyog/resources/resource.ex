@@ -13,6 +13,7 @@ defmodule Sahajyog.Resources.Resource do
     field :file_size, :integer
     field :content_type, :string
     field :r2_key, :string
+    field :thumbnail_r2_key, :string
     field :level, :string
     field :resource_type, :string
     field :language, :string
@@ -33,6 +34,7 @@ defmodule Sahajyog.Resources.Resource do
       :file_size,
       :content_type,
       :r2_key,
+      :thumbnail_r2_key,
       :level,
       :resource_type,
       :language,

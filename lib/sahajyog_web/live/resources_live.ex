@@ -126,14 +126,35 @@ defmodule SahajyogWeb.ResourcesLive do
             :for={resource <- @resources}
             class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors flex flex-col"
           >
+            <%= if resource.thumbnail_r2_key do %>
+              <div class="w-full h-48 bg-gray-900 overflow-hidden flex items-center justify-center">
+                <img
+                  src={Resources.thumbnail_url(resource)}
+                  alt={resource.title}
+                  class="w-full h-full object-contain"
+                />
+              </div>
+            <% else %>
+              <div class="w-full h-48 bg-gray-900 flex items-center justify-center">
+                <.icon
+                  name={type_icon(resource.resource_type)}
+                  class="w-20 h-20 text-gray-700"
+                />
+              </div>
+            <% end %>
+
             <div class="p-4 sm:p-6 flex flex-col flex-1">
-              <div class="flex items-start justify-between mb-3">
-                <div style="color: #D4A574;">
-                  <.icon name={type_icon(resource.resource_type)} class="w-10 h-10 sm:w-12 sm:h-12" />
-                </div>
-                <span class="px-2 py-1 text-xs font-medium bg-gray-700 text-gray-300 rounded whitespace-nowrap">
+              <div class="flex items-center justify-between mb-3 text-xs sm:text-sm">
+                <span class="px-2 py-1 font-medium bg-gray-700 text-gray-300 rounded whitespace-nowrap">
                   {resource.resource_type}
                 </span>
+                <div class="flex items-center gap-3 text-gray-400">
+                  <span>{format_file_size(resource.file_size)}</span>
+                  <span class="flex items-center gap-1">
+                    <.icon name="hero-arrow-down-tray" class="w-4 h-4" />
+                    {resource.downloads_count}
+                  </span>
+                </div>
               </div>
 
               <h3 class="text-lg sm:text-xl font-semibold text-white mb-2 break-words">
@@ -143,14 +164,6 @@ defmodule SahajyogWeb.ResourcesLive do
               <%= if resource.description do %>
                 <p class="text-gray-400 text-sm mb-4 line-clamp-3">{resource.description}</p>
               <% end %>
-
-              <div class="flex items-center justify-between text-xs sm:text-sm text-gray-400 mb-4">
-                <span>{format_file_size(resource.file_size)}</span>
-                <span class="flex items-center gap-1">
-                  <.icon name="hero-arrow-down-tray" class="w-4 h-4" />
-                  {resource.downloads_count}
-                </span>
-              </div>
 
               <div class="flex gap-2 mt-auto">
                 <button

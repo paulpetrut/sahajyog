@@ -16,6 +16,11 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
        accept: :any,
        max_entries: 1,
        max_file_size: 500_000_000
+     )
+     |> allow_upload(:thumbnail,
+       accept: ~w(.jpg .jpeg .png .gif .webp),
+       max_entries: 1,
+       max_file_size: 5_000_000
      )}
   end
 
@@ -90,13 +95,14 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
     if socket.assigns.uploads.file.entries == [] do
       {:noreply, put_flash(socket, :error, "Please select a file to upload")}
     else
+      require Logger
+
+      # Upload main file
       uploaded_files =
         consume_uploaded_entries(socket, :file, fn %{path: path}, entry ->
           level = Map.get(resource_params, "level", "Level1")
           resource_type = Map.get(resource_params, "resource_type", "Books")
           key = R2Storage.generate_unique_key(entry.client_name, level, resource_type)
-
-          require Logger
 
           Logger.info("Uploading file: #{entry.client_name} to key: #{key}")
 
@@ -118,14 +124,41 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
           end
         end)
 
+      # Upload thumbnail if provided
+      uploaded_thumbnails =
+        consume_uploaded_entries(socket, :thumbnail, fn %{path: path}, entry ->
+          level = Map.get(resource_params, "level", "Level1")
+          resource_type = Map.get(resource_params, "resource_type", "Books")
+          key = R2Storage.generate_unique_key("thumb_#{entry.client_name}", level, resource_type)
+
+          Logger.info("Uploading thumbnail: #{entry.client_name} to key: #{key}")
+
+          case R2Storage.upload(path, key, content_type: entry.client_type) do
+            {:ok, ^key} ->
+              Logger.info("Successfully uploaded thumbnail: #{key}")
+              {:ok, key}
+
+            {:error, reason} ->
+              Logger.error("Failed to upload thumbnail: #{inspect(reason)}")
+              {:postpone, {:error, reason}}
+          end
+        end)
+
       case uploaded_files do
         [%{key: _} = file_info | _] ->
+          thumbnail_key =
+            case uploaded_thumbnails do
+              [key | _] when is_binary(key) -> key
+              _ -> nil
+            end
+
           resource_params =
             resource_params
             |> Map.put("r2_key", file_info.key)
             |> Map.put("file_name", file_info.file_name)
             |> Map.put("file_size", file_info.file_size)
             |> Map.put("content_type", file_info.content_type)
+            |> Map.put("thumbnail_r2_key", thumbnail_key)
             |> Map.put("user_id", socket.assigns.current_scope.user.id)
 
           case Resources.create_resource(resource_params) do
@@ -139,19 +172,53 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
               {:noreply, assign(socket, :form, to_form(changeset))}
           end
 
-        errors when is_list(errors) ->
-          require Logger
+        errors ->
           Logger.error("Upload errors: #{inspect(errors)}")
           {:noreply, put_flash(socket, :error, "Failed to upload file to storage")}
-
-        [] ->
-          {:noreply, put_flash(socket, :error, "File upload was cancelled or failed")}
       end
     end
   end
 
   defp save_resource(socket, :edit, resource_params) do
-    case Resources.update_resource(socket.assigns.resource, resource_params) do
+    require Logger
+    resource = socket.assigns.resource
+
+    # Upload new thumbnail if provided
+    uploaded_thumbnails =
+      consume_uploaded_entries(socket, :thumbnail, fn %{path: path}, entry ->
+        level = resource.level
+        resource_type = resource.resource_type
+        key = R2Storage.generate_unique_key("thumb_#{entry.client_name}", level, resource_type)
+
+        Logger.info("Uploading new thumbnail: #{entry.client_name} to key: #{key}")
+
+        case R2Storage.upload(path, key, content_type: entry.client_type) do
+          {:ok, ^key} ->
+            Logger.info("Successfully uploaded thumbnail: #{key}")
+            # Delete old thumbnail if exists
+            if resource.thumbnail_r2_key do
+              R2Storage.delete(resource.thumbnail_r2_key)
+            end
+
+            {:ok, key}
+
+          {:error, reason} ->
+            Logger.error("Failed to upload thumbnail: #{inspect(reason)}")
+            {:postpone, {:error, reason}}
+        end
+      end)
+
+    # Update thumbnail_r2_key if new thumbnail was uploaded
+    resource_params =
+      case uploaded_thumbnails do
+        [key | _] when is_binary(key) ->
+          Map.put(resource_params, "thumbnail_r2_key", key)
+
+        _ ->
+          resource_params
+      end
+
+    case Resources.update_resource(resource, resource_params) do
       {:ok, _resource} ->
         {:noreply,
          socket
@@ -226,12 +293,37 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
               <tbody class="bg-gray-800 divide-y divide-gray-700">
                 <tr :for={resource <- @resources} class="hover:bg-gray-700 transition-colors">
                   <td class="px-3 sm:px-6 py-4">
-                    <div class="text-sm font-medium text-white break-words">{resource.title}</div>
-                    <div class="text-xs sm:text-sm text-gray-400 truncate max-w-xs">
-                      {resource.file_name}
-                    </div>
-                    <div class="md:hidden text-xs text-gray-400 mt-1">
-                      {resource.level} · {resource.resource_type}
+                    <div class="flex items-center gap-3">
+                      <%= if resource.thumbnail_r2_key do %>
+                        <img
+                          src={Resources.thumbnail_url(resource)}
+                          alt={resource.title}
+                          class="w-12 h-12 object-cover rounded"
+                        />
+                      <% else %>
+                        <div class="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
+                          <.icon
+                            name={
+                              cond do
+                                resource.resource_type == "Photos" -> "hero-photo"
+                                resource.resource_type == "Music" -> "hero-musical-note"
+                                resource.resource_type == "Books" -> "hero-book-open"
+                                true -> "hero-document"
+                              end
+                            }
+                            class="w-6 h-6 text-gray-400"
+                          />
+                        </div>
+                      <% end %>
+                      <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium text-white break-words">{resource.title}</div>
+                        <div class="text-xs sm:text-sm text-gray-400 truncate max-w-xs">
+                          {resource.file_name}
+                        </div>
+                        <div class="md:hidden text-xs text-gray-400 mt-1">
+                          {resource.level} · {resource.resource_type}
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td class="hidden md:table-cell px-3 sm:px-6 py-4 text-sm text-gray-300">
@@ -313,10 +405,62 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
             />
           </div>
 
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">
+              {gettext("Thumbnail")}
+              <span class="text-gray-500 text-xs">({gettext("Optional")})</span>
+            </label>
+
+            <%= if @live_action == :edit && @form.data.thumbnail_r2_key do %>
+              <div class="mb-3 flex items-center gap-3 p-3 bg-gray-700 rounded-lg">
+                <img
+                  src={Resources.thumbnail_url(@form.data)}
+                  alt="Current thumbnail"
+                  class="w-16 h-16 object-cover rounded"
+                />
+                <div class="flex-1">
+                  <p class="text-sm text-gray-300">{gettext("Current thumbnail")}</p>
+                  <p class="text-xs text-gray-400">{gettext("Upload a new one to replace it")}</p>
+                </div>
+              </div>
+            <% end %>
+
+            <div
+              class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center bg-gray-700 hover:bg-gray-650 transition-colors"
+              phx-drop-target={@uploads.thumbnail.ref}
+            >
+              <.live_file_input upload={@uploads.thumbnail} class="hidden" />
+              <label for={@uploads.thumbnail.ref} class="cursor-pointer">
+                <.icon name="hero-photo" class="w-8 h-8 mx-auto text-gray-400" />
+                <p class="mt-1 text-xs text-gray-300">
+                  {gettext("Upload thumbnail image")}
+                </p>
+                <p class="text-xs text-gray-400">{gettext("JPG, PNG, GIF - Max 5MB")}</p>
+              </label>
+            </div>
+
+            <%= for entry <- @uploads.thumbnail.entries do %>
+              <div class="mt-2 bg-gray-700 p-3 rounded-lg flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <.icon name="hero-photo" class="w-5 h-5 text-gray-400" />
+                  <span class="text-sm text-white">{entry.client_name}</span>
+                </div>
+                <button
+                  type="button"
+                  phx-click="cancel-upload"
+                  phx-value-ref={entry.ref}
+                  class="text-red-400 hover:text-red-300"
+                >
+                  <.icon name="hero-x-mark" class="w-4 h-4" />
+                </button>
+              </div>
+            <% end %>
+          </div>
+
           <%= if @live_action == :new do %>
             <div>
               <label class="block text-sm font-medium text-gray-300 mb-2">
-                {gettext("File")}
+                {gettext("File")} <span class="text-red-400">*</span>
               </label>
               <div
                 class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center bg-gray-700 hover:bg-gray-650 transition-colors"

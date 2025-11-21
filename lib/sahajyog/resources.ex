@@ -71,6 +71,16 @@ defmodule Sahajyog.Resources do
     Resource.changeset(resource, attrs)
   end
 
+  @doc """
+  Generates a thumbnail URL for a resource.
+  Returns nil if no thumbnail is set.
+  """
+  def thumbnail_url(%Resource{thumbnail_r2_key: nil}), do: nil
+
+  def thumbnail_url(%Resource{thumbnail_r2_key: key}) when is_binary(key) do
+    Sahajyog.Resources.R2Storage.generate_download_url(key)
+  end
+
   defp apply_filters(query, filters) do
     Enum.reduce(filters, query, fn
       {:level, level}, query when is_binary(level) ->
