@@ -3,12 +3,16 @@ defmodule SahajyogWeb.StepsLive do
 
   alias Sahajyog.Progress
   alias Sahajyog.Content
+  import SahajyogWeb.VideoPlayer
 
   def mount(_params, _session, socket) do
     socket = assign(socket, :page_title, "Steps")
 
     # Fetch videos from database
     db_videos = Content.list_videos_ordered()
+
+    # Get current locale
+    locale = Gettext.get_locale(SahajyogWeb.Gettext)
 
     # Transform database videos to match the expected format
     videos =
@@ -22,7 +26,9 @@ defmodule SahajyogWeb.StepsLive do
           folder: video.category,
           video_id: video_id,
           provider: provider,
-          duration: video.duration || "N/A"
+          duration: video.duration || "N/A",
+          # Store the locale when video is loaded
+          locale: locale
         }
       end)
 
@@ -54,12 +60,17 @@ defmodule SahajyogWeb.StepsLive do
       |> assign(:sidebar_open, false)
       |> assign(:watched_videos, watched_videos)
       |> assign(:sidebar_visible, true)
+      |> assign(:locale, locale)
 
     {:ok, socket}
   end
 
   def handle_event("select_video", %{"id" => id}, socket) do
     video = Enum.find(socket.assigns.videos, &(&1.id == String.to_integer(id)))
+
+    # Update the video's locale to current locale when selected
+    video = Map.put(video, :locale, socket.assigns.locale)
+
     {:noreply, assign(socket, :current_video, video)}
   end
 
@@ -163,17 +174,11 @@ defmodule SahajyogWeb.StepsLive do
           <%!-- Current video player --%>
           <div class="sticky top-0 z-10 bg-gray-900">
             <div class="aspect-video bg-black">
-              <iframe
-                src={
-                  Sahajyog.VideoProvider.embed_url(@current_video.video_id, @current_video.provider)
-                }
-                class="w-full h-full"
-                frameborder="0"
-                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                allowfullscreen
-                referrerpolicy="strict-origin-when-cross-origin"
-              >
-              </iframe>
+              <.video_player
+                video_id={@current_video.video_id}
+                provider={@current_video.provider}
+                locale={@current_video.locale}
+              />
             </div>
             <div class="p-4 border-b border-gray-700">
               <h1 class="text-lg font-bold mb-2">{@current_video.title}</h1>
@@ -270,17 +275,11 @@ defmodule SahajyogWeb.StepsLive do
 
             <%!-- Video player --%>
             <div class="flex-1 bg-black rounded-lg overflow-hidden">
-              <iframe
-                src={
-                  Sahajyog.VideoProvider.embed_url(@current_video.video_id, @current_video.provider)
-                }
-                class="w-full h-full"
-                frameborder="0"
-                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                allowfullscreen
-                referrerpolicy="strict-origin-when-cross-origin"
-              >
-              </iframe>
+              <.video_player
+                video_id={@current_video.video_id}
+                provider={@current_video.provider}
+                locale={@current_video.locale}
+              />
             </div>
 
             <%!-- Mark as watched button --%>

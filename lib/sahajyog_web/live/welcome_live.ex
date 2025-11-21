@@ -2,15 +2,20 @@ defmodule SahajyogWeb.WelcomeLive do
   use SahajyogWeb, :live_view
 
   alias Sahajyog.Content
+  import SahajyogWeb.VideoPlayer
 
   def mount(_params, _session, socket) do
     welcome_videos = Content.list_videos_by_category("Welcome")
     current_video = List.first(welcome_videos)
 
+    # Get current locale
+    locale = Gettext.get_locale(SahajyogWeb.Gettext)
+
     socket =
       socket
       |> assign(:page_title, "Welcome")
       |> assign(:current_video, current_video)
+      |> assign(:locale, locale)
 
     {:ok, socket}
   end
@@ -36,14 +41,11 @@ defmodule SahajyogWeb.WelcomeLive do
         <div :if={@current_video} class="mb-12">
           <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 shadow-2xl">
             <div class="aspect-video bg-black">
-              <iframe
-                src={"https://www.youtube.com/embed/#{Sahajyog.YouTube.extract_video_id(@current_video.url)}?rel=0&modestbranding=1&showinfo=0&controls=1"}
-                class="w-full h-full"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              >
-              </iframe>
+              <.video_player
+                video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
+                provider={:youtube}
+                locale={@locale}
+              />
             </div>
             <div class="p-6">
               <h2 class="text-2xl font-bold text-white mb-2">{@current_video.title}</h2>
