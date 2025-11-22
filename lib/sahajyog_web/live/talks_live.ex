@@ -1,5 +1,6 @@
 defmodule SahajyogWeb.TalksLive do
   use SahajyogWeb, :live_view
+  require Logger
 
   def mount(_params, _session, socket) do
     socket =
@@ -22,6 +23,7 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:per_page, 21)
       |> assign(:loading, false)
       |> assign(:error, nil)
+      |> assign(:retry_count, 0)
       |> stream_configure(:talks, dom_id: fn talk -> "talk-#{talk["id"]}" end)
       |> stream(:talks, [])
 
@@ -42,11 +44,15 @@ defmodule SahajyogWeb.TalksLive do
             require Logger
             Logger.error("Failed to load talks in mount: #{inspect(reason)}")
 
+            # Schedule a retry after 5 seconds for deployment scenarios
+            Process.send_after(self(), :retry_load, 5000)
+
             socket
             |> stream(:talks, [], reset: true)
             |> assign(:talks_empty?, false)
-            |> assign(:loading, false)
-            |> assign(:error, reason)
+            |> assign(:loading, true)
+            |> assign(:error, nil)
+            |> assign(:retry_count, 1)
         end
       else
         socket
@@ -319,6 +325,44 @@ defmodule SahajyogWeb.TalksLive do
   def handle_event("change_locale", %{"locale" => locale}, socket) do
     Gettext.put_locale(SahajyogWeb.Gettext, locale)
     {:noreply, assign(socket, :locale, locale)}
+  end
+
+  def handle_info(:retry_load, socket) do
+    retry_count = socket.assigns.retry_count
+
+    if retry_count < 3 do
+      require Logger
+      Logger.info("Retrying talks load (attempt #{retry_count + 1}/3)")
+
+      socket = load_filter_options(socket)
+
+      case fetch_talks(%{}) do
+        {:ok, talks, total} ->
+          {:noreply,
+           socket
+           |> stream(:talks, talks, reset: true)
+           |> assign(:total_results, total)
+           |> assign(:talks_empty?, talks == [])
+           |> assign(:loading, false)
+           |> assign(:error, nil)}
+
+        {:error, reason} ->
+          Logger.warning("Retry #{retry_count + 1} failed: #{inspect(reason)}")
+          Process.send_after(self(), :retry_load, 5000)
+
+          {:noreply,
+           socket
+           |> assign(:retry_count, retry_count + 1)
+           |> assign(:loading, true)}
+      end
+    else
+      Logger.error("All retry attempts exhausted for talks load")
+
+      {:noreply,
+       socket
+       |> assign(:loading, false)
+       |> assign(:error, "Unable to load talks. Please refresh the page.")}
+    end
   end
 
   defp apply_filters(socket, reset_page \\ true) do

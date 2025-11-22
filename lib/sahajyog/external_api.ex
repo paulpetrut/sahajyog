@@ -118,13 +118,14 @@ defmodule Sahajyog.ExternalApi do
   defp make_request(url) do
     start_time = System.monotonic_time(:millisecond)
 
-    # Simple, deployment-friendly options
+    # Deployment-friendly options with aggressive retry for 520 errors
     options = [
       connect_options: [timeout: @default_timeout],
       receive_timeout: @default_receive_timeout,
       retry: :transient,
-      max_retries: 2,
-      retry_delay: fn attempt -> attempt * 2000 end,
+      max_retries: 3,
+      retry_delay: fn attempt -> attempt * 3000 end,
+      retry_log_level: :warning,
       headers: [
         {"user-agent", "SahajyogApp/1.0"},
         {"accept", "application/json"}
