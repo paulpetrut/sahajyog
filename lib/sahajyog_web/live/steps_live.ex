@@ -161,6 +161,67 @@ defmodule SahajyogWeb.StepsLive do
     end
   end
 
+  defp video_item(assigns) do
+    ~H"""
+    <button
+      phx-click="select_video"
+      phx-value-id={@video.id}
+      class={[
+        "w-full p-3 rounded-lg text-left transition-colors flex items-start gap-3",
+        @current_video && @current_video.id == @video.id &&
+          "bg-gray-700 border border-blue-500",
+        (!@current_video || @current_video.id != @video.id) &&
+          "bg-gray-800 hover:bg-gray-700 border border-gray-700"
+      ]}
+    >
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium mb-1">{@video.title}</div>
+        <div class="text-xs text-gray-400 flex items-center gap-2">
+          <.icon name="hero-play-circle" class="w-3 h-3" />
+          <span>{@video.duration}</span>
+        </div>
+      </div>
+      <%= cond do %>
+        <% MapSet.member?(@watched_videos, @video.id) -> %>
+          <.icon name="hero-check-circle" class="w-5 h-5 text-green-500 flex-shrink-0" />
+        <% @current_video && @current_video.id == @video.id -> %>
+          <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
+        <% true -> %>
+          <div class="w-5 h-5"></div>
+      <% end %>
+    </button>
+    """
+  end
+
+  defp video_item_desktop(assigns) do
+    ~H"""
+    <button
+      phx-click="select_video"
+      phx-value-id={@video.id}
+      class={[
+        "w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-t border-gray-700 flex items-start gap-3",
+        @current_video && @current_video.id == @video.id && "bg-gray-700"
+      ]}
+    >
+      <div class="flex-1">
+        <div class="text-sm font-medium">{@video.title}</div>
+        <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
+          <.icon name="hero-play-circle" class="w-4 h-4" />
+          <span>{@video.duration}</span>
+        </div>
+      </div>
+      <%= cond do %>
+        <% MapSet.member?(@watched_videos, @video.id) -> %>
+          <.icon name="hero-check-circle" class="w-5 h-5 text-green-500 flex-shrink-0" />
+        <% @current_video && @current_video.id == @video.id -> %>
+          <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
+        <% true -> %>
+          <div class="w-5 h-5"></div>
+      <% end %>
+    </button>
+    """
+  end
+
   def render(assigns) do
     ~H"""
     <div
@@ -205,36 +266,11 @@ defmodule SahajyogWeb.StepsLive do
                 </h2>
                 <div class="space-y-2">
                   <%= for video <- folder_videos do %>
-                    <button
-                      phx-click="select_video"
-                      phx-value-id={video.id}
-                      class={[
-                        "w-full p-3 rounded-lg text-left transition-colors flex items-start gap-3",
-                        @current_video && @current_video.id == video.id &&
-                          "bg-gray-700 border border-blue-500",
-                        (!@current_video || @current_video.id != video.id) &&
-                          "bg-gray-800 hover:bg-gray-700 border border-gray-700"
-                      ]}
-                    >
-                      <div class="flex-1 min-w-0">
-                        <div class="text-sm font-medium mb-1">{video.title}</div>
-                        <div class="text-xs text-gray-400 flex items-center gap-2">
-                          <.icon name="hero-play-circle" class="w-3 h-3" />
-                          <span>{video.duration}</span>
-                        </div>
-                      </div>
-                      <%= cond do %>
-                        <% MapSet.member?(@watched_videos, video.id) -> %>
-                          <.icon
-                            name="hero-check-circle"
-                            class="w-5 h-5 text-green-500 flex-shrink-0"
-                          />
-                        <% @current_video && @current_video.id == video.id -> %>
-                          <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
-                        <% true -> %>
-                          <div class="w-5 h-5"></div>
-                      <% end %>
-                    </button>
+                    <.video_item
+                      video={video}
+                      current_video={@current_video}
+                      watched_videos={@watched_videos}
+                    />
                   <% end %>
                 </div>
               </div>
@@ -356,33 +392,11 @@ defmodule SahajyogWeb.StepsLive do
                     unless(MapSet.member?(@expanded_folders, folder_name), do: "hidden")
                   ]}>
                     <%= for video <- folder_videos do %>
-                      <button
-                        phx-click="select_video"
-                        phx-value-id={video.id}
-                        class={[
-                          "w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-t border-gray-700 flex items-start gap-3",
-                          @current_video && @current_video.id == video.id && "bg-gray-700"
-                        ]}
-                      >
-                        <div class="flex-1">
-                          <div class="text-sm font-medium">{video.title}</div>
-                          <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
-                            <.icon name="hero-play-circle" class="w-4 h-4" />
-                            <span>{video.duration}</span>
-                          </div>
-                        </div>
-                        <%= cond do %>
-                          <% MapSet.member?(@watched_videos, video.id) -> %>
-                            <.icon
-                              name="hero-check-circle"
-                              class="w-5 h-5 text-green-500 flex-shrink-0"
-                            />
-                          <% @current_video && @current_video.id == video.id -> %>
-                            <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
-                          <% true -> %>
-                            <div class="w-5 h-5"></div>
-                        <% end %>
-                      </button>
+                      <.video_item_desktop
+                        video={video}
+                        current_video={@current_video}
+                        watched_videos={@watched_videos}
+                      />
                     <% end %>
                   </div>
                 </div>

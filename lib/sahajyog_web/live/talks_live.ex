@@ -401,6 +401,72 @@ defmodule SahajyogWeb.TalksLive do
     end
   end
 
+  defp talk_card(assigns) do
+    ~H"""
+    <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all hover:shadow-lg hover:shadow-blue-500/20 group flex flex-col">
+      <div class="p-4 sm:p-6 flex flex-col flex-1">
+        <%!-- Title - fixed height --%>
+        <h3 class="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 group-hover:text-blue-400 transition-colors line-clamp-2 min-h-[3rem] sm:min-h-[3.5rem]">
+          {Map.get(@talk, "title", "Untitled")}
+        </h3>
+
+        <%!-- Metadata --%>
+        <div class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
+          <%= if date = Map.get(@talk, "date") do %>
+            <div class="flex items-center gap-2">
+              <.icon name="hero-calendar" class="w-4 h-4 flex-shrink-0" />
+              <span>{String.slice(date, 0, 4)}</span>
+            </div>
+          <% end %>
+
+          <%= if category = Map.get(@talk, "category") do %>
+            <div class="flex items-center gap-2">
+              <.icon name="hero-tag" class="w-4 h-4 flex-shrink-0" />
+              <span class="line-clamp-1">{category}</span>
+            </div>
+          <% end %>
+
+          <%= if country = Map.get(@talk, "country") do %>
+            <div class="flex items-center gap-2">
+              <.icon name="hero-map-pin" class="w-4 h-4 flex-shrink-0" />
+              <span class="line-clamp-1">{country}</span>
+            </div>
+          <% end %>
+
+          <%= case Map.get(@talk, "spoken_languages") do %>
+            <% spoken_languages when is_list(spoken_languages) and spoken_languages != [] -> %>
+              <div class="flex items-center gap-2">
+                <.icon name="hero-language" class="w-4 h-4 flex-shrink-0" />
+                <span class="line-clamp-1">{Enum.join(spoken_languages, ", ")}</span>
+              </div>
+            <% _ -> %>
+          <% end %>
+
+          <%= if duration = Map.get(@talk, "duration") do %>
+            <div class="flex items-center gap-2">
+              <.icon name="hero-clock" class="w-4 h-4" />
+              <span>{format_duration(duration)}</span>
+            </div>
+          <% end %>
+        </div>
+
+        <%!-- Action button - pushed to bottom --%>
+        <%= if web_url = Map.get(@talk, "web_url") do %>
+          <a
+            href={web_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-auto inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-xs sm:text-sm font-medium self-start"
+          >
+            <span>{gettext("View Talk")}</span>
+            <.icon name="hero-arrow-top-right-on-square" class="w-3 h-3 sm:w-4 sm:h-4" />
+          </a>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
   def render(assigns) do
     ~H"""
     <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -635,69 +701,8 @@ defmodule SahajyogWeb.TalksLive do
               class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
             >
               <%= for {id, talk} <- @streams.talks do %>
-                <div
-                  id={id}
-                  class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all hover:shadow-lg hover:shadow-blue-500/20 group flex flex-col"
-                >
-                  <div class="p-4 sm:p-6 flex flex-col flex-1">
-                    <%!-- Title - fixed height --%>
-                    <h3 class="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 group-hover:text-blue-400 transition-colors line-clamp-2 min-h-[3rem] sm:min-h-[3.5rem]">
-                      {Map.get(talk, "title", "Untitled")}
-                    </h3>
-
-                    <%!-- Metadata --%>
-                    <div class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
-                      <%= if date = Map.get(talk, "date") do %>
-                        <div class="flex items-center gap-2">
-                          <.icon name="hero-calendar" class="w-4 h-4 flex-shrink-0" />
-                          <span>{String.slice(date, 0, 4)}</span>
-                        </div>
-                      <% end %>
-
-                      <%= if category = Map.get(talk, "category") do %>
-                        <div class="flex items-center gap-2">
-                          <.icon name="hero-tag" class="w-4 h-4 flex-shrink-0" />
-                          <span class="line-clamp-1">{category}</span>
-                        </div>
-                      <% end %>
-
-                      <%= if country = Map.get(talk, "country") do %>
-                        <div class="flex items-center gap-2">
-                          <.icon name="hero-map-pin" class="w-4 h-4 flex-shrink-0" />
-                          <span class="line-clamp-1">{country}</span>
-                        </div>
-                      <% end %>
-
-                      <%= case Map.get(talk, "spoken_languages") do %>
-                        <% spoken_languages when is_list(spoken_languages) and spoken_languages != [] -> %>
-                          <div class="flex items-center gap-2">
-                            <.icon name="hero-language" class="w-4 h-4 flex-shrink-0" />
-                            <span class="line-clamp-1">{Enum.join(spoken_languages, ", ")}</span>
-                          </div>
-                        <% _ -> %>
-                      <% end %>
-
-                      <%= if duration = Map.get(talk, "duration") do %>
-                        <div class="flex items-center gap-2">
-                          <.icon name="hero-clock" class="w-4 h-4" />
-                          <span>{format_duration(duration)}</span>
-                        </div>
-                      <% end %>
-                    </div>
-
-                    <%!-- Action button - pushed to bottom --%>
-                    <%= if web_url = Map.get(talk, "web_url") do %>
-                      <a
-                        href={web_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="mt-auto inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-xs sm:text-sm font-medium self-start"
-                      >
-                        <span>{gettext("View Talk")}</span>
-                        <.icon name="hero-arrow-top-right-on-square" class="w-3 h-3 sm:w-4 sm:h-4" />
-                      </a>
-                    <% end %>
-                  </div>
+                <div id={id}>
+                  <.talk_card talk={talk} />
                 </div>
               <% end %>
             </div>
