@@ -728,9 +728,9 @@ msgstr ""
 
 #: lib/sahajyog_web/components/layouts/root.html.heex:139
 #: lib/sahajyog_web/components/mobile_menu.ex:72
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Sign out"
-msgstr "Înregistrează-te"
+msgstr "Deconectare"
 
 #: lib/sahajyog_web/live/admin/resources_live.ex:410
 #, elixir-autogen, elixir-format
