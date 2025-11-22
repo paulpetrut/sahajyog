@@ -88,6 +88,34 @@ defmodule Sahajyog.ExternalApi do
     end
   end
 
+  def fetch_translation_languages do
+    url = "#{@base_url}/meta/languages"
+
+    case make_request(url) do
+      {:ok, %{"languages" => languages}} when is_list(languages) ->
+        language_list =
+          languages
+          |> Enum.sort_by(fn lang -> -lang["talk_count"] end)
+          |> Enum.map(fn lang ->
+            %{
+              code: lang["language_code"],
+              name: lang["language_name"],
+              count: lang["talk_count"]
+            }
+          end)
+
+        {:ok, language_list}
+
+      {:ok, unexpected_body} ->
+        Logger.error("Unexpected languages response: #{inspect(unexpected_body)}")
+        {:error, "Unexpected response format"}
+
+      {:error, reason} ->
+        Logger.error("Failed to fetch translation languages: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
   defp build_search_url(query) do
     params = %{"q" => query, "lang" => "en"}
 
@@ -98,8 +126,12 @@ defmodule Sahajyog.ExternalApi do
   end
 
   defp build_talks_url(filters) do
+    # Use translation language if specified, otherwise default to "en"
+    translation_lang = filters[:translation_language]
+    lang = if translation_lang != nil && translation_lang != "", do: translation_lang, else: "en"
+
     params =
-      %{"lang" => "en", "sort_by" => "date", "sort_order" => "ASC"}
+      %{"lang" => lang, "sort_by" => "date", "sort_order" => "ASC"}
       |> maybe_add_param("country", filters[:country])
       |> maybe_add_param("year", filters[:year])
       |> maybe_add_param("category", filters[:category])

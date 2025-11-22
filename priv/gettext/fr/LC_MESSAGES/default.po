@@ -12,23 +12,23 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n>1);\n"
 
 #: lib/sahajyog_web/components/core_components.ex:342
-#: lib/sahajyog_web/live/admin/resources_live.ex:192
+#: lib/sahajyog_web/live/admin/resources_live.ex:289
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Actions"
 
-#: lib/sahajyog_web/components/layouts.ex:72
-#: lib/sahajyog_web/components/layouts.ex:84
+#: lib/sahajyog_web/components/layouts.ex:73
+#: lib/sahajyog_web/components/layouts.ex:85
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Tentative de reconnexion"
 
-#: lib/sahajyog_web/components/layouts.ex:79
+#: lib/sahajyog_web/components/layouts.ex:80
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Quelque chose s'est mal passé!"
 
-#: lib/sahajyog_web/components/layouts.ex:67
+#: lib/sahajyog_web/components/layouts.ex:68
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Nous ne trouvons pas internet"
@@ -38,247 +38,243 @@ msgstr "Nous ne trouvons pas internet"
 msgid "close"
 msgstr "fermer"
 
-#: lib/sahajyog_web/live/welcome_live.ex:90
+#: lib/sahajyog_web/live/welcome_live.ex:79
 #, elixir-autogen, elixir-format
 msgid "Browse All Talks"
 msgstr "Parcourir tous les discours"
 
-#: lib/sahajyog_web/live/welcome_live.ex:44
+#: lib/sahajyog_web/live/welcome_live.ex:36
 #, elixir-autogen, elixir-format
 msgid "Discover inner peace through meditation"
 msgstr "Découvrez la paix intérieure par la méditation"
 
-#: lib/sahajyog_web/live/welcome_live.ex:76
+#: lib/sahajyog_web/live/welcome_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "Explore our complete collection of talks and guided meditations"
 msgstr "Explorez notre collection complète de discours et méditations guidées"
 
-#: lib/sahajyog_web/live/steps_live.ex:199
+#: lib/sahajyog_web/live/steps_live.ex:302
 #, elixir-autogen, elixir-format
 msgid "Hide sidebar"
 msgstr "Masquer la barre latérale"
 
-#: lib/sahajyog_web/live/steps_live.ex:231
+#: lib/sahajyog_web/live/steps_live.ex:253
+#: lib/sahajyog_web/live/steps_live.ex:330
 #, elixir-autogen, elixir-format
 msgid "Mark as Watched"
 msgstr "Marquer comme vu"
 
-#: lib/sahajyog_web/live/welcome_live.ex:73
+#: lib/sahajyog_web/live/welcome_live.ex:62
 #, elixir-autogen, elixir-format
 msgid "Ready to Begin Your Journey?"
 msgstr "Prêt à commencer votre voyage?"
 
-#: lib/sahajyog_web/live/steps_live.ex:279
-#: lib/sahajyog_web/live/steps_live.ex:300
+#: lib/sahajyog_web/live/steps_live.ex:359
 #, elixir-autogen, elixir-format
 msgid "Reset all progress"
 msgstr "Réinitialiser tous les progrès"
 
-#: lib/sahajyog_web/live/steps_live.ex:273
-#: lib/sahajyog_web/live/steps_live.ex:295
+#: lib/sahajyog_web/live/steps_live.ex:354
 #, elixir-autogen, elixir-format
 msgid "SahajYog Content"
 msgstr "Contenu SahajYog"
 
-#: lib/sahajyog_web/live/steps_live.ex:199
+#: lib/sahajyog_web/live/steps_live.ex:302
 #, elixir-autogen, elixir-format
 msgid "Show sidebar"
 msgstr "Afficher la barre latérale"
 
-#: lib/sahajyog_web/live/welcome_live.ex:83
+#: lib/sahajyog_web/live/welcome_live.ex:72
 #, elixir-autogen, elixir-format
 msgid "Start Learning"
 msgstr "Commencer à apprendre"
 
-#: lib/sahajyog_web/live/welcome_live.ex:42
+#: lib/sahajyog_web/live/welcome_live.ex:34
 #, elixir-autogen, elixir-format
 msgid "Welcome to Sahaja Yoga"
 msgstr "Bienvenue à Sahaja Yoga"
 
-#: lib/sahajyog_web/live/steps_live.ex:143
+#: lib/sahajyog_web/live/steps_live.ex:158
 #, elixir-autogen, elixir-format
 msgid "Advanced Topics"
 msgstr "Sujets avancés"
 
-#: lib/sahajyog_web/live/steps_live.ex:144
+#: lib/sahajyog_web/live/steps_live.ex:159
 #, elixir-autogen, elixir-format
 msgid "Excerpts"
 msgstr "Extraits"
 
-#: lib/sahajyog_web/live/steps_live.ex:142
+#: lib/sahajyog_web/live/steps_live.ex:157
 #, elixir-autogen, elixir-format
 msgid "Getting Started"
 msgstr "Pour commencer"
 
-#: lib/sahajyog_web/live/talks_live.ex:773
+#: lib/sahajyog_web/live/talks_live.ex:713
 #, elixir-autogen, elixir-format
 msgid "Active filters:"
 msgstr "Filtres actifs :"
 
-#: lib/sahajyog_web/live/talks_live.ex:717
+#: lib/sahajyog_web/live/talks_live.ex:638
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Advanced Filters"
 msgstr "Sujets avancés"
 
-#: lib/sahajyog_web/live/talks_live.ex:738
+#: lib/sahajyog_web/live/talks_live.ex:659
 #, elixir-autogen, elixir-format
 msgid "All Categories"
 msgstr "Toutes les catégories"
 
-#: lib/sahajyog_web/live/talks_live.ex:676
+#: lib/sahajyog_web/live/talks_live.ex:597
 #, elixir-autogen, elixir-format
 msgid "All Countries"
 msgstr "Tous les pays"
 
-#: lib/sahajyog_web/live/talks_live.ex:757
+#: lib/sahajyog_web/live/talks_live.ex:678
 #, elixir-autogen, elixir-format
 msgid "All Languages"
 msgstr "Toutes les langues"
 
-#: lib/sahajyog_web/live/talks_live.ex:695
+#: lib/sahajyog_web/live/talks_live.ex:616
 #, elixir-autogen, elixir-format
 msgid "All Years"
 msgstr "Toutes les années"
 
-#: lib/sahajyog_web/live/talks_live.ex:731
+#: lib/sahajyog_web/live/talks_live.ex:652
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr "Catégorie"
 
-#: lib/sahajyog_web/live/talks_live.ex:803
+#: lib/sahajyog_web/live/talks_live.ex:754
 #, elixir-autogen, elixir-format
 msgid "Clear all"
 msgstr "Tout effacer"
 
-#: lib/sahajyog_web/live/talks_live.ex:669
+#: lib/sahajyog_web/live/talks_live.ex:590
 #, elixir-autogen, elixir-format
 msgid "Country"
 msgstr "Pays"
 
-#: lib/sahajyog_web/live/talks_live.ex:827
+#: lib/sahajyog_web/live/talks_live.ex:778
 #, elixir-autogen, elixir-format
 msgid "Error Loading Talks"
 msgstr "Erreur lors du chargement des discours"
 
-#: lib/sahajyog_web/live/talks_live.ex:607
+#: lib/sahajyog_web/live/talks_live.ex:543
 #, elixir-autogen, elixir-format
 msgid "Explore spiritual teachings and wisdom"
 msgstr "Explorer les enseignements spirituels et la sagesse"
 
-#: lib/sahajyog_web/live/talks_live.ex:717
+#: lib/sahajyog_web/live/talks_live.ex:638
 #, elixir-autogen, elixir-format
 msgid "Hide"
 msgstr "Masquer"
 
-#: lib/sahajyog_web/live/talks_live.ex:819
+#: lib/sahajyog_web/live/talks_live.ex:770
 #, elixir-autogen, elixir-format
 msgid "Loading talks..."
 msgstr "Chargement des discours..."
 
-#: lib/sahajyog_web/live/talks_live.ex:661
+#: lib/sahajyog_web/live/talks_live.ex:582
 #, elixir-autogen, elixir-format
 msgid "Newest"
 msgstr "Plus récents"
 
-#: lib/sahajyog_web/live/talks_live.ex:982
+#: lib/sahajyog_web/live/talks_live.ex:872
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "Suivant"
 
-#: lib/sahajyog_web/live/talks_live.ex:835
+#: lib/sahajyog_web/live/talks_live.ex:786
 #, elixir-autogen, elixir-format
 msgid "No talks available"
 msgstr "Aucun discours disponible"
 
-#: lib/sahajyog_web/live/talks_live.ex:662
+#: lib/sahajyog_web/live/talks_live.ex:583
 #, elixir-autogen, elixir-format
 msgid "Oldest"
 msgstr "Plus anciens"
 
-#: lib/sahajyog_web/live/talks_live.ex:944
+#: lib/sahajyog_web/live/talks_live.ex:834
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr "Précédent"
 
-#: lib/sahajyog_web/live/talks_live.ex:622
-#, elixir-autogen, elixir-format
-msgid "Refresh"
-msgstr "Actualiser"
-
-#: lib/sahajyog_web/live/talks_live.ex:660
+#: lib/sahajyog_web/live/talks_live.ex:581
 #, elixir-autogen, elixir-format
 msgid "Relevance"
 msgstr "Pertinence"
 
-#: lib/sahajyog_web/live/talks_live.ex:606
+#: lib/sahajyog_web/live/talks_live.ex:540
 #, elixir-autogen, elixir-format
 msgid "Sahaja Yoga Talks"
 msgstr "Discours Sahaja Yoga"
 
-#: lib/sahajyog_web/live/talks_live.ex:633
-#: lib/sahajyog_web/live/talks_live.ex:776
+#: lib/sahajyog_web/live/talks_live.ex:554
+#: lib/sahajyog_web/live/talks_live.ex:716
 #, elixir-autogen, elixir-format
 msgid "Search"
 msgstr "Rechercher"
 
-#: lib/sahajyog_web/live/talks_live.ex:640
+#: lib/sahajyog_web/live/talks_live.ex:561
 #, elixir-autogen, elixir-format
 msgid "Search talks..."
 msgstr "Rechercher des discours..."
 
-#: lib/sahajyog_web/live/talks_live.ex:717
+#: lib/sahajyog_web/live/talks_live.ex:638
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr "Afficher"
 
-#: lib/sahajyog_web/live/talks_live.ex:917
+#: lib/sahajyog_web/live/talks_live.ex:807
 #, elixir-autogen, elixir-format
 msgid "Showing"
 msgstr "Affichage"
 
-#: lib/sahajyog_web/live/talks_live.ex:653
+#: lib/sahajyog_web/live/talks_live.ex:574
 #, elixir-autogen, elixir-format
 msgid "Sort By"
 msgstr "Trier par"
 
-#: lib/sahajyog_web/live/talks_live.ex:750
+#: lib/sahajyog_web/live/talks_live.ex:671
 #, elixir-autogen, elixir-format
 msgid "Spoken Language"
 msgstr "Langue parlée"
 
-#: lib/sahajyog_web/live/talks_live.ex:903
+#: lib/sahajyog_web/live/talks_live.ex:523
 #, elixir-autogen, elixir-format
 msgid "View Talk"
 msgstr "Voir le discours"
 
-#: lib/sahajyog_web/live/talks_live.ex:688
+#: lib/sahajyog_web/live/talks_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Year"
 msgstr "Année"
 
-#: lib/sahajyog_web/live/talks_live.ex:925
+#: lib/sahajyog_web/live/talks_live.ex:815
 #, elixir-autogen, elixir-format
 msgid "of"
 msgstr "de"
 
-#: lib/sahajyog_web/live/talks_live.ex:926
+#: lib/sahajyog_web/live/talks_live.ex:816
 #, elixir-autogen, elixir-format
 msgid "talk"
 msgid_plural "talks"
 msgstr[0] "discours"
 msgstr[1] "discours"
 
-#: lib/sahajyog_web/live/talks_live.ex:921
+#: lib/sahajyog_web/live/talks_live.ex:811
 #, elixir-autogen, elixir-format
 msgid "to"
 msgstr "à"
 
-#: lib/sahajyog_web/live/steps_live.ex:239
+#: lib/sahajyog_web/live/steps_live.ex:283
+#: lib/sahajyog_web/live/steps_live.ex:338
 #, elixir-autogen, elixir-format
 msgid "No videos available"
 msgstr "Aucune vidéo disponible"
 
-#: lib/sahajyog_web/live/steps_live.ex:240
+#: lib/sahajyog_web/live/steps_live.ex:284
+#: lib/sahajyog_web/live/steps_live.ex:339
 #, elixir-autogen, elixir-format
 msgid "Please add videos to get started"
 msgstr "Veuillez ajouter des vidéos pour commencer"
@@ -288,40 +284,40 @@ msgstr "Veuillez ajouter des vidéos pour commencer"
 msgid "Dev mode:"
 msgstr "Mode développement :"
 
-#: lib/sahajyog_web/live/user_live/login.ex:141
+#: lib/sahajyog_web/live/user_live/login.ex:143
 #, elixir-autogen, elixir-format
 msgid "Don't have an account?"
 msgstr "Vous n'avez pas de compte ?"
 
 #: lib/sahajyog_web/live/user_live/login.ex:48
-#: lib/sahajyog_web/live/user_live/login.ex:123
+#: lib/sahajyog_web/live/user_live/login.ex:124
 #: lib/sahajyog_web/live/user_live/registration.ex:29
-#: lib/sahajyog_web/live/user_live/settings.ex:23
+#: lib/sahajyog_web/live/user_live/settings.ex:32
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-mail"
 
-#: lib/sahajyog_web/live/user_live/login.ex:59
+#: lib/sahajyog_web/live/user_live/login.ex:60
 #, elixir-autogen, elixir-format
 msgid "Enter your password"
 msgstr "Entrez votre mot de passe"
 
-#: lib/sahajyog_web/live/user_live/login.ex:73
+#: lib/sahajyog_web/live/user_live/login.ex:74
 #, elixir-autogen, elixir-format
 msgid "Keep me signed in"
 msgstr "Rester connecté"
 
-#: lib/sahajyog_web/live/user_live/login.ex:108
+#: lib/sahajyog_web/live/user_live/login.ex:109
 #, elixir-autogen, elixir-format
 msgid "Magic link (passwordless)"
 msgstr "Lien magique (sans mot de passe)"
 
-#: lib/sahajyog_web/live/user_live/login.ex:89
+#: lib/sahajyog_web/live/user_live/login.ex:90
 #, elixir-autogen, elixir-format
 msgid "OR"
 msgstr "OU"
 
-#: lib/sahajyog_web/live/user_live/login.ex:58
+#: lib/sahajyog_web/live/user_live/login.ex:59
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Mot de passe"
@@ -331,12 +327,12 @@ msgstr "Mot de passe"
 msgid "Please reauthenticate to continue"
 msgstr "Veuillez vous authentifier à nouveau pour continuer"
 
-#: lib/sahajyog_web/live/user_live/login.ex:131
+#: lib/sahajyog_web/live/user_live/login.ex:133
 #, elixir-autogen, elixir-format
 msgid "Send magic link"
 msgstr "Envoyer le lien magique"
 
-#: lib/sahajyog_web/live/user_live/login.ex:83
+#: lib/sahajyog_web/live/user_live/login.ex:84
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Se connecter"
@@ -346,7 +342,7 @@ msgstr "Se connecter"
 msgid "Sign in to your account to continue"
 msgstr "Connectez-vous à votre compte pour continuer"
 
-#: lib/sahajyog_web/live/user_live/login.ex:143
+#: lib/sahajyog_web/live/user_live/login.ex:145
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "S'inscrire"
@@ -356,7 +352,7 @@ msgstr "S'inscrire"
 msgid "View mailbox"
 msgstr "Voir la boîte aux lettres"
 
-#: lib/sahajyog_web/live/user_live/login.ex:116
+#: lib/sahajyog_web/live/user_live/login.ex:117
 #, elixir-autogen, elixir-format
 msgid "We'll email you a secure link to sign in without a password."
 msgstr "Nous vous enverrons un lien sécurisé par e-mail pour vous connecter sans mot de passe."
@@ -367,7 +363,7 @@ msgid "Welcome back"
 msgstr "Bon retour"
 
 #: lib/sahajyog_web/live/user_live/login.ex:49
-#: lib/sahajyog_web/live/user_live/login.ex:124
+#: lib/sahajyog_web/live/user_live/login.ex:125
 #, elixir-autogen, elixir-format
 msgid "you@example.com"
 msgstr "vous@exemple.fr"
@@ -392,7 +388,8 @@ msgstr "Créer un compte"
 msgid "Creating account..."
 msgstr "Création du compte..."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:107
+#: lib/sahajyog_web/components/layouts/root.html.heex:149
+#: lib/sahajyog_web/components/mobile_menu.ex:80
 #: lib/sahajyog_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
@@ -428,98 +425,74 @@ msgstr "Seulement si vous avez défini un mot de passe ci-dessus"
 msgid "Password (optional)"
 msgstr "Mot de passe (optionnel)"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:104
+#: lib/sahajyog_web/components/layouts/root.html.heex:146
+#: lib/sahajyog_web/components/mobile_menu.ex:77
 #: lib/sahajyog_web/live/user_live/registration.ex:69
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "S'inscrire"
-
-#: lib/sahajyog_web/live/talks_live.ex:154
-#, elixir-autogen, elixir-format
-msgid "Connection timeout. Please try again later."
-msgstr "Délai de connexion dépassé. Veuillez réessayer plus tard."
-
-#: lib/sahajyog_web/live/talks_live.ex:149
-#, elixir-autogen, elixir-format
-msgid "The talks service is temporarily unavailable. Please try again later."
-msgstr "Le service de discours est temporairement indisponible. Veuillez réessayer plus tard."
-
-#: lib/sahajyog_web/live/talks_live.ex:144
-#, elixir-autogen, elixir-format
-msgid "The talks service returned an unexpected response. Please try again later."
-msgstr "Le service de discours a renvoyé une réponse inattendue. Veuillez réessayer plus tard."
-
-#: lib/sahajyog_web/live/talks_live.ex:159
-#, elixir-autogen, elixir-format
-msgid "Unable to connect to the talks service. Please try again later."
-msgstr "Impossible de se connecter au service de discours. Veuillez réessayer plus tard."
-
-#: lib/sahajyog_web/live/talks_live.ex:164
-#, elixir-autogen, elixir-format
-msgid "Unable to load talks. Please try again later."
-msgstr "Impossible de charger les discours. Veuillez réessayer plus tard."
 
 #: lib/sahajyog_web/live/user_live/registration.ex:104
 #, elixir-autogen, elixir-format
 msgid "Account created but we couldn't send the confirmation email. Please contact support."
 msgstr "Compte créé mais nous n'avons pas pu envoyer l'e-mail de confirmation. Veuillez contacter le support."
 
-#: lib/sahajyog_web/live/user_live/login.ex:195
+#: lib/sahajyog_web/live/user_live/login.ex:197
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Vérifiez votre e-mail ! Si votre adresse est dans notre système, vous recevrez bientôt un lien de connexion."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:127
+#: lib/sahajyog_web/live/user_live/settings.ex:144
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Un lien pour confirmer votre changement d'e-mail a été envoyé à la nouvelle adresse."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:14
+#: lib/sahajyog_web/live/user_live/settings.ex:15
 #, elixir-autogen, elixir-format
 msgid "Account Settings"
 msgstr "Paramètres du compte"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:28
+#: lib/sahajyog_web/live/user_live/settings.ex:38
 #, elixir-autogen, elixir-format
 msgid "Change Email"
 msgstr "Changer l'e-mail"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:27
+#: lib/sahajyog_web/live/user_live/settings.ex:37
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr "Modification..."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:60
+#: lib/sahajyog_web/live/user_live/settings.ex:72
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
 msgstr "Confirmer le nouveau mot de passe"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:79
+#: lib/sahajyog_web/live/user_live/settings.ex:96
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr "Le lien de changement d'e-mail est invalide ou a expiré."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:76
+#: lib/sahajyog_web/live/user_live/settings.ex:93
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr "E-mail modifié avec succès."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:15
+#: lib/sahajyog_web/live/user_live/settings.ex:17
 #, elixir-autogen, elixir-format
 msgid "Manage your account email address and password settings"
 msgstr "Gérez l'adresse e-mail et les paramètres de mot de passe de votre compte"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:53
+#: lib/sahajyog_web/live/user_live/settings.ex:65
 #, elixir-autogen, elixir-format
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:64
+#: lib/sahajyog_web/live/user_live/settings.ex:77
 #, elixir-autogen, elixir-format
 msgid "Save Password"
 msgstr "Enregistrer le mot de passe"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:63
+#: lib/sahajyog_web/live/user_live/settings.ex:76
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Enregistrement..."
@@ -559,170 +532,221 @@ msgstr "Bon retour !"
 msgid "Your account has been confirmed! Please log in with your password."
 msgstr "Votre compte a été confirmé ! Veuillez vous connecter avec votre mot de passe."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:100
-#, elixir-autogen, elixir-format
-msgid "Log out"
-msgstr "Se déconnecter"
-
-#: lib/sahajyog_web/components/layouts/root.html.heex:94
-#, elixir-autogen, elixir-format
-msgid "Settings"
-msgstr "Paramètres"
-
-#: lib/sahajyog_web/live/admin/resources_live.ex:168
+#: lib/sahajyog_web/live/admin/resources_live.ex:265
 #, elixir-autogen, elixir-format
 msgid "+ Upload New Resource"
 msgstr "+ Téléverser une Nouvelle Ressource"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:62
+#: lib/sahajyog_web/components/layouts/root.html.heex:65
+#: lib/sahajyog_web/components/mobile_menu.ex:44
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Admin"
 msgstr "Admin Videos"
 
-#: lib/sahajyog_web/live/resources_live.ex:72
+#: lib/sahajyog_web/live/resources_live.ex:105
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:230
+#: lib/sahajyog_web/live/admin/resources_live.ex:352
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:151
+#: lib/sahajyog_web/live/admin/resources_live.ex:248
 #, elixir-autogen, elixir-format
 msgid "Back to Resources"
 msgstr "Retour aux Ressources"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:337
+#: lib/sahajyog_web/live/admin/resources_live.ex:544
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:302
+#: lib/sahajyog_web/live/admin/resources_live.ex:473
 #, elixir-autogen, elixir-format
 msgid "Click to upload or drag and drop"
 msgstr "Cliquez pour téléverser ou glissez-déposez"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:233
+#: lib/sahajyog_web/live/admin/resources_live.ex:355
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:264
+#: lib/sahajyog_web/live/admin/resources_live.ex:383
 #, elixir-autogen, elixir-format
 msgid "Description"
 msgstr ""
 
-#: lib/sahajyog_web/live/resources_live.ex:127
+#: lib/sahajyog_web/live/resources_live.ex:181
+#: lib/sahajyog_web/live/resources_live.ex:237
 #, elixir-autogen, elixir-format
 msgid "Download"
 msgstr "Télécharger"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:189
+#: lib/sahajyog_web/live/admin/resources_live.ex:286
 #, elixir-autogen, elixir-format
 msgid "Downloads"
 msgstr "Téléchargements"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:225
+#: lib/sahajyog_web/live/admin/resources_live.ex:347
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:254
+#: lib/sahajyog_web/live/admin/resources_live.ex:373
 #, elixir-autogen, elixir-format
 msgid "Edit Resource"
 msgstr "Modifier la Ressource"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:292
+#: lib/sahajyog_web/live/admin/resources_live.ex:463
 #, elixir-autogen, elixir-format
 msgid "File"
 msgstr "Fichier"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:180
-#: lib/sahajyog_web/live/admin/resources_live.ex:271
+#: lib/sahajyog_web/live/admin/resources_live.ex:277
+#: lib/sahajyog_web/live/admin/resources_live.ex:390
 #, elixir-autogen, elixir-format
 msgid "Level"
 msgstr "Niveau"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:304
+#: lib/sahajyog_web/live/admin/resources_live.ex:475
 #, elixir-autogen, elixir-format
 msgid "Max 500MB"
 msgstr "Maximum 500 Mo"
 
-#: lib/sahajyog_web/live/resources_live.ex:136
+#: lib/sahajyog_web/live/resources_live.ex:191
 #, elixir-autogen, elixir-format
 msgid "No resources available for your level"
 msgstr "Aucune ressource disponible pour votre niveau"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:317
-#, elixir-autogen, elixir-format
-msgid "Remove"
-msgstr ""
-
-#: lib/sahajyog_web/components/layouts/root.html.heex:84
-#: lib/sahajyog_web/components/layouts/root.html.heex:90
-#: lib/sahajyog_web/live/admin/resources_live.ex:162
-#: lib/sahajyog_web/live/resources_live.ex:49
+#: lib/sahajyog_web/components/layouts/root.html.heex:87
+#: lib/sahajyog_web/components/layouts/root.html.heex:93
+#: lib/sahajyog_web/components/mobile_menu.ex:50
+#: lib/sahajyog_web/components/mobile_menu.ex:57
+#: lib/sahajyog_web/live/admin/resources_live.ex:259
+#: lib/sahajyog_web/live/resources_live.ex:82
 #, elixir-autogen, elixir-format
 msgid "Resources"
 msgstr "Ressources"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:273
+#: lib/sahajyog_web/live/admin/resources_live.ex:392
 #, elixir-autogen, elixir-format
 msgid "Select a level"
 msgstr "Sélectionnez un niveau"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:284
+#: lib/sahajyog_web/live/admin/resources_live.ex:403
 #, elixir-autogen, elixir-format
 msgid "Select a type"
 msgstr "Sélectionnez un type"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:186
+#: lib/sahajyog_web/live/admin/resources_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "Size"
 msgstr "Taille"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:177
-#: lib/sahajyog_web/live/admin/resources_live.ex:260
+#: lib/sahajyog_web/live/admin/resources_live.ex:274
+#: lib/sahajyog_web/live/admin/resources_live.ex:379
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:183
-#: lib/sahajyog_web/live/admin/resources_live.ex:282
+#: lib/sahajyog_web/live/admin/resources_live.ex:280
+#: lib/sahajyog_web/live/admin/resources_live.ex:401
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr "Type"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:331
+#: lib/sahajyog_web/live/admin/resources_live.ex:538
 #, elixir-autogen, elixir-format
 msgid "Update Resource"
 msgstr "Mettre à jour la Ressource"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:254
-#: lib/sahajyog_web/live/admin/resources_live.ex:330
+#: lib/sahajyog_web/live/admin/resources_live.ex:373
+#: lib/sahajyog_web/live/admin/resources_live.ex:537
 #, elixir-autogen, elixir-format
 msgid "Upload Resource"
 msgstr "Téléverser une Ressource"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:81
+#: lib/sahajyog_web/components/layouts/root.html.heex:84
+#: lib/sahajyog_web/components/mobile_menu.ex:47
 #, elixir-autogen, elixir-format
 msgid "Videos"
 msgstr "Vidéos"
 
-#: lib/sahajyog_web/live/resources_live.ex:52
+#: lib/sahajyog_web/live/resources_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "Your Level"
 msgstr "Votre Niveau"
 
-#: lib/sahajyog_web/user_auth.ex:243
-#, elixir-autogen, elixir-format
-msgid "You must re-authenticate to access this page."
-msgstr "Vous devez vous authentifier à nouveau pour accéder à cette page."
+#: lib/sahajyog_web/components/layouts/root.html.heex:133
+#: lib/sahajyog_web/components/mobile_menu.ex:66
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Account settings"
+msgstr "Paramètres du compte"
 
-#: lib/sahajyog_web/user_auth.ex:226
-#: lib/sahajyog_web/user_auth.ex:286
+#: lib/sahajyog_web/live/user_live/settings.ex:45
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Change Password"
+msgstr "Enregistrer le mot de passe"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:422
 #, elixir-autogen, elixir-format
-msgid "You must log in to access this page."
-msgstr "Vous devez vous connecter pour accéder à cette page."
+msgid "Current thumbnail"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:22
+#, elixir-autogen, elixir-format
+msgid "Email Address"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:697
+#, elixir-autogen, elixir-format
+msgid "English (Default)"
+msgstr "Anglais (Par défaut)"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:438
+#, elixir-autogen, elixir-format
+msgid "JPG, PNG, GIF - Max 5MB"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:411
+#, elixir-autogen, elixir-format
+msgid "Optional"
+msgstr ""
+
+#: lib/sahajyog_web/live/resources_live.ex:174
+#, elixir-autogen, elixir-format
+msgid "Preview"
+msgstr ""
+
+#: lib/sahajyog_web/live/resources_live.ex:230
+#, elixir-autogen, elixir-format
+msgid "Preview not available for this file type"
+msgstr ""
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:139
+#: lib/sahajyog_web/components/mobile_menu.ex:72
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Sign out"
+msgstr "S'inscrire"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:410
+#, elixir-autogen, elixir-format
+msgid "Thumbnail"
+msgstr ""
+
+#: lib/sahajyog_web/live/talks_live.ex:690
+#, elixir-autogen, elixir-format
+msgid "Translation Language"
+msgstr "Langue de Traduction"
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:423
+#, elixir-autogen, elixir-format
+msgid "Upload a new one to replace it"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:436
+#, elixir-autogen, elixir-format
+msgid "Upload thumbnail image"
+msgstr ""

@@ -2,7 +2,11 @@ defmodule SahajyogWeb.TalksLive do
   use SahajyogWeb, :live_view
   require Logger
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    # Get current locale from session and map to API language code
+    locale = session["locale"] || "en"
+    default_translation_lang = map_locale_to_api_code(locale)
+
     socket =
       socket
       |> assign(:page_title, "Talks")
@@ -11,11 +15,13 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:selected_year, "")
       |> assign(:selected_category, "")
       |> assign(:selected_spoken_language, "")
+      |> assign(:selected_translation_language, default_translation_lang)
       |> assign(:sort_by, "date_asc")
       |> assign(:countries, [])
       |> assign(:years, [])
       |> assign(:categories, [])
       |> assign(:spoken_languages, [])
+      |> assign(:translation_languages, [])
       |> assign(:total_results, 0)
       |> assign(:talks_empty?, true)
       |> assign(:show_advanced_filters, false)
@@ -31,7 +37,14 @@ defmodule SahajyogWeb.TalksLive do
       if connected?(socket) do
         socket = load_filter_options(socket)
 
-        case fetch_talks(%{}) do
+        initial_filters = %{
+          translation_language: default_translation_lang,
+          sort_by: "date_asc",
+          page: 1,
+          per_page: 21
+        }
+
+        case fetch_talks(initial_filters) do
           {:ok, talks, total} ->
             socket
             |> stream(:talks, talks, reset: true)
@@ -221,11 +234,18 @@ defmodule SahajyogWeb.TalksLive do
           []
       end
 
+    translation_languages =
+      case Sahajyog.ExternalApi.fetch_translation_languages() do
+        {:ok, languages} -> languages
+        {:error, _} -> []
+      end
+
     socket
     |> assign(:countries, countries)
     |> assign(:years, years)
     |> assign(:categories, categories)
     |> assign(:spoken_languages, spoken_languages)
+    |> assign(:translation_languages, translation_languages)
   end
 
   def handle_event("apply_all_filters", params, socket) do
@@ -236,6 +256,7 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:selected_year, params["year"] || "")
       |> assign(:selected_category, params["category"] || "")
       |> assign(:selected_spoken_language, params["spoken_language"] || "")
+      |> assign(:selected_translation_language, params["translation_language"] || "")
       |> assign(:sort_by, params["sort_by"] || "date_asc")
 
     apply_filters(socket)
@@ -275,6 +296,12 @@ defmodule SahajyogWeb.TalksLive do
     apply_filters(socket)
   end
 
+  def handle_event("filter_translation_language", params, socket) do
+    language = params["translation_language"] || params["value"] || ""
+    socket = assign(socket, :selected_translation_language, language)
+    apply_filters(socket)
+  end
+
   def handle_event("toggle_advanced_filters", _params, socket) do
     {:noreply, assign(socket, :show_advanced_filters, !socket.assigns.show_advanced_filters)}
   end
@@ -287,6 +314,7 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:selected_year, "")
       |> assign(:selected_category, "")
       |> assign(:selected_spoken_language, "")
+      |> assign(:selected_translation_language, "")
       |> assign(:sort_by, "date_asc")
 
     apply_filters(socket)
@@ -324,7 +352,14 @@ defmodule SahajyogWeb.TalksLive do
 
   def handle_event("change_locale", %{"locale" => locale}, socket) do
     Gettext.put_locale(SahajyogWeb.Gettext, locale)
-    {:noreply, assign(socket, :locale, locale)}
+    translation_lang = map_locale_to_api_code(locale)
+
+    socket =
+      socket
+      |> assign(:locale, locale)
+      |> assign(:selected_translation_language, translation_lang)
+
+    apply_filters(socket)
   end
 
   def handle_info(:retry_load, socket) do
@@ -381,6 +416,7 @@ defmodule SahajyogWeb.TalksLive do
       year: socket.assigns.selected_year,
       category: socket.assigns.selected_category,
       spoken_language: socket.assigns.selected_spoken_language,
+      translation_language: socket.assigns.selected_translation_language,
       sort_by: socket.assigns.sort_by,
       page: socket.assigns.current_page,
       per_page: socket.assigns.per_page
@@ -420,6 +456,18 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   defp format_duration(_), do: nil
+
+  defp map_locale_to_api_code(locale) do
+    case locale do
+      "en" -> ""
+      "ro" -> "ro"
+      "de" -> "de"
+      "es" -> "es"
+      "fr" -> "fr"
+      "it" -> "it"
+      _ -> ""
+    end
+  end
 
   defp page_numbers(current_page, total_pages) do
     cond do
@@ -491,6 +539,26 @@ defmodule SahajyogWeb.TalksLive do
               <.icon name="hero-clock" class="w-4 h-4" />
               <span>{format_duration(duration)}</span>
             </div>
+          <% end %>
+
+          <%= case Map.get(@talk, "video_subtitles") do %>
+            <% subtitles when is_list(subtitles) and subtitles != [] -> %>
+              <div class="flex items-start gap-2">
+                <.icon name="hero-language" class="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <div class="flex flex-wrap gap-1">
+                  <%= for subtitle <- Enum.take(subtitles, 8) do %>
+                    <span class="px-1.5 py-0.5 bg-gray-700 text-gray-300 rounded text-xs">
+                      {String.upcase(subtitle)}
+                    </span>
+                  <% end %>
+                  <%= if length(subtitles) > 8 do %>
+                    <span class="px-1.5 py-0.5 text-gray-500 text-xs">
+                      +{length(subtitles) - 8}
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% _ -> %>
           <% end %>
         </div>
 
@@ -566,20 +634,22 @@ defmodule SahajyogWeb.TalksLive do
                   </select>
                 </div>
 
-                <%!-- Country Filter --%>
+                <%!-- Translation Language Filter --%>
                 <div>
                   <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
-                    {gettext("Country")}
+                    {gettext("Translation Language")}
                   </label>
                   <select
-                    name="country"
-                    value={@selected_country}
+                    name="translation_language"
+                    value={@selected_translation_language}
                     class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="">{gettext("All Countries")}</option>
-                    <%= for country <- @countries do %>
-                      <option value={country}>
-                        {country}
+                    <option value="" selected={@selected_translation_language == ""}>
+                      {gettext("English (Default)")}
+                    </option>
+                    <%= for lang <- @translation_languages do %>
+                      <option value={lang.code} selected={@selected_translation_language == lang.code}>
+                        {lang.name} ({lang.count})
                       </option>
                     <% end %>
                   </select>
@@ -627,7 +697,26 @@ defmodule SahajyogWeb.TalksLive do
               <%!-- Advanced Filters --%>
               <%= if @show_advanced_filters do %>
                 <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-700">
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <%!-- Country Filter --%>
+                    <div>
+                      <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
+                        {gettext("Country")}
+                      </label>
+                      <select
+                        name="country"
+                        value={@selected_country}
+                        class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="">{gettext("All Countries")}</option>
+                        <%= for country <- @countries do %>
+                          <option value={country}>
+                            {country}
+                          </option>
+                        <% end %>
+                      </select>
+                    </div>
+
                     <%!-- Category Filter --%>
                     <div>
                       <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
@@ -671,7 +760,7 @@ defmodule SahajyogWeb.TalksLive do
             </form>
 
             <%!-- Active filters and clear button --%>
-            <%= if @search_query != "" or @selected_country != "" or @selected_year != "" or @selected_category != "" or @selected_spoken_language != "" do %>
+            <%= if @search_query != "" or @selected_country != "" or @selected_year != "" or @selected_category != "" or @selected_spoken_language != "" or @selected_translation_language != "" do %>
               <div class="mt-3 sm:mt-4 flex items-center gap-2 flex-wrap">
                 <span class="text-xs sm:text-sm text-gray-400">{gettext("Active filters:")}</span>
                 <%= if @search_query != "" do %>
@@ -697,6 +786,17 @@ defmodule SahajyogWeb.TalksLive do
                 <%= if @selected_spoken_language != "" do %>
                   <span class="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded-full">
                     {@selected_spoken_language}
+                  </span>
+                <% end %>
+                <%= if @selected_translation_language != "" do %>
+                  <span class="px-2 sm:px-3 py-1 bg-purple-600 text-white text-xs sm:text-sm rounded-full">
+                    {Enum.find(@translation_languages, fn l ->
+                      l.code == @selected_translation_language
+                    end)
+                    |> case do
+                      %{name: name} -> name
+                      _ -> @selected_translation_language
+                    end}
                   </span>
                 <% end %>
                 <button
