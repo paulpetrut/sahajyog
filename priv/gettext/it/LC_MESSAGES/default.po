@@ -115,9 +115,9 @@ msgid "Active filters:"
 msgstr "Filtri attivi:"
 
 #: lib/sahajyog_web/live/talks_live.ex:638
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Advanced Filters"
-msgstr "Argomenti avanzati"
+msgstr "Filtri Avanzati"
 
 #: lib/sahajyog_web/live/talks_live.ex:659
 #, elixir-autogen, elixir-format
@@ -539,9 +539,9 @@ msgstr "+ Carica Nuova Risorsa"
 
 #: lib/sahajyog_web/components/layouts/root.html.heex:65
 #: lib/sahajyog_web/components/mobile_menu.ex:44
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Admin"
-msgstr "Admin Videos"
+msgstr "Admin"
 
 #: lib/sahajyog_web/live/resources_live.ex:105
 #, elixir-autogen, elixir-format
@@ -686,9 +686,9 @@ msgid "Account settings"
 msgstr "Impostazioni account"
 
 #: lib/sahajyog_web/live/user_live/settings.ex:45
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Change Password"
-msgstr "Salva password"
+msgstr "Cambia Password"
 
 #: lib/sahajyog_web/live/admin/resources_live.ex:422
 #, elixir-autogen, elixir-format

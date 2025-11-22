@@ -111,7 +111,23 @@ defmodule Sahajyog.Resources.R2Storage do
   end
 
   defp get_bucket do
-    Application.get_env(:sahajyog, :r2)[:bucket] ||
-      raise "R2_BUCKET_NAME not configured"
+    case Application.get_env(:sahajyog, :r2) do
+      nil ->
+        raise """
+        R2_BUCKET_NAME not configured.
+
+        For development, run: source load_env.sh && mix phx.server
+        For production, ensure R2_BUCKET_NAME environment variable is set.
+        """
+
+      config ->
+        config[:bucket] ||
+          raise """
+          R2_BUCKET_NAME not configured.
+
+          For development, run: source load_env.sh && mix phx.server
+          For production, ensure R2_BUCKET_NAME environment variable is set.
+          """
+    end
   end
 end
