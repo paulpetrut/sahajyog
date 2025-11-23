@@ -131,20 +131,20 @@ defmodule SahajyogWeb.ResourcesLive do
 
             <%!-- Thumbnail/Icon --%>
             <%= if resource.thumbnail_r2_key do %>
-              <div class="relative w-full h-56 bg-gradient-to-br from-gray-900 to-black overflow-hidden flex items-center justify-center">
+              <div class="relative w-full h-56 bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden flex items-center justify-center">
                 <img
                   src={Resources.thumbnail_url(resource)}
                   alt={resource.title}
                   class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                 />
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent opacity-60 pointer-events-none">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent opacity-60 pointer-events-none">
                 </div>
               </div>
             <% else %>
-              <div class="relative w-full h-56 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+              <div class="relative w-full h-56 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                 <.icon
                   name={type_icon(resource.resource_type)}
-                  class="w-24 h-24 text-gray-700 group-hover:text-amber-500/30 transition-colors duration-300"
+                  class="w-24 h-24 text-gray-700 group-hover:text-blue-500/30 transition-colors duration-300"
                 />
               </div>
             <% end %>
