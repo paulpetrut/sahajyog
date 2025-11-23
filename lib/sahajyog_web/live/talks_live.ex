@@ -495,83 +495,100 @@ defmodule SahajyogWeb.TalksLive do
 
   defp talk_card(assigns) do
     ~H"""
-    <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all hover:shadow-lg hover:shadow-blue-500/20 group flex flex-col">
-      <div class="p-4 sm:p-6 flex flex-col flex-1">
-        <%!-- Title - fixed height --%>
-        <h3 class="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 group-hover:text-blue-400 transition-colors line-clamp-2 min-h-[3rem] sm:min-h-[3.5rem]">
+    <div class="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 flex flex-col h-full">
+      <%!-- Decorative gradient overlay --%>
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      </div>
+
+      <%!-- Content --%>
+      <div class="relative p-5 sm:p-6 flex flex-col flex-1">
+        <%!-- Duration badge --%>
+        <%= if duration = Map.get(@talk, "duration") do %>
+          <div class="flex justify-end mb-3">
+            <span class="inline-flex items-center gap-1 px-2 py-1 bg-purple-500/10 text-purple-400 rounded-md text-xs font-medium border border-purple-500/20">
+              <.icon name="hero-clock" class="w-3 h-3" />
+              {format_duration(duration)}
+            </span>
+          </div>
+        <% end %>
+
+        <%!-- Title --%>
+        <h3 class="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors line-clamp-2 min-h-[3.5rem] leading-tight">
           {Map.get(@talk, "title", "Untitled")}
         </h3>
 
-        <%!-- Metadata --%>
-        <div class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">
+        <%!-- Year and Location --%>
+        <div class="flex items-center gap-2 text-sm text-gray-400 mb-4 flex-wrap">
           <%= if date = Map.get(@talk, "date") do %>
-            <div class="flex items-center gap-2">
-              <.icon name="hero-calendar" class="w-4 h-4 flex-shrink-0" />
-              <span>{String.slice(date, 0, 4)}</span>
-            </div>
+            <span class="font-semibold text-blue-400">{String.slice(date, 0, 4)}</span>
           <% end %>
-
-          <%= if category = Map.get(@talk, "category") do %>
-            <div class="flex items-center gap-2">
-              <.icon name="hero-tag" class="w-4 h-4 flex-shrink-0" />
-              <span class="line-clamp-1">{category}</span>
-            </div>
+          <%= if Map.get(@talk, "date") && Map.get(@talk, "country") do %>
+            <span class="text-gray-600">•</span>
           <% end %>
-
           <%= if country = Map.get(@talk, "country") do %>
-            <div class="flex items-center gap-2">
-              <.icon name="hero-map-pin" class="w-4 h-4 flex-shrink-0" />
-              <span class="line-clamp-1">{country}</span>
-            </div>
-          <% end %>
-
-          <%= case Map.get(@talk, "spoken_languages") do %>
-            <% spoken_languages when is_list(spoken_languages) and spoken_languages != [] -> %>
-              <div class="flex items-center gap-2">
-                <.icon name="hero-language" class="w-4 h-4 flex-shrink-0" />
-                <span class="line-clamp-1">{Enum.join(spoken_languages, ", ")}</span>
-              </div>
-            <% _ -> %>
-          <% end %>
-
-          <%= if duration = Map.get(@talk, "duration") do %>
-            <div class="flex items-center gap-2">
-              <.icon name="hero-clock" class="w-4 h-4" />
-              <span>{format_duration(duration)}</span>
-            </div>
-          <% end %>
-
-          <%= case Map.get(@talk, "video_subtitles") do %>
-            <% subtitles when is_list(subtitles) and subtitles != [] -> %>
-              <div class="flex items-start gap-2">
-                <.icon name="hero-language" class="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <div class="flex flex-wrap gap-1">
-                  <%= for subtitle <- Enum.take(subtitles, 8) do %>
-                    <span class="px-1.5 py-0.5 bg-gray-700 text-gray-300 rounded text-xs">
-                      {String.upcase(subtitle)}
-                    </span>
-                  <% end %>
-                  <%= if length(subtitles) > 8 do %>
-                    <span class="px-1.5 py-0.5 text-gray-500 text-xs">
-                      +{length(subtitles) - 8}
-                    </span>
-                  <% end %>
-                </div>
-              </div>
-            <% _ -> %>
+            <span class="line-clamp-1">{country}</span>
           <% end %>
         </div>
 
-        <%!-- Action button - pushed to bottom --%>
+        <%!-- Category badge --%>
+        <%= if category = Map.get(@talk, "category") do %>
+          <div class="mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-400 rounded-lg text-xs font-semibold border border-amber-500/20">
+              <.icon name="hero-tag" class="w-3.5 h-3.5" />
+              {category}
+            </span>
+          </div>
+        <% end %>
+
+        <%!-- Spoken languages --%>
+        <%= case Map.get(@talk, "spoken_languages") do %>
+          <% spoken_languages when is_list(spoken_languages) and spoken_languages != [] -> %>
+            <div class="flex items-center gap-2 text-sm text-gray-400 mb-3">
+              <.icon name="hero-language" class="w-4 h-4 text-gray-500" />
+              <span class="line-clamp-1 font-medium">{Enum.join(spoken_languages, ", ")}</span>
+            </div>
+          <% _ -> %>
+        <% end %>
+
+        <%!-- Subtitles section --%>
+        <%= case Map.get(@talk, "video_subtitles") do %>
+          <% subtitles when is_list(subtitles) and subtitles != [] -> %>
+            <div class="mb-4 pb-4 border-b border-gray-700/50">
+              <div class="flex items-center gap-2 mb-2">
+                <.icon name="hero-language" class="w-4 h-4 text-gray-500" />
+                <span class="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                  {gettext("Subtitles Available")}
+                </span>
+              </div>
+              <div class="flex flex-nowrap gap-1.5 overflow-x-auto scrollbar-hide">
+                <%= for subtitle <- Enum.take(subtitles, 6) do %>
+                  <span class="px-2 py-1 bg-gray-700/50 text-gray-300 rounded-md text-xs font-medium border border-gray-600/50 whitespace-nowrap flex-shrink-0">
+                    {String.upcase(subtitle)}
+                  </span>
+                <% end %>
+                <%= if length(subtitles) > 6 do %>
+                  <span class="px-2 py-1 text-gray-500 text-xs font-medium whitespace-nowrap flex-shrink-0">
+                    +{length(subtitles) - 6} {gettext("more")}
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          <% _ -> %>
+        <% end %>
+
+        <%!-- Spacer --%>
+        <div class="flex-1"></div>
+
+        <%!-- Action button --%>
         <%= if web_url = Map.get(@talk, "web_url") do %>
           <a
             href={web_url}
             target="_blank"
             rel="noopener noreferrer"
-            class="mt-auto inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-xs sm:text-sm font-medium self-start"
+            class="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-lg transition-all duration-200 text-sm font-semibold shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40"
           >
-            <span>{gettext("View Talk")}</span>
-            <.icon name="hero-arrow-top-right-on-square" class="w-3 h-3 sm:w-4 sm:h-4" />
+            <span>{gettext("Watch Talk")}</span>
+            <.icon name="hero-play" class="w-4 h-4" />
           </a>
         <% end %>
       </div>
@@ -585,22 +602,23 @@ defmodule SahajyogWeb.TalksLive do
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <%!-- Header --%>
         <div class="mb-6 sm:mb-8">
-          <div class="mb-4 sm:mb-6">
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+          <div class="mb-4 sm:mb-6 text-center">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
               {gettext("Sahaja Yoga Talks")}
             </h1>
-            <p class="text-sm sm:text-base text-gray-400">
+            <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
               {gettext("Explore spiritual teachings and wisdom")}
             </p>
           </div>
 
           <%!-- Search and Filters --%>
-          <div class="bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-700">
+          <div class="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-gray-700/50 shadow-xl">
             <form phx-change="apply_all_filters">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <%!-- Search --%>
                 <div class="sm:col-span-2 lg:col-span-2">
-                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
+                  <label class="block text-xs sm:text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                    <.icon name="hero-magnifying-glass" class="w-4 h-4 text-blue-400" />
                     {gettext("Search")}
                   </label>
                   <div class="relative">
@@ -609,24 +627,25 @@ defmodule SahajyogWeb.TalksLive do
                       name="search"
                       value={@search_query}
                       placeholder={gettext("Search talks...")}
-                      class="w-full px-3 sm:px-4 py-2 pl-9 sm:pl-10 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      class="w-full px-4 py-3 pl-11 bg-gray-900/50 border border-gray-600/50 rounded-lg text-sm sm:text-base text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-gray-900 transition-all"
                     />
                     <.icon
                       name="hero-magnifying-glass"
-                      class="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-500"
+                      class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
                     />
                   </div>
                 </div>
 
                 <%!-- Sort By --%>
                 <div>
-                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
+                  <label class="block text-xs sm:text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                    <.icon name="hero-arrows-up-down" class="w-4 h-4 text-purple-400" />
                     {gettext("Sort By")}
                   </label>
                   <select
                     name="sort_by"
                     value={@sort_by}
-                    class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600/50 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-gray-900 transition-all cursor-pointer"
                   >
                     <option value="relevance">{gettext("Relevance")}</option>
                     <option value="date_desc">{gettext("Newest")}</option>
@@ -636,13 +655,14 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Translation Language Filter --%>
                 <div>
-                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
+                  <label class="block text-xs sm:text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                    <.icon name="hero-language" class="w-4 h-4 text-green-400" />
                     {gettext("Translation Language")}
                   </label>
                   <select
                     name="translation_language"
                     value={@selected_translation_language}
-                    class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600/50 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-gray-900 transition-all cursor-pointer"
                   >
                     <option value="" selected={@selected_translation_language == ""}>
                       {gettext("English (Default)")}
@@ -657,13 +677,14 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Year Filter --%>
                 <div>
-                  <label class="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
+                  <label class="block text-xs sm:text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                    <.icon name="hero-calendar" class="w-4 h-4 text-amber-400" />
                     {gettext("Year")}
                   </label>
                   <select
                     name="year"
                     value={@selected_year}
-                    class="w-full px-3 sm:px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600/50 rounded-lg text-sm sm:text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-gray-900 transition-all cursor-pointer"
                   >
                     <option value="">{gettext("All Years")}</option>
                     <%= for year <- @years do %>
