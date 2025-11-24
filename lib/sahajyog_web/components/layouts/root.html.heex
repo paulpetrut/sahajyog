@@ -31,13 +31,13 @@
     </script>
   </head>
   <body>
-    <div class="w-full relative z-[9999] flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+    <div class="w-full relative z-[9999] flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-4 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
       <%!-- Left Section - Home Icon --%>
       <div class="flex items-center gap-4">
         <%!-- Home Icon --%>
         <a
           href="/"
-          class="p-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors home-icon"
+          class="p-2 text-gray-300 hover:text-white transition-colors home-icon"
           title="Home"
           style="visibility: hidden;"
         >
@@ -57,11 +57,11 @@
       </div>
 
       <%!-- Desktop Navigation --%>
-      <ul class="menu menu-horizontal hidden md:flex items-center gap-4">
+      <ul class="menu menu-horizontal hidden md:flex items-center gap-4 text-gray-300">
         <%= if assigns[:current_scope] do %>
           <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
             <li class="dropdown dropdown-end">
-              <div tabindex="0" role="button" class="cursor-pointer">
+              <div tabindex="0" role="button" class="cursor-pointer hover:text-white">
                 {gettext("Admin")}
                 <svg
                   class="w-4 h-4 inline ml-1"
@@ -90,7 +90,7 @@
             </li>
           <% else %>
             <li>
-              <.link href={~p"/resources"}>{gettext("Resources")}</.link>
+              <.link href={~p"/resources"} class="hover:text-white">{gettext("Resources")}</.link>
             </li>
           <% end %>
         <% end %>
@@ -103,7 +103,7 @@
             <div
               tabindex="0"
               role="button"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold cursor-pointer hover:bg-base-200 transition-colors"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 text-white font-semibold cursor-pointer hover:bg-gray-600 transition-colors"
               title={@current_scope.user.email}
             >
               {String.upcase(String.first(@current_scope.user.email))}
@@ -143,17 +143,17 @@
           </li>
         <% else %>
           <li>
-            <.link href={~p"/users/register"}>{gettext("Register")}</.link>
+            <.link href={~p"/users/register"} class="hover:text-white">{gettext("Register")}</.link>
           </li>
           <li>
-            <.link href={~p"/users/log-in"}>{gettext("Log in")}</.link>
+            <.link href={~p"/users/log-in"} class="hover:text-white">{gettext("Log in")}</.link>
           </li>
         <% end %>
       </ul>
       <%!-- Mobile Hamburger Button --%>
       <div
         id="mobile-menu-button"
-        class="md:hidden p-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors cursor-pointer select-none"
+        class="md:hidden p-2 text-gray-300 hover:text-white transition-colors cursor-pointer select-none"
         aria-label="Toggle menu"
       >
         <svg
