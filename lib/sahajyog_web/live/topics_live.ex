@@ -14,6 +14,15 @@ defmodule SahajyogWeb.TopicsLive do
      |> assign(:topics, topics)}
   end
 
+  defp strip_html_tags(html) when is_binary(html) do
+    html
+    |> String.replace(~r/<[^>]*>/, "")
+    |> String.replace(~r/\s+/, " ")
+    |> String.trim()
+  end
+
+  defp strip_html_tags(_), do: ""
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -56,7 +65,11 @@ defmodule SahajyogWeb.TopicsLive do
                 <%!-- Content Preview --%>
                 <%= if topic.content do %>
                   <p class="text-gray-400 text-sm mb-4 line-clamp-3">
-                    {String.slice(topic.content, 0, 150)}...
+                    {strip_html_tags(topic.content) |> String.slice(0, 150)}{if String.length(
+                                                                                  strip_html_tags(
+                                                                                    topic.content
+                                                                                  )
+                                                                                ) > 150, do: "..."}
                   </p>
                 <% end %>
 
