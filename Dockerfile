@@ -20,8 +20,10 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
 FROM ${BUILDER_IMAGE} as builder
 
-# install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
+# install build dependencies (including Node.js for npm)
+RUN apt-get update -y && apt-get install -y build-essential git curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
@@ -50,6 +52,9 @@ COPY priv priv
 COPY lib lib
 
 COPY assets assets
+
+# install npm dependencies for Quill editor
+RUN cd assets && npm install && cd ..
 
 # compile assets
 RUN mix assets.deploy
