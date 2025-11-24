@@ -108,16 +108,9 @@ defmodule SahajyogWeb.TopicsLive do
             <h3 class="text-xl font-semibold text-gray-300 mb-2">
               {gettext("No topics yet")}
             </h3>
-            <p class="text-gray-500 mb-6">
+            <p class="text-gray-500">
               {gettext("Be the first to propose a topic")}
             </p>
-            <.link
-              navigate="/topics/propose"
-              class="inline-flex items-center gap-2 px-8 py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors font-semibold"
-            >
-              <span>{gettext("Propose Topic")}</span>
-              <.icon name="hero-light-bulb" class="w-5 h-5" />
-            </.link>
           </div>
         <% end %>
       </div>
