@@ -35,27 +35,53 @@ defmodule Sahajyog.Resources.ThumbnailGenerator do
   defp generate_image_thumbnail(file_path) do
     output_path = temp_thumbnail_path("jpg")
 
-    # Use ImageMagick directly to maintain aspect ratio without cropping
-    # The -thumbnail option with > only shrinks larger images
-    # -background white -gravity center -extent creates a white canvas if needed
-    case System.cmd("magick", [
-           file_path,
-           "-thumbnail",
-           "#{@thumbnail_width}x#{@thumbnail_height}>",
-           "-background",
-           "white",
-           "-gravity",
-           "center",
-           "-extent",
-           "#{@thumbnail_width}x#{@thumbnail_height}",
-           output_path
-         ]) do
-      {_, 0} ->
-        {:ok, output_path}
+    # Try ImageMagick 7 (magick) first, then fall back to ImageMagick 6 (convert)
+    result =
+      case System.cmd("magick", [
+             file_path,
+             "-thumbnail",
+             "#{@thumbnail_width}x#{@thumbnail_height}>",
+             "-background",
+             "white",
+             "-gravity",
+             "center",
+             "-extent",
+             "#{@thumbnail_width}x#{@thumbnail_height}",
+             output_path
+           ]) do
+        {_, 0} ->
+          {:ok, output_path}
 
-      {error, _} ->
-        Logger.error("Image thumbnail generation failed: #{inspect(error)}")
-        {:error, :thumbnail_generation_failed}
+        {error, _} ->
+          Logger.warning("magick command failed: #{inspect(error)}, trying convert")
+          {:error, :try_convert}
+      end
+
+    case result do
+      {:ok, path} ->
+        {:ok, path}
+
+      {:error, :try_convert} ->
+        # Try with convert command (ImageMagick 6)
+        case System.cmd("convert", [
+               file_path,
+               "-thumbnail",
+               "#{@thumbnail_width}x#{@thumbnail_height}>",
+               "-background",
+               "white",
+               "-gravity",
+               "center",
+               "-extent",
+               "#{@thumbnail_width}x#{@thumbnail_height}",
+               output_path
+             ]) do
+          {_, 0} ->
+            {:ok, output_path}
+
+          {error, _} ->
+            Logger.error("Image thumbnail generation failed: #{inspect(error)}")
+            {:error, :thumbnail_generation_failed}
+        end
     end
   rescue
     e ->
