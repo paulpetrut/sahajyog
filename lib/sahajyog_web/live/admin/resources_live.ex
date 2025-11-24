@@ -4,6 +4,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   alias Sahajyog.Resources
   alias Sahajyog.Resources.Resource
   alias Sahajyog.Resources.R2Storage
+  alias Sahajyog.Resources.ThumbnailGenerator
 
   @impl true
   def mount(_params, _session, socket) do
@@ -12,10 +13,14 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
      |> assign(:page_title, "Manage Resources")
      |> assign(:uploaded_files, [])
      |> assign(:resources, list_resources())
+     |> assign(:auto_thumbnail_preview, nil)
+     |> assign(:generating_thumbnail, false)
      |> allow_upload(:file,
        accept: :any,
        max_entries: 1,
-       max_file_size: 500_000_000
+       max_file_size: 500_000_000,
+       progress: &handle_progress/3,
+       auto_upload: true
      )
      |> allow_upload(:thumbnail,
        accept: ~w(.jpg .jpeg .png .gif .webp),
@@ -32,6 +37,8 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:resource, nil)
+    |> assign(:auto_thumbnail_preview, nil)
+    |> assign(:generating_thumbnail, false)
   end
 
   defp apply_action(socket, :new, _params) do
@@ -41,6 +48,8 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
     socket
     |> assign(:resource, resource)
     |> assign(:form, to_form(changeset))
+    |> assign(:auto_thumbnail_preview, nil)
+    |> assign(:generating_thumbnail, false)
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -50,6 +59,8 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
     socket
     |> assign(:resource, resource)
     |> assign(:form, to_form(changeset))
+    |> assign(:auto_thumbnail_preview, nil)
+    |> assign(:generating_thumbnail, false)
   end
 
   @impl true
@@ -68,6 +79,20 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   end
 
   @impl true
+  def handle_event("cancel-upload", %{"ref" => ref, "upload" => "file"}, socket) do
+    {:noreply,
+     socket
+     |> cancel_upload(:file, ref)
+     |> assign(:auto_thumbnail_preview, nil)
+     |> assign(:generating_thumbnail, false)}
+  end
+
+  @impl true
+  def handle_event("cancel-upload", %{"ref" => ref, "upload" => "thumbnail"}, socket) do
+    {:noreply, cancel_upload(socket, :thumbnail, ref)}
+  end
+
+  @impl true
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
     {:noreply, cancel_upload(socket, :file, ref)}
   end
@@ -78,7 +103,13 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
 
     case Resources.delete_resource(resource) do
       {:ok, _} ->
+        # Delete the main file from R2
         R2Storage.delete(resource.r2_key)
+
+        # Delete the thumbnail from R2 if it exists
+        if resource.thumbnail_r2_key do
+          R2Storage.delete(resource.thumbnail_r2_key)
+        end
 
         {:noreply,
          socket
@@ -97,7 +128,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
     else
       require Logger
 
-      # Upload main file
+      # Upload main file and generate thumbnail
       uploaded_files =
         consume_uploaded_entries(socket, :file, fn %{path: path}, entry ->
           level = Map.get(resource_params, "level", "Level1")
@@ -110,12 +141,17 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
             {:ok, ^key} ->
               Logger.info("Successfully uploaded: #{key}")
 
+              # Generate thumbnail from the uploaded file
+              auto_thumbnail_key =
+                generate_and_upload_thumbnail(path, entry.client_type, level, resource_type)
+
               {:ok,
                %{
                  key: key,
                  file_name: entry.client_name,
                  file_size: entry.client_size,
-                 content_type: entry.client_type
+                 content_type: entry.client_type,
+                 auto_thumbnail_key: auto_thumbnail_key
                }}
 
             {:error, reason} ->
@@ -124,7 +160,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
           end
         end)
 
-      # Upload thumbnail if provided
+      # Upload manual thumbnail if provided
       uploaded_thumbnails =
         consume_uploaded_entries(socket, :thumbnail, fn %{path: path}, entry ->
           level = Map.get(resource_params, "level", "Level1")
@@ -146,10 +182,15 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
 
       case uploaded_files do
         [%{key: _} = file_info | _] ->
+          # Priority: manual thumbnail > auto-generated thumbnail > none
           thumbnail_key =
             case uploaded_thumbnails do
-              [key | _] when is_binary(key) -> key
-              _ -> nil
+              [key | _] when is_binary(key) ->
+                key
+
+              _ ->
+                # Use auto-generated thumbnail from file upload
+                file_info[:auto_thumbnail_key]
             end
 
           resource_params =
@@ -234,6 +275,119 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
     Resources.list_resources()
   end
 
+  defp handle_progress(:file, entry, socket) do
+    if entry.done? do
+      # File uploaded, generate thumbnail preview
+      send(self(), {:generate_thumbnail_preview, entry.client_type})
+      {:noreply, assign(socket, :generating_thumbnail, true)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info({:generate_thumbnail_preview, content_type}, socket) do
+    require Logger
+
+    socket =
+      case socket.assigns.uploads.file.entries do
+        [_entry | _] ->
+          # Consume the entry to get the file path
+          results =
+            consume_uploaded_entries(socket, :file, fn %{path: path}, _entry ->
+              # Generate thumbnail from uploaded file
+              case ThumbnailGenerator.generate(path, content_type) do
+                {:ok, thumbnail_path} ->
+                  case File.read(thumbnail_path) do
+                    {:ok, thumbnail_data} ->
+                      # Convert to base64 for preview
+                      base64_data = Base.encode64(thumbnail_data)
+                      preview_url = "data:image/jpeg;base64,#{base64_data}"
+
+                      File.rm(thumbnail_path)
+                      Logger.info("Thumbnail preview generated")
+
+                      {:postpone, {:ok, preview_url}}
+
+                    {:error, reason} ->
+                      Logger.error("Failed to read thumbnail: #{inspect(reason)}")
+                      File.rm(thumbnail_path)
+                      {:postpone, {:error, reason}}
+                  end
+
+                {:error, reason} ->
+                  Logger.info("Thumbnail generation skipped: #{inspect(reason)}")
+                  {:postpone, {:error, reason}}
+              end
+            end)
+
+          case results do
+            [{:ok, preview_url}] ->
+              socket
+              |> assign(:auto_thumbnail_preview, preview_url)
+              |> assign(:generating_thumbnail, false)
+
+            _ ->
+              socket
+              |> assign(:generating_thumbnail, false)
+          end
+
+        _ ->
+          socket
+          |> assign(:generating_thumbnail, false)
+      end
+
+    {:noreply, socket}
+  end
+
+  defp generate_and_upload_thumbnail(file_path, content_type, level, resource_type) do
+    require Logger
+
+    case ThumbnailGenerator.generate(file_path, content_type) do
+      {:ok, thumbnail_path} ->
+        case File.read(thumbnail_path) do
+          {:ok, thumbnail_data} ->
+            timestamp = System.system_time(:millisecond)
+
+            key =
+              R2Storage.generate_unique_key(
+                "thumb_auto_#{timestamp}.jpg",
+                level,
+                resource_type
+              )
+
+            # Write to temp file for upload
+            temp_path = Path.join(System.tmp_dir!(), "upload_thumb_#{timestamp}.jpg")
+            File.write!(temp_path, thumbnail_data)
+
+            result =
+              case R2Storage.upload(temp_path, key, content_type: "image/jpeg") do
+                {:ok, ^key} ->
+                  Logger.info("Auto-generated thumbnail uploaded: #{key}")
+                  key
+
+                {:error, reason} ->
+                  Logger.error("Failed to upload auto-thumbnail: #{inspect(reason)}")
+                  nil
+              end
+
+            # Cleanup
+            File.rm(temp_path)
+            File.rm(thumbnail_path)
+            result
+
+          {:error, reason} ->
+            Logger.error("Failed to read thumbnail: #{inspect(reason)}")
+            File.rm(thumbnail_path)
+            nil
+        end
+
+      {:error, reason} ->
+        Logger.info("Thumbnail generation skipped: #{inspect(reason)}")
+        nil
+    end
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -251,6 +405,8 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
               form={@form}
               uploads={@uploads}
               live_action={@live_action}
+              auto_thumbnail_preview={@auto_thumbnail_preview}
+              generating_thumbnail={@generating_thumbnail}
             />
           </div>
         <% else %>
@@ -298,7 +454,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                         <img
                           src={Resources.thumbnail_url(resource)}
                           alt={resource.title}
-                          class="w-12 h-12 object-cover rounded"
+                          class="w-12 h-12 object-contain rounded"
                         />
                       <% else %>
                         <div class="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
@@ -411,6 +567,43 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
               <span class="text-gray-500 text-xs">({gettext("Optional")})</span>
             </label>
 
+            <%!-- Generating thumbnail indicator --%>
+            <%= if @live_action == :new && @generating_thumbnail do %>
+              <div class="mb-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <div class="flex items-center gap-2">
+                  <div class="animate-spin">
+                    <.icon name="hero-arrow-path" class="w-5 h-5 text-blue-400" />
+                  </div>
+                  <p class="text-sm text-blue-300">
+                    {gettext("Generating thumbnail...")}
+                  </p>
+                </div>
+              </div>
+            <% end %>
+            <%!-- Auto-generated thumbnail preview --%>
+            <%= if @live_action == :new && @auto_thumbnail_preview do %>
+              <div class="mb-3 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <div class="flex items-start gap-3">
+                  <img
+                    src={@auto_thumbnail_preview}
+                    alt="Auto-generated thumbnail"
+                    class="w-20 h-20 object-cover rounded"
+                  />
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <.icon name="hero-sparkles" class="w-4 h-4 text-green-400" />
+                      <p class="text-sm text-green-300 font-medium">
+                        {gettext("Thumbnail auto-generated")}
+                      </p>
+                    </div>
+                    <p class="text-xs text-green-400/80">
+                      {gettext("Upload a custom thumbnail below to override")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
             <%= if @live_action == :edit && @form.data.thumbnail_r2_key do %>
               <div class="mb-3 flex items-center gap-3 p-3 bg-gray-700 rounded-lg">
                 <img
@@ -433,7 +626,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
               <label for={@uploads.thumbnail.ref} class="cursor-pointer">
                 <.icon name="hero-photo" class="w-8 h-8 mx-auto text-gray-400" />
                 <p class="mt-1 text-xs text-gray-300">
-                  {gettext("Upload thumbnail image")}
+                  {gettext("Upload custom thumbnail")}
                 </p>
                 <p class="text-xs text-gray-400">{gettext("JPG, PNG, GIF - Max 5MB")}</p>
               </label>
@@ -449,6 +642,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                   type="button"
                   phx-click="cancel-upload"
                   phx-value-ref={entry.ref}
+                  phx-value-upload="thumbnail"
                   class="text-red-400 hover:text-red-300"
                 >
                   <.icon name="hero-x-mark" class="w-4 h-4" />
@@ -489,6 +683,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                       type="button"
                       phx-click="cancel-upload"
                       phx-value-ref={entry.ref}
+                      phx-value-upload="file"
                       class="text-red-400 hover:text-red-300 ml-4"
                     >
                       <.icon name="hero-x-mark" class="w-5 h-5" />
