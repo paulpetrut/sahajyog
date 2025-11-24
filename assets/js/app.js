@@ -23,8 +23,11 @@ import "phoenix_html"
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+import QuillEditor from "./quill_editor"
 
 const Hooks = {}
+
+Hooks.QuillEditor = QuillEditor
 
 Hooks.WatchedVideos = {
   mounted() {

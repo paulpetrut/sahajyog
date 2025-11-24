@@ -79,6 +79,15 @@ defmodule SahajyogWeb.WelcomeLive do
               <span>{gettext("Browse All Talks")}</span>
               <.icon name="hero-magnifying-glass" class="w-5 h-5" />
             </.link>
+            <%= if @current_scope do %>
+              <.link
+                navigate="/topics"
+                class="px-8 py-3 bg-purple-700 text-white rounded-lg font-semibold hover:bg-purple-800 transition-colors inline-flex items-center justify-center gap-2"
+              >
+                <span>{gettext("Explore Topics")}</span>
+                <.icon name="hero-document-text" class="w-5 h-5" />
+              </.link>
+            <% end %>
           </div>
         </div>
       </div>

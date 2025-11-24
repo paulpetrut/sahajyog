@@ -73,7 +73,13 @@ defmodule SahajyogWeb.Router do
       live "/admin/resources", Admin.ResourcesLive, :index
       live "/admin/resources/new", Admin.ResourcesLive, :new
       live "/admin/resources/:id/edit", Admin.ResourcesLive, :edit
+      live "/admin/topics", Admin.TopicsLive
+      live "/admin/topic-proposals", Admin.TopicProposalsLive
       live "/resources", ResourcesLive
+      live "/topics", TopicsLive
+      live "/topics/propose", TopicProposeLive
+      live "/topics/:slug", TopicShowLive
+      live "/topics/:slug/edit", TopicEditLive
     end
 
     get "/resources/:id/download", ResourceController, :download

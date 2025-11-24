@@ -37,7 +37,10 @@ defmodule SahajyogWeb.MobileMenu do
                   </div>
                 </div>
               </li>
-              <%!-- Resources Menu Items --%>
+              <%!-- Main Menu Items --%>
+              <li>
+                <.link href={~p"/topics"}>{gettext("Topics")}</.link>
+              </li>
               <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
                 <li>
                   <details>
@@ -48,6 +51,12 @@ defmodule SahajyogWeb.MobileMenu do
                       </li>
                       <li>
                         <.link href={~p"/admin/resources"}>{gettext("Resources")}</.link>
+                      </li>
+                      <li>
+                        <.link href={~p"/admin/topics"}>{gettext("Topics")}</.link>
+                      </li>
+                      <li>
+                        <.link href={~p"/admin/topic-proposals"}>{gettext("Proposals")}</.link>
                       </li>
                     </ul>
                   </details>

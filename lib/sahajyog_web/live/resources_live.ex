@@ -23,10 +23,32 @@ defmodule SahajyogWeb.ResourcesLive do
     resource_type = Map.get(params, "type", "all")
     user = socket.assigns.current_scope.user
 
-    {:noreply,
-     socket
-     |> assign(:selected_type, resource_type)
-     |> assign(:resources, list_resources(user, resource_type))}
+    socket =
+      socket
+      |> assign(:selected_type, resource_type)
+      |> assign(:resources, list_resources(user, resource_type))
+
+    # Auto-open preview if preview parameter is present
+    socket =
+      case Map.get(params, "preview") do
+        nil ->
+          socket
+
+        resource_id ->
+          try do
+            resource = Resources.get_resource!(String.to_integer(resource_id))
+            preview_url = Sahajyog.Resources.R2Storage.generate_download_url(resource.r2_key)
+
+            socket
+            |> assign(preview_resource: resource, preview_url: preview_url)
+          rescue
+            _ ->
+              socket
+              |> put_flash(:error, gettext("Resource not found or preview unavailable"))
+          end
+      end
+
+    {:noreply, socket}
   end
 
   @impl true
