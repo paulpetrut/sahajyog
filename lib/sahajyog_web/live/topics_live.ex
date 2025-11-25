@@ -29,19 +29,19 @@ defmodule SahajyogWeb.TopicsLive do
     <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Header --%>
-        <div class="mb-6 sm:mb-8">
-          <div class="flex flex-col gap-4">
-            <div class="text-center sm:text-left">
-              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">
-                {gettext("Topics")}
-              </h1>
-              <p class="text-base sm:text-lg text-gray-300">
-                {gettext("Explore in-depth articles on Sahaja Yoga")}
-              </p>
-            </div>
+        <div class="mb-6 sm:mb-8 text-center relative">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
+            {gettext("Topics")}
+          </h1>
+          <p class="text-base sm:text-lg text-gray-300 mb-6 sm:mb-0">
+            {gettext("Explore in-depth articles on Sahaja Yoga")}
+          </p>
+
+          <%!-- Propose Button - Mobile: below text, Desktop: top right --%>
+          <div class="flex justify-center sm:block">
             <.link
               navigate="/topics/propose"
-              class="w-full sm:w-auto sm:self-start px-6 sm:px-8 py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors font-semibold inline-flex items-center justify-center gap-2"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors font-semibold sm:absolute sm:right-0 sm:top-0"
             >
               <span>{gettext("Propose Topic")}</span>
               <.icon name="hero-light-bulb" class="w-5 h-5" />
