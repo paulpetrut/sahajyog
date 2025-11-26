@@ -42,24 +42,24 @@ defmodule SahajyogWeb.TopicProposeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <.page_container>
       <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Back Button --%>
         <.link
           navigate="/topics"
-          class="text-blue-400 hover:text-blue-300 mb-6 inline-flex items-center gap-2"
+          class="text-info hover:text-info/80 mb-6 inline-flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-info focus:ring-offset-2 focus:ring-offset-base-300 rounded"
         >
           <.icon name="hero-arrow-left" class="w-4 h-4" />
           {gettext("Back to Topics")}
         </.link>
 
         <%!-- Form --%>
-        <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 sm:p-6 lg:p-8 border border-gray-700/50">
+        <.card size="lg">
           <div class="mb-4 sm:mb-6">
-            <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
+            <h1 class="text-2xl sm:text-3xl font-bold text-base-content mb-2">
               {gettext("Propose a New Topic")}
             </h1>
-            <p class="text-sm sm:text-base text-gray-400">
+            <p class="text-sm sm:text-base text-base-content/60">
               {gettext("Suggest a topic for the community. An admin will review and approve it.")}
             </p>
           </div>
@@ -87,24 +87,18 @@ defmodule SahajyogWeb.TopicProposeLive do
               </div>
 
               <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
-                <button
-                  type="submit"
-                  class="w-full sm:w-auto px-6 py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors font-semibold"
-                >
+                <.primary_button type="submit" class="w-full sm:w-auto">
                   {gettext("Submit Proposal")}
-                </button>
-                <.link
-                  navigate="/topics"
-                  class="w-full sm:w-auto px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-semibold text-center"
-                >
+                </.primary_button>
+                <.secondary_button navigate="/topics" class="w-full sm:w-auto">
                   {gettext("Cancel")}
-                </.link>
+                </.secondary_button>
               </div>
             </div>
           </.form>
-        </div>
+        </.card>
       </div>
-    </div>
+    </.page_container>
     """
   end
 end

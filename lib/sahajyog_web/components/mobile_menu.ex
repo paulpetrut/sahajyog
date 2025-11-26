@@ -10,8 +10,7 @@ defmodule SahajyogWeb.MobileMenu do
     <%!-- Mobile Menu Overlay --%>
     <div
       id="mobile-menu-overlay"
-      class="fixed inset-0 z-40 hidden md:hidden backdrop-blur-sm"
-      style="background-color: rgba(0, 0, 0, 0.25);"
+      class="fixed inset-0 z-40 hidden md:hidden backdrop-blur-sm bg-black/25"
     >
     </div>
     <%!-- Mobile Menu Sidebar --%>
@@ -25,7 +24,7 @@ defmodule SahajyogWeb.MobileMenu do
           <ul class="menu menu-vertical w-full gap-2">
             <%= if @current_scope do %>
               <%!-- User Info Section --%>
-              <li class="border-b border-gray-600 mb-2 pb-2">
+              <li class="border-b border-base-content/20 mb-2 pb-2">
                 <div class="flex items-center gap-3 py-3 px-0 pointer-events-none">
                   <div class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold">
                     {String.upcase(String.first(@current_scope.user.email))}
@@ -39,31 +38,20 @@ defmodule SahajyogWeb.MobileMenu do
               </li>
               <%!-- Main Menu Items --%>
               <li>
+                <.link href={~p"/steps"}>{gettext("Steps")}</.link>
+              </li>
+              <li>
+                <.link href={~p"/talks"}>{gettext("Talks")}</.link>
+              </li>
+              <li>
                 <.link href={~p"/topics"}>{gettext("Topics")}</.link>
+              </li>
+              <li>
+                <.link href={~p"/resources"}>{gettext("Resources")}</.link>
               </li>
               <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
                 <li>
-                  <details>
-                    <summary>{gettext("Admin")}</summary>
-                    <ul>
-                      <li>
-                        <.link href={~p"/admin/videos"}>{gettext("Videos")}</.link>
-                      </li>
-                      <li>
-                        <.link href={~p"/admin/resources"}>{gettext("Resources")}</.link>
-                      </li>
-                      <li>
-                        <.link href={~p"/admin/topics"}>{gettext("Topics")}</.link>
-                      </li>
-                      <li>
-                        <.link href={~p"/admin/topic-proposals"}>{gettext("Proposals")}</.link>
-                      </li>
-                    </ul>
-                  </details>
-                </li>
-              <% else %>
-                <li>
-                  <.link href={~p"/resources"}>{gettext("Resources")}</.link>
+                  <.link href={~p"/admin/videos"}>{gettext("Admin")}</.link>
                 </li>
               <% end %>
               <li>
@@ -75,7 +63,7 @@ defmodule SahajyogWeb.MobileMenu do
                   <span>{gettext("Account settings")}</span>
                 </.link>
               </li>
-              <li class="border-t border-gray-600 mt-2 pt-2">
+              <li class="border-t border-base-content/20 mt-2 pt-2">
                 <.link href={~p"/users/log-out"} method="delete" class="flex items-center gap-2">
                   <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" />
                   <span>{gettext("Sign out")}</span>

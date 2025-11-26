@@ -13,7 +13,7 @@ msgstr ""
 
 #: lib/sahajyog_web/components/core_components.ex:342
 #: lib/sahajyog_web/live/admin/resources_live.ex:445
-#: lib/sahajyog_web/live/admin/topics_live.ex:278
+#: lib/sahajyog_web/live/admin/topics_live.ex:213
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Acciones"
@@ -39,17 +39,17 @@ msgstr "No podemos encontrar internet"
 msgid "close"
 msgstr "cerrar"
 
-#: lib/sahajyog_web/live/welcome_live.ex:79
+#: lib/sahajyog_web/live/welcome_live.ex:76
 #, elixir-autogen, elixir-format
 msgid "Browse All Talks"
 msgstr "Explorar todas las charlas"
 
-#: lib/sahajyog_web/live/welcome_live.ex:36
+#: lib/sahajyog_web/live/welcome_live.ex:34
 #, elixir-autogen, elixir-format
 msgid "Discover inner peace through meditation"
 msgstr "Descubre la paz interior a través de la meditación"
 
-#: lib/sahajyog_web/live/welcome_live.ex:65
+#: lib/sahajyog_web/live/welcome_live.ex:62
 #, elixir-autogen, elixir-format
 msgid "Explore our complete collection of talks and guided meditations"
 msgstr "Explora nuestra colección completa de charlas y meditaciones guiadas"
@@ -65,7 +65,7 @@ msgstr "Ocultar barra lateral"
 msgid "Mark as Watched"
 msgstr "Marcar como visto"
 
-#: lib/sahajyog_web/live/welcome_live.ex:62
+#: lib/sahajyog_web/live/welcome_live.ex:59
 #, elixir-autogen, elixir-format
 msgid "Ready to Begin Your Journey?"
 msgstr "¿Listo para comenzar tu viaje?"
@@ -85,12 +85,12 @@ msgstr "Contenido SahajYog"
 msgid "Show sidebar"
 msgstr "Mostrar barra lateral"
 
-#: lib/sahajyog_web/live/welcome_live.ex:72
+#: lib/sahajyog_web/live/welcome_live.ex:69
 #, elixir-autogen, elixir-format
 msgid "Start Learning"
 msgstr "Comenzar a aprender"
 
-#: lib/sahajyog_web/live/welcome_live.ex:34
+#: lib/sahajyog_web/live/welcome_live.ex:33
 #, elixir-autogen, elixir-format
 msgid "Welcome to Sahaja Yoga"
 msgstr "Bienvenido a Sahaja Yoga"
@@ -140,6 +140,7 @@ msgstr "Todos los idiomas"
 msgid "All Years"
 msgstr "Todos los años"
 
+#: lib/sahajyog_web/live/admin/videos_live.ex:286
 #: lib/sahajyog_web/live/talks_live.ex:744
 #, elixir-autogen, elixir-format
 msgid "Category"
@@ -384,8 +385,8 @@ msgstr "Crear una cuenta"
 msgid "Creating account..."
 msgstr "Creando cuenta..."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:157
-#: lib/sahajyog_web/components/mobile_menu.ex:89
+#: lib/sahajyog_web/components/layouts/root.html.heex:202
+#: lib/sahajyog_web/components/mobile_menu.ex:93
 #: lib/sahajyog_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
@@ -421,8 +422,8 @@ msgstr "Solo si estableciste una contraseña arriba"
 msgid "Password (optional)"
 msgstr "Contraseña (opcional)"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:153
-#: lib/sahajyog_web/components/mobile_menu.ex:86
+#: lib/sahajyog_web/components/layouts/root.html.heex:194
+#: lib/sahajyog_web/components/mobile_menu.ex:90
 #: lib/sahajyog_web/live/user_live/registration.ex:69
 #, elixir-autogen, elixir-format
 msgid "Register"
@@ -528,69 +529,67 @@ msgstr "¡Bienvenido de nuevo!"
 msgid "Your account has been confirmed! Please log in with your password."
 msgstr "¡Tu cuenta ha sido confirmada! Por favor inicia sesión con tu contraseña."
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:421
-#, elixir-autogen, elixir-format
-msgid "+ Upload New Resource"
-msgstr "+ Subir Nuevo Recurso"
-
-#: lib/sahajyog_web/components/layouts/root.html.heex:65
-#: lib/sahajyog_web/components/mobile_menu.ex:47
+#: lib/sahajyog_web/components/layouts/root.html.heex:107
+#: lib/sahajyog_web/components/mobile_menu.ex:55
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr "Admin"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:128
-#: lib/sahajyog_web/live/resources_live.ex:123
+#: lib/sahajyog_web/live/admin/topics_live.ex:101
+#: lib/sahajyog_web/live/resources_live.ex:92
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:508
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:284
-#: lib/sahajyog_web/live/admin/topics_live.ex:248
-#: lib/sahajyog_web/live/admin/topics_live.ex:338
-#: lib/sahajyog_web/live/topic_edit_live.ex:420
+#: lib/sahajyog_web/live/admin/resources_live.ex:503
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:272
+#: lib/sahajyog_web/live/admin/topics_live.ex:182
+#: lib/sahajyog_web/live/admin/topics_live.ex:263
+#: lib/sahajyog_web/live/topic_edit_live.ex:414
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
 msgstr "¿Estás seguro?"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:402
+#: lib/sahajyog_web/live/admin/resources_live.ex:406
 #, elixir-autogen, elixir-format
 msgid "Back to Resources"
 msgstr "Volver a Recursos"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:739
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:197
-#: lib/sahajyog_web/live/topic_edit_live.ex:255
-#: lib/sahajyog_web/live/topic_edit_live.ex:363
-#: lib/sahajyog_web/live/topic_propose_live.ex:100
+#: lib/sahajyog_web/live/admin/resources_live.ex:730
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:198
+#: lib/sahajyog_web/live/admin/videos_live.ex:338
+#: lib/sahajyog_web/live/topic_edit_live.ex:249
+#: lib/sahajyog_web/live/topic_edit_live.ex:354
+#: lib/sahajyog_web/live/topic_propose_live.ex:94
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:667
+#: lib/sahajyog_web/live/admin/resources_live.ex:664
 #, elixir-autogen, elixir-format
 msgid "Click to upload or drag and drop"
 msgstr "Haz clic para subir o arrastra y suelta"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:511
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:287
-#: lib/sahajyog_web/live/admin/topics_live.ex:251
-#: lib/sahajyog_web/live/admin/topics_live.ex:341
-#: lib/sahajyog_web/live/topic_edit_live.ex:423
+#: lib/sahajyog_web/live/admin/resources_live.ex:506
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:275
+#: lib/sahajyog_web/live/admin/topics_live.ex:185
+#: lib/sahajyog_web/live/admin/topics_live.ex:266
+#: lib/sahajyog_web/live/admin/videos_live.ex:406
+#: lib/sahajyog_web/live/topic_edit_live.ex:417
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Eliminar"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:539
-#: lib/sahajyog_web/live/topic_edit_live.ex:346
+#: lib/sahajyog_web/live/admin/resources_live.ex:534
+#: lib/sahajyog_web/live/admin/videos_live.ex:310
+#: lib/sahajyog_web/live/topic_edit_live.ex:340
 #: lib/sahajyog_web/live/topic_propose_live.ex:83
 #, elixir-autogen, elixir-format
 msgid "Description"
 msgstr "Descripción"
 
-#: lib/sahajyog_web/live/resources_live.ex:220
-#: lib/sahajyog_web/live/resources_live.ex:324
+#: lib/sahajyog_web/live/resources_live.ex:187
+#: lib/sahajyog_web/live/resources_live.ex:267
 #, elixir-autogen, elixir-format
 msgid "Download"
 msgstr "Descargar"
@@ -600,58 +599,59 @@ msgstr "Descargar"
 msgid "Downloads"
 msgstr "Descargas"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:503
-#: lib/sahajyog_web/live/admin/topics_live.ex:243
-#: lib/sahajyog_web/live/admin/topics_live.ex:333
-#: lib/sahajyog_web/live/topic_edit_live.ex:415
+#: lib/sahajyog_web/live/admin/resources_live.ex:498
+#: lib/sahajyog_web/live/admin/topics_live.ex:177
+#: lib/sahajyog_web/live/admin/topics_live.ex:258
+#: lib/sahajyog_web/live/admin/videos_live.ex:398
+#: lib/sahajyog_web/live/topic_edit_live.ex:409
 #: lib/sahajyog_web/live/topic_show_live.ex:46
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr "Editar"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:529
+#: lib/sahajyog_web/live/admin/resources_live.ex:524
 #, elixir-autogen, elixir-format
 msgid "Edit Resource"
 msgstr "Editar Recurso"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:657
+#: lib/sahajyog_web/live/admin/resources_live.ex:654
 #, elixir-autogen, elixir-format
 msgid "File"
 msgstr "Archivo"
 
 #: lib/sahajyog_web/live/admin/resources_live.ex:433
-#: lib/sahajyog_web/live/admin/resources_live.ex:546
+#: lib/sahajyog_web/live/admin/resources_live.ex:541
 #, elixir-autogen, elixir-format
 msgid "Level"
 msgstr "Nivel"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:669
+#: lib/sahajyog_web/live/admin/resources_live.ex:666
 #, elixir-autogen, elixir-format
 msgid "Max 500MB"
 msgstr "Máximo 500MB"
 
-#: lib/sahajyog_web/live/resources_live.ex:236
+#: lib/sahajyog_web/live/resources_live.ex:199
 #, elixir-autogen, elixir-format
 msgid "No resources available for your level"
 msgstr "No hay recursos disponibles para tu nivel"
 
 #: lib/sahajyog_web/components/admin_nav.ex:36
-#: lib/sahajyog_web/components/layouts/root.html.heex:87
-#: lib/sahajyog_web/components/layouts/root.html.heex:99
-#: lib/sahajyog_web/components/mobile_menu.ex:53
-#: lib/sahajyog_web/components/mobile_menu.ex:66
-#: lib/sahajyog_web/live/admin/resources_live.ex:415
+#: lib/sahajyog_web/components/layouts/root.html.heex:96
+#: lib/sahajyog_web/components/layouts/root.html.heex:129
+#: lib/sahajyog_web/components/mobile_menu.ex:50
+#: lib/sahajyog_web/components/mobile_menu.ex:61
+#: lib/sahajyog_web/live/admin/resources_live.ex:417
 #: lib/sahajyog_web/live/resources_live.ex:103
 #, elixir-autogen, elixir-format
 msgid "Resources"
 msgstr "Recursos"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:548
+#: lib/sahajyog_web/live/admin/resources_live.ex:543
 #, elixir-autogen, elixir-format
 msgid "Select a level"
 msgstr "Selecciona un nivel"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:559
+#: lib/sahajyog_web/live/admin/resources_live.ex:554
 #, elixir-autogen, elixir-format
 msgid "Select a type"
 msgstr "Selecciona un tipo"
@@ -662,42 +662,43 @@ msgid "Size"
 msgstr "Tamaño"
 
 #: lib/sahajyog_web/live/admin/resources_live.ex:430
-#: lib/sahajyog_web/live/admin/resources_live.ex:535
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:149
-#: lib/sahajyog_web/live/admin/topics_live.ex:263
+#: lib/sahajyog_web/live/admin/resources_live.ex:530
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:154
+#: lib/sahajyog_web/live/admin/topics_live.ex:198
+#: lib/sahajyog_web/live/admin/videos_live.ex:256
 #: lib/sahajyog_web/live/topic_edit_live.ex:207
-#: lib/sahajyog_web/live/topic_edit_live.ex:332
+#: lib/sahajyog_web/live/topic_edit_live.ex:326
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr "Título"
 
 #: lib/sahajyog_web/live/admin/resources_live.ex:436
-#: lib/sahajyog_web/live/admin/resources_live.ex:557
-#: lib/sahajyog_web/live/topic_edit_live.ex:323
+#: lib/sahajyog_web/live/admin/resources_live.ex:552
+#: lib/sahajyog_web/live/topic_edit_live.ex:317
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr "Tipo"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:733
+#: lib/sahajyog_web/live/admin/resources_live.ex:727
 #, elixir-autogen, elixir-format
 msgid "Update Resource"
 msgstr "Actualizar Recurso"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:529
-#: lib/sahajyog_web/live/admin/resources_live.ex:732
+#: lib/sahajyog_web/live/admin/resources_live.ex:524
+#: lib/sahajyog_web/live/admin/resources_live.ex:726
 #, elixir-autogen, elixir-format
 msgid "Upload Resource"
 msgstr "Subir Recurso"
 
 #: lib/sahajyog_web/components/admin_nav.ex:22
-#: lib/sahajyog_web/components/layouts/root.html.heex:84
-#: lib/sahajyog_web/components/mobile_menu.ex:50
+#: lib/sahajyog_web/components/layouts/root.html.heex:126
+#: lib/sahajyog_web/components/mobile_menu.ex:58
 #, elixir-autogen, elixir-format
 msgid "Videos"
 msgstr "Videos"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:139
-#: lib/sahajyog_web/components/mobile_menu.ex:75
+#: lib/sahajyog_web/components/layouts/root.html.heex:177
+#: lib/sahajyog_web/components/mobile_menu.ex:79
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Account settings"
 msgstr "Configuración de cuenta"
@@ -707,7 +708,7 @@ msgstr "Configuración de cuenta"
 msgid "Change Password"
 msgstr "Cambiar Contraseña"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:615
+#: lib/sahajyog_web/live/admin/resources_live.ex:610
 #, elixir-autogen, elixir-format
 msgid "Current thumbnail"
 msgstr ""
@@ -722,33 +723,33 @@ msgstr ""
 msgid "English (Default)"
 msgstr "Inglés (Predeterminado)"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:631
+#: lib/sahajyog_web/live/admin/resources_live.ex:628
 #, elixir-autogen, elixir-format
 msgid "JPG, PNG, GIF - Max 5MB"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:567
+#: lib/sahajyog_web/live/admin/resources_live.ex:562
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr ""
 
-#: lib/sahajyog_web/live/resources_live.ex:213
+#: lib/sahajyog_web/live/resources_live.ex:180
 #, elixir-autogen, elixir-format
 msgid "Preview"
 msgstr ""
 
-#: lib/sahajyog_web/live/resources_live.ex:317
+#: lib/sahajyog_web/live/resources_live.ex:260
 #, elixir-autogen, elixir-format
 msgid "Preview not available for this file type"
 msgstr ""
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:145
-#: lib/sahajyog_web/components/mobile_menu.ex:81
+#: lib/sahajyog_web/components/layouts/root.html.heex:183
+#: lib/sahajyog_web/components/mobile_menu.ex:85
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Cerrar sesión"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:566
+#: lib/sahajyog_web/live/admin/resources_live.ex:561
 #, elixir-autogen, elixir-format
 msgid "Thumbnail"
 msgstr ""
@@ -758,33 +759,33 @@ msgstr ""
 msgid "Translation Language"
 msgstr "Idioma de Traducción"
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:616
+#: lib/sahajyog_web/live/admin/resources_live.ex:612
 #, elixir-autogen, elixir-format
 msgid "Upload a new one to replace it"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:274
+#: lib/sahajyog_web/live/topic_edit_live.ex:268
 #, elixir-autogen, elixir-format
 msgid "Add Reference"
 msgstr "Añadir Referencia"
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:160
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:165
 #, elixir-autogen, elixir-format
 msgid "Add initial content or leave empty..."
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:190
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:195
 #, elixir-autogen, elixir-format
 msgid "Approve & Create Topic"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:173
+#: lib/sahajyog_web/live/admin/topics_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "Archived"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:266
-#: lib/sahajyog_web/live/admin/topics_live.ex:374
+#: lib/sahajyog_web/live/admin/topics_live.ex:201
+#: lib/sahajyog_web/live/admin/topics_live.ex:287
 #, elixir-autogen, elixir-format
 msgid "Author"
 msgstr ""
@@ -800,7 +801,7 @@ msgstr "Volver al Tema"
 msgid "Back to Topics"
 msgstr "Volver a Temas"
 
-#: lib/sahajyog_web/live/topics_live.ex:125
+#: lib/sahajyog_web/live/topics_live.ex:100
 #, elixir-autogen, elixir-format
 msgid "Be the first to propose a topic"
 msgstr "Sé el primero en proponer un tema"
@@ -810,12 +811,13 @@ msgstr "Sé el primero en proponer un tema"
 msgid "Briefly describe what this topic should cover..."
 msgstr "Describe brevemente lo que debería cubrir este tema..."
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:492
+#: lib/sahajyog_web/components/ui_components.ex:279
+#: lib/sahajyog_web/live/admin/topics_live.ex:388
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Close"
 msgstr "cerrar"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:412
+#: lib/sahajyog_web/live/admin/topics_live.ex:315
 #, elixir-autogen, elixir-format
 msgid "Co-Authors"
 msgstr ""
@@ -840,34 +842,34 @@ msgstr "Coautores"
 msgid "Content"
 msgstr "Contenido"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:231
-#: lib/sahajyog_web/live/admin/topics_live.ex:321
+#: lib/sahajyog_web/live/admin/topics_live.ex:165
+#: lib/sahajyog_web/live/admin/topics_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "Details"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:143
+#: lib/sahajyog_web/live/admin/topics_live.ex:102
 #, elixir-autogen, elixir-format
 msgid "Draft"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:284
+#: lib/sahajyog_web/live/topic_edit_live.ex:278
 #, elixir-autogen, elixir-format
 msgid "Edit Reference"
 msgstr "Editar Referencia"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:486
+#: lib/sahajyog_web/live/admin/topics_live.ex:385
 #: lib/sahajyog_web/live/topic_edit_live.ex:201
 #, elixir-autogen, elixir-format
 msgid "Edit Topic"
 msgstr "Editar Tema"
 
-#: lib/sahajyog_web/live/welcome_live.ex:87
+#: lib/sahajyog_web/live/welcome_live.ex:84
 #, elixir-autogen, elixir-format
 msgid "Explore Topics"
 msgstr "Explorar Temas"
 
-#: lib/sahajyog_web/live/topics_live.ex:37
+#: lib/sahajyog_web/live/topics_live.ex:29
 #, elixir-autogen, elixir-format
 msgid "Explore in-depth articles on Sahaja Yoga"
 msgstr "Explora artículos detallados sobre Sahaja Yoga"
@@ -882,38 +884,38 @@ msgstr ""
 msgid "Failed to reject proposal"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:578
+#: lib/sahajyog_web/live/admin/resources_live.ex:573
 #, elixir-autogen, elixir-format
 msgid "Generating thumbnail..."
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:158
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:163
 #, elixir-autogen, elixir-format
 msgid "Initial Content"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:458
+#: lib/sahajyog_web/live/admin/topics_live.ex:361
 #, elixir-autogen, elixir-format
 msgid "Invite Co-Author"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:178
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:183
 #: lib/sahajyog_web/live/topic_edit_live.ex:237
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Language"
 msgstr "Todos los idiomas"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:108
+#: lib/sahajyog_web/live/admin/topics_live.ex:115
 #, elixir-autogen, elixir-format
 msgid "Manage Topics"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:283
+#: lib/sahajyog_web/live/topic_edit_live.ex:277
 #, elixir-autogen, elixir-format
 msgid "New Reference"
 msgstr "Nueva Referencia"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:417
+#: lib/sahajyog_web/live/admin/topics_live.ex:320
 #, elixir-autogen, elixir-format
 msgid "No co-authors yet"
 msgstr ""
@@ -923,42 +925,37 @@ msgstr ""
 msgid "No content yet"
 msgstr "Aún no hay contenido"
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:214
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:210
 #, elixir-autogen, elixir-format
 msgid "No proposals"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:374
-#, elixir-autogen, elixir-format
-msgid "No references yet. Add books, talks, or other resources."
-msgstr "Aún no hay referencias. Añade libros, charlas u otros recursos."
-
-#: lib/sahajyog_web/live/resources_live.ex:234
+#: lib/sahajyog_web/live/resources_live.ex:198
 #, elixir-autogen, elixir-format, fuzzy
 msgid "No resources available"
 msgstr "No hay recursos disponibles para tu nivel"
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:216
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:211
 #, elixir-autogen, elixir-format
 msgid "No topic proposals to review"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:185
+#: lib/sahajyog_web/live/admin/topics_live.ex:130
 #, elixir-autogen, elixir-format
 msgid "No topics found"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:187
+#: lib/sahajyog_web/live/admin/topics_live.ex:131
 #, elixir-autogen, elixir-format
 msgid "No topics match the selected filter"
 msgstr ""
 
-#: lib/sahajyog_web/live/topics_live.ex:122
+#: lib/sahajyog_web/live/topics_live.ex:99
 #, elixir-autogen, elixir-format
 msgid "No topics yet"
 msgstr "Aún no hay temas"
 
-#: lib/sahajyog_web/live/resources_live.ex:314
+#: lib/sahajyog_web/live/resources_live.ex:259
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Preview not available"
 msgstr ""
@@ -979,13 +976,15 @@ msgid "Proposal rejected"
 msgstr ""
 
 #: lib/sahajyog_web/components/admin_nav.ex:64
-#: lib/sahajyog_web/components/layouts/root.html.heex:93
-#: lib/sahajyog_web/components/mobile_menu.ex:59
+#: lib/sahajyog_web/components/layouts/root.html.heex:135
+#: lib/sahajyog_web/components/mobile_menu.ex:67
 #, elixir-autogen, elixir-format
 msgid "Proposals"
 msgstr ""
 
-#: lib/sahajyog_web/live/topics_live.ex:46
+#: lib/sahajyog_web/live/topics_live.ex:34
+#: lib/sahajyog_web/live/topics_live.ex:39
+#: lib/sahajyog_web/live/topics_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "Propose Topic"
 msgstr "Proponer Tema"
@@ -995,19 +994,19 @@ msgstr "Proponer Tema"
 msgid "Propose a New Topic"
 msgstr "Proponer un Nuevo Tema"
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:134
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:139
 #, elixir-autogen, elixir-format
 msgid "Proposed by"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:158
-#: lib/sahajyog_web/live/admin/topics_live.ex:275
-#: lib/sahajyog_web/live/admin/topics_live.ex:400
+#: lib/sahajyog_web/live/admin/topics_live.ex:103
+#: lib/sahajyog_web/live/admin/topics_live.ex:210
+#: lib/sahajyog_web/live/admin/topics_live.ex:303
 #, elixir-autogen, elixir-format
 msgid "Published"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:298
+#: lib/sahajyog_web/live/topic_edit_live.ex:292
 #, elixir-autogen, elixir-format
 msgid "Quick Add from Resources"
 msgstr "Añadir Rápido desde Recursos"
@@ -1022,18 +1021,18 @@ msgstr "Referencia eliminada"
 msgid "Reference saved"
 msgstr "Referencia guardada"
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:267
+#: lib/sahajyog_web/live/topic_edit_live.ex:261
 #: lib/sahajyog_web/live/topic_show_live.ex:103
 #, elixir-autogen, elixir-format
 msgid "References"
 msgstr "Referencias"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:449
+#: lib/sahajyog_web/live/admin/topics_live.ex:352
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:446
+#: lib/sahajyog_web/live/admin/topics_live.ex:349
 #, elixir-autogen, elixir-format
 msgid "Remove this co-author?"
 msgstr ""
@@ -1048,61 +1047,61 @@ msgstr "Detalles del recurso cargados. Revisa y guarda."
 msgid "Resource not found or preview unavailable"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:278
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:266
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Review"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:120
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:133
 #, elixir-autogen, elixir-format
 msgid "Review Proposal"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:264
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:251
 #, elixir-autogen, elixir-format
 msgid "Review notes"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:356
+#: lib/sahajyog_web/live/topic_edit_live.ex:347
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Guardar"
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:249
+#: lib/sahajyog_web/live/topic_edit_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "Save Changes"
 msgstr "Guardar Cambios"
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:313
+#: lib/sahajyog_web/live/topic_edit_live.ex:307
 #, elixir-autogen, elixir-format
 msgid "Select a resource to auto-fill the reference details"
 msgstr "Selecciona un recurso para autocompletar los detalles de la referencia"
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:305
+#: lib/sahajyog_web/live/topic_edit_live.ex:299
 #, elixir-autogen, elixir-format
 msgid "Select a resource..."
 msgstr "Selecciona un recurso..."
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:475
+#: lib/sahajyog_web/live/admin/topics_live.ex:378
 #, elixir-autogen, elixir-format
 msgid "Select a user to invite them as a co-author"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:466
+#: lib/sahajyog_web/live/admin/topics_live.ex:369
 #, elixir-autogen, elixir-format
 msgid "Select a user..."
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:169
-#: lib/sahajyog_web/live/admin/topics_live.ex:269
-#: lib/sahajyog_web/live/admin/topics_live.ex:379
-#: lib/sahajyog_web/live/admin/topics_live.ex:431
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:174
+#: lib/sahajyog_web/live/admin/topics_live.ex:204
+#: lib/sahajyog_web/live/admin/topics_live.ex:292
+#: lib/sahajyog_web/live/admin/topics_live.ex:334
 #: lib/sahajyog_web/live/topic_edit_live.ex:228
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Estado"
 
-#: lib/sahajyog_web/live/topic_propose_live.ex:94
+#: lib/sahajyog_web/live/topic_propose_live.ex:91
 #, elixir-autogen, elixir-format
 msgid "Submit Proposal"
 msgstr "Enviar Propuesta"
@@ -1117,7 +1116,7 @@ msgstr ""
 msgid "Suggest a topic for the community. An admin will review and approve it."
 msgstr "Sugiere un tema para la comunidad. Un administrador lo revisará y aprobará."
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:596
+#: lib/sahajyog_web/live/admin/resources_live.ex:591
 #, elixir-autogen, elixir-format
 msgid "Thumbnail auto-generated"
 msgstr ""
@@ -1127,12 +1126,12 @@ msgstr ""
 msgid "Tip: Use the toolbar to format text, add images, and create rich content"
 msgstr "Consejo: Usa la barra de herramientas para formatear texto, añadir imágenes y crear contenido enriquecido"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:358
+#: lib/sahajyog_web/live/admin/topics_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Topic Details"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:110
+#: lib/sahajyog_web/live/admin/topic_proposals_live.ex:124
 #, elixir-autogen, elixir-format
 msgid "Topic Proposals"
 msgstr ""
@@ -1158,38 +1157,39 @@ msgid "Topic updated successfully"
 msgstr "Tema actualizado con éxito"
 
 #: lib/sahajyog_web/components/admin_nav.ex:50
-#: lib/sahajyog_web/components/layouts/root.html.heex:90
-#: lib/sahajyog_web/components/mobile_menu.ex:42
-#: lib/sahajyog_web/components/mobile_menu.ex:56
-#: lib/sahajyog_web/live/topics_live.ex:34
+#: lib/sahajyog_web/components/layouts/root.html.heex:87
+#: lib/sahajyog_web/components/layouts/root.html.heex:132
+#: lib/sahajyog_web/components/mobile_menu.ex:47
+#: lib/sahajyog_web/components/mobile_menu.ex:64
+#: lib/sahajyog_web/live/topics_live.ex:26
 #, elixir-autogen, elixir-format
 msgid "Topics"
 msgstr "Temas"
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:339
+#: lib/sahajyog_web/live/topic_edit_live.ex:333
 #, elixir-autogen, elixir-format
 msgid "URL"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:600
+#: lib/sahajyog_web/live/admin/resources_live.ex:595
 #, elixir-autogen, elixir-format
 msgid "Upload a custom thumbnail below to override"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/resources_live.ex:629
+#: lib/sahajyog_web/live/admin/resources_live.ex:626
 #, elixir-autogen, elixir-format
 msgid "Upload custom thumbnail"
 msgstr ""
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:237
-#: lib/sahajyog_web/live/admin/topics_live.ex:327
+#: lib/sahajyog_web/live/admin/topics_live.ex:171
+#: lib/sahajyog_web/live/admin/topics_live.ex:252
 #: lib/sahajyog_web/live/topic_show_live.ex:132
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View"
 msgstr "Ver charla"
 
-#: lib/sahajyog_web/live/admin/topics_live.ex:272
-#: lib/sahajyog_web/live/admin/topics_live.ex:394
+#: lib/sahajyog_web/live/admin/topics_live.ex:207
+#: lib/sahajyog_web/live/admin/topics_live.ex:297
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Views"
 msgstr "Videos"
@@ -1223,3 +1223,136 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "views"
 msgstr "vistas"
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:239
+#, elixir-autogen, elixir-format
+msgid "Add New Video"
+msgstr ""
+
+#: lib/sahajyog_web/live/topic_edit_live.ex:367
+#, elixir-autogen, elixir-format
+msgid "Add books, talks, or other resources."
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:403
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to delete this video?"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:335
+#, elixir-autogen, elixir-format
+msgid "Create Video"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:328
+#: lib/sahajyog_web/live/admin/videos_live.ex:381
+#, elixir-autogen, elixir-format
+msgid "Duration"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:247
+#, elixir-autogen, elixir-format
+msgid "Edit Video"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:311
+#, elixir-autogen, elixir-format
+msgid "Enter video description (optional)"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:257
+#, elixir-autogen, elixir-format
+msgid "Enter video title"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:275
+#, elixir-autogen, elixir-format
+msgid "Fetch Video Info"
+msgstr ""
+
+#: lib/sahajyog_web/components/ui_components.ex:522
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Loading"
+msgstr "Cargando charlas..."
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:236
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Manage Videos"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:247
+#, elixir-autogen, elixir-format
+msgid "New Video"
+msgstr ""
+
+#: lib/sahajyog_web/live/topic_edit_live.ex:366
+#, elixir-autogen, elixir-format
+msgid "No references yet"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:416
+#, elixir-autogen, elixir-format
+msgid "No videos in this category yet"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:297
+#, elixir-autogen, elixir-format
+msgid "Order in sequence"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:278
+#, elixir-autogen, elixir-format
+msgid "Provider"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:288
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Select a category"
+msgstr "Selecciona un tipo"
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:296
+#, elixir-autogen, elixir-format
+msgid "Step Number"
+msgstr ""
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:78
+#: lib/sahajyog_web/components/mobile_menu.ex:44
+#, elixir-autogen, elixir-format
+msgid "Talks"
+msgstr "Charlas"
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:319
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Thumbnail URL"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:335
+#, elixir-autogen, elixir-format
+msgid "Update Video"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/resources_live.ex:420
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Upload New Resource"
+msgstr "Subir Nuevo Recurso"
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:265
+#, elixir-autogen, elixir-format
+msgid "Video URL"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:300
+#, elixir-autogen, elixir-format
+msgid "Videos at this position and higher in the same category will shift up automatically"
+msgstr ""
+
+#: lib/sahajyog_web/live/admin/videos_live.ex:387
+#, elixir-autogen, elixir-format
+msgid "View Video"
+msgstr ""
+
+#: lib/sahajyog_web/components/layouts/root.html.heex:69
+#: lib/sahajyog_web/components/mobile_menu.ex:41
+#, elixir-autogen, elixir-format
+msgid "Steps"
+msgstr "Pasos"

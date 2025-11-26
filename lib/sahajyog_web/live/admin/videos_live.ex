@@ -1,6 +1,8 @@
 defmodule SahajyogWeb.Admin.VideosLive do
   use SahajyogWeb, :live_view
 
+  import SahajyogWeb.AdminNav
+
   alias Sahajyog.Content
   alias Sahajyog.Content.Video
   alias Sahajyog.VideoProvider
@@ -227,23 +229,22 @@ defmodule SahajyogWeb.Admin.VideosLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 px-4">
-      <div class="max-w-7xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
-          <h1 class="text-4xl font-bold text-white">Manage Videos</h1>
-          <button
-            :if={!@form}
-            phx-click="new"
-            class="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold shadow-lg"
-          >
-            + Add New Video
-          </button>
-        </div>
+    <.page_container>
+      <.admin_nav current_page={:videos} />
+
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <.page_header title={gettext("Manage Videos")}>
+          <:actions>
+            <.primary_button :if={!@form} phx-click="new" icon="hero-plus">
+              {gettext("Add New Video")}
+            </.primary_button>
+          </:actions>
+        </.page_header>
 
         <%!-- Video Form --%>
-        <div :if={@form} class="bg-gray-800 rounded-xl shadow-lg p-8 mb-8 border border-gray-700">
-          <h2 class="text-2xl font-bold text-white mb-6">
-            {(@editing_video && "Edit Video") || "New Video"}
+        <.card :if={@form} size="lg" class="mb-8">
+          <h2 class="text-2xl font-bold text-base-content mb-6">
+            {(@editing_video && gettext("Edit Video")) || gettext("New Video")}
           </h2>
 
           <.form for={@form} id="video-form" phx-change="validate" phx-submit="save">
@@ -252,8 +253,8 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 <.input
                   field={@form[:title]}
                   type="text"
-                  label="Title"
-                  placeholder="Enter video title"
+                  label={gettext("Title")}
+                  placeholder={gettext("Enter video title")}
                 />
               </div>
 
@@ -261,19 +262,20 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 <.input
                   field={@form[:url]}
                   type="text"
-                  label="Video URL"
+                  label={gettext("Video URL")}
                   placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
                 />
                 <button
                   type="button"
                   phx-click="fetch_metadata"
                   phx-value-url={@form[:url].value}
-                  class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  class="mt-2 px-4 py-2 bg-info text-info-content rounded-lg hover:bg-info/90 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-info"
                 >
-                  <.icon name="hero-arrow-down-tray" class="w-4 h-4 inline mr-1" /> Fetch Video Info
+                  <.icon name="hero-arrow-down-tray" class="w-4 h-4 inline mr-1" />
+                  {gettext("Fetch Video Info")}
                 </button>
-                <p :if={@form[:provider].value} class="text-sm text-gray-400 mt-1">
-                  Provider: {String.capitalize(@form[:provider].value || "unknown")}
+                <p :if={@form[:provider].value} class="text-sm text-base-content/60 mt-1">
+                  {gettext("Provider")}: {String.capitalize(@form[:provider].value || "unknown")}
                 </p>
               </div>
 
@@ -281,9 +283,9 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 <.input
                   field={@form[:category]}
                   type="select"
-                  label="Category"
+                  label={gettext("Category")}
                   options={Video.categories()}
-                  prompt="Select a category"
+                  prompt={gettext("Select a category")}
                 />
               </div>
 
@@ -291,11 +293,13 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 <.input
                   field={@form[:step_number]}
                   type="number"
-                  label="Step Number"
-                  placeholder="Order in sequence"
+                  label={gettext("Step Number")}
+                  placeholder={gettext("Order in sequence")}
                 />
-                <p class="text-sm text-gray-400 mt-1">
-                  Videos at this position and higher in the same category will shift up automatically
+                <p class="text-sm text-base-content/60 mt-1">
+                  {gettext(
+                    "Videos at this position and higher in the same category will shift up automatically"
+                  )}
                 </p>
               </div>
 
@@ -303,8 +307,8 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 <.input
                   field={@form[:description]}
                   type="textarea"
-                  label="Description"
-                  placeholder="Enter video description (optional)"
+                  label={gettext("Description")}
+                  placeholder={gettext("Enter video description (optional)")}
                 />
               </div>
 
@@ -312,7 +316,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 <.input
                   field={@form[:thumbnail_url]}
                   type="text"
-                  label="Thumbnail URL"
+                  label={gettext("Thumbnail URL")}
                   placeholder="https://... (optional)"
                 />
               </div>
@@ -321,39 +325,32 @@ defmodule SahajyogWeb.Admin.VideosLive do
                 <.input
                   field={@form[:duration]}
                   type="text"
-                  label="Duration"
+                  label={gettext("Duration")}
                   placeholder="e.g., 10:30 (optional)"
                 />
               </div>
 
               <div class="flex gap-4 pt-4">
-                <button
-                  type="submit"
-                  class="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold"
-                >
-                  {(@editing_video && "Update Video") || "Create Video"}
-                </button>
-                <button
-                  type="button"
-                  phx-click="cancel"
-                  class="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
+                <.primary_button type="submit">
+                  {(@editing_video && gettext("Update Video")) || gettext("Create Video")}
+                </.primary_button>
+                <.secondary_button type="button" phx-click="cancel">
+                  {gettext("Cancel")}
+                </.secondary_button>
               </div>
             </div>
           </.form>
-        </div>
+        </.card>
 
         <%!-- Videos List --%>
         <div class="space-y-6">
           <%= for category <- Video.categories() do %>
-            <div class="bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700">
-              <h2 class="text-2xl font-bold text-white mb-4">{category}</h2>
+            <.card class="p-6">
+              <h2 class="text-2xl font-bold text-base-content mb-4">{category}</h2>
 
               <div class="space-y-4">
                 <%= for video <- Enum.filter(@videos, &(&1.category == category)) do %>
-                  <div class="flex items-start gap-4 p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+                  <div class="flex items-start gap-4 p-4 bg-base-100 rounded-lg hover:bg-base-200 transition-colors">
                     <div :if={video.thumbnail_url} class="flex-shrink-0">
                       <img
                         src={video.thumbnail_url}
@@ -366,23 +363,28 @@ defmodule SahajyogWeb.Admin.VideosLive do
                       <div class="flex items-center gap-2">
                         <span
                           :if={video.step_number}
-                          class="px-2 py-1 bg-orange-600 text-white text-xs font-bold rounded"
+                          class="px-2 py-1 bg-warning text-warning-content text-xs font-bold rounded"
                         >
                           #{video.step_number}
                         </span>
-                        <h3 class="text-lg font-semibold text-white truncate">{video.title}</h3>
+                        <h3 class="text-lg font-semibold text-base-content truncate">
+                          {video.title}
+                        </h3>
                       </div>
-                      <p :if={video.description} class="text-sm text-gray-300 mt-1 line-clamp-2">
+                      <p
+                        :if={video.description}
+                        class="text-sm text-base-content/70 mt-1 line-clamp-2"
+                      >
                         {video.description}
                       </p>
-                      <div class="flex items-center gap-4 mt-2 text-sm text-gray-400">
-                        <span :if={video.duration}>Duration: {video.duration}</span>
+                      <div class="flex items-center gap-4 mt-2 text-sm text-base-content/60">
+                        <span :if={video.duration}>{gettext("Duration")}: {video.duration}</span>
                         <a
                           href={video.url}
                           target="_blank"
-                          class="text-orange-400 hover:text-orange-300"
+                          class="text-warning hover:text-warning/80 focus:outline-none focus:ring-2 focus:ring-warning rounded"
                         >
-                          View Video →
+                          {gettext("View Video")} →
                         </a>
                       </div>
                     </div>
@@ -391,20 +393,17 @@ defmodule SahajyogWeb.Admin.VideosLive do
                       <button
                         phx-click="edit"
                         phx-value-id={video.id}
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-medium"
+                        class="px-4 py-2 bg-primary text-primary-content rounded hover:bg-primary/90 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
                       >
-                        Edit
+                        {gettext("Edit")}
                       </button>
                       <button
                         phx-click="delete"
                         phx-value-id={video.id}
-                        data-confirm="Are you sure you want to delete this video?"
-                        class="px-4 py-2 text-white rounded transition-colors text-sm font-medium"
-                        style="background-color: #d14545;"
-                        onmouseover="this.style.backgroundColor='#b83030'"
-                        onmouseout="this.style.backgroundColor='#d14545'"
+                        data-confirm={gettext("Are you sure you want to delete this video?")}
+                        class="px-4 py-2 bg-base-200 text-error rounded hover:bg-error/20 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-error/50"
                       >
-                        Delete
+                        {gettext("Delete")}
                       </button>
                     </div>
                   </div>
@@ -412,16 +411,16 @@ defmodule SahajyogWeb.Admin.VideosLive do
 
                 <div
                   :if={Enum.filter(@videos, &(&1.category == category)) == []}
-                  class="text-center py-8 text-gray-400"
+                  class="text-center py-8 text-base-content/50"
                 >
-                  No videos in this category yet
+                  {gettext("No videos in this category yet")}
                 </div>
               </div>
-            </div>
+            </.card>
           <% end %>
         </div>
       </div>
-    </div>
+    </.page_container>
     """
   end
 end

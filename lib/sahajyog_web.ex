@@ -86,6 +86,10 @@ defmodule SahajyogWeb do
       import Phoenix.HTML
       # Core UI components
       import SahajyogWeb.CoreComponents
+      # Shared UI components
+      import SahajyogWeb.UIComponents
+      # Format helpers
+      import SahajyogWeb.FormatHelpers
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS

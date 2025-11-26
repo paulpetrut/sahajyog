@@ -27,19 +27,16 @@ defmodule SahajyogWeb.WelcomeLive do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <.page_container>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Header --%>
-        <div class="mb-8 text-center">
-          <h1 class="text-5xl font-bold text-white mb-4">{gettext("Welcome to Sahaja Yoga")}</h1>
-          <p class="text-xl text-gray-300">
-            {gettext("Discover inner peace through meditation")}
-          </p>
-        </div>
+        <.page_header title={gettext("Welcome to Sahaja Yoga")} centered>
+          <:subtitle>{gettext("Discover inner peace through meditation")}</:subtitle>
+        </.page_header>
 
         <%!-- Video Player --%>
         <div :if={@current_video} class="mb-12">
-          <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 shadow-2xl">
+          <.card class="overflow-hidden p-0">
             <div class="aspect-video bg-black">
               <.video_player
                 video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
@@ -48,33 +45,33 @@ defmodule SahajyogWeb.WelcomeLive do
               />
             </div>
             <div class="p-6">
-              <h2 class="text-2xl font-bold text-white mb-2">{@current_video.title}</h2>
-              <p :if={@current_video.description} class="text-gray-400">
+              <h2 class="text-2xl font-bold text-base-content mb-2">{@current_video.title}</h2>
+              <p :if={@current_video.description} class="text-base-content/60">
                 {@current_video.description}
               </p>
             </div>
-          </div>
+          </.card>
         </div>
 
         <%!-- Call to Action --%>
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-8 text-center">
-          <h3 class="text-3xl font-bold text-white mb-4">
+        <div class="bg-gradient-to-r from-primary to-secondary rounded-lg p-8 text-center">
+          <h3 class="text-3xl font-bold text-primary-content mb-4">
             {gettext("Ready to Begin Your Journey?")}
           </h3>
-          <p class="text-xl text-blue-100 mb-6">
+          <p class="text-xl text-primary-content/80 mb-6">
             {gettext("Explore our complete collection of talks and guided meditations")}
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <.link
               navigate="/steps"
-              class="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors inline-flex items-center justify-center gap-2"
+              class="px-8 py-3 bg-purple-200 text-purple-900 rounded-lg font-semibold hover:bg-purple-100 transition-colors inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2 focus:ring-offset-primary shadow-lg"
             >
               <span>{gettext("Start Learning")}</span>
               <.icon name="hero-arrow-right" class="w-5 h-5" />
             </.link>
             <.link
               navigate="/talks"
-              class="px-8 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 transition-colors inline-flex items-center justify-center gap-2"
+              class="px-8 py-3 bg-primary/80 text-primary-content rounded-lg font-semibold hover:bg-primary/70 transition-colors inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-content/50 focus:ring-offset-2 focus:ring-offset-primary"
             >
               <span>{gettext("Browse All Talks")}</span>
               <.icon name="hero-magnifying-glass" class="w-5 h-5" />
@@ -82,7 +79,7 @@ defmodule SahajyogWeb.WelcomeLive do
             <%= if @current_scope do %>
               <.link
                 navigate="/topics"
-                class="px-8 py-3 bg-purple-700 text-white rounded-lg font-semibold hover:bg-purple-800 transition-colors inline-flex items-center justify-center gap-2"
+                class="px-8 py-3 bg-secondary/80 text-secondary-content rounded-lg font-semibold hover:bg-secondary/70 transition-colors inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-secondary-content/50 focus:ring-offset-2 focus:ring-offset-secondary"
               >
                 <span>{gettext("Explore Topics")}</span>
                 <.icon name="hero-document-text" class="w-5 h-5" />
@@ -91,7 +88,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </div>
         </div>
       </div>
-    </div>
+    </.page_container>
     """
   end
 end

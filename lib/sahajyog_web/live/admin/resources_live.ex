@@ -1,6 +1,8 @@
 defmodule SahajyogWeb.Admin.ResourcesLive do
   use SahajyogWeb, :live_view
 
+  import SahajyogWeb.AdminNav
+
   alias Sahajyog.Resources
   alias Sahajyog.Resources.Resource
   alias Sahajyog.Resources.R2Storage
@@ -391,13 +393,15 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-6 sm:py-8 lg:py-12 px-4">
-      <div class="max-w-7xl mx-auto">
+    <.page_container>
+      <.admin_nav current_page={:resources} />
+
+      <div class="max-w-7xl mx-auto px-4 py-8">
         <%= if @live_action in [:new, :edit] do %>
           <div class="mb-6 sm:mb-8">
             <.link
               navigate={~p"/admin/resources"}
-              class="text-orange-400 hover:text-orange-300 mb-4 inline-flex items-center gap-1 text-sm sm:text-base"
+              class="text-info hover:text-info/80 mb-4 inline-flex items-center gap-1 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-info rounded"
             >
               ← {gettext("Back to Resources")}
             </.link>
@@ -410,44 +414,40 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
             />
           </div>
         <% else %>
-          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-              {gettext("Resources")}
-            </h1>
-            <.link
-              navigate={~p"/admin/resources/new"}
-              class="px-4 sm:px-6 py-2 sm:py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold shadow-lg text-sm sm:text-base text-center"
-            >
-              {gettext("+ Upload New Resource")}
-            </.link>
-          </div>
+          <.page_header title={gettext("Resources")}>
+            <:actions>
+              <.primary_button navigate={~p"/admin/resources/new"} icon="hero-plus">
+                {gettext("Upload New Resource")}
+              </.primary_button>
+            </:actions>
+          </.page_header>
 
-          <div class="bg-gray-800 rounded-xl shadow-lg overflow-x-auto border border-gray-700">
-            <table class="min-w-full divide-y divide-gray-700">
-              <thead class="bg-gray-900">
+          <.card class="overflow-x-auto p-0">
+            <table class="min-w-full divide-y divide-base-content/10">
+              <thead class="bg-base-300">
                 <tr>
-                  <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
+                  <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-base-content/70 uppercase">
                     {gettext("Title")}
                   </th>
-                  <th class="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
+                  <th class="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-base-content/70 uppercase">
                     {gettext("Level")}
                   </th>
-                  <th class="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
+                  <th class="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-base-content/70 uppercase">
                     {gettext("Type")}
                   </th>
-                  <th class="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
+                  <th class="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-base-content/70 uppercase">
                     {gettext("Size")}
                   </th>
-                  <th class="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
+                  <th class="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-base-content/70 uppercase">
                     {gettext("Downloads")}
                   </th>
-                  <th class="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase">
+                  <th class="px-3 sm:px-6 py-3 text-right text-xs font-medium text-base-content/70 uppercase">
                     {gettext("Actions")}
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-gray-800 divide-y divide-gray-700">
-                <tr :for={resource <- @resources} class="hover:bg-gray-700 transition-colors">
+              <tbody class="bg-base-200 divide-y divide-base-content/10">
+                <tr :for={resource <- @resources} class="hover:bg-base-100 transition-colors">
                   <td class="px-3 sm:px-6 py-4">
                     <div class="flex items-center gap-3">
                       <%= if resource.thumbnail_r2_key do %>
@@ -457,48 +457,43 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                           class="w-12 h-12 object-contain rounded"
                         />
                       <% else %>
-                        <div class="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
+                        <div class="w-12 h-12 bg-base-300 rounded flex items-center justify-center">
                           <.icon
-                            name={
-                              cond do
-                                resource.resource_type == "Photos" -> "hero-photo"
-                                resource.resource_type == "Music" -> "hero-musical-note"
-                                resource.resource_type == "Books" -> "hero-book-open"
-                                true -> "hero-document"
-                              end
-                            }
-                            class="w-6 h-6 text-gray-400"
+                            name={type_icon(resource.resource_type)}
+                            class="w-6 h-6 text-base-content/40"
                           />
                         </div>
                       <% end %>
                       <div class="flex-1 min-w-0">
-                        <div class="text-sm font-medium text-white break-words">{resource.title}</div>
-                        <div class="text-xs sm:text-sm text-gray-400 truncate max-w-xs">
+                        <div class="text-sm font-medium text-base-content break-words">
+                          {resource.title}
+                        </div>
+                        <div class="text-xs sm:text-sm text-base-content/60 truncate max-w-xs">
                           {resource.file_name}
                         </div>
-                        <div class="md:hidden text-xs text-gray-400 mt-1">
+                        <div class="md:hidden text-xs text-base-content/60 mt-1">
                           {resource.level} · {resource.resource_type}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td class="hidden md:table-cell px-3 sm:px-6 py-4 text-sm text-gray-300">
+                  <td class="hidden md:table-cell px-3 sm:px-6 py-4 text-sm text-base-content/80">
                     {resource.level}
                   </td>
-                  <td class="hidden lg:table-cell px-3 sm:px-6 py-4 text-sm text-gray-300">
+                  <td class="hidden lg:table-cell px-3 sm:px-6 py-4 text-sm text-base-content/80">
                     {resource.resource_type}
                   </td>
-                  <td class="hidden sm:table-cell px-3 sm:px-6 py-4 text-sm text-gray-300">
+                  <td class="hidden sm:table-cell px-3 sm:px-6 py-4 text-sm text-base-content/80">
                     {format_file_size(resource.file_size)}
                   </td>
-                  <td class="hidden lg:table-cell px-3 sm:px-6 py-4 text-sm text-gray-300">
+                  <td class="hidden lg:table-cell px-3 sm:px-6 py-4 text-sm text-base-content/80">
                     {resource.downloads_count}
                   </td>
                   <td class="px-3 sm:px-6 py-4 text-right text-sm font-medium">
                     <div class="flex flex-col sm:flex-row sm:justify-end gap-2">
                       <.link
                         navigate={~p"/admin/resources/#{resource}/edit"}
-                        class="text-blue-400 hover:text-blue-300 text-xs sm:text-sm"
+                        class="text-primary hover:text-primary/80 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary rounded"
                       >
                         {gettext("Edit")}
                       </.link>
@@ -506,7 +501,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                         phx-click="delete"
                         phx-value-id={resource.id}
                         data-confirm={gettext("Are you sure?")}
-                        class="text-red-400 hover:text-red-300 text-xs sm:text-sm"
+                        class="text-error/70 hover:text-error text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-error/50 rounded"
                       >
                         {gettext("Delete")}
                       </.link>
@@ -515,17 +510,17 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                 </tr>
               </tbody>
             </table>
-          </div>
+          </.card>
         <% end %>
       </div>
-    </div>
+    </.page_container>
     """
   end
 
   defp resource_form(assigns) do
     ~H"""
-    <div class="bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-700">
-      <h2 class="text-2xl font-bold text-white mb-6">
+    <.card size="lg">
+      <h2 class="text-2xl font-bold text-base-content mb-6">
         {if @live_action == :new, do: gettext("Upload Resource"), else: gettext("Edit Resource")}
       </h2>
 
@@ -562,19 +557,19 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-300 mb-2">
+            <label class="block text-sm font-medium text-base-content/80 mb-2">
               {gettext("Thumbnail")}
-              <span class="text-gray-500 text-xs">({gettext("Optional")})</span>
+              <span class="text-base-content/50 text-xs">({gettext("Optional")})</span>
             </label>
 
             <%!-- Generating thumbnail indicator --%>
             <%= if @live_action == :new && @generating_thumbnail do %>
-              <div class="mb-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div class="mb-3 p-3 bg-info/10 border border-info/20 rounded-lg">
                 <div class="flex items-center gap-2">
                   <div class="animate-spin">
-                    <.icon name="hero-arrow-path" class="w-5 h-5 text-blue-400" />
+                    <.icon name="hero-arrow-path" class="w-5 h-5 text-info" />
                   </div>
-                  <p class="text-sm text-blue-300">
+                  <p class="text-sm text-info">
                     {gettext("Generating thumbnail...")}
                   </p>
                 </div>
@@ -582,7 +577,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
             <% end %>
             <%!-- Auto-generated thumbnail preview --%>
             <%= if @live_action == :new && @auto_thumbnail_preview do %>
-              <div class="mb-3 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+              <div class="mb-3 p-3 bg-success/10 border border-success/20 rounded-lg">
                 <div class="flex items-start gap-3">
                   <img
                     src={@auto_thumbnail_preview}
@@ -591,12 +586,12 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                   />
                   <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">
-                      <.icon name="hero-sparkles" class="w-4 h-4 text-green-400" />
-                      <p class="text-sm text-green-300 font-medium">
+                      <.icon name="hero-sparkles" class="w-4 h-4 text-success" />
+                      <p class="text-sm text-success font-medium">
                         {gettext("Thumbnail auto-generated")}
                       </p>
                     </div>
-                    <p class="text-xs text-green-400/80">
+                    <p class="text-xs text-success/80">
                       {gettext("Upload a custom thumbnail below to override")}
                     </p>
                   </div>
@@ -605,45 +600,47 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
             <% end %>
 
             <%= if @live_action == :edit && @form.data.thumbnail_r2_key do %>
-              <div class="mb-3 flex items-center gap-3 p-3 bg-gray-700 rounded-lg">
+              <div class="mb-3 flex items-center gap-3 p-3 bg-base-100 rounded-lg">
                 <img
                   src={Resources.thumbnail_url(@form.data)}
                   alt="Current thumbnail"
                   class="w-16 h-16 object-cover rounded"
                 />
                 <div class="flex-1">
-                  <p class="text-sm text-gray-300">{gettext("Current thumbnail")}</p>
-                  <p class="text-xs text-gray-400">{gettext("Upload a new one to replace it")}</p>
+                  <p class="text-sm text-base-content/80">{gettext("Current thumbnail")}</p>
+                  <p class="text-xs text-base-content/60">
+                    {gettext("Upload a new one to replace it")}
+                  </p>
                 </div>
               </div>
             <% end %>
 
             <div
-              class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center bg-gray-700 hover:bg-gray-650 transition-colors"
+              class="border-2 border-dashed border-base-content/30 rounded-lg p-4 text-center bg-base-100 hover:bg-base-200 transition-colors"
               phx-drop-target={@uploads.thumbnail.ref}
             >
               <.live_file_input upload={@uploads.thumbnail} class="hidden" />
               <label for={@uploads.thumbnail.ref} class="cursor-pointer">
-                <.icon name="hero-photo" class="w-8 h-8 mx-auto text-gray-400" />
-                <p class="mt-1 text-xs text-gray-300">
+                <.icon name="hero-photo" class="w-8 h-8 mx-auto text-base-content/40" />
+                <p class="mt-1 text-xs text-base-content/80">
                   {gettext("Upload custom thumbnail")}
                 </p>
-                <p class="text-xs text-gray-400">{gettext("JPG, PNG, GIF - Max 5MB")}</p>
+                <p class="text-xs text-base-content/60">{gettext("JPG, PNG, GIF - Max 5MB")}</p>
               </label>
             </div>
 
             <%= for entry <- @uploads.thumbnail.entries do %>
-              <div class="mt-2 bg-gray-700 p-3 rounded-lg flex items-center justify-between">
+              <div class="mt-2 bg-base-100 p-3 rounded-lg flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                  <.icon name="hero-photo" class="w-5 h-5 text-gray-400" />
-                  <span class="text-sm text-white">{entry.client_name}</span>
+                  <.icon name="hero-photo" class="w-5 h-5 text-base-content/60" />
+                  <span class="text-sm text-base-content">{entry.client_name}</span>
                 </div>
                 <button
                   type="button"
                   phx-click="cancel-upload"
                   phx-value-ref={entry.ref}
                   phx-value-upload="thumbnail"
-                  class="text-red-400 hover:text-red-300"
+                  class="text-error hover:text-error/80 focus:outline-none focus:ring-2 focus:ring-error rounded"
                 >
                   <.icon name="hero-x-mark" class="w-4 h-4" />
                 </button>
@@ -653,29 +650,29 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
 
           <%= if @live_action == :new do %>
             <div>
-              <label class="block text-sm font-medium text-gray-300 mb-2">
-                {gettext("File")} <span class="text-red-400">*</span>
+              <label class="block text-sm font-medium text-base-content/80 mb-2">
+                {gettext("File")} <span class="text-error">*</span>
               </label>
               <div
-                class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center bg-gray-700 hover:bg-gray-650 transition-colors"
+                class="border-2 border-dashed border-base-content/30 rounded-lg p-6 text-center bg-base-100 hover:bg-base-200 transition-colors"
                 phx-drop-target={@uploads.file.ref}
               >
                 <.live_file_input upload={@uploads.file} class="hidden" />
                 <label for={@uploads.file.ref} class="cursor-pointer">
-                  <.icon name="hero-arrow-up-tray" class="w-12 h-12 mx-auto text-gray-400" />
-                  <p class="mt-2 text-sm text-gray-300">
+                  <.icon name="hero-arrow-up-tray" class="w-12 h-12 mx-auto text-base-content/40" />
+                  <p class="mt-2 text-sm text-base-content/80">
                     {gettext("Click to upload or drag and drop")}
                   </p>
-                  <p class="text-xs text-gray-400">{gettext("Max 500MB")}</p>
+                  <p class="text-xs text-base-content/60">{gettext("Max 500MB")}</p>
                 </label>
               </div>
 
               <%= for entry <- @uploads.file.entries do %>
-                <div class="mt-4 bg-gray-700 p-4 rounded-lg">
+                <div class="mt-4 bg-base-100 p-4 rounded-lg">
                   <div class="flex items-start justify-between mb-3">
                     <div class="flex-1">
-                      <p class="text-sm font-medium text-white">{entry.client_name}</p>
-                      <p class="text-xs text-gray-400 mt-1">
+                      <p class="text-sm font-medium text-base-content">{entry.client_name}</p>
+                      <p class="text-xs text-base-content/60 mt-1">
                         {format_file_size(entry.client_size)}
                       </p>
                     </div>
@@ -684,14 +681,14 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
                       phx-click="cancel-upload"
                       phx-value-ref={entry.ref}
                       phx-value-upload="file"
-                      class="text-red-400 hover:text-red-300 ml-4"
+                      class="text-error hover:text-error/80 ml-4 focus:outline-none focus:ring-2 focus:ring-error rounded"
                     >
                       <.icon name="hero-x-mark" class="w-5 h-5" />
                     </button>
                   </div>
 
                   <%!-- File type indicator --%>
-                  <div class="mt-3 flex items-center gap-2 text-gray-400">
+                  <div class="mt-3 flex items-center gap-2 text-base-content/60">
                     <.icon
                       name={
                         cond do
@@ -709,14 +706,14 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
 
                   <%!-- Upload progress --%>
                   <div class="mt-3">
-                    <div class="w-full bg-gray-600 rounded-full h-2">
+                    <div class="w-full bg-base-300 rounded-full h-2">
                       <div
-                        class="bg-orange-600 h-2 rounded-full transition-all duration-300"
+                        class="bg-warning h-2 rounded-full transition-all duration-300"
                         style={"width: #{entry.progress}%"}
                       >
                       </div>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">{entry.progress}%</p>
+                    <p class="text-xs text-base-content/60 mt-1">{entry.progress}%</p>
                   </div>
                 </div>
               <% end %>
@@ -724,33 +721,18 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
           <% end %>
 
           <div class="flex gap-4 pt-4">
-            <button
-              type="submit"
-              class="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold"
-            >
+            <.primary_button type="submit">
               {if @live_action == :new,
                 do: gettext("Upload Resource"),
                 else: gettext("Update Resource")}
-            </button>
-            <.link
-              navigate={~p"/admin/resources"}
-              class="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-semibold"
-            >
+            </.primary_button>
+            <.secondary_button navigate={~p"/admin/resources"}>
               {gettext("Cancel")}
-            </.link>
+            </.secondary_button>
           </div>
         </div>
       </.form>
-    </div>
+    </.card>
     """
   end
-
-  defp format_file_size(bytes) when bytes < 1024, do: "#{bytes} B"
-  defp format_file_size(bytes) when bytes < 1024 * 1024, do: "#{Float.round(bytes / 1024, 1)} KB"
-
-  defp format_file_size(bytes) when bytes < 1024 * 1024 * 1024,
-    do: "#{Float.round(bytes / (1024 * 1024), 1)} MB"
-
-  defp format_file_size(bytes),
-    do: "#{Float.round(bytes / (1024 * 1024 * 1024), 1)} GB"
 end

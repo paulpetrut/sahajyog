@@ -14,83 +14,63 @@ defmodule SahajyogWeb.TopicsLive do
      |> assign(:topics, topics)}
   end
 
-  defp strip_html_tags(html) when is_binary(html) do
-    html
-    |> String.replace(~r/<[^>]*>/, "")
-    |> String.replace(~r/\s+/, " ")
-    |> String.trim()
-  end
-
-  defp strip_html_tags(_), do: ""
-
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <.page_container>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Header --%>
-        <div class="mb-6 sm:mb-8 text-center relative">
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
-            {gettext("Topics")}
-          </h1>
-          <p class="text-base sm:text-lg text-gray-300 mb-6 sm:mb-0">
-            {gettext("Explore in-depth articles on Sahaja Yoga")}
-          </p>
-
-          <%!-- Propose Button - Mobile: below text, Desktop: top right --%>
-          <div class="flex justify-center sm:block">
-            <.link
-              navigate="/topics/propose"
-              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors font-semibold sm:absolute sm:right-0 sm:top-0"
-            >
-              <span>{gettext("Propose Topic")}</span>
-              <.icon name="hero-light-bulb" class="w-5 h-5" />
-            </.link>
+        <div class="mb-6 sm:mb-8 relative">
+          <div class="text-center">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-base-content mb-3">
+              {gettext("Topics")}
+            </h1>
+            <p class="text-base sm:text-lg text-base-content/70">
+              {gettext("Explore in-depth articles on Sahaja Yoga")}
+            </p>
+          </div>
+          <div class="absolute right-0 top-0 hidden sm:block">
+            <.primary_button navigate="/topics/propose" icon="hero-light-bulb">
+              {gettext("Propose Topic")}
+            </.primary_button>
+          </div>
+          <div class="mt-4 flex justify-center sm:hidden">
+            <.primary_button navigate="/topics/propose" icon="hero-light-bulb">
+              {gettext("Propose Topic")}
+            </.primary_button>
           </div>
         </div>
 
         <%!-- Topics Grid --%>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div
+          <.card
             :for={topic <- @topics}
-            class="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 sm:hover:-translate-y-1"
+            hover
+            class="group overflow-hidden sm:hover:-translate-y-1"
           >
             <.link navigate={~p"/topics/#{topic.slug}"} class="block">
               <div class="p-4 sm:p-6">
                 <%!-- Title --%>
-                <h3 class="text-lg sm:text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-blue-400 transition-colors">
+                <h3 class="text-lg sm:text-xl font-bold text-base-content mb-3 line-clamp-2 group-hover:text-primary transition-colors">
                   {topic.title}
                 </h3>
 
                 <%!-- Content Preview --%>
                 <%= if topic.content do %>
-                  <p class="text-gray-400 text-sm mb-4 line-clamp-3">
-                    {strip_html_tags(topic.content) |> String.slice(0, 150)}{if String.length(
-                                                                                  strip_html_tags(
-                                                                                    topic.content
-                                                                                  )
-                                                                                ) > 150, do: "..."}
+                  <p class="text-base-content/60 text-sm mb-4 line-clamp-3">
+                    {strip_html_tags(topic.content) |> truncate_text(150)}
                   </p>
                 <% end %>
 
                 <%!-- Status Badge --%>
                 <%= if topic.status != "published" do %>
                   <div class="mb-3">
-                    <span class={[
-                      "px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1",
-                      topic.status == "draft" &&
-                        "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20",
-                      topic.status == "archived" &&
-                        "bg-gray-500/10 text-gray-400 border border-gray-500/20"
-                    ]}>
-                      <.icon name="hero-pencil" class="w-3 h-3" />
-                      {String.capitalize(topic.status)}
-                    </span>
+                    <.status_badge status={topic.status} />
                   </div>
                 <% end %>
 
                 <%!-- Meta Info --%>
-                <div class="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-700/50">
+                <div class="flex items-center justify-between text-xs text-base-content/50 pt-4 border-t border-base-content/10">
                   <div class="flex items-center gap-2">
                     <.icon name="hero-user" class="w-4 h-4" />
                     <span>{topic.user.email}</span>
@@ -109,25 +89,25 @@ defmodule SahajyogWeb.TopicsLive do
                 </div>
               </div>
             </.link>
-          </div>
+          </.card>
         </div>
 
         <%!-- Empty State --%>
         <%= if @topics == [] do %>
-          <div class="text-center py-16">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-800 border border-gray-700 mb-4">
-              <.icon name="hero-document-text" class="w-10 h-10 text-gray-600" />
-            </div>
-            <h3 class="text-xl font-semibold text-gray-300 mb-2">
-              {gettext("No topics yet")}
-            </h3>
-            <p class="text-gray-500">
-              {gettext("Be the first to propose a topic")}
-            </p>
-          </div>
+          <.empty_state
+            icon="hero-document-text"
+            title={gettext("No topics yet")}
+            description={gettext("Be the first to propose a topic")}
+          >
+            <:actions>
+              <.primary_button navigate="/topics/propose" icon="hero-light-bulb">
+                {gettext("Propose Topic")}
+              </.primary_button>
+            </:actions>
+          </.empty_state>
         <% end %>
       </div>
-    </div>
+    </.page_container>
     """
   end
 end

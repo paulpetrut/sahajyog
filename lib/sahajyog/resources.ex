@@ -81,10 +81,14 @@ defmodule Sahajyog.Resources do
     Sahajyog.Resources.R2Storage.generate_download_url(key)
   end
 
+  @levels ["Level1", "Level2", "Level3"]
+
   defp apply_filters(query, filters) do
     Enum.reduce(filters, query, fn
       {:level, level}, query when is_binary(level) ->
-        where(query, [r], r.level == ^level)
+        # Show resources at or below user's level
+        accessible_levels = levels_up_to(level)
+        where(query, [r], r.level in ^accessible_levels)
 
       {:resource_type, resource_type}, query when is_binary(resource_type) ->
         where(query, [r], r.resource_type == ^resource_type)
@@ -98,5 +102,12 @@ defmodule Sahajyog.Resources do
       _, query ->
         query
     end)
+  end
+
+  defp levels_up_to(level) do
+    case Enum.find_index(@levels, &(&1 == level)) do
+      nil -> @levels
+      index -> Enum.take(@levels, index + 1)
+    end
   end
 end

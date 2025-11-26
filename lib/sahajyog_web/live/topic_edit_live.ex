@@ -184,20 +184,20 @@ defmodule SahajyogWeb.TopicEditLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <.page_container>
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Back Button --%>
         <.link
           navigate={~p"/topics/#{@topic.slug}"}
-          class="text-blue-400 hover:text-blue-300 mb-6 inline-flex items-center gap-2"
+          class="text-info hover:text-info/80 mb-6 inline-flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-info focus:ring-offset-2 focus:ring-offset-base-300 rounded"
         >
           <.icon name="hero-arrow-left" class="w-4 h-4" />
           {gettext("Back to Topic")}
         </.link>
 
         <%!-- Topic Form --%>
-        <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 sm:p-6 lg:p-8 border border-gray-700/50 mb-4 sm:mb-6">
-          <h1 class="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">
+        <.card size="lg" class="mb-4 sm:mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold text-base-content mb-4 sm:mb-6">
             {gettext("Edit Topic")}
           </h1>
 
@@ -208,14 +208,14 @@ defmodule SahajyogWeb.TopicEditLive do
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2">
+                <label class="block text-sm font-medium text-base-content/80 mb-2">
                   {gettext("Content")}
                 </label>
                 <.quill_editor
                   field={@form[:content]}
                   placeholder={gettext("Write your topic content here...")}
                 />
-                <p class="mt-2 text-sm text-gray-400">
+                <p class="mt-2 text-sm text-base-content/60">
                   {gettext("Tip: Use the toolbar to format text, add images, and create rich content")}
                 </p>
               </div>
@@ -242,43 +242,37 @@ defmodule SahajyogWeb.TopicEditLive do
               </div>
 
               <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
-                <button
-                  type="submit"
-                  class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-                >
+                <.primary_button type="submit" class="w-full sm:w-auto">
                   {gettext("Save Changes")}
-                </button>
-                <.link
-                  navigate={~p"/topics/#{@topic.slug}"}
-                  class="w-full sm:w-auto px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-semibold text-center"
-                >
+                </.primary_button>
+                <.secondary_button navigate={~p"/topics/#{@topic.slug}"} class="w-full sm:w-auto">
                   {gettext("Cancel")}
-                </.link>
+                </.secondary_button>
               </div>
             </div>
           </.form>
-        </div>
+        </.card>
 
         <%!-- References Section --%>
-        <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-4 sm:p-6 lg:p-8 border border-gray-700/50">
+        <.card size="lg">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-            <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-base-content flex items-center gap-2">
               <.icon name="hero-book-open" class="w-5 h-5 sm:w-6 sm:h-6" />
               {gettext("References")}
             </h2>
-            <button
+            <.primary_button
               phx-click="add_reference"
-              class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold inline-flex items-center justify-center gap-2"
+              icon="hero-plus"
+              class="w-full sm:w-auto px-4 py-2 text-sm"
             >
-              <.icon name="hero-plus" class="w-4 h-4" />
               {gettext("Add Reference")}
-            </button>
+            </.primary_button>
           </div>
 
           <%!-- Reference Form --%>
           <%= if @reference_form do %>
-            <div class="mb-6 p-6 bg-gray-700/30 rounded-lg border border-blue-500/30">
-              <h3 class="text-lg font-semibold text-white mb-4">
+            <div class="mb-6 p-6 bg-base-100/50 rounded-lg border border-primary/30">
+              <h3 class="text-lg font-semibold text-base-content mb-4">
                 {if @editing_reference == :new,
                   do: gettext("New Reference"),
                   else: gettext("Edit Reference")}
@@ -293,12 +287,12 @@ defmodule SahajyogWeb.TopicEditLive do
                 <div class="space-y-4">
                   <%!-- Quick Add from Resources --%>
                   <%= if @available_resources != [] do %>
-                    <div class="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                      <label class="block text-sm font-medium text-blue-300 mb-2">
+                    <div class="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                      <label class="block text-sm font-medium text-primary mb-2">
                         {gettext("Quick Add from Resources")}
                       </label>
                       <select
-                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 bg-base-200 border border-base-content/20 rounded-lg text-base-content text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                         phx-change="select_resource"
                         name="resource_id"
                       >
@@ -309,7 +303,7 @@ defmodule SahajyogWeb.TopicEditLive do
                           </option>
                         <% end %>
                       </select>
-                      <p class="text-xs text-blue-400 mt-2">
+                      <p class="text-xs text-primary/80 mt-2">
                         {gettext("Select a resource to auto-fill the reference details")}
                       </p>
                     </div>
@@ -349,19 +343,16 @@ defmodule SahajyogWeb.TopicEditLive do
                   </div>
 
                   <div class="flex flex-col sm:flex-row gap-2">
-                    <button
-                      type="submit"
-                      class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-                    >
+                    <.primary_button type="submit" class="w-full sm:w-auto px-4 py-2 text-sm">
                       {gettext("Save")}
-                    </button>
-                    <button
+                    </.primary_button>
+                    <.secondary_button
                       type="button"
                       phx-click="cancel_reference"
-                      class="w-full sm:w-auto px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors text-sm font-semibold"
+                      class="w-full sm:w-auto px-4 py-2 text-sm"
                     >
                       {gettext("Cancel")}
-                    </button>
+                    </.secondary_button>
                   </div>
                 </div>
               </.form>
@@ -370,35 +361,38 @@ defmodule SahajyogWeb.TopicEditLive do
 
           <%!-- References List --%>
           <%= if @references == [] do %>
-            <p class="text-gray-500 text-center py-8">
-              {gettext("No references yet. Add books, talks, or other resources.")}
-            </p>
+            <.empty_state
+              icon="hero-book-open"
+              title={gettext("No references yet")}
+              description={gettext("Add books, talks, or other resources.")}
+              class="py-8"
+            />
           <% else %>
             <div class="space-y-3">
               <div
                 :for={ref <- @references}
-                class="p-4 bg-gray-700/30 rounded-lg border border-gray-700/50 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
+                class="p-4 bg-base-100/50 rounded-lg border border-base-content/10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
               >
                 <div class="flex items-start gap-3 flex-1">
-                  <div class="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20 shrink-0">
-                    <.icon name={reference_icon(ref.reference_type)} class="w-5 h-5 text-blue-400" />
+                  <div class="p-2 bg-primary/10 rounded-lg border border-primary/20 shrink-0">
+                    <.reference_icon type={ref.reference_type} class="w-5 h-5 text-primary" />
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex flex-wrap items-center gap-2 mb-1">
-                      <h4 class="font-semibold text-white">{ref.title}</h4>
-                      <span class="px-2 py-0.5 bg-gray-700 text-gray-300 rounded text-xs shrink-0">
+                      <h4 class="font-semibold text-base-content">{ref.title}</h4>
+                      <span class="px-2 py-0.5 bg-base-200 text-base-content/70 rounded text-xs shrink-0">
                         {ref.reference_type}
                       </span>
                     </div>
                     <%= if ref.description do %>
-                      <p class="text-sm text-gray-400">{ref.description}</p>
+                      <p class="text-sm text-base-content/60">{ref.description}</p>
                     <% end %>
                     <%= if ref.url do %>
                       <a
                         href={ref.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-sm text-blue-400 hover:text-blue-300 mt-1 inline-flex items-center gap-1"
+                        class="text-sm text-primary hover:text-primary/80 mt-1 inline-flex items-center gap-1"
                       >
                         {ref.url}
                         <.icon name="hero-arrow-top-right-on-square" class="w-3 h-3" />
@@ -410,7 +404,7 @@ defmodule SahajyogWeb.TopicEditLive do
                   <button
                     phx-click="edit_reference"
                     phx-value-id={ref.id}
-                    class="px-3 py-1.5 text-blue-400 hover:text-blue-300 text-sm font-medium whitespace-nowrap"
+                    class="px-3 py-1.5 text-primary hover:text-primary/80 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary rounded"
                   >
                     {gettext("Edit")}
                   </button>
@@ -418,7 +412,7 @@ defmodule SahajyogWeb.TopicEditLive do
                     phx-click="delete_reference"
                     phx-value-id={ref.id}
                     data-confirm={gettext("Are you sure?")}
-                    class="px-3 py-1.5 text-red-400 hover:text-red-300 text-sm font-medium whitespace-nowrap"
+                    class="px-3 py-1.5 text-error hover:text-error/80 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-error rounded"
                   >
                     {gettext("Delete")}
                   </button>
@@ -426,16 +420,9 @@ defmodule SahajyogWeb.TopicEditLive do
               </div>
             </div>
           <% end %>
-        </div>
+        </.card>
       </div>
-    </div>
+    </.page_container>
     """
   end
-
-  defp reference_icon("book"), do: "hero-book-open"
-  defp reference_icon("talk"), do: "hero-microphone"
-  defp reference_icon("video"), do: "hero-video-camera"
-  defp reference_icon("article"), do: "hero-document-text"
-  defp reference_icon("website"), do: "hero-globe-alt"
-  defp reference_icon(_), do: "hero-link"
 end

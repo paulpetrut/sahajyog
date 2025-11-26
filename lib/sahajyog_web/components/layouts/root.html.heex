@@ -31,13 +31,13 @@
     </script>
   </head>
   <body>
-    <div class="w-full relative z-[9999] flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-4 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
+    <div class="w-full relative z-[9999] flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-4 bg-base-300/95 backdrop-blur-sm border-b border-base-content/10">
       <%!-- Left Section - Home Icon --%>
       <div class="flex items-center gap-4">
         <%!-- Home Icon --%>
         <a
           href="/"
-          class="p-2 text-gray-300 hover:text-white transition-colors home-icon"
+          class="p-2 text-base-content/70 hover:text-base-content transition-colors home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded"
           title="Home"
           style="visibility: hidden;"
         >
@@ -57,46 +57,55 @@
       </div>
 
       <%!-- Desktop Navigation --%>
-      <ul class="menu menu-horizontal hidden md:flex items-center gap-4 text-gray-300">
+      <ul class="menu menu-horizontal hidden md:flex items-center gap-4 text-base-content/70">
+        <%!-- Main navigation links - visible to all logged-in users --%>
         <%= if assigns[:current_scope] do %>
+          <li>
+            <.link
+              href={~p"/steps"}
+              data-nav-path="/steps"
+              class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+            >
+              {gettext("Steps")}
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/talks"}
+              data-nav-path="/talks"
+              class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+            >
+              {gettext("Talks")}
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/topics"}
+              data-nav-path="/topics"
+              class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+            >
+              {gettext("Topics")}
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/resources"}
+              data-nav-path="/resources"
+              class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+            >
+              {gettext("Resources")}
+            </.link>
+          </li>
+          <%!-- Admin link - only for admins --%>
           <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
-            <li class="dropdown dropdown-end">
-              <div tabindex="0" role="button" class="cursor-pointer hover:text-white">
-                {gettext("Admin")}
-                <svg
-                  class="w-4 h-4 inline ml-1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-              <ul
-                tabindex="0"
-                class="dropdown-content menu bg-base-200 rounded-box z-[99999] w-52 p-2 shadow mt-2"
-              >
-                <li>
-                  <.link href={~p"/admin/videos"}>{gettext("Videos")}</.link>
-                </li>
-                <li>
-                  <.link href={~p"/admin/resources"}>{gettext("Resources")}</.link>
-                </li>
-                <li>
-                  <.link href={~p"/admin/topics"}>{gettext("Topics")}</.link>
-                </li>
-                <li>
-                  <.link href={~p"/admin/topic-proposals"}>{gettext("Proposals")}</.link>
-                </li>
-              </ul>
-            </li>
-          <% else %>
             <li>
-              <.link href={~p"/resources"} class="hover:text-white">{gettext("Resources")}</.link>
+              <.link
+                href={~p"/admin/videos"}
+                data-nav-path="/admin"
+                class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+              >
+                {gettext("Admin")}
+              </.link>
             </li>
           <% end %>
         <% end %>
@@ -109,7 +118,7 @@
             <div
               tabindex="0"
               role="button"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 text-white font-semibold cursor-pointer hover:bg-gray-600 transition-colors"
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-base-100 text-base-content font-semibold cursor-pointer hover:bg-base-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
               title={@current_scope.user.email}
             >
               {String.upcase(String.first(@current_scope.user.email))}
@@ -149,19 +158,27 @@
           </li>
         <% else %>
           <li>
-            <.link href={~p"/users/register"} class="hover:text-white">
+            <.link
+              href={~p"/users/register"}
+              class="hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+            >
               {gettext("Register")}
             </.link>
           </li>
           <li>
-            <.link href={~p"/users/log-in"} class="hover:text-white">{gettext("Log in")}</.link>
+            <.link
+              href={~p"/users/log-in"}
+              class="hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+            >
+              {gettext("Log in")}
+            </.link>
           </li>
         <% end %>
       </ul>
       <%!-- Mobile Hamburger Button --%>
       <div
         id="mobile-menu-button"
-        class="md:hidden p-2 text-gray-300 hover:text-white transition-colors cursor-pointer select-none"
+        class="md:hidden p-2 text-base-content/70 hover:text-base-content transition-colors cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-primary rounded"
         aria-label="Toggle menu"
       >
         <svg
@@ -197,6 +214,26 @@
 
       // Update on LiveView navigation
       window.addEventListener('phx:page-loading-stop', updateHomeIconVisibility);
+
+      // Function to update active nav link
+      const updateActiveNavLink = () => {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+          const navPath = link.dataset.navPath;
+          if (navPath && currentPath.startsWith(navPath)) {
+            link.classList.add('text-base-content', 'border-b-2', 'border-primary');
+            link.classList.remove('text-base-content/70');
+          } else {
+            link.classList.remove('text-base-content', 'border-b-2', 'border-primary');
+          }
+        });
+      };
+
+      // Update on initial load
+      updateActiveNavLink();
+
+      // Update on LiveView navigation
+      window.addEventListener('phx:page-loading-stop', updateActiveNavLink);
 
       // Mobile menu toggle functionality
       const initMobileMenu = () => {
