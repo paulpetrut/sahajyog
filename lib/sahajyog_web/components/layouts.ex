@@ -125,4 +125,45 @@ defmodule SahajyogWeb.Layouts do
     </div>
     """
   end
+
+  @doc """
+  Renders the site footer with navigation links and contact information.
+  """
+  attr :current_scope, :map, default: nil
+
+  def footer(assigns) do
+    ~H"""
+    <footer class="w-full bg-base-200/50 border-t border-base-content/10 mt-auto">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <%!-- Main Content - Centered --%>
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold text-base-content mb-3">SahajYog</h3>
+          <p class="text-base-content/60 text-sm max-w-lg mx-auto">
+            {gettext(
+              "Discover inner peace through Sahaja Yoga meditation. Explore teachings, talks, and resources for your spiritual journey."
+            )}
+          </p>
+        </div>
+
+        <%!-- Contact Button --%>
+        <div class="flex justify-center mb-8">
+          <.link
+            href={~p"/contact"}
+            class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-content hover:bg-primary/90 rounded-full transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+          >
+            <.icon name="hero-envelope" class="w-5 h-5" />
+            {gettext("Contact Us")}
+          </.link>
+        </div>
+
+        <%!-- Divider --%>
+        <div class="border-t border-base-content/10 pt-6">
+          <p class="text-base-content/50 text-sm text-center">
+            © {DateTime.utc_now().year} SahajYog. {gettext("All rights reserved.")}
+          </p>
+        </div>
+      </div>
+    </footer>
+    """
+  end
 end

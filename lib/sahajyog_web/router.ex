@@ -29,6 +29,7 @@ defmodule SahajyogWeb.Router do
       live "/", WelcomeLive
       live "/steps", StepsLive
       live "/talks", TalksLive
+      live "/contact", ContactLive
     end
   end
 

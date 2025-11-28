@@ -21,7 +21,7 @@ defmodule SahajyogWeb.UserLive.LoginTest do
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
       # First toggle the magic form to show it
-      lv |> element("button", "Magic link (passwordless)") |> render_click()
+      lv |> element("button", "Magic Link") |> render_click()
 
       html =
         lv
@@ -38,7 +38,7 @@ defmodule SahajyogWeb.UserLive.LoginTest do
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
       # First toggle the magic form to show it
-      lv |> element("button", "Magic link (passwordless)") |> render_click()
+      lv |> element("button", "Magic Link") |> render_click()
 
       html =
         lv

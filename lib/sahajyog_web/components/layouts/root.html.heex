@@ -286,5 +286,6 @@
       window.addEventListener('phx:page-loading-stop', initMobileMenu);
     </script>
     {@inner_content}
+    <Layouts.footer current_scope={assigns[:current_scope]} />
   </body>
 </html>
