@@ -54,19 +54,19 @@ defmodule SahajyogWeb.MobileMenu do
                   <.link href={~p"/admin/videos"}>{gettext("Admin")}</.link>
                 </li>
               <% end %>
-              <li>
+              <li class="mt-2">
                 <.locale_switcher id="locale-select-mobile" current_locale={@locale} />
               </li>
-              <li>
-                <.link href={~p"/users/settings"} class="flex items-center gap-2">
+              <li class="mt-2">
+                <.link href={~p"/users/settings"}>
                   <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
-                  <span>{gettext("Account settings")}</span>
+                  {gettext("Account settings")}
                 </.link>
               </li>
               <li class="border-t border-base-content/20 mt-2 pt-2">
-                <.link href={~p"/users/log-out"} method="delete" class="flex items-center gap-2">
+                <.link href={~p"/users/log-out"} method="delete">
                   <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" />
-                  <span>{gettext("Sign out")}</span>
+                  {gettext("Sign out")}
                 </.link>
               </li>
             <% else %>
@@ -77,7 +77,7 @@ defmodule SahajyogWeb.MobileMenu do
               <li>
                 <.link href={~p"/talks"}>{gettext("Talks")}</.link>
               </li>
-              <li>
+              <li class="mt-2">
                 <.locale_switcher id="locale-select-mobile" current_locale={@locale} />
               </li>
               <li class="border-t border-base-content/20 mt-2 pt-2">

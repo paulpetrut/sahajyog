@@ -137,7 +137,7 @@ defmodule SahajyogWeb.Layouts do
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           <%!-- Left: Branding --%>
-          <div>
+          <div class="text-center md:text-left">
             <h3 class="text-2xl font-bold text-base-content mb-3">SahajYog</h3>
             <p class="text-base-content/60 text-sm leading-relaxed">
               {gettext(
@@ -147,11 +147,11 @@ defmodule SahajyogWeb.Layouts do
           </div>
 
           <%!-- Center: Quick Links --%>
-          <div>
+          <div class="text-center md:text-left">
             <h4 class="text-sm font-semibold text-base-content uppercase tracking-wider mb-4">
               {gettext("Explore")}
             </h4>
-            <nav class="flex flex-col gap-2">
+            <nav class="flex flex-col gap-2 items-center md:items-start">
               <.link
                 href={~p"/"}
                 data-footer-path="/"

@@ -24,7 +24,7 @@ defmodule SahajyogWeb.LocaleSwitcher do
         id={@id}
         name="locale"
         phx-hook="LocaleSelector"
-        class="appearance-none w-full bg-gray-800 text-white border border-gray-700 rounded-lg pl-4 pr-12 py-2.5 hover:bg-gray-700 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        class="appearance-none w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-3 pr-10 py-2 hover:bg-gray-700 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
       >
         <%= for {code, name} <- @locales do %>
           <option value={code} selected={@current_locale == code}>
@@ -32,7 +32,7 @@ defmodule SahajyogWeb.LocaleSwitcher do
           </option>
         <% end %>
       </select>
-      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center w-12 text-gray-400">
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center w-10 text-gray-400">
         <.icon name="hero-chevron-down" class="w-5 h-5" />
       </div>
     </div>
