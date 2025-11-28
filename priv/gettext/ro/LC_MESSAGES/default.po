@@ -282,40 +282,31 @@ msgstr "Te rugăm să adaugi videoclipuri pentru a începe"
 msgid "Dev mode:"
 msgstr "Mod dezvoltare:"
 
-#: lib/sahajyog_web/live/user_live/login.ex:143
+#: lib/sahajyog_web/live/user_live/login.ex:156
 #, elixir-autogen, elixir-format
 msgid "Don't have an account?"
 msgstr "Nu ai un cont?"
 
-#: lib/sahajyog_web/live/user_live/login.ex:48
-#: lib/sahajyog_web/live/user_live/login.ex:124
+#: lib/sahajyog_web/live/user_live/login.ex:77
+#: lib/sahajyog_web/live/user_live/login.ex:137
 #: lib/sahajyog_web/live/user_live/registration.ex:30
 #: lib/sahajyog_web/live/user_live/settings.ex:32
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "Email"
 
-#: lib/sahajyog_web/live/user_live/login.ex:60
+#: lib/sahajyog_web/live/user_live/login.ex:89
 #, elixir-autogen, elixir-format
 msgid "Enter your password"
 msgstr "Introdu parola"
 
-#: lib/sahajyog_web/live/user_live/login.ex:74
+#: lib/sahajyog_web/live/user_live/login.ex:103
 #, elixir-autogen, elixir-format
 msgid "Keep me signed in"
 msgstr "Ține-mă autentificat"
 
-#: lib/sahajyog_web/live/user_live/login.ex:109
-#, elixir-autogen, elixir-format
-msgid "Magic link (passwordless)"
-msgstr "Link magic (fără parolă)"
-
-#: lib/sahajyog_web/live/user_live/login.ex:90
-#, elixir-autogen, elixir-format
-msgid "OR"
-msgstr "SAU"
-
-#: lib/sahajyog_web/live/user_live/login.ex:59
+#: lib/sahajyog_web/live/user_live/login.ex:48
+#: lib/sahajyog_web/live/user_live/login.ex:88
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Parolă"
@@ -325,12 +316,12 @@ msgstr "Parolă"
 msgid "Please reauthenticate to continue"
 msgstr "Te rugăm să te autentifici din nou pentru a continua"
 
-#: lib/sahajyog_web/live/user_live/login.ex:133
+#: lib/sahajyog_web/live/user_live/login.ex:146
 #, elixir-autogen, elixir-format
 msgid "Send magic link"
 msgstr "Trimite link magic"
 
-#: lib/sahajyog_web/live/user_live/login.ex:84
+#: lib/sahajyog_web/live/user_live/login.ex:113
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Autentificare"
@@ -340,7 +331,7 @@ msgstr "Autentificare"
 msgid "Sign in to your account to continue"
 msgstr "Autentifică-te în contul tău pentru a continua"
 
-#: lib/sahajyog_web/live/user_live/login.ex:145
+#: lib/sahajyog_web/live/user_live/login.ex:158
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "Înregistrează-te"
@@ -350,7 +341,7 @@ msgstr "Înregistrează-te"
 msgid "View mailbox"
 msgstr "Vezi căsuța poștală"
 
-#: lib/sahajyog_web/live/user_live/login.ex:117
+#: lib/sahajyog_web/live/user_live/login.ex:130
 #, elixir-autogen, elixir-format
 msgid "We'll email you a secure link to sign in without a password."
 msgstr "Îți vom trimite un link securizat prin email pentru a te autentifica fără parolă."
@@ -360,8 +351,8 @@ msgstr "Îți vom trimite un link securizat prin email pentru a te autentifica f
 msgid "Welcome back"
 msgstr "Bine ai revenit"
 
-#: lib/sahajyog_web/live/user_live/login.ex:49
-#: lib/sahajyog_web/live/user_live/login.ex:125
+#: lib/sahajyog_web/live/user_live/login.ex:78
+#: lib/sahajyog_web/live/user_live/login.ex:138
 #, elixir-autogen, elixir-format
 msgid "you@example.com"
 msgstr "tu@exemplu.com"
@@ -436,8 +427,8 @@ msgstr "Înregistrează-te"
 msgid "Account created but we couldn't send the confirmation email. Please contact support."
 msgstr "Contul a fost creat dar nu am putut trimite emailul de confirmare. Te rugăm să contactezi suportul."
 
-#: lib/sahajyog_web/live/user_live/login.ex:196
-#: lib/sahajyog_web/live/user_live/login.ex:222
+#: lib/sahajyog_web/live/user_live/login.ex:213
+#: lib/sahajyog_web/live/user_live/login.ex:239
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Verifică-ți emailul! Dacă adresa ta este în sistemul nostru, vei primi în curând un link de autentificare."
@@ -1405,7 +1396,77 @@ msgstr "Sfat: Dacă preferi parole, le poți activa în setările contului."
 msgid "Welcome %{email}"
 msgstr "Bine ai venit %{email}"
 
-#: lib/sahajyog_web/live/user_live/login.ex:213
+#: lib/sahajyog_web/live/user_live/login.ex:230
 #, elixir-autogen, elixir-format
 msgid "Failed to send email. Please try again or contact support if the problem persists."
 msgstr ""
+
+#: lib/sahajyog_web/live/user_live/login.ex:60
+#, elixir-autogen, elixir-format
+msgid "Magic Link"
+msgstr ""
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Welcome to SahajYog!"
+msgstr "Bine ai venit la SahajYog!"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
+msgstr "Mulțumim pentru înregistrare. Pentru a finaliza înregistrarea și a accesa contul tău, te rugăm să confirmi adresa de email făcând clic pe linkul de mai jos:"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "This link will expire in 24 hours for security reasons."
+msgstr "Acest link va expira în 24 de ore din motive de securitate."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "If you didn't create an account with us, you can safely ignore this email."
+msgstr "Dacă nu ai creat un cont cu noi, poți ignora în siguranță acest email."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Best regards"
+msgstr "Cu stimă"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "The SahajYog Team"
+msgstr "Echipa SahajYog"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Welcome to SahajYog - Confirm Your Account"
+msgstr "Bine ai venit la SahajYog - Confirmă-ți contul"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Hello"
+msgstr "Bună"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "You requested a secure login link for your SahajYog account."
+msgstr "Ai solicitat un link securizat de autentificare pentru contul tău SahajYog."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Click the link below to log in:"
+msgstr "Fă clic pe linkul de mai jos pentru a te autentifica:"
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "This link will expire in 1 hour for security reasons."
+msgstr "Acest link va expira într-o oră din motive de securitate."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "If you didn't request this, you can safely ignore this email."
+msgstr "Dacă nu ai solicitat acest lucru, poți ignora în siguranță acest email."
+
+#: lib/sahajyog/accounts/user_notifier.ex
+#, elixir-autogen, elixir-format
+msgid "Your SahajYog Login Link"
+msgstr "Linkul tău de autentificare SahajYog"

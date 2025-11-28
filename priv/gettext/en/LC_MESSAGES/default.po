@@ -281,40 +281,31 @@ msgstr ""
 msgid "Dev mode:"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:143
+#: lib/sahajyog_web/live/user_live/login.ex:156
 #, elixir-autogen, elixir-format
 msgid "Don't have an account?"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:48
-#: lib/sahajyog_web/live/user_live/login.ex:124
+#: lib/sahajyog_web/live/user_live/login.ex:77
+#: lib/sahajyog_web/live/user_live/login.ex:137
 #: lib/sahajyog_web/live/user_live/registration.ex:30
 #: lib/sahajyog_web/live/user_live/settings.ex:32
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:60
+#: lib/sahajyog_web/live/user_live/login.ex:89
 #, elixir-autogen, elixir-format
 msgid "Enter your password"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:74
+#: lib/sahajyog_web/live/user_live/login.ex:103
 #, elixir-autogen, elixir-format
 msgid "Keep me signed in"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:109
-#, elixir-autogen, elixir-format
-msgid "Magic link (passwordless)"
-msgstr ""
-
-#: lib/sahajyog_web/live/user_live/login.ex:90
-#, elixir-autogen, elixir-format
-msgid "OR"
-msgstr ""
-
-#: lib/sahajyog_web/live/user_live/login.ex:59
+#: lib/sahajyog_web/live/user_live/login.ex:48
+#: lib/sahajyog_web/live/user_live/login.ex:88
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr ""
@@ -324,12 +315,12 @@ msgstr ""
 msgid "Please reauthenticate to continue"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:133
+#: lib/sahajyog_web/live/user_live/login.ex:146
 #, elixir-autogen, elixir-format
 msgid "Send magic link"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:84
+#: lib/sahajyog_web/live/user_live/login.ex:113
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr ""
@@ -339,7 +330,7 @@ msgstr ""
 msgid "Sign in to your account to continue"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:145
+#: lib/sahajyog_web/live/user_live/login.ex:158
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr ""
@@ -349,7 +340,7 @@ msgstr ""
 msgid "View mailbox"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:117
+#: lib/sahajyog_web/live/user_live/login.ex:130
 #, elixir-autogen, elixir-format
 msgid "We'll email you a secure link to sign in without a password."
 msgstr ""
@@ -359,8 +350,8 @@ msgstr ""
 msgid "Welcome back"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:49
-#: lib/sahajyog_web/live/user_live/login.ex:125
+#: lib/sahajyog_web/live/user_live/login.ex:78
+#: lib/sahajyog_web/live/user_live/login.ex:138
 #, elixir-autogen, elixir-format
 msgid "you@example.com"
 msgstr ""
@@ -435,8 +426,8 @@ msgstr ""
 msgid "Account created but we couldn't send the confirmation email. Please contact support."
 msgstr "Account created but we couldn't send the confirmation email. Please contact support."
 
-#: lib/sahajyog_web/live/user_live/login.ex:196
-#: lib/sahajyog_web/live/user_live/login.ex:222
+#: lib/sahajyog_web/live/user_live/login.ex:213
+#: lib/sahajyog_web/live/user_live/login.ex:239
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
@@ -1404,7 +1395,12 @@ msgstr ""
 msgid "Welcome %{email}"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/login.ex:213
+#: lib/sahajyog_web/live/user_live/login.ex:230
 #, elixir-autogen, elixir-format
 msgid "Failed to send email. Please try again or contact support if the problem persists."
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/login.ex:60
+#, elixir-autogen, elixir-format
+msgid "Magic Link"
 msgstr ""
