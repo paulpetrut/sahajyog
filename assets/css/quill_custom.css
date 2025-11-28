@@ -57,7 +57,7 @@
 .ql-editor {
     color: #e5e7eb !important;
     min-height: 400px;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.6;
     padding: 2rem 1.5rem;
 }
@@ -295,7 +295,7 @@
 
 /* View-only content (no extra padding) */
 .ql-content {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.6;
     overflow: hidden;
 }
