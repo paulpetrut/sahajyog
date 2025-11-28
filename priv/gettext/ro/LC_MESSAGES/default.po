@@ -1109,11 +1109,6 @@ msgstr "Sugerează un subiect pentru comunitate. Un administrator îl va revizui
 msgid "Thumbnail auto-generated"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:219
-#, elixir-autogen, elixir-format
-msgid "Tip: Use the toolbar to format text, add images, and create rich content"
-msgstr "Sfat: Folosește bara de instrumente pentru a formata textul, adăuga imagini și crea conținut bogat"
-
 #: lib/sahajyog_web/live/admin/topics_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Topic Details"
@@ -1406,67 +1401,7 @@ msgstr ""
 msgid "Magic Link"
 msgstr ""
 
-#: lib/sahajyog/accounts/user_notifier.ex
+#: lib/sahajyog_web/live/topic_edit_live.ex:219
 #, elixir-autogen, elixir-format
-msgid "Welcome to SahajYog!"
-msgstr "Bine ai venit la SahajYog!"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "Thank you for registering. To complete your registration and access your account, please confirm your email address by clicking the link below:"
-msgstr "Mulțumim pentru înregistrare. Pentru a finaliza înregistrarea și a accesa contul tău, te rugăm să confirmi adresa de email făcând clic pe linkul de mai jos:"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "This link will expire in 24 hours for security reasons."
-msgstr "Acest link va expira în 24 de ore din motive de securitate."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "If you didn't create an account with us, you can safely ignore this email."
-msgstr "Dacă nu ai creat un cont cu noi, poți ignora în siguranță acest email."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "Best regards"
-msgstr "Cu stimă"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "The SahajYog Team"
-msgstr "Echipa SahajYog"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "Welcome to SahajYog - Confirm Your Account"
-msgstr "Bine ai venit la SahajYog - Confirmă-ți contul"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "Hello"
-msgstr "Bună"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "You requested a secure login link for your SahajYog account."
-msgstr "Ai solicitat un link securizat de autentificare pentru contul tău SahajYog."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "Click the link below to log in:"
-msgstr "Fă clic pe linkul de mai jos pentru a te autentifica:"
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "This link will expire in 1 hour for security reasons."
-msgstr "Acest link va expira într-o oră din motive de securitate."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "If you didn't request this, you can safely ignore this email."
-msgstr "Dacă nu ai solicitat acest lucru, poți ignora în siguranță acest email."
-
-#: lib/sahajyog/accounts/user_notifier.ex
-#, elixir-autogen, elixir-format
-msgid "Your SahajYog Login Link"
-msgstr "Linkul tău de autentificare SahajYog"
+msgid "Tip Images: click to resize • use ◀ ▶ to wrap text around"
+msgstr "Sfat Imagini: click pentru redimensionare • folosește ◀ ▶ pentru text în jurul imaginii"

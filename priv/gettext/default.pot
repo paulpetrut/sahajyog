@@ -1108,11 +1108,6 @@ msgstr ""
 msgid "Thumbnail auto-generated"
 msgstr ""
 
-#: lib/sahajyog_web/live/topic_edit_live.ex:219
-#, elixir-autogen, elixir-format
-msgid "Tip: Use the toolbar to format text, add images, and create rich content"
-msgstr ""
-
 #: lib/sahajyog_web/live/admin/topics_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Topic Details"
@@ -1403,4 +1398,9 @@ msgstr ""
 #: lib/sahajyog_web/live/user_live/login.ex:60
 #, elixir-autogen, elixir-format
 msgid "Magic Link"
+msgstr ""
+
+#: lib/sahajyog_web/live/topic_edit_live.ex:219
+#, elixir-autogen, elixir-format
+msgid "Tip Images: click to resize • use ◀ ▶ to wrap text around"
 msgstr ""

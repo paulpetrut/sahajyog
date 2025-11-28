@@ -86,7 +86,7 @@ defmodule SahajyogWeb.TopicShowLive do
         <.card size="lg" class="mb-4 sm:mb-6">
           <div class="prose prose-invert prose-sm sm:prose-base lg:prose-lg max-w-none">
             <%= if @topic.content do %>
-              <div class="text-base-content/80 leading-relaxed ql-editor">
+              <div class="text-base-content/80 leading-relaxed ql-content">
                 {Phoenix.HTML.raw(@topic.content)}
               </div>
             <% else %>

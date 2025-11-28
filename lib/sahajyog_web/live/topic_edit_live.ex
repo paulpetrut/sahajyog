@@ -185,7 +185,7 @@ defmodule SahajyogWeb.TopicEditLive do
   def render(assigns) do
     ~H"""
     <.page_container>
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Back Button --%>
         <.link
           navigate={~p"/topics/#{@topic.slug}"}
@@ -216,7 +216,7 @@ defmodule SahajyogWeb.TopicEditLive do
                   placeholder={gettext("Write your topic content here...")}
                 />
                 <p class="mt-2 text-sm text-base-content/60">
-                  {gettext("Tip: Use the toolbar to format text, add images, and create rich content")}
+                  {gettext("Tip Images: click to resize • use ◀ ▶ to wrap text around")}
                 </p>
               </div>
 
