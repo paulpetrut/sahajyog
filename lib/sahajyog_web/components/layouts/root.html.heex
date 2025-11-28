@@ -58,26 +58,27 @@
 
       <%!-- Desktop Navigation --%>
       <ul class="menu menu-horizontal hidden md:flex items-center gap-4 text-base-content/70">
-        <%!-- Main navigation links - visible to all logged-in users --%>
+        <%!-- Public navigation links - visible to all users --%>
+        <li>
+          <.link
+            href={~p"/steps"}
+            data-nav-path="/steps"
+            class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+          >
+            {gettext("Steps")}
+          </.link>
+        </li>
+        <li>
+          <.link
+            href={~p"/talks"}
+            data-nav-path="/talks"
+            class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
+          >
+            {gettext("Talks")}
+          </.link>
+        </li>
+        <%!-- Authenticated-only navigation links --%>
         <%= if assigns[:current_scope] do %>
-          <li>
-            <.link
-              href={~p"/steps"}
-              data-nav-path="/steps"
-              class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
-            >
-              {gettext("Steps")}
-            </.link>
-          </li>
-          <li>
-            <.link
-              href={~p"/talks"}
-              data-nav-path="/talks"
-              class="nav-link font-medium hover:text-base-content focus:outline-none focus:ring-2 focus:ring-primary rounded"
-            >
-              {gettext("Talks")}
-            </.link>
-          </li>
           <li>
             <.link
               href={~p"/topics"}
@@ -229,11 +230,28 @@
         });
       };
 
+      // Function to update footer nav links - hide current page link
+      const updateFooterNavLinks = () => {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.footer-nav-link').forEach(link => {
+          const footerPath = link.dataset.footerPath;
+          if (footerPath === '/' && currentPath === '/') {
+            link.style.display = 'none';
+          } else if (footerPath !== '/' && currentPath.startsWith(footerPath)) {
+            link.style.display = 'none';
+          } else {
+            link.style.display = '';
+          }
+        });
+      };
+
       // Update on initial load
       updateActiveNavLink();
+      updateFooterNavLinks();
 
       // Update on LiveView navigation
       window.addEventListener('phx:page-loading-stop', updateActiveNavLink);
+      window.addEventListener('phx:page-loading-stop', updateFooterNavLinks);
 
       // Mobile menu toggle functionality
       const initMobileMenu = () => {

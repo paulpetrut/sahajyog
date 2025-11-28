@@ -70,7 +70,17 @@ defmodule SahajyogWeb.MobileMenu do
                 </.link>
               </li>
             <% else %>
+              <%!-- Public links for non-logged-in users --%>
               <li>
+                <.link href={~p"/steps"}>{gettext("Steps")}</.link>
+              </li>
+              <li>
+                <.link href={~p"/talks"}>{gettext("Talks")}</.link>
+              </li>
+              <li>
+                <.locale_switcher id="locale-select-mobile" current_locale={@locale} />
+              </li>
+              <li class="border-t border-base-content/20 mt-2 pt-2">
                 <.link href={~p"/users/register"}>{gettext("Register")}</.link>
               </li>
               <li>

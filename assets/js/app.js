@@ -84,7 +84,7 @@ Hooks.ScheduleNotification = {
     const key = this.el.dataset.key
     const permanentlyDismissed = localStorage.getItem(`${key}_dismissed`)
     const hasSeen = sessionStorage.getItem(key)
-    
+
     console.log(`[ScheduleNotification] Key: ${key}, HasSeen: ${hasSeen}, Dismissed: ${permanentlyDismissed}`)
 
     // Don't show if permanently dismissed
@@ -106,6 +106,106 @@ Hooks.ScheduleNotification = {
       console.log(`[ScheduleNotification] Permanently dismissing ${key}`)
       localStorage.setItem(`${key}_dismissed`, "true")
     })
+  },
+}
+
+Hooks.QuotesCarousel = {
+  mounted() {
+    this.currentSlide = 0
+    this.totalSlides = 3
+    this.autoSlideInterval = null
+
+    this.track = this.el.querySelector(".carousel-track")
+    this.indicators = this.el.querySelectorAll(".carousel-indicator")
+    this.prevBtn = this.el.querySelector(".carousel-prev")
+    this.nextBtn = this.el.querySelector(".carousel-next")
+
+    // Update slide position
+    this.updateSlide = () => {
+      this.track.style.transform = `translateX(-${this.currentSlide * 100}%)`
+
+      // Update indicators
+      this.indicators.forEach((indicator, index) => {
+        if (index === this.currentSlide) {
+          indicator.classList.add("bg-primary", "w-8")
+          indicator.classList.remove("bg-base-content/30", "w-3")
+        } else {
+          indicator.classList.remove("bg-primary", "w-8")
+          indicator.classList.add("bg-base-content/30", "w-3")
+        }
+      })
+    }
+
+    // Next slide
+    this.nextSlide = () => {
+      this.currentSlide = (this.currentSlide + 1) % this.totalSlides
+      this.updateSlide()
+    }
+
+    // Previous slide
+    this.prevSlide = () => {
+      this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides
+      this.updateSlide()
+    }
+
+    // Go to specific slide
+    this.goToSlide = (index) => {
+      this.currentSlide = index
+      this.updateSlide()
+    }
+
+    // Start auto-slide
+    this.startAutoSlide = () => {
+      this.autoSlideInterval = setInterval(() => {
+        this.nextSlide()
+      }, 15000) // Change slide every 15 seconds
+    }
+
+    // Stop auto-slide
+    this.stopAutoSlide = () => {
+      if (this.autoSlideInterval) {
+        clearInterval(this.autoSlideInterval)
+        this.autoSlideInterval = null
+      }
+    }
+
+    // Event listeners
+    this.nextBtn.addEventListener("click", () => {
+      this.stopAutoSlide()
+      this.nextSlide()
+      this.startAutoSlide()
+    })
+
+    this.prevBtn.addEventListener("click", () => {
+      this.stopAutoSlide()
+      this.prevSlide()
+      this.startAutoSlide()
+    })
+
+    this.indicators.forEach((indicator, index) => {
+      indicator.addEventListener("click", () => {
+        this.stopAutoSlide()
+        this.goToSlide(index)
+        this.startAutoSlide()
+      })
+    })
+
+    // Pause on hover
+    this.el.addEventListener("mouseenter", () => {
+      this.stopAutoSlide()
+    })
+
+    this.el.addEventListener("mouseleave", () => {
+      this.startAutoSlide()
+    })
+
+    // Initialize
+    this.updateSlide()
+    this.startAutoSlide()
+  },
+
+  destroyed() {
+    this.stopAutoSlide()
   },
 }
 

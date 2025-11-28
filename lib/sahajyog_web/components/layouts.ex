@@ -134,32 +134,89 @@ defmodule SahajyogWeb.Layouts do
   def footer(assigns) do
     ~H"""
     <footer class="w-full bg-base-200/50 border-t border-base-content/10 mt-auto">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <%!-- Main Content - Centered --%>
-        <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold text-base-content mb-3">SahajYog</h3>
-          <p class="text-base-content/60 text-sm max-w-lg mx-auto">
-            {gettext(
-              "Discover inner peace through Sahaja Yoga meditation. Explore teachings, talks, and resources for your spiritual journey."
-            )}
-          </p>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          <%!-- Left: Branding --%>
+          <div>
+            <h3 class="text-2xl font-bold text-base-content mb-3">SahajYog</h3>
+            <p class="text-base-content/60 text-sm leading-relaxed">
+              {gettext(
+                "Discover inner peace through Sahaja Yoga meditation. Explore teachings, talks, and resources for your spiritual journey."
+              )}
+            </p>
+          </div>
+
+          <%!-- Center: Quick Links --%>
+          <div>
+            <h4 class="text-sm font-semibold text-base-content uppercase tracking-wider mb-4">
+              {gettext("Explore")}
+            </h4>
+            <nav class="flex flex-col gap-2">
+              <.link
+                href={~p"/"}
+                data-footer-path="/"
+                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+              >
+                {gettext("Home")}
+              </.link>
+              <.link
+                href={~p"/steps"}
+                data-footer-path="/steps"
+                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+              >
+                {gettext("Steps")}
+              </.link>
+              <.link
+                href={~p"/talks"}
+                data-footer-path="/talks"
+                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+              >
+                {gettext("Talks")}
+              </.link>
+              <.link
+                :if={@current_scope}
+                href={~p"/resources"}
+                data-footer-path="/resources"
+                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+              >
+                {gettext("Resources")}
+              </.link>
+              <.link
+                :if={@current_scope}
+                href={~p"/topics"}
+                data-footer-path="/topics"
+                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+              >
+                {gettext("Topics")}
+              </.link>
+            </nav>
+          </div>
+
+          <%!-- Right: Contact --%>
+          <div class="text-center md:text-left">
+            <h4 class="text-sm font-semibold text-base-content uppercase tracking-wider mb-4">
+              {gettext("Get in Touch")}
+            </h4>
+            <p class="text-base-content/60 text-sm mb-4">
+              {gettext("Have questions? We'd love to hear from you.")}
+            </p>
+            <.link
+              href={~p"/contact"}
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-content hover:bg-primary/90 rounded-lg transition-all duration-200 text-sm font-medium"
+            >
+              <.icon name="hero-envelope" class="w-4 h-4" />
+              {gettext("Contact Us")}
+            </.link>
+          </div>
         </div>
 
-        <%!-- Contact Button --%>
-        <div class="flex justify-center mb-8">
-          <.link
-            href={~p"/contact"}
-            class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-content hover:bg-primary/90 rounded-full transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
-          >
-            <.icon name="hero-envelope" class="w-5 h-5" />
-            {gettext("Contact Us")}
-          </.link>
-        </div>
-
-        <%!-- Divider --%>
-        <div class="border-t border-base-content/10 pt-6">
-          <p class="text-base-content/50 text-sm text-center">
+        <%!-- Bottom Bar --%>
+        <div class="border-t border-base-content/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p class="text-base-content/50 text-sm">
             © {DateTime.utc_now().year} SahajYog. {gettext("All rights reserved.")}
+          </p>
+          <p class="text-base-content/40 text-xs">
+            {gettext("Sahaja Yoga is always free")}
           </p>
         </div>
       </div>
