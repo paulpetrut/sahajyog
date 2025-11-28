@@ -79,6 +79,36 @@ Hooks.PreviewHandler = {
   },
 }
 
+Hooks.ScheduleNotification = {
+  mounted() {
+    const key = this.el.dataset.key
+    const permanentlyDismissed = localStorage.getItem(`${key}_dismissed`)
+    const hasSeen = sessionStorage.getItem(key)
+    
+    console.log(`[ScheduleNotification] Key: ${key}, HasSeen: ${hasSeen}, Dismissed: ${permanentlyDismissed}`)
+
+    // Don't show if permanently dismissed
+    if (permanentlyDismissed) {
+      console.log(`[ScheduleNotification] Permanently dismissed ${key}, skipping`)
+      return
+    }
+
+    if (!hasSeen) {
+      console.log(`[ScheduleNotification] Showing notification for ${key}`)
+      this.pushEvent("show_notification", {})
+      sessionStorage.setItem(key, "true")
+    } else {
+      console.log(`[ScheduleNotification] Already seen ${key}, skipping`)
+    }
+
+    // Listen for dismiss event from server
+    this.handleEvent("permanently_dismiss", () => {
+      console.log(`[ScheduleNotification] Permanently dismissing ${key}`)
+      localStorage.setItem(`${key}_dismissed`, "true")
+    })
+  },
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

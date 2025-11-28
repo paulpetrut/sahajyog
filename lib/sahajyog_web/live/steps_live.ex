@@ -61,8 +61,23 @@ defmodule SahajyogWeb.StepsLive do
       |> assign(:watched_videos, watched_videos)
       |> assign(:sidebar_visible, true)
       |> assign(:locale, locale)
+      |> assign(:show_schedule_info, false)
 
     {:ok, socket}
+  end
+
+  def handle_info(:clear_schedule_info, socket) do
+    {:noreply, assign(socket, :show_schedule_info, false)}
+  end
+
+  def handle_event("show_notification", _params, socket) do
+    Process.send_after(self(), :clear_schedule_info, 12000)
+    {:noreply, assign(socket, :show_schedule_info, true)}
+  end
+
+  def handle_event("dismiss_notification", _params, socket) do
+    socket = push_event(socket, "permanently_dismiss", %{})
+    {:noreply, assign(socket, :show_schedule_info, false)}
   end
 
   def handle_event("select_video", %{"id" => id}, socket) do
@@ -229,6 +244,13 @@ defmodule SahajyogWeb.StepsLive do
       phx-hook="WatchedVideos"
       id="watched-videos-container"
     >
+      <div
+        id="weekly-update-hook"
+        phx-hook="ScheduleNotification"
+        data-key="weekly_update_seen_v4"
+        class="hidden"
+      >
+      </div>
       <%!-- Mobile Layout --%>
       <div class="lg:hidden">
         <%= if @current_video do %>
@@ -243,6 +265,30 @@ defmodule SahajyogWeb.StepsLive do
             </div>
             <div class="p-4 border-b border-gray-700">
               <h1 class="text-lg font-bold mb-2">{@current_video.title}</h1>
+
+              <div
+                class={[
+                  "mb-4 mx-auto w-fit max-w-full bg-blue-600 text-white rounded-full px-4 py-2 flex items-center gap-2 shadow-lg animate-fade-in-down",
+                  !@show_schedule_info && "hidden"
+                ]}
+                role="alert"
+              >
+                <.icon name="hero-information-circle" class="w-4 h-4 shrink-0" />
+                <p class="text-xs font-medium truncate max-w-[200px] sm:max-w-none">
+                  <span class="font-bold">{gettext("Weekly Update")}:</span>
+                  <span class="opacity-90">
+                    {gettext("The content on this page is refreshed every Monday.")}
+                  </span>
+                </p>
+                <button
+                  phx-click="dismiss_notification"
+                  class="ml-1 p-0.5 hover:bg-white/20 rounded-full transition-colors shrink-0"
+                  aria-label={gettext("Close")}
+                >
+                  <.icon name="hero-x-mark" class="w-3 h-3" />
+                </button>
+              </div>
+
               <%= if not MapSet.member?(@watched_videos, @current_video.id) do %>
                 <button
                   phx-click="mark_watched"
@@ -310,6 +356,29 @@ defmodule SahajyogWeb.StepsLive do
             </div>
 
             <%!-- Video player --%>
+            <div
+              class={[
+                "mb-6 mx-auto w-fit max-w-2xl bg-blue-600 text-white rounded-full px-6 py-2.5 flex items-center gap-3 shadow-lg animate-fade-in-down",
+                !@show_schedule_info && "hidden"
+              ]}
+              role="alert"
+            >
+              <.icon name="hero-information-circle" class="w-5 h-5 shrink-0" />
+              <p class="text-sm font-medium">
+                <span class="font-bold">{gettext("Weekly Update")}:</span>
+                <span class="opacity-90">
+                  {gettext("The content on this page is refreshed every Monday.")}
+                </span>
+              </p>
+              <button
+                phx-click="dismiss_notification"
+                class="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
+                aria-label={gettext("Close")}
+              >
+                <.icon name="hero-x-mark" class="w-4 h-4" />
+              </button>
+            </div>
+
             <div class="flex-1 bg-black rounded-lg overflow-hidden">
               <.video_player
                 video_id={@current_video.video_id}

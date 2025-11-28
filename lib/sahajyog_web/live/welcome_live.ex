@@ -16,8 +16,23 @@ defmodule SahajyogWeb.WelcomeLive do
       |> assign(:page_title, "Welcome")
       |> assign(:current_video, current_video)
       |> assign(:locale, locale)
+      |> assign(:show_schedule_info, false)
 
     {:ok, socket}
+  end
+
+  def handle_info(:clear_schedule_info, socket) do
+    {:noreply, assign(socket, :show_schedule_info, false)}
+  end
+
+  def handle_event("show_notification", _params, socket) do
+    Process.send_after(self(), :clear_schedule_info, 12000)
+    {:noreply, assign(socket, :show_schedule_info, true)}
+  end
+
+  def handle_event("dismiss_notification", _params, socket) do
+    socket = push_event(socket, "permanently_dismiss", %{})
+    {:noreply, assign(socket, :show_schedule_info, false)}
   end
 
   def handle_event("change_locale", %{"locale" => locale}, socket) do
@@ -28,6 +43,13 @@ defmodule SahajyogWeb.WelcomeLive do
   def render(assigns) do
     ~H"""
     <.page_container>
+      <div
+        id="daily-update-hook"
+        phx-hook="ScheduleNotification"
+        data-key="daily_update_seen_v5"
+        class="hidden"
+      >
+      </div>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <%!-- Header --%>
         <.page_header title={gettext("Welcome to Sahaja Yoga")} centered>
@@ -36,6 +58,28 @@ defmodule SahajyogWeb.WelcomeLive do
 
         <%!-- Video Player --%>
         <div :if={@current_video} class="mb-12">
+          <div
+            class={[
+              "mb-6 mx-auto w-fit max-w-2xl bg-blue-600 text-white rounded-full px-6 py-2.5 flex items-center gap-3 shadow-lg animate-fade-in-down",
+              !@show_schedule_info && "hidden"
+            ]}
+            role="alert"
+          >
+            <.icon name="hero-information-circle" class="w-5 h-5 shrink-0" />
+            <p class="text-sm font-medium">
+              <span class="font-bold">{gettext("Daily Update")}:</span>
+              <span class="opacity-90">
+                {gettext("The video on this page is replaced every day.")}
+              </span>
+            </p>
+            <button
+              phx-click="dismiss_notification"
+              class="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
+              aria-label={gettext("Close")}
+            >
+              <.icon name="hero-x-mark" class="w-4 h-4" />
+            </button>
+          </div>
           <.card class="overflow-hidden p-0">
             <div class="aspect-video bg-black">
               <.video_player
