@@ -66,9 +66,20 @@ defmodule Sahajyog.Accounts.UserNotifier do
   Deliver instructions to log in with a magic link.
   """
   def deliver_login_instructions(user, url, locale \\ "en") do
+    require Logger
+
+    Logger.info(
+      "Delivering login instructions for user: #{user.email}, confirmed_at: #{inspect(user.confirmed_at)}"
+    )
+
     case user do
-      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url, locale)
-      _ -> deliver_magic_link_instructions(user, url, locale)
+      %User{confirmed_at: nil} ->
+        Logger.info("User not confirmed, sending confirmation email")
+        deliver_confirmation_instructions(user, url, locale)
+
+      _ ->
+        Logger.info("User confirmed, sending magic link login email")
+        deliver_magic_link_instructions(user, url, locale)
     end
   end
 

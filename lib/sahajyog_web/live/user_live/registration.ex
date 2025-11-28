@@ -8,50 +8,57 @@ defmodule SahajyogWeb.UserLive.Registration do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-sm">
-        <div class="text-center">
-          <.header>
-            {gettext("Register for an account")}
-            <:subtitle>
+      <div class="min-h-screen flex items-center justify-center bg-base-200 px-4 py-12">
+        <div class="w-full max-w-md">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-3">{gettext("Register for an account")}</h1>
+            <p class="text-base-content/70">
               {gettext("Already registered?")}
               <.link navigate={~p"/users/log-in"} class="font-semibold text-brand hover:underline">
                 {gettext("Log in")}
               </.link>
               {gettext("to your account now.")}
-            </:subtitle>
-          </.header>
+            </p>
+          </div>
+
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
+                <.input
+                  field={@form[:email]}
+                  type="email"
+                  label={gettext("Email")}
+                  autocomplete="username"
+                  required
+                  phx-mounted={JS.focus()}
+                />
+
+                <.input
+                  field={@form[:password]}
+                  type="password"
+                  label={gettext("Password (optional)")}
+                  placeholder={gettext("Leave blank to use magic link login")}
+                  autocomplete="new-password"
+                />
+
+                <.input
+                  field={@form[:password_confirmation]}
+                  type="password"
+                  label={gettext("Confirm password (optional)")}
+                  placeholder={gettext("Only if you set a password above")}
+                  autocomplete="new-password"
+                />
+
+                <.button
+                  phx-disable-with={gettext("Creating account...")}
+                  class="btn btn-primary w-full"
+                >
+                  {gettext("Create an account")}
+                </.button>
+              </.form>
+            </div>
+          </div>
         </div>
-
-        <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
-          <.input
-            field={@form[:email]}
-            type="email"
-            label={gettext("Email")}
-            autocomplete="username"
-            required
-            phx-mounted={JS.focus()}
-          />
-
-          <.input
-            field={@form[:password]}
-            type="password"
-            label={gettext("Password (optional)")}
-            placeholder={gettext("Leave blank to use magic link login")}
-            autocomplete="new-password"
-          />
-
-          <.input
-            field={@form[:password_confirmation]}
-            type="password"
-            label={gettext("Confirm password (optional)")}
-            placeholder={gettext("Only if you set a password above")}
-            autocomplete="new-password"
-          />
-
-          <.button phx-disable-with={gettext("Creating account...")} class="btn btn-primary w-full">
-            {gettext("Create an account")}
-          </.button>
-        </.form>
       </div>
     </Layouts.app>
     """

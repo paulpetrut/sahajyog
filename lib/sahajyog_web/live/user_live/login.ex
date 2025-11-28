@@ -33,87 +33,100 @@ defmodule SahajyogWeb.UserLive.Login do
           <%!-- Main card --%>
           <div class="card bg-base-100 shadow-xl">
             <div class="card-body">
-              <%!-- Password Form --%>
-              <.form
-                for={@form}
-                id="login_form_password"
-                action={~p"/users/log-in"}
-                phx-submit="submit_password"
-                phx-trigger-action={@trigger_submit}
-              >
-                <.input
-                  readonly={!!@current_scope}
-                  field={@form[:email]}
-                  type="email"
-                  label={gettext("Email")}
-                  placeholder={gettext("you@example.com")}
-                  autocomplete="username"
-                  required
-                  phx-mounted={JS.focus()}
-                  id="user_email"
-                />
-
-                <.input
-                  field={@form[:password]}
-                  type="password"
-                  label={gettext("Password")}
-                  placeholder={gettext("Enter your password")}
-                  autocomplete="current-password"
-                  required
-                />
-
-                <div class="form-control">
-                  <label class="label cursor-pointer justify-start gap-3">
-                    <input
-                      type="checkbox"
-                      name="remember_me_checkbox"
-                      checked={@remember_me}
-                      phx-click="toggle_remember"
-                      class="checkbox checkbox-primary"
-                    />
-                    <span class="label-text">{gettext("Keep me signed in")}</span>
-                  </label>
-                </div>
-
-                <.button
-                  class="btn btn-primary w-full text-lg h-12 rounded-full shadow-lg hover:shadow-xl transition-all"
-                  name={@form[:remember_me].name}
-                  value={if @remember_me, do: "true", else: "false"}
-                >
-                  <span class="flex items-center justify-center gap-2 font-semibold">
-                    <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" /> {gettext("Sign in")}
-                  </span>
-                </.button>
-              </.form>
-
-              <%!-- Divider --%>
-              <div class="divider">{gettext("OR")}</div>
-
-              <%!-- Magic Link Form --%>
-              <.form
-                for={@form}
-                id="login_form_magic"
-                action={~p"/users/log-in"}
-                phx-submit="submit_magic"
-              >
+              <%!-- Tab Buttons --%>
+              <div class="grid grid-cols-2 gap-3 mb-6">
                 <button
                   type="button"
-                  phx-click="toggle_magic_form"
+                  phx-click="show_password_form"
                   class={[
-                    "btn w-full h-12 text-base font-semibold rounded-full",
-                    @show_magic_form && "btn-primary",
-                    !@show_magic_form && "btn-outline btn-primary"
+                    "btn btn-lg h-16 flex-col gap-1 transition-all",
+                    !@show_magic_form && "btn-primary shadow-lg",
+                    @show_magic_form && "btn-outline btn-ghost"
                   ]}
                 >
-                  <span class="flex items-center justify-center gap-2">
-                    <.icon name="hero-envelope" class="w-5 h-5" /> {gettext(
-                      "Magic link (passwordless)"
-                    )}
-                  </span>
+                  <.icon name="hero-lock-closed" class="w-6 h-6" />
+                  <span class="text-sm font-semibold">{gettext("Password")}</span>
                 </button>
+                <button
+                  type="button"
+                  phx-click="show_magic_form"
+                  class={[
+                    "btn btn-lg h-16 flex-col gap-1 transition-all",
+                    @show_magic_form && "btn-primary shadow-lg",
+                    !@show_magic_form && "btn-outline btn-ghost"
+                  ]}
+                >
+                  <.icon name="hero-envelope" class="w-6 h-6" />
+                  <span class="text-sm font-semibold">{gettext("Magic Link")}</span>
+                </button>
+              </div>
 
-                <div :if={@show_magic_form} class="mt-4 p-4 bg-base-200 rounded-lg space-y-4">
-                  <p class="text-sm text-base-content/70">
+              <%!-- Password Form --%>
+              <div :if={!@show_magic_form}>
+                <.form
+                  for={@form}
+                  id="login_form_password"
+                  action={~p"/users/log-in"}
+                  phx-submit="submit_password"
+                  phx-trigger-action={@trigger_submit}
+                >
+                  <.input
+                    readonly={!!@current_scope}
+                    field={@form[:email]}
+                    type="email"
+                    label={gettext("Email")}
+                    placeholder={gettext("you@example.com")}
+                    autocomplete="username"
+                    required
+                    phx-mounted={JS.focus()}
+                    id="user_email"
+                  />
+
+                  <.input
+                    field={@form[:password]}
+                    type="password"
+                    label={gettext("Password")}
+                    placeholder={gettext("Enter your password")}
+                    autocomplete="current-password"
+                    required
+                  />
+
+                  <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-3">
+                      <input
+                        type="checkbox"
+                        name="remember_me_checkbox"
+                        checked={@remember_me}
+                        phx-click="toggle_remember"
+                        class="checkbox checkbox-primary"
+                      />
+                      <span class="label-text">{gettext("Keep me signed in")}</span>
+                    </label>
+                  </div>
+
+                  <.button
+                    class="btn btn-primary w-full text-lg h-12 rounded-full shadow-lg hover:shadow-xl transition-all"
+                    name={@form[:remember_me].name}
+                    value={if @remember_me, do: "true", else: "false"}
+                  >
+                    <span class="flex items-center justify-center gap-2 font-semibold">
+                      <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" /> {gettext(
+                        "Sign in"
+                      )}
+                    </span>
+                  </.button>
+                </.form>
+              </div>
+
+              <%!-- Magic Link Form --%>
+              <div :if={@show_magic_form}>
+                <.form
+                  for={@form}
+                  id="login_form_magic"
+                  action={~p"/users/log-in"}
+                  phx-submit="submit_magic"
+                >
+                  <p class="text-sm text-base-content/70 mb-4">
                     {gettext("We'll email you a secure link to sign in without a password.")}
                   </p>
 
@@ -133,8 +146,8 @@ defmodule SahajyogWeb.UserLive.Login do
                       <.icon name="hero-paper-airplane" class="w-5 h-5" /> {gettext("Send magic link")}
                     </span>
                   </.button>
-                </div>
-              </.form>
+                </.form>
+              </div>
             </div>
           </div>
 
@@ -174,8 +187,12 @@ defmodule SahajyogWeb.UserLive.Login do
     {:noreply, assign(socket, :remember_me, !socket.assigns.remember_me)}
   end
 
-  def handle_event("toggle_magic_form", _params, socket) do
-    {:noreply, assign(socket, :show_magic_form, !socket.assigns.show_magic_form)}
+  def handle_event("show_password_form", _params, socket) do
+    {:noreply, assign(socket, :show_magic_form, false)}
+  end
+
+  def handle_event("show_magic_form", _params, socket) do
+    {:noreply, assign(socket, :show_magic_form, true)}
   end
 
   def handle_event("submit_password", _params, socket) do
@@ -186,22 +203,48 @@ defmodule SahajyogWeb.UserLive.Login do
     if user = Accounts.get_user_by_email(email) do
       locale = Gettext.get_locale(SahajyogWeb.Gettext)
 
-      Accounts.deliver_login_instructions(
-        user,
-        &url(~p"/users/log-in/#{&1}"),
-        locale
-      )
+      case Accounts.deliver_login_instructions(
+             user,
+             &url(~p"/users/log-in/#{&1}"),
+             locale
+           ) do
+        {:ok, _} ->
+          info =
+            gettext(
+              "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
+            )
+
+          {:noreply,
+           socket
+           |> put_flash(:info, info)
+           |> assign(:show_magic_form, true)}
+
+        {:error, reason} ->
+          require Logger
+          Logger.error("Failed to send magic link email: #{inspect(reason)}")
+
+          {:noreply,
+           socket
+           |> put_flash(
+             :error,
+             gettext(
+               "Failed to send email. Please try again or contact support if the problem persists."
+             )
+           )
+           |> assign(:show_magic_form, true)}
+      end
+    else
+      # User not found - still show success message to prevent email enumeration
+      info =
+        gettext(
+          "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
+        )
+
+      {:noreply,
+       socket
+       |> put_flash(:info, info)
+       |> assign(:show_magic_form, true)}
     end
-
-    info =
-      gettext(
-        "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
-      )
-
-    {:noreply,
-     socket
-     |> put_flash(:info, info)
-     |> assign(:show_magic_form, true)}
   end
 
   defp local_mail_adapter? do

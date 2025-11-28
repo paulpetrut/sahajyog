@@ -132,11 +132,15 @@ defmodule SahajyogWeb.UserAuth do
   defp renew_session(conn, _user) do
     delete_csrf_token()
     locale = get_session(conn, :locale)
+    phoenix_flash = get_session(conn, "phoenix_flash")
 
     conn
     |> configure_session(renew: true)
     |> clear_session()
     |> put_session(:locale, locale)
+    |> then(fn conn ->
+      if phoenix_flash, do: put_session(conn, "phoenix_flash", phoenix_flash), else: conn
+    end)
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}, _),

@@ -288,7 +288,7 @@ msgstr "Vous n'avez pas de compte ?"
 
 #: lib/sahajyog_web/live/user_live/login.ex:48
 #: lib/sahajyog_web/live/user_live/login.ex:124
-#: lib/sahajyog_web/live/user_live/registration.ex:29
+#: lib/sahajyog_web/live/user_live/registration.ex:30
 #: lib/sahajyog_web/live/user_live/settings.ex:32
 #, elixir-autogen, elixir-format
 msgid "Email"
@@ -370,23 +370,24 @@ msgstr "vous@exemple.fr"
 msgid "Already registered?"
 msgstr "Déjà inscrit ?"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:90
+#: lib/sahajyog_web/live/user_live/registration.ex:97
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr "Un e-mail a été envoyé à %{email}, veuillez y accéder pour confirmer votre compte."
 
-#: lib/sahajyog_web/live/user_live/registration.ex:52
+#: lib/sahajyog_web/live/user_live/registration.ex:56
 #, elixir-autogen, elixir-format
 msgid "Create an account"
 msgstr "Créer un compte"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:51
+#: lib/sahajyog_web/live/user_live/registration.ex:53
 #, elixir-autogen, elixir-format
 msgid "Creating account..."
 msgstr "Création du compte..."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:202
-#: lib/sahajyog_web/components/mobile_menu.ex:93
+#: lib/sahajyog_web/components/layouts/root.html.heex:173
+#: lib/sahajyog_web/components/mobile_menu.ex:77
+#: lib/sahajyog_web/live/user_live/confirmation.ex:56
 #: lib/sahajyog_web/live/user_live/registration.ex:18
 #, elixir-autogen, elixir-format
 msgid "Log in"
@@ -402,39 +403,40 @@ msgstr "S'inscrire pour un compte"
 msgid "to your account now."
 msgstr "à votre compte maintenant."
 
-#: lib/sahajyog_web/live/user_live/registration.ex:46
+#: lib/sahajyog_web/live/user_live/registration.ex:47
 #, elixir-autogen, elixir-format
 msgid "Confirm password (optional)"
 msgstr "Confirmer le mot de passe (optionnel)"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:39
+#: lib/sahajyog_web/live/user_live/registration.ex:40
 #, elixir-autogen, elixir-format
 msgid "Leave blank to use magic link login"
 msgstr "Laisser vide pour utiliser la connexion par lien magique"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:47
+#: lib/sahajyog_web/live/user_live/registration.ex:48
 #, elixir-autogen, elixir-format
 msgid "Only if you set a password above"
 msgstr "Seulement si vous avez défini un mot de passe ci-dessus"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:38
+#: lib/sahajyog_web/live/user_live/registration.ex:39
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Password (optional)"
 msgstr "Mot de passe (optionnel)"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:194
-#: lib/sahajyog_web/components/mobile_menu.ex:90
-#: lib/sahajyog_web/live/user_live/registration.ex:69
+#: lib/sahajyog_web/components/layouts/root.html.heex:165
+#: lib/sahajyog_web/components/mobile_menu.ex:74
+#: lib/sahajyog_web/live/user_live/registration.ex:76
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "S'inscrire"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:104
+#: lib/sahajyog_web/live/user_live/registration.ex:111
 #, elixir-autogen, elixir-format
 msgid "Account created but we couldn't send the confirmation email. Please contact support."
 msgstr "Compte créé mais nous n'avons pas pu envoyer l'e-mail de confirmation. Veuillez contacter le support."
 
-#: lib/sahajyog_web/live/user_live/login.ex:197
+#: lib/sahajyog_web/live/user_live/login.ex:196
+#: lib/sahajyog_web/live/user_live/login.ex:222
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Vérifiez votre e-mail ! Si votre adresse est dans notre système, vous recevrez bientôt un lien de connexion."
@@ -530,7 +532,7 @@ msgid "Your account has been confirmed! Please log in with your password."
 msgstr "Votre compte a été confirmé ! Veuillez vous connecter avec votre mot de passe."
 
 #: lib/sahajyog_web/components/layouts/root.html.heex:107
-#: lib/sahajyog_web/components/mobile_menu.ex:55
+#: lib/sahajyog_web/components/mobile_menu.ex:54
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr "Admin"
@@ -637,9 +639,7 @@ msgstr "Aucune ressource disponible pour votre niveau"
 
 #: lib/sahajyog_web/components/admin_nav.ex:36
 #: lib/sahajyog_web/components/layouts/root.html.heex:96
-#: lib/sahajyog_web/components/layouts/root.html.heex:129
 #: lib/sahajyog_web/components/mobile_menu.ex:50
-#: lib/sahajyog_web/components/mobile_menu.ex:61
 #: lib/sahajyog_web/live/admin/resources_live.ex:417
 #: lib/sahajyog_web/live/resources_live.ex:103
 #, elixir-autogen, elixir-format
@@ -691,14 +691,12 @@ msgid "Upload Resource"
 msgstr "Téléverser une Ressource"
 
 #: lib/sahajyog_web/components/admin_nav.ex:22
-#: lib/sahajyog_web/components/layouts/root.html.heex:126
-#: lib/sahajyog_web/components/mobile_menu.ex:58
 #, elixir-autogen, elixir-format
 msgid "Videos"
 msgstr "Vidéos"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:177
-#: lib/sahajyog_web/components/mobile_menu.ex:79
+#: lib/sahajyog_web/components/layouts/root.html.heex:148
+#: lib/sahajyog_web/components/mobile_menu.ex:63
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Account settings"
 msgstr "Paramètres du compte"
@@ -743,8 +741,8 @@ msgstr ""
 msgid "Preview not available for this file type"
 msgstr ""
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:183
-#: lib/sahajyog_web/components/mobile_menu.ex:85
+#: lib/sahajyog_web/components/layouts/root.html.heex:154
+#: lib/sahajyog_web/components/mobile_menu.ex:69
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Se déconnecter"
@@ -976,8 +974,6 @@ msgid "Proposal rejected"
 msgstr ""
 
 #: lib/sahajyog_web/components/admin_nav.ex:64
-#: lib/sahajyog_web/components/layouts/root.html.heex:135
-#: lib/sahajyog_web/components/mobile_menu.ex:67
 #, elixir-autogen, elixir-format
 msgid "Proposals"
 msgstr ""
@@ -1158,9 +1154,7 @@ msgstr "Sujet mis à jour avec succès"
 
 #: lib/sahajyog_web/components/admin_nav.ex:50
 #: lib/sahajyog_web/components/layouts/root.html.heex:87
-#: lib/sahajyog_web/components/layouts/root.html.heex:132
 #: lib/sahajyog_web/components/mobile_menu.ex:47
-#: lib/sahajyog_web/components/mobile_menu.ex:64
 #: lib/sahajyog_web/live/topics_live.ex:26
 #, elixir-autogen, elixir-format
 msgid "Topics"
@@ -1356,3 +1350,61 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Steps"
 msgstr "Étapes"
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:94
+#, elixir-autogen, elixir-format
+msgid "Confirm Account"
+msgstr "Confirmer le compte"
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:40
+#, elixir-autogen, elixir-format
+msgid "Confirm and log in only this time"
+msgstr "Confirmer et se connecter uniquement cette fois"
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:34
+#, elixir-autogen, elixir-format
+msgid "Confirm and stay logged in"
+msgstr "Confirmer et rester connecté"
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:31
+#: lib/sahajyog_web/live/user_live/confirmation.ex:37
+#, elixir-autogen, elixir-format
+msgid "Confirming..."
+msgstr "Confirmation en cours..."
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:65
+#, elixir-autogen, elixir-format
+msgid "Keep me logged in on this device"
+msgstr "Rester connecté sur cet appareil"
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:71
+#, elixir-autogen, elixir-format
+msgid "Log me in only this time"
+msgstr "Me connecter uniquement cette fois"
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:55
+#: lib/sahajyog_web/live/user_live/confirmation.ex:62
+#: lib/sahajyog_web/live/user_live/confirmation.ex:68
+#, elixir-autogen, elixir-format
+msgid "Logging in..."
+msgstr "Connexion en cours..."
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:102
+#, elixir-autogen, elixir-format
+msgid "Magic link is invalid or it has expired."
+msgstr "Le lien magique est invalide ou a expiré."
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:77
+#, elixir-autogen, elixir-format
+msgid "Tip: If you prefer passwords, you can enable them in the user settings."
+msgstr "Astuce : Si vous préférez les mots de passe, vous pouvez les activer dans les paramètres utilisateur."
+
+#: lib/sahajyog_web/live/user_live/confirmation.ex:13
+#, elixir-autogen, elixir-format
+msgid "Welcome %{email}"
+msgstr "Bienvenue %{email}"
+
+#: lib/sahajyog_web/live/user_live/login.ex:213
+#, elixir-autogen, elixir-format
+msgid "Failed to send email. Please try again or contact support if the problem persists."
+msgstr ""
