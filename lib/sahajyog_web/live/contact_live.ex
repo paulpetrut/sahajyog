@@ -117,38 +117,40 @@ defmodule SahajyogWeb.ContactLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="min-h-screen bg-base-100 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-2xl mx-auto">
-          <%!-- Header --%>
-          <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-base-content mb-3">
-              {gettext("Contact Us")}
-            </h1>
-            <p class="text-lg text-base-content/70">
-              {gettext("Have a question or feedback? We'd love to hear from you.")}
-            </p>
-          </div>
-
-          <%= if @submitted do %>
-            <%!-- Success Message --%>
-            <div class="bg-success/10 border border-success/20 rounded-lg p-6 text-center">
-              <div class="flex justify-center mb-4">
-                <.icon name="hero-check-circle" class="w-16 h-16 text-success" />
-              </div>
-              <h2 class="text-2xl font-semibold text-base-content mb-2">
-                {gettext("Thank you for reaching out!")}
-              </h2>
-              <p class="text-base-content/70 mb-6">
-                {gettext("We've received your message and will respond as soon as possible.")}
-              </p>
-              <.link
-                navigate={~p"/"}
-                class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-content rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                {gettext("Back to Home")}
-              </.link>
+      <%= if @submitted do %>
+        <%!-- Success Message - Centered --%>
+        <div class="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div class="max-w-md w-full bg-success/10 border border-success/20 rounded-lg p-8 text-center">
+            <div class="flex justify-center mb-4">
+              <.icon name="hero-check-circle" class="w-16 h-16 text-success" />
             </div>
-          <% else %>
+            <h2 class="text-2xl font-semibold text-base-content mb-2">
+              {gettext("Thank you for reaching out!")}
+            </h2>
+            <p class="text-base-content/70 mb-6">
+              {gettext("We've received your message and will respond as soon as possible.")}
+            </p>
+            <.link
+              navigate={~p"/"}
+              class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-content rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              {gettext("Back to Home")}
+            </.link>
+          </div>
+        </div>
+      <% else %>
+        <%!-- Contact Form - Centered --%>
+        <div class="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <div class="max-w-2xl w-full">
+            <%!-- Header --%>
+            <div class="text-center mb-8">
+              <h1 class="text-4xl font-bold text-base-content mb-3">
+                {gettext("Contact Us")}
+              </h1>
+              <p class="text-lg text-base-content/70">
+                {gettext("Have a question or feedback? We'd love to hear from you.")}
+              </p>
+            </div>
             <%!-- Contact Form --%>
             <div class="bg-base-200 rounded-lg shadow-lg p-8">
               <.form
@@ -207,9 +209,9 @@ defmodule SahajyogWeb.ContactLive do
                 </div>
               </.form>
             </div>
-          <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </Layouts.app>
     """
   end
