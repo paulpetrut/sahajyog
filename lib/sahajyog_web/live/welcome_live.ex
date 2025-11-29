@@ -11,8 +11,9 @@ defmodule SahajyogWeb.WelcomeLive do
   ]
 
   def mount(_params, _session, socket) do
-    welcome_videos = Content.list_videos_by_category("Welcome")
-    current_video = List.first(welcome_videos)
+    # Get today's video from the Welcome pool rotation
+    # Returns nil if the pool is empty
+    current_video = Content.get_daily_video()
 
     # Get current locale
     locale = Gettext.get_locale(SahajyogWeb.Gettext)

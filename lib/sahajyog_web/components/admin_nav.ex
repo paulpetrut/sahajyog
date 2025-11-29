@@ -23,6 +23,20 @@ defmodule SahajyogWeb.AdminNav do
           </.link>
 
           <.link
+            navigate={~p"/admin/weekly-schedule"}
+            class={[
+              "px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2",
+              if(@current_page == :weekly_schedule,
+                do: "text-orange-400 border-orange-400",
+                else: "text-gray-400 hover:text-white border-transparent"
+              )
+            ]}
+          >
+            <.icon name="hero-calendar-days" class="w-4 h-4 inline mr-1" />
+            {gettext("Weekly Schedule")}
+          </.link>
+
+          <.link
             navigate={~p"/admin/resources"}
             class={[
               "px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2",

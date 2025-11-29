@@ -254,6 +254,45 @@ defmodule SahajyogWeb.UserAuth do
     end
   end
 
+  def on_mount(:require_admin, _params, session, socket) do
+    socket = mount_current_scope(socket, session)
+
+    cond do
+      socket.assigns.current_scope == nil or socket.assigns.current_scope.user == nil ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(
+            :error,
+            Gettext.dgettext(
+              SahajyogWeb.Gettext,
+              "default",
+              "You must log in to access this page."
+            )
+          )
+          |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
+
+        {:halt, socket}
+
+      Accounts.User.admin?(socket.assigns.current_scope.user) ->
+        {:cont, socket}
+
+      true ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(
+            :error,
+            Gettext.dgettext(
+              SahajyogWeb.Gettext,
+              "default",
+              "You must be an administrator to access this page."
+            )
+          )
+          |> Phoenix.LiveView.redirect(to: ~p"/")
+
+        {:halt, socket}
+    end
+  end
+
   defp mount_current_scope(socket, session) do
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
       {user, _} =

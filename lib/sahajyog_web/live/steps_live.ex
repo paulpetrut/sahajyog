@@ -8,11 +8,23 @@ defmodule SahajyogWeb.StepsLive do
   def mount(_params, _session, socket) do
     socket = assign(socket, :page_title, "Steps")
 
-    # Fetch videos from database
-    db_videos = Content.list_videos_ordered()
+    # Get the current user from socket assigns (may be nil for unauthenticated users)
+    user =
+      case socket.assigns[:current_scope] do
+        %{user: user} -> user
+        _ -> nil
+      end
 
     # Get current locale
     locale = Gettext.get_locale(SahajyogWeb.Gettext)
+
+    # Get accessible categories for this user
+    accessible_categories = Content.accessible_categories(user)
+
+    # Build videos list based on category type:
+    # - "Getting Started": Show all videos in the category
+    # - "Advanced Topics" / "Excerpts": Show only weekly assigned videos for current week
+    db_videos = build_videos_for_user(user, accessible_categories)
 
     # Transform database videos to match the expected format
     videos =
@@ -34,13 +46,9 @@ defmodule SahajyogWeb.StepsLive do
 
     folder_order = ["Getting Started", "Advanced Topics", "Excerpts"]
 
-    folders =
-      videos
-      |> Enum.group_by(& &1.folder)
-      |> Enum.map(fn {folder, vids} -> {folder, vids, true} end)
-      |> Enum.sort_by(fn {folder_name, _, _} ->
-        Enum.find_index(folder_order, &(&1 == folder_name)) || 999
-      end)
+    # Build folders, including empty categories for Advanced Topics/Excerpts
+    # when user has access but no videos are assigned for the current week
+    folders = build_folders(videos, accessible_categories, folder_order)
 
     # Load watched videos from database if user is logged in
     watched_videos =
@@ -167,6 +175,45 @@ defmodule SahajyogWeb.StepsLive do
     {:noreply, assign(socket, :locale, locale)}
   end
 
+  # Build the list of videos for a user based on their access level
+  # - "Getting Started": All videos in the category
+  # - "Advanced Topics" / "Excerpts": Only weekly assigned videos for current week
+  defp build_videos_for_user(user, accessible_categories) do
+    Enum.flat_map(accessible_categories, fn category ->
+      case category do
+        "Getting Started" ->
+          # Show all Getting Started videos
+          Content.list_videos_for_user(user, category)
+
+        category when category in ["Advanced Topics", "Excerpts"] ->
+          # Show only weekly assigned videos for current week
+          Content.get_videos_for_current_week(category)
+
+        _ ->
+          # Other categories (like Welcome) are not shown in steps
+          []
+      end
+    end)
+  end
+
+  # Build folders list, including empty folders for categories with no videos
+  # This allows showing empty state messages for Advanced Topics/Excerpts
+  defp build_folders(videos, accessible_categories, folder_order) do
+    # Group videos by folder
+    videos_by_folder = Enum.group_by(videos, & &1.folder)
+
+    # Build folders for all accessible categories (except Welcome)
+    accessible_categories
+    |> Enum.reject(&(&1 == "Welcome"))
+    |> Enum.map(fn category ->
+      folder_videos = Map.get(videos_by_folder, category, [])
+      {category, folder_videos, folder_videos != []}
+    end)
+    |> Enum.sort_by(fn {folder_name, _, _} ->
+      Enum.find_index(folder_order, &(&1 == folder_name)) || 999
+    end)
+  end
+
   defp translate_category(category) do
     case category do
       "Getting Started" -> gettext("Getting Started")
@@ -174,6 +221,33 @@ defmodule SahajyogWeb.StepsLive do
       "Excerpts" -> gettext("Excerpts")
       _ -> category
     end
+  end
+
+  # Empty state message for mobile view
+  defp empty_folder_message(assigns) do
+    ~H"""
+    <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 text-center">
+      <.icon name="hero-calendar" class="w-8 h-8 mx-auto mb-2 text-gray-500" />
+      <p class="text-sm text-gray-400">
+        {gettext("No videos scheduled for this week")}
+      </p>
+      <p class="text-xs text-gray-500 mt-1">
+        {gettext("Check back later for new content")}
+      </p>
+    </div>
+    """
+  end
+
+  # Empty state message for desktop sidebar
+  defp empty_folder_message_desktop(assigns) do
+    ~H"""
+    <div class="px-4 py-6 text-center border-t border-gray-700">
+      <.icon name="hero-calendar" class="w-6 h-6 mx-auto mb-2 text-gray-500" />
+      <p class="text-xs text-gray-400">
+        {gettext("No videos scheduled for this week")}
+      </p>
+    </div>
+    """
   end
 
   defp video_item(assigns) do
@@ -304,21 +378,25 @@ defmodule SahajyogWeb.StepsLive do
 
           <%!-- Video list --%>
           <div class="p-4">
-            <%= for {folder_name, folder_videos, _} <- @folders do %>
+            <%= for {folder_name, folder_videos, has_videos} <- @folders do %>
               <%!-- Category header --%>
               <div class="mb-4">
                 <h2 class="text-lg font-semibold mb-3 text-gray-300">
                   {translate_category(folder_name)}
                 </h2>
-                <div class="space-y-2">
-                  <%= for video <- folder_videos do %>
-                    <.video_item
-                      video={video}
-                      current_video={@current_video}
-                      watched_videos={@watched_videos}
-                    />
-                  <% end %>
-                </div>
+                <%= if has_videos do %>
+                  <div class="space-y-2">
+                    <%= for video <- folder_videos do %>
+                      <.video_item
+                        video={video}
+                        current_video={@current_video}
+                        watched_videos={@watched_videos}
+                      />
+                    <% end %>
+                  </div>
+                <% else %>
+                  <.empty_folder_message folder_name={folder_name} />
+                <% end %>
               </div>
             <% end %>
           </div>
@@ -433,15 +511,13 @@ defmodule SahajyogWeb.StepsLive do
             </div>
 
             <div class="space-y-2">
-              <%= for {folder_name, folder_videos, _} <- @folders do %>
+              <%= for {folder_name, folder_videos, has_videos} <- @folders do %>
                 <div class="border border-gray-700 rounded-lg overflow-hidden">
                   <%!-- Folder header --%>
                   <button
                     phx-click="toggle_folder"
                     phx-value-folder={folder_name}
                     class="w-full px-4 py-3 bg-gray-750 hover:bg-gray-700 flex items-center justify-between transition-colors"
-                    style="color: #c45e5eff;"
-                    #
                     style="color: #D4A574;"
                   >
                     <span class="font-semibold">{translate_category(folder_name)}</span>
@@ -460,12 +536,16 @@ defmodule SahajyogWeb.StepsLive do
                     "transition-all duration-200",
                     unless(MapSet.member?(@expanded_folders, folder_name), do: "hidden")
                   ]}>
-                    <%= for video <- folder_videos do %>
-                      <.video_item_desktop
-                        video={video}
-                        current_video={@current_video}
-                        watched_videos={@watched_videos}
-                      />
+                    <%= if has_videos do %>
+                      <%= for video <- folder_videos do %>
+                        <.video_item_desktop
+                          video={video}
+                          current_video={@current_video}
+                          watched_videos={@watched_videos}
+                        />
+                      <% end %>
+                    <% else %>
+                      <.empty_folder_message_desktop folder_name={folder_name} />
                     <% end %>
                   </div>
                 </div>

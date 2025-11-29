@@ -13,6 +13,12 @@ defmodule Sahajyog.Content.Video do
     field :provider, :string, default: "youtube"
     field :user_id, :id
 
+    # Pool management fields
+    field :pool_position, :integer
+    field :in_pool, :boolean, default: false
+
+    has_many :weekly_assignments, Sahajyog.Content.WeeklyVideoAssignment
+
     timestamps(type: :utc_datetime)
   end
 
@@ -29,11 +35,22 @@ defmodule Sahajyog.Content.Video do
       :thumbnail_url,
       :duration,
       :step_number,
-      :provider
+      :provider,
+      :pool_position,
+      :in_pool
     ])
     |> validate_required([:title, :url, :category, :provider])
     |> validate_inclusion(:category, @categories)
     |> validate_inclusion(:provider, ["youtube", "vimeo"])
+    |> validate_pool_position()
+  end
+
+  defp validate_pool_position(changeset) do
+    case get_field(changeset, :pool_position) do
+      nil -> changeset
+      pos when pos >= 1 and pos <= 31 -> changeset
+      _ -> add_error(changeset, :pool_position, "must be between 1 and 31")
+    end
   end
 
   def categories, do: @categories

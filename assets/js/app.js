@@ -24,10 +24,37 @@ import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import QuillEditor from "./quill_editor"
+import Sortable from "sortablejs"
 
 const Hooks = {}
 
 Hooks.QuillEditor = QuillEditor
+
+// Pool Sortable hook for drag-and-drop reordering of Welcome pool videos
+Hooks.PoolSortable = {
+  mounted() {
+    const el = this.el
+    const hook = this
+
+    this.sortable = new Sortable(el, {
+      animation: 150,
+      ghostClass: "opacity-50",
+      dragClass: "shadow-lg",
+      handle: ".cursor-grab",
+      onEnd: function (evt) {
+        // Get all video IDs in the new order
+        const ids = Array.from(el.children).map((child) => child.dataset.id)
+        hook.pushEvent("reorder_pool", { ids: ids })
+      },
+    })
+  },
+
+  destroyed() {
+    if (this.sortable) {
+      this.sortable.destroy()
+    }
+  },
+}
 
 Hooks.WatchedVideos = {
   mounted() {

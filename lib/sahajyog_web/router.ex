@@ -70,12 +70,6 @@ defmodule SahajyogWeb.Router do
       ] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
-      live "/admin/videos", Admin.VideosLive
-      live "/admin/resources", Admin.ResourcesLive, :index
-      live "/admin/resources/new", Admin.ResourcesLive, :new
-      live "/admin/resources/:id/edit", Admin.ResourcesLive, :edit
-      live "/admin/topics", Admin.TopicsLive
-      live "/admin/topic-proposals", Admin.TopicProposalsLive
       live "/resources", ResourcesLive
       live "/topics", TopicsLive
       live "/topics/propose", TopicProposeLive
@@ -85,6 +79,25 @@ defmodule SahajyogWeb.Router do
 
     get "/resources/:id/download", ResourceController, :download
     post "/users/update-password", UserSessionController, :update_password
+  end
+
+  # Admin-only routes
+  scope "/admin", SahajyogWeb.Admin do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_admin,
+      on_mount: [
+        {SahajyogWeb.UserAuth, :require_admin},
+        {SahajyogWeb.LocaleLive, :default}
+      ] do
+      live "/videos", VideosLive
+      live "/weekly-schedule", WeeklyScheduleLive
+      live "/resources", ResourcesLive, :index
+      live "/resources/new", ResourcesLive, :new
+      live "/resources/:id/edit", ResourcesLive, :edit
+      live "/topics", TopicsLive
+      live "/topic-proposals", TopicProposalsLive
+    end
   end
 
   scope "/", SahajyogWeb do
