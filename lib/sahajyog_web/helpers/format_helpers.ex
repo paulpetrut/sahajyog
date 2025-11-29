@@ -60,4 +60,35 @@ defmodule SahajyogWeb.FormatHelpers do
   end
 
   def truncate_text(text, _max_length), do: text || ""
+
+  @doc """
+  Formats a duration in seconds to a human-readable string.
+
+  ## Examples
+
+      iex> format_duration(3661)
+      "1h 1m"
+
+      iex> format_duration(125)
+      "2m 5s"
+
+      iex> format_duration(45)
+      "45s"
+
+      iex> format_duration(nil)
+      nil
+  """
+  def format_duration(seconds) when is_integer(seconds) do
+    hours = div(seconds, 3600)
+    minutes = div(rem(seconds, 3600), 60)
+    secs = rem(seconds, 60)
+
+    cond do
+      hours > 0 -> "#{hours}h #{minutes}m"
+      minutes > 0 -> "#{minutes}m #{secs}s"
+      true -> "#{secs}s"
+    end
+  end
+
+  def format_duration(_), do: nil
 end

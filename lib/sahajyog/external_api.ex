@@ -116,6 +116,58 @@ defmodule Sahajyog.ExternalApi do
     end
   end
 
+  def fetch_categories do
+    url = "#{@base_url}/meta/categories"
+
+    case make_request(url) do
+      {:ok, %{"languages" => languages}} when is_list(languages) ->
+        categories =
+          languages
+          |> Enum.find(fn lang -> lang["language_code"] == "en" end)
+          |> case do
+            %{"categories" => categories} when is_list(categories) ->
+              categories
+              |> Enum.sort_by(fn cat -> -cat["talk_count"] end)
+              |> Enum.map(fn cat -> cat["name"] end)
+
+            _ ->
+              []
+          end
+
+        {:ok, categories}
+
+      {:ok, unexpected_body} ->
+        Logger.error("Unexpected categories response: #{inspect(unexpected_body)}")
+        {:error, "Unexpected response format"}
+
+      {:error, reason} ->
+        Logger.error("Failed to fetch categories: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
+  def fetch_spoken_languages do
+    url = "#{@base_url}/meta/spoken-languages"
+
+    case make_request(url) do
+      {:ok, %{"spoken_languages" => languages}} when is_list(languages) ->
+        spoken_languages =
+          languages
+          |> Enum.sort_by(fn lang -> -lang["talk_count"] end)
+          |> Enum.map(fn lang -> lang["language_name"] end)
+
+        {:ok, spoken_languages}
+
+      {:ok, unexpected_body} ->
+        Logger.error("Unexpected spoken languages response: #{inspect(unexpected_body)}")
+        {:error, "Unexpected response format"}
+
+      {:error, reason} ->
+        Logger.error("Failed to fetch spoken languages: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
   defp build_search_url(query) do
     params = %{"q" => query, "lang" => "en"}
 
@@ -150,13 +202,19 @@ defmodule Sahajyog.ExternalApi do
   defp make_request(url) do
     start_time = System.monotonic_time(:millisecond)
 
-    # Deployment-friendly options with aggressive retry for 520 errors
+    # Deployment-friendly options with exponential backoff and jitter
+    # to avoid thundering herd problems
     options = [
       connect_options: [timeout: @default_timeout],
       receive_timeout: @default_receive_timeout,
       retry: :transient,
       max_retries: 3,
-      retry_delay: fn attempt -> attempt * 3000 end,
+      retry_delay: fn attempt ->
+        # Exponential backoff: 2^attempt * 1000ms with random jitter (0-1000ms)
+        base_delay = :math.pow(2, attempt) * 1000
+        jitter = :rand.uniform(1000)
+        trunc(base_delay + jitter)
+      end,
       retry_log_level: :warning,
       headers: [
         {"user-agent", "SahajyogApp/1.0"},

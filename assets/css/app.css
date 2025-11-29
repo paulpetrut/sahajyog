@@ -156,6 +156,40 @@
   animation: slide-in 0.2s ease-out;
 }
 
+/* Subtle bounce animation for empty states */
+@keyframes bounce-subtle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Fade in down animation */
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.3s ease-out;
+}
+
 /* Focus visible improvements for accessibility */
 :focus-visible {
   outline: 2px solid oklch(var(--color-primary));

@@ -211,13 +211,25 @@ defmodule SahajyogWeb.Layouts do
         </div>
 
         <%!-- Bottom Bar --%>
-        <div class="border-t border-base-content/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p class="text-base-content/50 text-sm">
-            © {DateTime.utc_now().year} SahajYog. {gettext("All rights reserved.")}
-          </p>
-          <p class="text-base-content/40 text-xs">
-            {gettext("Sahaja Yoga is always free")}
-          </p>
+        <div class="border-t border-base-content/10 mt-10 pt-6">
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p class="text-base-content/50 text-sm">
+              © {DateTime.utc_now().year} SahajYog. {gettext("All rights reserved.")}
+            </p>
+            <div class="flex items-center gap-4">
+              <p class="text-base-content/40 text-xs">
+                {gettext("Sahaja Yoga is always free")}
+              </p>
+              <button
+                onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+                class="p-2 bg-base-200 hover:bg-primary hover:text-primary-content rounded-full transition-all duration-200 group"
+                aria-label={gettext("Back to top")}
+                title={gettext("Back to top")}
+              >
+                <.icon name="hero-arrow-up" class="w-4 h-4 group-hover:animate-bounce" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

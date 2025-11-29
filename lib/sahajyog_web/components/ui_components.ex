@@ -89,18 +89,26 @@ defmodule SahajyogWeb.UIComponents do
   attr :title, :string, required: true
   attr :description, :string, default: nil
   attr :class, :string, default: nil
+  attr :animated, :boolean, default: true
   slot :actions
 
   def empty_state(assigns) do
     ~H"""
-    <div class={["text-center py-16", @class]}>
-      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-base-200 border border-base-content/20 mb-4">
+    <div class={[
+      "text-center py-16",
+      @animated && "animate-fade-in",
+      @class
+    ]}>
+      <div class={[
+        "inline-flex items-center justify-center w-20 h-20 rounded-full bg-base-200 border border-base-content/20 mb-4",
+        @animated && "animate-bounce-subtle"
+      ]}>
         <.icon name={@icon} class="w-10 h-10 text-base-content/40" />
       </div>
       <h3 class="text-xl font-semibold text-base-content/80 mb-2">
         {@title}
       </h3>
-      <p :if={@description} class="text-base-content/50">
+      <p :if={@description} class="text-base-content/50 max-w-md mx-auto">
         {@description}
       </p>
       <div :if={@actions != []} class="mt-6">

@@ -67,30 +67,40 @@ defmodule SahajyogWeb.WelcomeLive do
           <:subtitle>{gettext("Discover inner peace through meditation")}</:subtitle>
         </.page_header>
 
-        <%!-- Video Player --%>
-        <div :if={@current_video} class="mb-12">
+        <%!-- Banner container with fixed height to prevent layout shift --%>
+        <div class="h-12 flex items-center justify-center mb-4 px-4">
           <div
             class={[
-              "mb-6 mx-auto w-fit max-w-2xl bg-blue-600 text-white rounded-full px-6 py-2.5 flex items-center gap-3 shadow-lg animate-fade-in-down",
-              !@show_schedule_info && "hidden"
+              "w-fit max-w-full sm:max-w-2xl bg-blue-600 text-white rounded-full px-4 sm:px-6 py-2 sm:py-2.5 flex items-center gap-2 sm:gap-3 shadow-lg transition-all duration-300",
+              if(@show_schedule_info,
+                do: "opacity-100 scale-100",
+                else: "opacity-0 scale-95 pointer-events-none"
+              )
             ]}
             role="alert"
           >
-            <.icon name="hero-information-circle" class="w-5 h-5 shrink-0" />
-            <p class="text-sm font-medium">
+            <.icon name="hero-information-circle" class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+            <p class="text-xs sm:text-sm font-medium">
               <span class="font-bold">{gettext("Daily Update")}:</span>
-              <span class="opacity-90">
+              <span class="opacity-90 hidden sm:inline">
                 {gettext("The video on this page is replaced every day.")}
+              </span>
+              <span class="opacity-90 sm:hidden">
+                {gettext("Video changes daily.")}
               </span>
             </p>
             <button
               phx-click="dismiss_notification"
-              class="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
+              class="ml-1 sm:ml-2 p-0.5 sm:p-1 hover:bg-white/20 rounded-full transition-colors shrink-0"
               aria-label={gettext("Close")}
             >
-              <.icon name="hero-x-mark" class="w-4 h-4" />
+              <.icon name="hero-x-mark" class="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
           </div>
+        </div>
+
+        <%!-- Video Player --%>
+        <div :if={@current_video} class="mb-12">
           <.card class="overflow-hidden p-0">
             <div class="aspect-video bg-black">
               <.video_player
@@ -222,7 +232,31 @@ defmodule SahajyogWeb.WelcomeLive do
           </div>
         </div>
 
-        <%!-- Quotes from Shri Mataji - Carousel (hidden on mobile and tablet) --%>
+        <%!-- Quotes from Shri Mataji - Mobile/Tablet (single quote) --%>
+        <div class="mb-16 lg:hidden">
+          <h2 class="text-2xl sm:text-3xl font-bold text-base-content text-center mb-6">
+            {gettext("Quotes from Shri Mataji")}
+          </h2>
+          <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-2xl p-6 text-center max-w-lg mx-auto">
+            <div class="flex justify-center mb-4">
+              <img
+                src={~p"/images/home_img_Quotes_1.png"}
+                alt={gettext("Shri Mataji")}
+                class="w-20 h-20 rounded-full object-cover border-4 border-primary/20 shadow-lg"
+              />
+            </div>
+            <p class="text-xs text-primary-content/90 font-medium mb-3 bg-primary/20 rounded-full px-3 py-1 inline-block">
+              03 January 1988, Ganapatipule, India
+            </p>
+            <blockquote class="text-sm sm:text-base text-base-content/80 italic leading-relaxed">
+              "{gettext(
+                "Sahaja Yoga is a very subtle happening within us. It's a very subtle happening. And this subtler happening gives you sensitivity to divine joy."
+              )}"
+            </blockquote>
+          </div>
+        </div>
+
+        <%!-- Quotes from Shri Mataji - Desktop Carousel --%>
         <div class="mb-16 hidden lg:block">
           <h2 class="text-3xl font-bold text-base-content text-center mb-8">
             {gettext("Quotes from Shri Mataji")}

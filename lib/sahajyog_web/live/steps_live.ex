@@ -226,12 +226,12 @@ defmodule SahajyogWeb.StepsLive do
   # Empty state message for mobile view
   defp empty_folder_message(assigns) do
     ~H"""
-    <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 text-center">
-      <.icon name="hero-calendar" class="w-8 h-8 mx-auto mb-2 text-gray-500" />
-      <p class="text-sm text-gray-400">
+    <div class="p-4 bg-base-200 rounded-lg border border-base-content/20 text-center">
+      <.icon name="hero-calendar" class="w-8 h-8 mx-auto mb-2 text-base-content/40" />
+      <p class="text-sm text-base-content/60">
         {gettext("No videos scheduled for this week")}
       </p>
-      <p class="text-xs text-gray-500 mt-1">
+      <p class="text-xs text-base-content/40 mt-1">
         {gettext("Check back later for new content")}
       </p>
     </div>
@@ -241,9 +241,9 @@ defmodule SahajyogWeb.StepsLive do
   # Empty state message for desktop sidebar
   defp empty_folder_message_desktop(assigns) do
     ~H"""
-    <div class="px-4 py-6 text-center border-t border-gray-700">
-      <.icon name="hero-calendar" class="w-6 h-6 mx-auto mb-2 text-gray-500" />
-      <p class="text-xs text-gray-400">
+    <div class="px-4 py-6 text-center border-t border-base-content/20">
+      <.icon name="hero-calendar" class="w-6 h-6 mx-auto mb-2 text-base-content/40" />
+      <p class="text-xs text-base-content/60">
         {gettext("No videos scheduled for this week")}
       </p>
     </div>
@@ -258,23 +258,23 @@ defmodule SahajyogWeb.StepsLive do
       class={[
         "w-full p-3 rounded-lg text-left transition-colors flex items-start gap-3",
         @current_video && @current_video.id == @video.id &&
-          "bg-gray-700 border border-blue-500",
+          "bg-base-100 border border-primary",
         (!@current_video || @current_video.id != @video.id) &&
-          "bg-gray-800 hover:bg-gray-700 border border-gray-700"
+          "bg-base-200 hover:bg-base-100 border border-base-content/20"
       ]}
     >
       <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium mb-1">{@video.title}</div>
-        <div class="text-xs text-gray-400 flex items-center gap-2">
+        <div class="text-sm font-medium mb-1 text-base-content">{@video.title}</div>
+        <div class="text-xs text-base-content/60 flex items-center gap-2">
           <.icon name="hero-play-circle" class="w-3 h-3" />
           <span>{@video.duration}</span>
         </div>
       </div>
       <%= cond do %>
         <% MapSet.member?(@watched_videos, @video.id) -> %>
-          <.icon name="hero-check-circle" class="w-5 h-5 text-green-500 flex-shrink-0" />
+          <.icon name="hero-check-circle" class="w-5 h-5 text-success flex-shrink-0" />
         <% @current_video && @current_video.id == @video.id -> %>
-          <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
+          <.icon name="hero-play" class="w-5 h-5 text-primary flex-shrink-0" />
         <% true -> %>
           <div class="w-5 h-5"></div>
       <% end %>
@@ -288,22 +288,22 @@ defmodule SahajyogWeb.StepsLive do
       phx-click="select_video"
       phx-value-id={@video.id}
       class={[
-        "w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-t border-gray-700 flex items-start gap-3",
-        @current_video && @current_video.id == @video.id && "bg-gray-700"
+        "w-full px-4 py-3 text-left hover:bg-base-100 transition-colors border-t border-base-content/20 flex items-start gap-3",
+        @current_video && @current_video.id == @video.id && "bg-base-100"
       ]}
     >
       <div class="flex-1">
-        <div class="text-sm font-medium">{@video.title}</div>
-        <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
+        <div class="text-sm font-medium text-base-content">{@video.title}</div>
+        <div class="text-xs text-base-content/60 mt-1 flex items-center gap-2">
           <.icon name="hero-play-circle" class="w-4 h-4" />
           <span>{@video.duration}</span>
         </div>
       </div>
       <%= cond do %>
         <% MapSet.member?(@watched_videos, @video.id) -> %>
-          <.icon name="hero-check-circle" class="w-5 h-5 text-green-500 flex-shrink-0" />
+          <.icon name="hero-check-circle" class="w-5 h-5 text-success flex-shrink-0" />
         <% @current_video && @current_video.id == @video.id -> %>
-          <.icon name="hero-play" class="w-5 h-5 text-blue-500 flex-shrink-0" />
+          <.icon name="hero-play" class="w-5 h-5 text-primary flex-shrink-0" />
         <% true -> %>
           <div class="w-5 h-5"></div>
       <% end %>
@@ -314,7 +314,7 @@ defmodule SahajyogWeb.StepsLive do
   def render(assigns) do
     ~H"""
     <div
-      class="bg-gray-900 text-white"
+      class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 text-base-content"
       phx-hook="WatchedVideos"
       id="watched-videos-container"
     >
@@ -329,7 +329,7 @@ defmodule SahajyogWeb.StepsLive do
       <div class="lg:hidden">
         <%= if @current_video do %>
           <%!-- Current video player --%>
-          <div class="sticky top-0 z-10 bg-gray-900">
+          <div class="sticky top-0 z-10 bg-base-300">
             <div class="aspect-video bg-black">
               <.video_player
                 video_id={@current_video.video_id}
@@ -337,37 +337,43 @@ defmodule SahajyogWeb.StepsLive do
                 locale={@current_video.locale}
               />
             </div>
-            <div class="p-4 border-b border-gray-700">
-              <h1 class="text-lg font-bold mb-2">{@current_video.title}</h1>
+            <div class="p-4 border-b border-base-content/20">
+              <h1 class="text-lg font-bold mb-2 text-base-content">{@current_video.title}</h1>
 
-              <div
-                class={[
-                  "mb-4 mx-auto w-fit max-w-full bg-blue-600 text-white rounded-full px-4 py-2 flex items-center gap-2 shadow-lg animate-fade-in-down",
-                  !@show_schedule_info && "hidden"
-                ]}
-                role="alert"
-              >
-                <.icon name="hero-information-circle" class="w-4 h-4 shrink-0" />
-                <p class="text-xs font-medium truncate max-w-[200px] sm:max-w-none">
-                  <span class="font-bold">{gettext("Weekly Update")}:</span>
-                  <span class="opacity-90">
-                    {gettext("The content on this page is refreshed every Monday.")}
-                  </span>
-                </p>
-                <button
-                  phx-click="dismiss_notification"
-                  class="ml-1 p-0.5 hover:bg-white/20 rounded-full transition-colors shrink-0"
-                  aria-label={gettext("Close")}
+              <%!-- Banner with fixed height container --%>
+              <div class="h-10 flex items-center justify-center">
+                <div
+                  class={[
+                    "w-fit max-w-full bg-blue-600 text-white rounded-full px-4 py-2 flex items-center gap-2 shadow-lg transition-all duration-300",
+                    if(@show_schedule_info,
+                      do: "opacity-100 scale-100",
+                      else: "opacity-0 scale-95 pointer-events-none"
+                    )
+                  ]}
+                  role="alert"
                 >
-                  <.icon name="hero-x-mark" class="w-3 h-3" />
-                </button>
+                  <.icon name="hero-information-circle" class="w-4 h-4 shrink-0" />
+                  <p class="text-xs font-medium truncate max-w-[200px] sm:max-w-none">
+                    <span class="font-bold">{gettext("Weekly Update")}:</span>
+                    <span class="opacity-90">
+                      {gettext("The content on this page is refreshed every Monday.")}
+                    </span>
+                  </p>
+                  <button
+                    phx-click="dismiss_notification"
+                    class="ml-1 p-0.5 hover:bg-white/20 rounded-full transition-colors shrink-0"
+                    aria-label={gettext("Close")}
+                  >
+                    <.icon name="hero-x-mark" class="w-3 h-3" />
+                  </button>
+                </div>
               </div>
 
               <%= if not MapSet.member?(@watched_videos, @current_video.id) do %>
                 <button
                   phx-click="mark_watched"
                   phx-value-id={@current_video.id}
-                  class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm"
+                  class="px-3 py-2 bg-success hover:bg-success/80 text-success-content rounded-lg transition-colors flex items-center gap-2 text-sm"
                 >
                   <.icon name="hero-check-circle" class="w-4 h-4" />
                   <span>{gettext("Mark as Watched")}</span>
@@ -381,7 +387,7 @@ defmodule SahajyogWeb.StepsLive do
             <%= for {folder_name, folder_videos, has_videos} <- @folders do %>
               <%!-- Category header --%>
               <div class="mb-4">
-                <h2 class="text-lg font-semibold mb-3 text-gray-300">
+                <h2 class="text-lg font-semibold mb-3 text-primary">
                   {translate_category(folder_name)}
                 </h2>
                 <%= if has_videos do %>
@@ -402,7 +408,7 @@ defmodule SahajyogWeb.StepsLive do
           </div>
         <% else %>
           <div class="flex items-center justify-center min-h-screen">
-            <div class="text-center text-gray-400 p-4">
+            <div class="text-center text-base-content/60 p-4">
               <.icon name="hero-video-camera-slash" class="w-16 h-16 mx-auto mb-4" />
               <p class="text-xl">{gettext("No videos available")}</p>
               <p class="mt-2">{gettext("Please add videos to get started")}</p>
@@ -418,10 +424,10 @@ defmodule SahajyogWeb.StepsLive do
           <%= if @current_video do %>
             <%!-- Desktop title with toggle button --%>
             <div class="flex items-center justify-between mb-4">
-              <h1 class="text-2xl md:text-3xl font-bold">{@current_video.title}</h1>
+              <h1 class="text-2xl md:text-3xl font-bold text-base-content">{@current_video.title}</h1>
               <button
                 phx-click="toggle_sidebar_visibility"
-                class="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                class="p-2 hover:bg-base-200 rounded-lg transition-colors"
                 title={
                   if @sidebar_visible, do: gettext("Hide sidebar"), else: gettext("Show sidebar")
                 }
@@ -433,30 +439,36 @@ defmodule SahajyogWeb.StepsLive do
               </button>
             </div>
 
-            <%!-- Video player --%>
-            <div
-              class={[
-                "mb-6 mx-auto w-fit max-w-2xl bg-blue-600 text-white rounded-full px-6 py-2.5 flex items-center gap-3 shadow-lg animate-fade-in-down",
-                !@show_schedule_info && "hidden"
-              ]}
-              role="alert"
-            >
-              <.icon name="hero-information-circle" class="w-5 h-5 shrink-0" />
-              <p class="text-sm font-medium">
-                <span class="font-bold">{gettext("Weekly Update")}:</span>
-                <span class="opacity-90">
-                  {gettext("The content on this page is refreshed every Monday.")}
-                </span>
-              </p>
-              <button
-                phx-click="dismiss_notification"
-                class="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
-                aria-label={gettext("Close")}
+            <%!-- Banner with fixed height container --%>
+            <div class="h-12 flex items-center justify-center mb-4">
+              <div
+                class={[
+                  "w-fit max-w-2xl bg-blue-600 text-white rounded-full px-6 py-2.5 flex items-center gap-3 shadow-lg transition-all duration-300",
+                  if(@show_schedule_info,
+                    do: "opacity-100 scale-100",
+                    else: "opacity-0 scale-95 pointer-events-none"
+                  )
+                ]}
+                role="alert"
               >
-                <.icon name="hero-x-mark" class="w-4 h-4" />
-              </button>
+                <.icon name="hero-information-circle" class="w-5 h-5 shrink-0" />
+                <p class="text-sm font-medium">
+                  <span class="font-bold">{gettext("Weekly Update")}:</span>
+                  <span class="opacity-90">
+                    {gettext("The content on this page is refreshed every Monday.")}
+                  </span>
+                </p>
+                <button
+                  phx-click="dismiss_notification"
+                  class="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
+                  aria-label={gettext("Close")}
+                >
+                  <.icon name="hero-x-mark" class="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
+            <%!-- Video player --%>
             <div class="flex-1 bg-black rounded-lg overflow-hidden">
               <.video_player
                 video_id={@current_video.video_id}
@@ -471,7 +483,7 @@ defmodule SahajyogWeb.StepsLive do
                 <button
                   phx-click="mark_watched"
                   phx-value-id={@current_video.id}
-                  class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                  class="px-4 py-2 bg-success hover:bg-success/80 text-success-content rounded-lg transition-colors flex items-center gap-2"
                 >
                   <.icon name="hero-check-circle" class="w-5 h-5" />
                   <span>{gettext("Mark as Watched")}</span>
@@ -480,7 +492,7 @@ defmodule SahajyogWeb.StepsLive do
             <% end %>
           <% else %>
             <div class="flex-1 flex items-center justify-center">
-              <div class="text-center text-gray-400">
+              <div class="text-center text-base-content/60">
                 <.icon name="hero-video-camera-slash" class="w-16 h-16 mx-auto mb-4" />
                 <p class="text-xl">{gettext("No videos available")}</p>
                 <p class="mt-2">{gettext("Please add videos to get started")}</p>
@@ -491,18 +503,18 @@ defmodule SahajyogWeb.StepsLive do
 
         <%!-- Desktop Sidebar --%>
         <div class={[
-          "bg-gray-800 border-l border-gray-700 overflow-y-auto transition-all duration-300",
+          "bg-base-200 border-l border-base-content/20 overflow-y-auto transition-all duration-300",
           @sidebar_visible && "w-80",
           !@sidebar_visible && "w-0 border-0 overflow-hidden"
         ]}>
           <div class="p-4">
             <%!-- Desktop title --%>
             <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold">{gettext("SahajYog Content")}</h2>
+              <h2 class="text-xl font-semibold text-base-content">{gettext("SahajYog Content")}</h2>
               <%= if MapSet.size(@watched_videos) > 0 do %>
                 <button
                   phx-click="reset_progress"
-                  class="text-xs text-gray-400 hover:text-red-400 transition-colors"
+                  class="text-xs text-base-content/60 hover:text-error transition-colors"
                   title={gettext("Reset all progress")}
                 >
                   <.icon name="hero-arrow-path" class="w-4 h-4" />
@@ -512,13 +524,12 @@ defmodule SahajyogWeb.StepsLive do
 
             <div class="space-y-2">
               <%= for {folder_name, folder_videos, has_videos} <- @folders do %>
-                <div class="border border-gray-700 rounded-lg overflow-hidden">
+                <div class="border border-base-content/20 rounded-lg overflow-hidden">
                   <%!-- Folder header --%>
                   <button
                     phx-click="toggle_folder"
                     phx-value-folder={folder_name}
-                    class="w-full px-4 py-3 bg-gray-750 hover:bg-gray-700 flex items-center justify-between transition-colors"
-                    style="color: #D4A574;"
+                    class="w-full px-4 py-3 bg-base-300 hover:bg-base-100 flex items-center justify-between transition-colors text-primary"
                   >
                     <span class="font-semibold">{translate_category(folder_name)}</span>
                     <.icon

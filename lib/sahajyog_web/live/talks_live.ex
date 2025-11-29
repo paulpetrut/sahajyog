@@ -2,6 +2,8 @@ defmodule SahajyogWeb.TalksLive do
   use SahajyogWeb, :live_view
   require Logger
 
+  import SahajyogWeb.FormatHelpers, only: [format_duration: 1]
+
   def mount(_params, session, socket) do
     # Get current locale from session and map to API language code
     locale = session["locale"] || "en"
@@ -184,68 +186,30 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   defp load_filter_options(socket) do
-    countries =
-      case Sahajyog.ExternalApi.fetch_countries() do
-        {:ok, countries} -> countries
-        {:error, _} -> []
-      end
+    # Fetch all filter options in parallel using Task.async_stream for better performance
+    tasks = [
+      {:countries, fn -> Sahajyog.ExternalApi.fetch_countries() end},
+      {:years, fn -> Sahajyog.ExternalApi.fetch_years() end},
+      {:categories, fn -> Sahajyog.ExternalApi.fetch_categories() end},
+      {:spoken_languages, fn -> Sahajyog.ExternalApi.fetch_spoken_languages() end},
+      {:translation_languages, fn -> Sahajyog.ExternalApi.fetch_translation_languages() end}
+    ]
 
-    years =
-      case Sahajyog.ExternalApi.fetch_years() do
-        {:ok, years} -> years
-        {:error, _} -> []
-      end
-
-    categories =
-      case Req.get("https://learnsahajayoga.org/api/meta/categories",
-             connect_options: [timeout: 5000],
-             receive_timeout: 8000,
-             retry: :transient
-           ) do
-        {:ok, %{status: 200, body: %{"languages" => languages}}} when is_list(languages) ->
-          languages
-          |> Enum.find(fn lang -> lang["language_code"] == "en" end)
-          |> case do
-            %{"categories" => categories} when is_list(categories) ->
-              categories
-              |> Enum.sort_by(fn cat -> -cat["talk_count"] end)
-              |> Enum.map(fn cat -> cat["name"] end)
-
-            _ ->
-              []
-          end
-
-        _ ->
-          []
-      end
-
-    spoken_languages =
-      case Req.get("https://learnsahajayoga.org/api/meta/spoken-languages",
-             connect_options: [timeout: 5000],
-             receive_timeout: 8000,
-             retry: :transient
-           ) do
-        {:ok, %{status: 200, body: %{"spoken_languages" => languages}}} when is_list(languages) ->
-          languages
-          |> Enum.sort_by(fn lang -> -lang["talk_count"] end)
-          |> Enum.map(fn lang -> lang["language_name"] end)
-
-        _ ->
-          []
-      end
-
-    translation_languages =
-      case Sahajyog.ExternalApi.fetch_translation_languages() do
-        {:ok, languages} -> languages
-        {:error, _} -> []
-      end
+    results =
+      tasks
+      |> Task.async_stream(fn {key, func} -> {key, func.()} end, timeout: 15_000)
+      |> Enum.reduce(%{}, fn
+        {:ok, {key, {:ok, data}}}, acc -> Map.put(acc, key, data)
+        {:ok, {key, {:error, _}}}, acc -> Map.put(acc, key, [])
+        {:exit, _reason}, acc -> acc
+      end)
 
     socket
-    |> assign(:countries, countries)
-    |> assign(:years, years)
-    |> assign(:categories, categories)
-    |> assign(:spoken_languages, spoken_languages)
-    |> assign(:translation_languages, translation_languages)
+    |> assign(:countries, Map.get(results, :countries, []))
+    |> assign(:years, Map.get(results, :years, []))
+    |> assign(:categories, Map.get(results, :categories, []))
+    |> assign(:spoken_languages, Map.get(results, :spoken_languages, []))
+    |> assign(:translation_languages, Map.get(results, :translation_languages, []))
   end
 
   def handle_event("apply_all_filters", params, socket) do
@@ -316,6 +280,21 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:selected_spoken_language, "")
       |> assign(:selected_translation_language, "")
       |> assign(:sort_by, "date_asc")
+
+    apply_filters(socket)
+  end
+
+  def handle_event("clear_filter", %{"filter" => filter}, socket) do
+    socket =
+      case filter do
+        "search" -> assign(socket, :search_query, "")
+        "country" -> assign(socket, :selected_country, "")
+        "year" -> assign(socket, :selected_year, "")
+        "category" -> assign(socket, :selected_category, "")
+        "spoken_language" -> assign(socket, :selected_spoken_language, "")
+        "translation_language" -> assign(socket, :selected_translation_language, "")
+        _ -> socket
+      end
 
     apply_filters(socket)
   end
@@ -442,20 +421,6 @@ defmodule SahajyogWeb.TalksLive do
 
     {:noreply, socket}
   end
-
-  defp format_duration(seconds) when is_integer(seconds) do
-    hours = div(seconds, 3600)
-    minutes = div(rem(seconds, 3600), 60)
-    secs = rem(seconds, 60)
-
-    cond do
-      hours > 0 -> "#{hours}h #{minutes}m"
-      minutes > 0 -> "#{minutes}m #{secs}s"
-      true -> "#{secs}s"
-    end
-  end
-
-  defp format_duration(_), do: nil
 
   defp map_locale_to_api_code(locale) do
     case locale do
@@ -613,7 +578,7 @@ defmodule SahajyogWeb.TalksLive do
 
           <%!-- Search and Filters --%>
           <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-base-content/10 shadow-xl">
-            <form phx-change="apply_all_filters">
+            <form phx-change="apply_all_filters" phx-debounce="300">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <%!-- Search --%>
                 <div class="sm:col-span-2 lg:col-span-2">
@@ -627,6 +592,7 @@ defmodule SahajyogWeb.TalksLive do
                       name="search"
                       value={@search_query}
                       placeholder={gettext("Search talks...")}
+                      phx-debounce="500"
                       class="w-full px-4 py-3 pl-11 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content placeholder-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all"
                     />
                     <.icon
@@ -787,45 +753,103 @@ defmodule SahajyogWeb.TalksLive do
                   {gettext("Active filters:")}
                 </span>
                 <%= if @search_query != "" do %>
-                  <span class="px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    {gettext("Search")}: {@search_query}
+                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full group">
+                    <span>{gettext("Search")}: {@search_query}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="search"
+                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
+                      aria-label={gettext("Clear search filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3 h-3" />
+                    </button>
                   </span>
                 <% end %>
                 <%= if @selected_country != "" do %>
-                  <span class="px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    {@selected_country}
+                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
+                    <span>{@selected_country}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="country"
+                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
+                      aria-label={gettext("Clear country filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3 h-3" />
+                    </button>
                   </span>
                 <% end %>
                 <%= if @selected_year != "" do %>
-                  <span class="px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    {@selected_year}
+                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
+                    <span>{@selected_year}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="year"
+                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
+                      aria-label={gettext("Clear year filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3 h-3" />
+                    </button>
                   </span>
                 <% end %>
                 <%= if @selected_category != "" do %>
-                  <span class="px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    {@selected_category}
+                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
+                    <span>{@selected_category}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="category"
+                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
+                      aria-label={gettext("Clear category filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3 h-3" />
+                    </button>
                   </span>
                 <% end %>
                 <%= if @selected_spoken_language != "" do %>
-                  <span class="px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    {@selected_spoken_language}
+                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
+                    <span>{@selected_spoken_language}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="spoken_language"
+                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
+                      aria-label={gettext("Clear spoken language filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3 h-3" />
+                    </button>
                   </span>
                 <% end %>
                 <%= if @selected_translation_language != "" do %>
-                  <span class="px-2 sm:px-3 py-1 bg-accent text-accent-content text-xs sm:text-sm rounded-full">
-                    {Enum.find(@translation_languages, fn l ->
-                      l.code == @selected_translation_language
-                    end)
-                    |> case do
-                      %{name: name} -> name
-                      _ -> @selected_translation_language
-                    end}
+                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-accent text-accent-content text-xs sm:text-sm rounded-full">
+                    <span>
+                      {Enum.find(@translation_languages, fn l ->
+                        l.code == @selected_translation_language
+                      end)
+                      |> case do
+                        %{name: name} -> name
+                        _ -> @selected_translation_language
+                      end}
+                    </span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="translation_language"
+                      class="hover:bg-accent-content/20 rounded-full p-0.5 transition-colors"
+                      aria-label={gettext("Clear translation language filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3 h-3" />
+                    </button>
                   </span>
                 <% end %>
                 <button
+                  type="button"
                   phx-click="clear_filters"
-                  class="px-2 sm:px-3 py-1 bg-base-100 hover:bg-base-200 text-base-content text-xs sm:text-sm rounded-full transition-colors"
+                  class="px-2 sm:px-3 py-1 bg-base-100 hover:bg-error/20 hover:text-error text-base-content text-xs sm:text-sm rounded-full transition-colors flex items-center gap-1"
                 >
+                  <.icon name="hero-x-mark" class="w-3 h-3" />
                   {gettext("Clear all")}
                 </button>
               </div>
@@ -834,16 +858,39 @@ defmodule SahajyogWeb.TalksLive do
         </div>
 
         <%= cond do %>
-          <%!-- Loading state --%>
+          <%!-- Loading state with skeleton cards --%>
           <% @loading -> %>
-            <div class="flex items-center justify-center py-20">
-              <div class="text-center">
-                <.icon
-                  name="hero-arrow-path"
-                  class="w-12 h-12 text-primary animate-spin mx-auto mb-4"
-                />
-                <p class="text-base-content/60 text-lg">{gettext("Loading talks...")}</p>
-              </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <%= for _i <- 1..6 do %>
+                <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-xl overflow-hidden border border-base-content/10 flex flex-col h-full animate-pulse">
+                  <div class="p-5 sm:p-6 flex flex-col flex-1">
+                    <%!-- Duration badge skeleton --%>
+                    <div class="flex justify-end mb-3">
+                      <div class="skeleton h-6 w-16 rounded-md"></div>
+                    </div>
+                    <%!-- Title skeleton --%>
+                    <div class="skeleton h-6 w-full mb-2 rounded"></div>
+                    <div class="skeleton h-6 w-3/4 mb-3 rounded"></div>
+                    <%!-- Year and Location skeleton --%>
+                    <div class="flex items-center gap-2 mb-4">
+                      <div class="skeleton h-4 w-12 rounded"></div>
+                      <div class="skeleton h-4 w-24 rounded"></div>
+                    </div>
+                    <%!-- Category badge skeleton --%>
+                    <div class="skeleton h-8 w-32 mb-3 rounded-lg"></div>
+                    <%!-- Spacer --%>
+                    <div class="flex-1"></div>
+                    <%!-- Action button skeleton --%>
+                    <div class="skeleton h-12 w-full mt-4 rounded-lg"></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="text-center mt-6">
+              <p class="text-base-content/60 text-sm flex items-center justify-center gap-2">
+                <.icon name="hero-arrow-path" class="w-4 h-4 animate-spin" />
+                {gettext("Loading talks...")}
+              </p>
             </div>
             <%!-- Error state --%>
           <% @error -> %>
