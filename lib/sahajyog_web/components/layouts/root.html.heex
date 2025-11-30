@@ -30,14 +30,14 @@
       })();
     </script>
   </head>
-  <body>
-    <div class="w-full relative z-[9999] flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-4 bg-base-300/95 backdrop-blur-sm border-b border-base-content/10">
+  <body class="overflow-x-hidden">
+    <div class="w-full max-w-full relative z-[9999] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 bg-base-300/95 backdrop-blur-sm border-b border-base-content/10">
       <%!-- Left Section - Home Icon --%>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center shrink-0">
         <%!-- Home Icon --%>
         <a
           href="/"
-          class="p-2 text-base-content/70 hover:text-base-content transition-colors home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded"
+          class="p-1.5 sm:p-2 text-base-content/70 hover:text-base-content transition-colors home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded"
           title="Home"
           style="visibility: hidden;"
         >
@@ -57,7 +57,7 @@
       </div>
 
       <%!-- Desktop Navigation --%>
-      <ul class="menu menu-horizontal hidden md:flex items-center gap-4 text-base-content/70">
+      <ul class="menu menu-horizontal hidden md:flex items-center gap-2 lg:gap-4 text-base-content/70 shrink-0">
         <%!-- Public navigation links - visible to all users --%>
         <li>
           <.link

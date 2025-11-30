@@ -70,9 +70,9 @@ defmodule SahajyogWeb.UIComponents do
     """
   end
 
-  defp card_padding("sm"), do: "p-4"
-  defp card_padding("md"), do: "p-4 sm:p-6"
-  defp card_padding("lg"), do: "p-4 sm:p-6 lg:p-8"
+  defp card_padding("sm"), do: "p-3 sm:p-4"
+  defp card_padding("md"), do: "p-3 sm:p-4 md:p-6"
+  defp card_padding("lg"), do: "p-3 sm:p-4 md:p-6 lg:p-8"
 
   @doc """
   Renders an empty state with icon, title, and description.

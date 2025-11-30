@@ -394,6 +394,44 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Prevent horizontal overflow on mobile */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Ensure main content doesn't overflow */
+main {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Ensure text wraps properly on small screens without hyphenation */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+blockquote {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: none;
+}
+
+/* Smaller text on very small screens */
+@media (max-width: 374px) {
+
+  .card p,
+  .text-base-content\/80 {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
 /* Scroll progress bar */
 .scroll-progress {
   position: fixed;

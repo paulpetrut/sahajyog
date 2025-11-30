@@ -72,12 +72,12 @@ defmodule SahajyogWeb.WelcomeLive do
 
   def render(assigns) do
     ~H"""
-    <div id="welcome-page" phx-hook="WelcomeAnimations">
+    <div id="welcome-page" phx-hook="WelcomeAnimations" class="overflow-x-hidden">
       <%!-- Scroll Progress Bar --%>
       <div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
 
       <%!-- Animated gradient background --%>
-      <div class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 animate-gradient">
+      <div class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 animate-gradient overflow-x-hidden">
         <%!-- Hidden hooks --%>
         <div
           id="daily-update-hook"
@@ -87,13 +87,13 @@ defmodule SahajyogWeb.WelcomeLive do
         >
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
           <%!-- Hero Section with entrance animations --%>
           <section id="hero-section" class="text-center mb-12">
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-base-content mb-4 animate-hero-fade-up">
+            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-bold text-base-content mb-4 animate-hero-fade-up">
               {gettext("Welcome to Sahaja Yoga")}
             </h1>
-            <p class="text-xl sm:text-2xl text-base-content/70 mb-6 animate-hero-fade-up-delay-1">
+            <p class="text-base sm:text-xl lg:text-2xl text-base-content/70 mb-6 animate-hero-fade-up-delay-1">
               {gettext("Discover inner peace through meditation")}
             </p>
 
@@ -140,8 +140,10 @@ defmodule SahajyogWeb.WelcomeLive do
                   locale={@locale}
                 />
               </div>
-              <div class="p-6">
-                <h2 class="text-2xl font-bold text-base-content mb-2">{@current_video.title}</h2>
+              <div class="p-4 sm:p-6">
+                <h2 class="text-xl sm:text-2xl font-bold text-base-content mb-2 break-words">
+                  {@current_video.title}
+                </h2>
                 <p :if={@current_video.description} class="text-base-content/60">
                   {@current_video.description}
                 </p>
@@ -149,10 +151,10 @@ defmodule SahajyogWeb.WelcomeLive do
             </.card>
           </section>
 
-          <%!-- Scroll Indicator --%>
+          <%!-- Scroll Indicator - hidden on mobile --%>
           <div
             id="scroll-indicator"
-            class="flex flex-col items-center mb-12 animate-bounce-slow transition-opacity duration-500"
+            class="hidden sm:flex flex-col items-center mb-12 animate-bounce-slow transition-opacity duration-500"
           >
             <p class="text-base-content/50 text-sm mb-2">{gettext("Scroll to explore")}</p>
             <.icon name="hero-chevron-double-down" class="w-6 h-6 text-base-content/40" />
@@ -160,7 +162,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
           <%!-- About Sahaja Yoga Section --%>
           <section class="mb-16 scroll-animate">
-            <h2 class="text-3xl font-bold text-base-content text-center mb-8">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-6 sm:mb-8">
               {gettext("What is Sahaja Yoga?")}
             </h2>
 
@@ -196,7 +198,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
           <%!-- Chakra System --%>
           <section class="mb-16 scroll-animate">
-            <h3 class="text-2xl font-bold text-base-content text-center mb-6">
+            <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("The Subtle System")}
             </h3>
             <div class="grid md:grid-cols-2 gap-8 items-center">
@@ -204,7 +206,7 @@ defmodule SahajyogWeb.WelcomeLive do
                 <img
                   src={~p"/images/chakra_system.jpg"}
                   alt={gettext("Chakra System")}
-                  class="rounded-xl shadow-lg max-w-sm hover:scale-105 transition-transform duration-500"
+                  class="rounded-xl shadow-lg w-full max-w-sm hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div class="order-1 md:order-2">
@@ -231,7 +233,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
           <%!-- Quotes from Shri Mataji - Mobile/Tablet (single quote) --%>
           <section class="mb-16 lg:hidden scroll-animate">
-            <h2 class="text-2xl sm:text-3xl font-bold text-base-content text-center mb-6">
+            <h2 class="text-lg sm:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("Quotes from Shri Mataji")}
             </h2>
             <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-2xl p-6 text-center max-w-lg mx-auto">
@@ -371,7 +373,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
           <%!-- Testimonials Section --%>
           <section class="mb-16 scroll-animate">
-            <h2 class="text-3xl font-bold text-base-content text-center mb-4">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("What Practitioners Say")}
             </h2>
             <p class="text-base-content/60 text-center mb-10 max-w-2xl mx-auto">
@@ -428,7 +430,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
           <%!-- How It Works Section --%>
           <section id="how-it-works" class="mb-16 scroll-animate">
-            <h2 class="text-3xl font-bold text-base-content text-center mb-4">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("How It Works")}
             </h2>
             <p class="text-base-content/60 text-center mb-10 max-w-2xl mx-auto">
@@ -442,7 +444,9 @@ defmodule SahajyogWeb.WelcomeLive do
                   <div class="step-circle step-circle-1 w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-xl shadow-primary/40">
                     <span class="text-4xl font-bold text-primary-content">1</span>
                   </div>
-                  <h3 class="text-2xl font-bold text-base-content mb-3">{gettext("Learn")}</h3>
+                  <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-base-content mb-3">
+                    {gettext("Learn")}
+                  </h3>
                   <p class="text-base-content/70 text-lg">
                     {gettext("Watch introductory videos and understand the basics of meditation")}
                   </p>
@@ -458,7 +462,9 @@ defmodule SahajyogWeb.WelcomeLive do
                   <div class="step-circle step-circle-2 w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-xl shadow-primary/40">
                     <span class="text-4xl font-bold text-primary-content">2</span>
                   </div>
-                  <h3 class="text-2xl font-bold text-base-content mb-3">{gettext("Practice")}</h3>
+                  <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-base-content mb-3">
+                    {gettext("Practice")}
+                  </h3>
                   <p class="text-base-content/70 text-lg">
                     {gettext("Follow guided meditations and experience Self Realization")}
                   </p>
@@ -473,7 +479,9 @@ defmodule SahajyogWeb.WelcomeLive do
                   <div class="step-circle step-circle-3 w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-xl shadow-primary/40">
                     <span class="text-4xl font-bold text-primary-content">3</span>
                   </div>
-                  <h3 class="text-2xl font-bold text-base-content mb-3">{gettext("Experience")}</h3>
+                  <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-base-content mb-3">
+                    {gettext("Experience")}
+                  </h3>
                   <p class="text-base-content/70 text-lg">
                     {gettext("Feel the peace within and grow through regular practice")}
                   </p>
@@ -487,10 +495,10 @@ defmodule SahajyogWeb.WelcomeLive do
             <%= if @current_scope do %>
               <%!-- Authenticated user CTA --%>
               <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient">
-                <h3 class="text-3xl md:text-4xl font-bold text-primary-content mb-4">
+                <h3 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary-content mb-4">
                   {gettext("Ready to Begin Your Journey?")}
                 </h3>
-                <p class="text-xl text-primary-content/80 mb-8 max-w-2xl mx-auto">
+                <p class="text-base sm:text-lg md:text-xl text-primary-content/80 mb-8 max-w-2xl mx-auto">
                   {gettext("Explore our complete collection of talks and guided meditations")}
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -520,10 +528,10 @@ defmodule SahajyogWeb.WelcomeLive do
             <% else %>
               <%!-- Unauthenticated user CTA - encourage registration --%>
               <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient">
-                <h3 class="text-3xl md:text-4xl font-bold text-primary-content mb-4">
+                <h3 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary-content mb-4">
                   {gettext("Unlock Your Full Journey")}
                 </h3>
-                <p class="text-xl text-primary-content/80 mb-6 max-w-2xl mx-auto">
+                <p class="text-base sm:text-lg md:text-xl text-primary-content/80 mb-6 max-w-2xl mx-auto">
                   {gettext("Register for free to access exclusive benefits")}
                 </p>
                 <%!-- Benefits list --%>
