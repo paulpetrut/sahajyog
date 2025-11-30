@@ -206,6 +206,9 @@ Hooks.WelcomeAnimations = {
     // Setup IntersectionObserver for stats counter animation
     this.setupStatsObserver()
 
+    // Setup scroll reveal observer
+    this.setupScrollRevealObserver()
+
     // Setup scroll listener for progress bar and sticky CTA
     this.handleScroll = this.handleScroll.bind(this)
     window.addEventListener('scroll', this.handleScroll, { passive: true })
@@ -242,6 +245,31 @@ Hooks.WelcomeAnimations = {
         this.animateCounters()
         this.countersAnimated = true
       }
+    })
+  },
+
+  setupScrollRevealObserver() {
+    const revealElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale')
+    if (!revealElements.length) return
+
+    const options = {
+      root: null,
+      rootMargin: '0px 0px -150px 0px', // Trigger slightly before element is fully in view
+      threshold: 0.1,
+    }
+
+    this.revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed')
+          // Optionally unobserve after reveal to improve performance
+          this.revealObserver.unobserve(entry.target)
+        }
+      })
+    }, options)
+
+    revealElements.forEach((el) => {
+      this.revealObserver.observe(el)
     })
   },
 
@@ -302,6 +330,9 @@ Hooks.WelcomeAnimations = {
     window.removeEventListener('scroll', this.handleScroll)
     if (this.observer) {
       this.observer.disconnect()
+    }
+    if (this.revealObserver) {
+      this.revealObserver.disconnect()
     }
   },
 }

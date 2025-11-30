@@ -131,7 +131,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Video Player --%>
-          <section :if={@current_video} class="mb-16">
+          <section :if={@current_video} class="mb-32 sm:mb-16">
             <.card class="overflow-hidden p-0">
               <div class="aspect-video bg-black">
                 <.video_player
@@ -154,14 +154,14 @@ defmodule SahajyogWeb.WelcomeLive do
           <%!-- Scroll Indicator - hidden on mobile --%>
           <div
             id="scroll-indicator"
-            class="hidden sm:flex flex-col items-center mb-12 animate-bounce-slow transition-opacity duration-500"
+            class="hidden sm:flex flex-col items-center mb-32 animate-bounce-slow transition-opacity duration-500"
           >
             <p class="text-base-content/50 text-sm mb-2">{gettext("Scroll to explore")}</p>
             <.icon name="hero-chevron-double-down" class="w-6 h-6 text-base-content/40" />
           </div>
 
           <%!-- About Sahaja Yoga Section --%>
-          <section class="mb-16">
+          <section class="mb-16 scroll-reveal">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-6 sm:mb-8">
               {gettext("What is Sahaja Yoga?")}
             </h2>
@@ -197,7 +197,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Chakra System --%>
-          <section class="mb-16">
+          <section class="mb-16 scroll-reveal">
             <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("The Subtle System")}
             </h3>
@@ -232,7 +232,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Quotes from Shri Mataji - Mobile/Tablet (single quote) --%>
-          <section class="mb-16 lg:hidden">
+          <section class="mb-16 lg:hidden scroll-reveal">
             <h2 class="text-lg sm:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("Quotes from Shri Mataji")}
             </h2>
@@ -256,7 +256,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Quotes from Shri Mataji - Desktop Carousel --%>
-          <section class="mb-16 hidden lg:block">
+          <section class="mb-16 hidden lg:block scroll-reveal">
             <h2 class="text-3xl font-bold text-base-content text-center mb-8">
               {gettext("Quotes from Shri Mataji")}
             </h2>
@@ -372,7 +372,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Testimonials Section --%>
-          <section class="mb-16">
+          <section class="mb-16 scroll-reveal">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("What Practitioners Say")}
             </h2>
@@ -399,7 +399,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Statistics Section with animated counters --%>
-          <section id="stats-section" class="mb-16">
+          <section id="stats-section" class="mb-16 scroll-reveal">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
               <div class="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20">
                 <div class="text-4xl md:text-5xl font-bold text-primary mb-2">
@@ -429,7 +429,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- How It Works Section --%>
-          <section id="how-it-works" class="mb-16">
+          <section id="how-it-works" class="mb-16 scroll-reveal">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("How It Works")}
             </h2>
@@ -491,7 +491,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Call to Action --%>
-          <section>
+          <section class="scroll-reveal-scale">
             <%= if @current_scope do %>
               <%!-- Authenticated user CTA --%>
               <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient">
