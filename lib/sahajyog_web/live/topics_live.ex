@@ -3,12 +3,17 @@ defmodule SahajyogWeb.TopicsLive do
 
   alias Sahajyog.Topics
 
+  @per_page 21
+
   @impl true
   def mount(_params, _session, socket) do
     socket =
       socket
       |> assign(:page_title, "Topics")
       |> assign(:search_query, "")
+      |> assign(:current_page, 1)
+      |> assign(:per_page, @per_page)
+      |> assign(:total_results, 0)
 
     socket =
       if connected?(socket) do
@@ -16,8 +21,9 @@ defmodule SahajyogWeb.TopicsLive do
         topics = Topics.list_topics_for_user(user_id)
 
         socket
-        |> assign(:topics, topics)
         |> assign(:all_topics, topics)
+        |> assign(:total_results, length(topics))
+        |> assign(:topics, paginate_topics(topics, 1, @per_page))
         |> assign(:loading, false)
       else
         socket
@@ -36,15 +42,76 @@ defmodule SahajyogWeb.TopicsLive do
     {:noreply,
      socket
      |> assign(:search_query, query)
-     |> assign(:topics, filtered_topics)}
+     |> assign(:current_page, 1)
+     |> assign(:total_results, length(filtered_topics))
+     |> assign(:topics, paginate_topics(filtered_topics, 1, socket.assigns.per_page))}
   end
 
   @impl true
   def handle_event("clear_search", _, socket) do
+    all_topics = socket.assigns.all_topics
+
     {:noreply,
      socket
      |> assign(:search_query, "")
-     |> assign(:topics, socket.assigns.all_topics)}
+     |> assign(:current_page, 1)
+     |> assign(:total_results, length(all_topics))
+     |> assign(:topics, paginate_topics(all_topics, 1, socket.assigns.per_page))}
+  end
+
+  @impl true
+  def handle_event("goto_page", %{"page" => page}, socket) do
+    page_num = String.to_integer(page)
+    filtered_topics = get_filtered_topics(socket)
+
+    {:noreply,
+     socket
+     |> assign(:current_page, page_num)
+     |> assign(:topics, paginate_topics(filtered_topics, page_num, socket.assigns.per_page))}
+  end
+
+  @impl true
+  def handle_event("next_page", _params, socket) do
+    total_pages = ceil(socket.assigns.total_results / socket.assigns.per_page)
+    current_page = socket.assigns.current_page
+
+    if current_page < total_pages do
+      next_page = current_page + 1
+      filtered_topics = get_filtered_topics(socket)
+
+      {:noreply,
+       socket
+       |> assign(:current_page, next_page)
+       |> assign(:topics, paginate_topics(filtered_topics, next_page, socket.assigns.per_page))}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("prev_page", _params, socket) do
+    current_page = socket.assigns.current_page
+
+    if current_page > 1 do
+      prev_page = current_page - 1
+      filtered_topics = get_filtered_topics(socket)
+
+      {:noreply,
+       socket
+       |> assign(:current_page, prev_page)
+       |> assign(:topics, paginate_topics(filtered_topics, prev_page, socket.assigns.per_page))}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp get_filtered_topics(socket) do
+    filter_topics(socket.assigns.all_topics, socket.assigns.search_query)
+  end
+
+  defp paginate_topics(topics, page, per_page) do
+    topics
+    |> Enum.slice((page - 1) * per_page, per_page)
   end
 
   defp filter_topics(topics, ""), do: topics
@@ -56,6 +123,30 @@ defmodule SahajyogWeb.TopicsLive do
       String.contains?(String.downcase(topic.title), query) ||
         (topic.content && String.contains?(String.downcase(topic.content), query))
     end)
+  end
+
+  defp page_numbers(current_page, total_pages) do
+    cond do
+      total_pages <= 7 ->
+        Enum.to_list(1..total_pages//1)
+
+      current_page <= 4 ->
+        [1, 2, 3, 4, 5, "...", total_pages]
+
+      current_page >= total_pages - 3 ->
+        [
+          1,
+          "...",
+          total_pages - 4,
+          total_pages - 3,
+          total_pages - 2,
+          total_pages - 1,
+          total_pages
+        ]
+
+      true ->
+        [1, "...", current_page - 1, current_page, current_page + 1, "...", total_pages]
+    end
   end
 
   @impl true
@@ -178,6 +269,87 @@ defmodule SahajyogWeb.TopicsLive do
               </.link>
             </.card>
           </div>
+
+          <%!-- Pagination --%>
+          <%= if @total_results > @per_page do %>
+            <div class="mt-6 sm:mt-8">
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+                <%!-- Stats --%>
+                <p class="text-base-content/60 text-xs sm:text-sm">
+                  {gettext("Showing")}
+                  <span class="text-base-content font-semibold">
+                    {(@current_page - 1) * @per_page + 1}
+                  </span>
+                  {gettext("to")}
+                  <span class="text-base-content font-semibold">
+                    {min(@current_page * @per_page, @total_results)}
+                  </span>
+                  {gettext("of")}
+                  <span class="text-base-content font-semibold">{@total_results}</span>
+                  {ngettext("topic", "topics", @total_results)}
+                </p>
+
+                <%!-- Pagination controls --%>
+                <div class="flex items-center gap-1 sm:gap-2">
+                  <%!-- Previous button --%>
+                  <button
+                    phx-click="prev_page"
+                    disabled={@current_page == 1}
+                    class={[
+                      "px-2 sm:px-4 py-2 rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-xs sm:text-sm",
+                      @current_page == 1 &&
+                        "opacity-50 cursor-not-allowed bg-base-100 text-base-content/40",
+                      @current_page > 1 && "bg-base-100 hover:bg-base-200 text-base-content"
+                    ]}
+                  >
+                    <.icon name="hero-chevron-left" class="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span class="hidden sm:inline">{gettext("Previous")}</span>
+                  </button>
+
+                  <%!-- Page numbers --%>
+                  <div class="flex items-center gap-1">
+                    <%= for page_num <- page_numbers(@current_page, ceil(@total_results / @per_page)) do %>
+                      <%= if page_num == "..." do %>
+                        <span class="px-2 sm:px-3 py-2 text-base-content/40 text-xs sm:text-sm">
+                          ...
+                        </span>
+                      <% else %>
+                        <button
+                          phx-click="goto_page"
+                          phx-value-page={page_num}
+                          class={[
+                            "px-2 sm:px-3 py-2 rounded-lg transition-colors text-xs sm:text-sm",
+                            @current_page == page_num &&
+                              "bg-primary text-primary-content font-semibold",
+                            @current_page != page_num &&
+                              "bg-base-100 hover:bg-base-200 text-base-content/80"
+                          ]}
+                        >
+                          {page_num}
+                        </button>
+                      <% end %>
+                    <% end %>
+                  </div>
+
+                  <%!-- Next button --%>
+                  <button
+                    phx-click="next_page"
+                    disabled={@current_page >= ceil(@total_results / @per_page)}
+                    class={[
+                      "px-2 sm:px-4 py-2 rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-xs sm:text-sm",
+                      @current_page >= ceil(@total_results / @per_page) &&
+                        "opacity-50 cursor-not-allowed bg-base-100 text-base-content/40",
+                      @current_page < ceil(@total_results / @per_page) &&
+                        "bg-base-100 hover:bg-base-200 text-base-content"
+                    ]}
+                  >
+                    <span class="hidden sm:inline">{gettext("Next")}</span>
+                    <.icon name="hero-chevron-right" class="w-3 h-3 sm:w-4 sm:h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          <% end %>
         <% end %>
 
         <%!-- Empty State --%>
