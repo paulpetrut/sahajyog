@@ -203,8 +203,7 @@ Hooks.WelcomeAnimations = {
     this.counterElements = document.querySelectorAll('[data-counter]')
     this.countersAnimated = false
 
-    // Setup IntersectionObserver for stats counter animation
-    this.setupStatsObserver()
+
 
     // Setup scroll reveal observer
     this.setupScrollRevealObserver()
@@ -217,36 +216,7 @@ Hooks.WelcomeAnimations = {
     this.handleScroll()
   },
 
-  setupStatsObserver() {
-    const statsSection = document.getElementById('stats-section')
-    if (!statsSection) return
 
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1,
-    }
-
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !this.countersAnimated) {
-          this.animateCounters()
-          this.countersAnimated = true
-        }
-      })
-    }, options)
-
-    this.observer.observe(statsSection)
-
-    // Also check immediately if stats section is already in view
-    requestAnimationFrame(() => {
-      const rect = statsSection.getBoundingClientRect()
-      if (rect.top < window.innerHeight && rect.bottom > 0 && !this.countersAnimated) {
-        this.animateCounters()
-        this.countersAnimated = true
-      }
-    })
-  },
 
   setupScrollRevealObserver() {
     const revealElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale')
@@ -262,6 +232,13 @@ Hooks.WelcomeAnimations = {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('revealed')
+          
+          // Trigger stats animation if this is the stats section
+          if (entry.target.id === 'stats-section' && !this.countersAnimated) {
+            this.animateCounters()
+            this.countersAnimated = true
+          }
+
           // Optionally unobserve after reveal to improve performance
           this.revealObserver.unobserve(entry.target)
         }
