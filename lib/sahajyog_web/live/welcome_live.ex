@@ -161,7 +161,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </div>
 
           <%!-- About Sahaja Yoga Section --%>
-          <section class="mb-16 scroll-animate">
+          <section class="mb-16">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-6 sm:mb-8">
               {gettext("What is Sahaja Yoga?")}
             </h2>
@@ -197,7 +197,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Chakra System --%>
-          <section class="mb-16 scroll-animate">
+          <section class="mb-16">
             <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("The Subtle System")}
             </h3>
@@ -232,7 +232,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Quotes from Shri Mataji - Mobile/Tablet (single quote) --%>
-          <section class="mb-16 lg:hidden scroll-animate">
+          <section class="mb-16 lg:hidden">
             <h2 class="text-lg sm:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("Quotes from Shri Mataji")}
             </h2>
@@ -256,7 +256,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Quotes from Shri Mataji - Desktop Carousel --%>
-          <section class="mb-16 hidden lg:block scroll-animate">
+          <section class="mb-16 hidden lg:block">
             <h2 class="text-3xl font-bold text-base-content text-center mb-8">
               {gettext("Quotes from Shri Mataji")}
             </h2>
@@ -372,7 +372,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Testimonials Section --%>
-          <section class="mb-16 scroll-animate">
+          <section class="mb-16">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("What Practitioners Say")}
             </h2>
@@ -382,7 +382,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
             <div class="grid md:grid-cols-3 gap-6">
               <%= for {testimonial, idx} <- Enum.with_index(@testimonials) do %>
-                <div class={"testimonial-card bg-gradient-to-br from-base-200 to-base-300 rounded-2xl p-6 border border-base-content/10 animate-stagger-#{idx + 1}"}>
+                <div class="testimonial-card bg-gradient-to-br from-base-200 to-base-300 rounded-2xl p-6 border border-base-content/10">
                   <div class="flex items-center gap-3 mb-4">
                     <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
                       {testimonial.avatar}
@@ -399,7 +399,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Statistics Section with animated counters --%>
-          <section id="stats-section" class="mb-16 scroll-animate">
+          <section id="stats-section" class="mb-16">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
               <div class="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20">
                 <div class="text-4xl md:text-5xl font-bold text-primary mb-2">
@@ -429,7 +429,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- How It Works Section --%>
-          <section id="how-it-works" class="mb-16 scroll-animate">
+          <section id="how-it-works" class="mb-16">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("How It Works")}
             </h2>
@@ -491,7 +491,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Call to Action --%>
-          <section class="scroll-animate">
+          <section>
             <%= if @current_scope do %>
               <%!-- Authenticated user CTA --%>
               <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient">

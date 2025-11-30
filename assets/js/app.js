@@ -199,15 +199,12 @@ Hooks.WelcomeAnimations = {
     this.stickyCta = document.getElementById('sticky-cta')
     this.heroSection = document.getElementById('hero-section')
 
-    // Scroll-triggered animations
-    this.scrollElements = document.querySelectorAll('.scroll-animate')
-
-    // Counter elements
+    // Counter elements for stats section
     this.counterElements = document.querySelectorAll('[data-counter]')
     this.countersAnimated = false
 
-    // Setup IntersectionObserver for scroll animations
-    this.setupScrollObserver()
+    // Setup IntersectionObserver for stats counter animation
+    this.setupStatsObserver()
 
     // Setup scroll listener for progress bar and sticky CTA
     this.handleScroll = this.handleScroll.bind(this)
@@ -217,29 +214,34 @@ Hooks.WelcomeAnimations = {
     this.handleScroll()
   },
 
-  setupScrollObserver() {
+  setupStatsObserver() {
+    const statsSection = document.getElementById('stats-section')
+    if (!statsSection) return
+
     const options = {
       root: null,
-      rootMargin: '0px 0px -100px 0px',
+      rootMargin: '0px',
       threshold: 0.1,
     }
 
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-
-          // Check if this is the stats section for counter animation
-          if (entry.target.id === 'stats-section' && !this.countersAnimated) {
-            this.animateCounters()
-            this.countersAnimated = true
-          }
+        if (entry.isIntersecting && !this.countersAnimated) {
+          this.animateCounters()
+          this.countersAnimated = true
         }
       })
     }, options)
 
-    this.scrollElements.forEach((el) => {
-      this.observer.observe(el)
+    this.observer.observe(statsSection)
+
+    // Also check immediately if stats section is already in view
+    requestAnimationFrame(() => {
+      const rect = statsSection.getBoundingClientRect()
+      if (rect.top < window.innerHeight && rect.bottom > 0 && !this.countersAnimated) {
+        this.animateCounters()
+        this.countersAnimated = true
+      }
     })
   },
 

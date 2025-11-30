@@ -284,33 +284,6 @@
   animation: hero-fade-up 0.8s ease-out 0.6s forwards;
 }
 
-/* Staggered card animations */
-.animate-stagger-1 {
-  opacity: 0;
-  animation: hero-fade-up 0.6s ease-out 0.1s forwards;
-}
-
-.animate-stagger-2 {
-  opacity: 0;
-  animation: hero-fade-up 0.6s ease-out 0.2s forwards;
-}
-
-.animate-stagger-3 {
-  opacity: 0;
-  animation: hero-fade-up 0.6s ease-out 0.3s forwards;
-}
-
-/* Scroll-triggered animations (used with IntersectionObserver) */
-.scroll-animate {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.scroll-animate.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Floating animation for images */
 @keyframes float {
