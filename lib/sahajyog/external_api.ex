@@ -1,6 +1,9 @@
 defmodule Sahajyog.ExternalApi do
   @moduledoc """
   Client for the learnsahajayoga.org API with robust error handling for deployment environments.
+
+  Filter options (countries, years, categories, languages) are cached via `Sahajyog.ApiCache`.
+  Use the public `fetch_*` functions which leverage caching, or `fetch_*_uncached` for direct API access.
   """
 
   require Logger
@@ -8,6 +11,9 @@ defmodule Sahajyog.ExternalApi do
   @base_url "https://learnsahajayoga.org/api"
   @default_timeout 15_000
   @default_receive_timeout 20_000
+
+  # Telemetry event names
+  @telemetry_prefix [:sahajyog, :external_api]
 
   def fetch_talks(filters \\ %{}) do
     search_query = filters[:search_query]
@@ -36,10 +42,20 @@ defmodule Sahajyog.ExternalApi do
     end
   end
 
+  @doc """
+  Fetch countries with caching.
+  """
   def fetch_countries do
+    Sahajyog.ApiCache.get_countries()
+  end
+
+  @doc """
+  Fetch countries directly from API (bypasses cache).
+  """
+  def fetch_countries_uncached do
     url = "#{@base_url}/meta/countries"
 
-    case make_request(url) do
+    case make_request(url, :countries) do
       {:ok, %{"languages" => languages}} when is_list(languages) ->
         countries =
           languages
@@ -66,10 +82,20 @@ defmodule Sahajyog.ExternalApi do
     end
   end
 
+  @doc """
+  Fetch years with caching.
+  """
   def fetch_years do
+    Sahajyog.ApiCache.get_years()
+  end
+
+  @doc """
+  Fetch years directly from API (bypasses cache).
+  """
+  def fetch_years_uncached do
     url = "#{@base_url}/meta/years"
 
-    case make_request(url) do
+    case make_request(url, :years) do
       {:ok, %{"years" => years}} when is_list(years) ->
         year_list =
           years
@@ -88,10 +114,20 @@ defmodule Sahajyog.ExternalApi do
     end
   end
 
+  @doc """
+  Fetch translation languages with caching.
+  """
   def fetch_translation_languages do
+    Sahajyog.ApiCache.get_translation_languages()
+  end
+
+  @doc """
+  Fetch translation languages directly from API (bypasses cache).
+  """
+  def fetch_translation_languages_uncached do
     url = "#{@base_url}/meta/languages"
 
-    case make_request(url) do
+    case make_request(url, :translation_languages) do
       {:ok, %{"languages" => languages}} when is_list(languages) ->
         language_list =
           languages
@@ -116,10 +152,20 @@ defmodule Sahajyog.ExternalApi do
     end
   end
 
+  @doc """
+  Fetch categories with caching.
+  """
   def fetch_categories do
+    Sahajyog.ApiCache.get_categories()
+  end
+
+  @doc """
+  Fetch categories directly from API (bypasses cache).
+  """
+  def fetch_categories_uncached do
     url = "#{@base_url}/meta/categories"
 
-    case make_request(url) do
+    case make_request(url, :categories) do
       {:ok, %{"languages" => languages}} when is_list(languages) ->
         categories =
           languages
@@ -146,10 +192,20 @@ defmodule Sahajyog.ExternalApi do
     end
   end
 
+  @doc """
+  Fetch spoken languages with caching.
+  """
   def fetch_spoken_languages do
+    Sahajyog.ApiCache.get_spoken_languages()
+  end
+
+  @doc """
+  Fetch spoken languages directly from API (bypasses cache).
+  """
+  def fetch_spoken_languages_uncached do
     url = "#{@base_url}/meta/spoken-languages"
 
-    case make_request(url) do
+    case make_request(url, :spoken_languages) do
       {:ok, %{"spoken_languages" => languages}} when is_list(languages) ->
         spoken_languages =
           languages
@@ -199,8 +255,16 @@ defmodule Sahajyog.ExternalApi do
   defp maybe_add_param(params, _key, ""), do: params
   defp maybe_add_param(params, key, value), do: Map.put(params, key, value)
 
-  defp make_request(url) do
+  defp make_request(url, endpoint \\ :talks) do
     start_time = System.monotonic_time(:millisecond)
+    metadata = %{url: url, endpoint: endpoint}
+
+    # Emit telemetry start event
+    :telemetry.execute(
+      @telemetry_prefix ++ [:request, :start],
+      %{system_time: System.system_time()},
+      metadata
+    )
 
     # Deployment-friendly options with exponential backoff and jitter
     # to avoid thundering herd problems
@@ -229,30 +293,80 @@ defmodule Sahajyog.ExternalApi do
 
     case result do
       {:ok, %{status: 200, body: body}} ->
+        # Emit telemetry success event
+        :telemetry.execute(
+          @telemetry_prefix ++ [:request, :stop],
+          %{duration: duration, status: 200},
+          Map.put(metadata, :result, :ok)
+        )
+
         {:ok, body}
 
       {:ok, %{status: status, body: body}} ->
         Logger.error("HTTP #{status} response in #{duration}ms - Body: #{inspect(body)}")
+
+        # Emit telemetry error event
+        :telemetry.execute(
+          @telemetry_prefix ++ [:request, :stop],
+          %{duration: duration, status: status},
+          Map.merge(metadata, %{result: :error, error: :http_error})
+        )
+
         {:error, "The talks service returned HTTP #{status}"}
 
       {:error, %Req.TransportError{reason: :timeout}} ->
         Logger.error("Request timeout after #{duration}ms")
+
+        :telemetry.execute(
+          @telemetry_prefix ++ [:request, :stop],
+          %{duration: duration, status: nil},
+          Map.merge(metadata, %{result: :error, error: :timeout})
+        )
+
         {:error, "Connection timeout. Please try again later."}
 
       {:error, %Req.TransportError{reason: :econnrefused}} ->
         Logger.error("Connection refused after #{duration}ms")
+
+        :telemetry.execute(
+          @telemetry_prefix ++ [:request, :stop],
+          %{duration: duration, status: nil},
+          Map.merge(metadata, %{result: :error, error: :econnrefused})
+        )
+
         {:error, "Unable to connect to the talks service. Please try again later."}
 
       {:error, %Req.TransportError{reason: :nxdomain}} ->
         Logger.error("DNS resolution failed after #{duration}ms")
+
+        :telemetry.execute(
+          @telemetry_prefix ++ [:request, :stop],
+          %{duration: duration, status: nil},
+          Map.merge(metadata, %{result: :error, error: :nxdomain})
+        )
+
         {:error, "Unable to resolve talks service domain. Please check your internet connection."}
 
       {:error, %Req.TransportError{reason: reason}} ->
         Logger.error("Transport error after #{duration}ms: #{inspect(reason)}")
+
+        :telemetry.execute(
+          @telemetry_prefix ++ [:request, :stop],
+          %{duration: duration, status: nil},
+          Map.merge(metadata, %{result: :error, error: reason})
+        )
+
         {:error, "Network error: #{inspect(reason)}"}
 
       {:error, exception} ->
         Logger.error("Request failed after #{duration}ms: #{inspect(exception)}")
+
+        :telemetry.execute(
+          @telemetry_prefix ++ [:request, :exception],
+          %{duration: duration},
+          Map.merge(metadata, %{result: :error, error: exception})
+        )
+
         {:error, "Unable to load talks. Please try again later."}
     end
   end

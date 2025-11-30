@@ -556,4 +556,94 @@ defmodule SahajyogWeb.UIComponents do
     </div>
     """
   end
+
+  @doc """
+  Renders a skeleton card for topics list loading state.
+
+  ## Examples
+
+      <.topic_card_skeleton />
+  """
+  attr :class, :string, default: nil
+
+  def topic_card_skeleton(assigns) do
+    ~H"""
+    <div
+      class={[
+        "bg-gradient-to-br from-base-200 to-base-300 rounded-xl border border-base-content/10 p-4 sm:p-6",
+        @class
+      ]}
+      aria-hidden="true"
+    >
+      <%!-- Title skeleton --%>
+      <div class="skeleton h-6 w-3/4 mb-3 rounded"></div>
+      <%!-- Content preview skeleton --%>
+      <div class="space-y-2 mb-4">
+        <div class="skeleton h-4 w-full rounded"></div>
+        <div class="skeleton h-4 w-5/6 rounded"></div>
+        <div class="skeleton h-4 w-4/6 rounded"></div>
+      </div>
+      <%!-- Meta info skeleton --%>
+      <div class="flex items-center justify-between pt-4 border-t border-base-content/10">
+        <div class="skeleton h-4 w-24 rounded"></div>
+        <div class="flex gap-3">
+          <div class="skeleton h-4 w-12 rounded"></div>
+          <div class="skeleton h-4 w-20 rounded"></div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a skeleton grid for topics list loading state.
+
+  ## Examples
+
+      <.topics_skeleton_grid count={6} />
+  """
+  attr :count, :integer, default: 6
+  attr :class, :string, default: nil
+
+  def topics_skeleton_grid(assigns) do
+    ~H"""
+    <div class={["grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6", @class]}>
+      <.topic_card_skeleton :for={_ <- 1..@count} />
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a skeleton for topic content loading state.
+
+  ## Examples
+
+      <.topic_content_skeleton />
+  """
+  attr :class, :string, default: nil
+
+  def topic_content_skeleton(assigns) do
+    ~H"""
+    <div class={["space-y-4", @class]} aria-hidden="true">
+      <%!-- Title skeleton --%>
+      <div class="skeleton h-10 w-2/3 rounded"></div>
+      <%!-- Meta info skeleton --%>
+      <div class="flex gap-4">
+        <div class="skeleton h-4 w-32 rounded"></div>
+        <div class="skeleton h-4 w-24 rounded"></div>
+        <div class="skeleton h-4 w-20 rounded"></div>
+      </div>
+      <%!-- Content skeleton --%>
+      <div class="space-y-3 pt-4">
+        <div class="skeleton h-4 w-full rounded"></div>
+        <div class="skeleton h-4 w-full rounded"></div>
+        <div class="skeleton h-4 w-5/6 rounded"></div>
+        <div class="skeleton h-4 w-full rounded"></div>
+        <div class="skeleton h-4 w-4/5 rounded"></div>
+        <div class="skeleton h-4 w-full rounded"></div>
+        <div class="skeleton h-4 w-3/4 rounded"></div>
+      </div>
+    </div>
+    """
+  end
 end

@@ -41,6 +41,7 @@ defmodule SahajyogWeb.TopicShowLive do
             <%= if @can_edit do %>
               <.primary_button
                 navigate={~p"/topics/#{@topic.slug}/edit"}
+                icon="hero-pencil-square"
                 class="w-full sm:w-auto px-4 py-2 text-sm"
               >
                 {gettext("Edit")}

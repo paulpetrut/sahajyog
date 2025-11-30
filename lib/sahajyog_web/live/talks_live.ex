@@ -18,6 +18,7 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:selected_category, "")
       |> assign(:selected_spoken_language, "")
       |> assign(:selected_translation_language, default_translation_lang)
+      |> assign(:default_translation_lang, default_translation_lang)
       |> assign(:sort_by, "date_asc")
       |> assign(:countries, [])
       |> assign(:years, [])
@@ -29,51 +30,12 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:show_advanced_filters, false)
       |> assign(:current_page, 1)
       |> assign(:per_page, 21)
-      |> assign(:loading, false)
+      |> assign(:loading, true)
       |> assign(:error, nil)
       |> assign(:retry_count, 0)
+      |> assign(:params_applied, false)
       |> stream_configure(:talks, dom_id: fn talk -> "talk-#{talk["id"]}" end)
       |> stream(:talks, [])
-
-    socket =
-      if connected?(socket) do
-        socket = load_filter_options(socket)
-
-        initial_filters = %{
-          translation_language: default_translation_lang,
-          sort_by: "date_asc",
-          page: 1,
-          per_page: 21
-        }
-
-        case fetch_talks(initial_filters) do
-          {:ok, talks, total} ->
-            socket
-            |> stream(:talks, talks, reset: true)
-            |> assign(:total_results, total)
-            |> assign(:talks_empty?, talks == [])
-            |> assign(:loading, false)
-            |> assign(:error, nil)
-
-          {:error, reason} ->
-            require Logger
-            Logger.error("Failed to load talks in mount: #{inspect(reason)}")
-
-            # Schedule a retry after 5 seconds for deployment scenarios
-            Process.send_after(self(), :retry_load, 5000)
-
-            socket
-            |> stream(:talks, [], reset: true)
-            |> assign(:talks_empty?, false)
-            |> assign(:loading, true)
-            |> assign(:error, nil)
-            |> assign(:retry_count, 1)
-        end
-      else
-        socket
-        |> assign(:loading, true)
-        |> assign(:error, nil)
-      end
 
     {:ok, socket}
   rescue
@@ -88,6 +50,146 @@ defmodule SahajyogWeb.TalksLive do
        |> assign(:talks_empty?, true)
        |> assign(:loading, false)
        |> assign(:error, "An error occurred. Please try again later.")}
+  end
+
+  def handle_params(params, _uri, socket) do
+    # Skip if not connected yet (initial static render)
+    if not connected?(socket) do
+      {:noreply, socket}
+    else
+      # Load filter options on first connection
+      socket =
+        if not socket.assigns.params_applied do
+          load_filter_options(socket)
+        else
+          socket
+        end
+
+      # Parse URL params with defaults
+      socket =
+        socket
+        |> assign(:search_query, params["q"] || "")
+        |> assign(:selected_country, params["country"] || "")
+        |> assign(:selected_year, params["year"] || "")
+        |> assign(:selected_category, params["category"] || "")
+        |> assign(:selected_spoken_language, params["spoken_lang"] || "")
+        |> assign(
+          :selected_translation_language,
+          params["trans_lang"] || socket.assigns.default_translation_lang
+        )
+        |> assign(:sort_by, params["sort"] || "date_asc")
+        |> assign(:current_page, parse_page(params["page"]))
+        |> assign(:params_applied, true)
+
+      # Show advanced filters if any advanced filter is set
+      socket =
+        if params["country"] || params["category"] || params["spoken_lang"] do
+          assign(socket, :show_advanced_filters, true)
+        else
+          socket
+        end
+
+      # Fetch talks with the URL params
+      filters = build_filters_from_assigns(socket)
+
+      socket =
+        case fetch_talks(filters) do
+          {:ok, talks, total} ->
+            socket
+            |> stream(:talks, talks, reset: true)
+            |> assign(:total_results, total)
+            |> assign(:talks_empty?, talks == [])
+            |> assign(:loading, false)
+            |> assign(:error, nil)
+
+          {:error, reason} ->
+            Logger.error("Failed to load talks in handle_params: #{inspect(reason)}")
+
+            # Schedule a retry after 5 seconds for deployment scenarios
+            Process.send_after(self(), :retry_load, 5000)
+
+            socket
+            |> stream(:talks, [], reset: true)
+            |> assign(:talks_empty?, false)
+            |> assign(:loading, true)
+            |> assign(:error, nil)
+            |> assign(:retry_count, 1)
+        end
+
+      {:noreply, socket}
+    end
+  end
+
+  defp parse_page(nil), do: 1
+
+  defp parse_page(page) when is_binary(page) do
+    case Integer.parse(page) do
+      {num, _} when num > 0 -> num
+      _ -> 1
+    end
+  end
+
+  defp parse_page(_), do: 1
+
+  defp build_filters_from_assigns(socket) do
+    %{
+      search_query: socket.assigns.search_query,
+      country: socket.assigns.selected_country,
+      year: socket.assigns.selected_year,
+      category: socket.assigns.selected_category,
+      spoken_language: socket.assigns.selected_spoken_language,
+      translation_language: socket.assigns.selected_translation_language,
+      sort_by: socket.assigns.sort_by,
+      page: socket.assigns.current_page,
+      per_page: socket.assigns.per_page
+    }
+  end
+
+  defp build_url_params(socket) do
+    params = %{}
+
+    params =
+      if socket.assigns.search_query != "",
+        do: Map.put(params, "q", socket.assigns.search_query),
+        else: params
+
+    params =
+      if socket.assigns.selected_country != "",
+        do: Map.put(params, "country", socket.assigns.selected_country),
+        else: params
+
+    params =
+      if socket.assigns.selected_year != "",
+        do: Map.put(params, "year", socket.assigns.selected_year),
+        else: params
+
+    params =
+      if socket.assigns.selected_category != "",
+        do: Map.put(params, "category", socket.assigns.selected_category),
+        else: params
+
+    params =
+      if socket.assigns.selected_spoken_language != "",
+        do: Map.put(params, "spoken_lang", socket.assigns.selected_spoken_language),
+        else: params
+
+    params =
+      if socket.assigns.selected_translation_language != "" and
+           socket.assigns.selected_translation_language != socket.assigns.default_translation_lang,
+         do: Map.put(params, "trans_lang", socket.assigns.selected_translation_language),
+         else: params
+
+    params =
+      if socket.assigns.sort_by != "date_asc",
+        do: Map.put(params, "sort", socket.assigns.sort_by),
+        else: params
+
+    params =
+      if socket.assigns.current_page > 1,
+        do: Map.put(params, "page", socket.assigns.current_page),
+        else: params
+
+    params
   end
 
   defp fetch_talks(filters) do
@@ -341,6 +443,39 @@ defmodule SahajyogWeb.TalksLive do
     apply_filters(socket)
   end
 
+  # Infinite scroll - load more talks (mobile only)
+  def handle_event("load_more", _params, socket) do
+    total_pages = ceil(socket.assigns.total_results / socket.assigns.per_page)
+    current_page = socket.assigns.current_page
+
+    if current_page < total_pages do
+      next_page = current_page + 1
+
+      filters =
+        socket
+        |> assign(:current_page, next_page)
+        |> build_filters_from_assigns()
+
+      socket = push_event(socket, "loading_more", %{})
+
+      case fetch_talks(filters) do
+        {:ok, talks, _total} ->
+          socket =
+            socket
+            |> stream(:talks, talks, at: -1)
+            |> assign(:current_page, next_page)
+            |> push_event("loaded_more", %{})
+
+          {:noreply, socket}
+
+        {:error, _reason} ->
+          {:noreply, push_event(socket, "loaded_more", %{})}
+      end
+    else
+      {:noreply, socket}
+    end
+  end
+
   def handle_info(:retry_load, socket) do
     retry_count = socket.assigns.retry_count
 
@@ -379,47 +514,25 @@ defmodule SahajyogWeb.TalksLive do
     end
   end
 
+  # Catch-all for unexpected messages to prevent crashes
+  def handle_info(msg, socket) do
+    Logger.warning("TalksLive received unexpected message: #{inspect(msg)}")
+    {:noreply, socket}
+  end
+
   defp apply_filters(socket, reset_page \\ true) do
     socket =
       if reset_page do
-        socket
-        |> assign(:loading, true)
-        |> assign(:current_page, 1)
+        assign(socket, :current_page, 1)
       else
-        assign(socket, :loading, true)
+        socket
       end
 
-    filters = %{
-      search_query: socket.assigns.search_query,
-      country: socket.assigns.selected_country,
-      year: socket.assigns.selected_year,
-      category: socket.assigns.selected_category,
-      spoken_language: socket.assigns.selected_spoken_language,
-      translation_language: socket.assigns.selected_translation_language,
-      sort_by: socket.assigns.sort_by,
-      page: socket.assigns.current_page,
-      per_page: socket.assigns.per_page
-    }
+    # Update URL - handle_params will do the actual fetching
+    url_params = build_url_params(socket)
+    path = if url_params == %{}, do: "/talks", else: "/talks?" <> URI.encode_query(url_params)
 
-    socket =
-      case fetch_talks(filters) do
-        {:ok, talks, total} ->
-          socket
-          |> stream(:talks, talks, reset: true)
-          |> assign(:total_results, total)
-          |> assign(:talks_empty?, talks == [])
-          |> assign(:loading, false)
-          |> assign(:error, nil)
-
-        {:error, reason} ->
-          socket
-          |> stream(:talks, [], reset: true)
-          |> assign(:talks_empty?, true)
-          |> assign(:loading, false)
-          |> assign(:error, reason)
-      end
-
-    {:noreply, socket}
+    {:noreply, push_patch(socket, to: path, replace: true)}
   end
 
   defp map_locale_to_api_code(locale) do
@@ -910,19 +1023,54 @@ defmodule SahajyogWeb.TalksLive do
             <%!-- Talks grid --%>
           <% true -> %>
             <div
-              id="talks-list"
-              phx-update="stream"
-              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+              id="talks-container"
+              phx-hook="InfiniteScroll"
             >
-              <%= for {id, talk} <- @streams.talks do %>
-                <div id={id}>
-                  <.talk_card talk={talk} />
-                </div>
-              <% end %>
+              <div
+                id="talks-list"
+                phx-update="stream"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+              >
+                <%= for {id, talk} <- @streams.talks do %>
+                  <div id={id}>
+                    <.talk_card talk={talk} />
+                  </div>
+                <% end %>
+              </div>
+
+              <%!-- Mobile stats and infinite scroll sentinel --%>
+              <div class="lg:hidden mt-6">
+                <p class="text-center text-base-content/60 text-sm mb-4">
+                  {gettext("Showing")}
+                  <span class="text-base-content font-semibold">
+                    {min(@current_page * @per_page, @total_results)}
+                  </span>
+                  {gettext("of")}
+                  <span class="text-base-content font-semibold">{@total_results}</span>
+                  {ngettext("talk", "talks", @total_results)}
+                </p>
+
+                <%!-- Infinite scroll sentinel --%>
+                <%= if @total_results > @current_page * @per_page do %>
+                  <div
+                    id="infinite-scroll-sentinel"
+                    class="flex justify-center py-4"
+                  >
+                    <div class="flex items-center gap-2 text-base-content/60">
+                      <.icon name="hero-arrow-path" class="w-5 h-5 animate-spin" />
+                      <span class="text-sm">{gettext("Loading more...")}</span>
+                    </div>
+                  </div>
+                <% else %>
+                  <p class="text-center text-base-content/40 text-xs">
+                    {gettext("You've reached the end")}
+                  </p>
+                <% end %>
+              </div>
             </div>
 
-            <%!-- Pagination --%>
-            <div class="mt-6 sm:mt-8">
+            <%!-- Pagination (desktop only) --%>
+            <div class="mt-6 sm:mt-8 hidden lg:block">
               <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
                 <%!-- Stats --%>
                 <p class="text-base-content/60 text-xs sm:text-sm">

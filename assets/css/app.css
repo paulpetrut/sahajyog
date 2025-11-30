@@ -173,6 +173,23 @@
   animation: bounce-subtle 2s ease-in-out infinite;
 }
 
+/* Slow bounce for scroll indicator */
+@keyframes bounce-slow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2.5s ease-in-out infinite;
+}
+
 /* Fade in down animation */
 @keyframes fade-in-down {
   from {
@@ -231,4 +248,444 @@
   background: linear-gradient(90deg, oklch(var(--color-base-300)) 0%, oklch(var(--color-base-200)) 50%, oklch(var(--color-base-300)) 100%);
   background-size: 200% 100%;
   border-radius: 0.25rem;
+}
+
+/* ===== Welcome Page Animations ===== */
+
+/* Hero entrance animation */
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-fade-up {
+  animation: hero-fade-up 0.8s ease-out forwards;
+}
+
+.animate-hero-fade-up-delay-1 {
+  opacity: 0;
+  animation: hero-fade-up 0.8s ease-out 0.2s forwards;
+}
+
+.animate-hero-fade-up-delay-2 {
+  opacity: 0;
+  animation: hero-fade-up 0.8s ease-out 0.4s forwards;
+}
+
+.animate-hero-fade-up-delay-3 {
+  opacity: 0;
+  animation: hero-fade-up 0.8s ease-out 0.6s forwards;
+}
+
+/* Staggered card animations */
+.animate-stagger-1 {
+  opacity: 0;
+  animation: hero-fade-up 0.6s ease-out 0.1s forwards;
+}
+
+.animate-stagger-2 {
+  opacity: 0;
+  animation: hero-fade-up 0.6s ease-out 0.2s forwards;
+}
+
+.animate-stagger-3 {
+  opacity: 0;
+  animation: hero-fade-up 0.6s ease-out 0.3s forwards;
+}
+
+/* Scroll-triggered animations (used with IntersectionObserver) */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-animate.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Floating animation for images */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Subtle parallax effect */
+.parallax-slow {
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Counter animation */
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-count {
+  animation: count-up 0.5s ease-out forwards;
+}
+
+/* Pulse glow effect */
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(var(--color-primary), 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(var(--color-primary), 0.5);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, oklch(var(--color-primary)), oklch(var(--color-secondary)));
+  z-index: 9999;
+  transition: width 0.1s ease-out;
+}
+
+/* Sticky CTA button */
+.sticky-cta {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.sticky-cta.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Video skeleton loader */
+.video-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.video-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Testimonial card hover effect */
+.testimonial-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Step indicator line */
+.step-line {
+  position: relative;
+}
+
+.step-line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, oklch(var(--color-primary)), transparent);
+}
+
+/* How It Works step animations */
+/* Each step bounces for ~2s then stays still while others bounce */
+/* Total cycle: 6s (2s per step) */
+
+@keyframes step-bounce-1 {
+
+  0%,
+  5% {
+    transform: translateY(0);
+  }
+
+  10% {
+    transform: translateY(-12px);
+  }
+
+  15% {
+    transform: translateY(0);
+  }
+
+  20% {
+    transform: translateY(-10px);
+  }
+
+  25% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-6px);
+  }
+
+  33%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes step-bounce-2 {
+
+  0%,
+  33% {
+    transform: translateY(0);
+  }
+
+  38% {
+    transform: translateY(-12px);
+  }
+
+  43% {
+    transform: translateY(0);
+  }
+
+  48% {
+    transform: translateY(-10px);
+  }
+
+  53% {
+    transform: translateY(0);
+  }
+
+  58% {
+    transform: translateY(-6px);
+  }
+
+  66%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes step-bounce-3 {
+
+  0%,
+  66% {
+    transform: translateY(0);
+  }
+
+  71% {
+    transform: translateY(-12px);
+  }
+
+  76% {
+    transform: translateY(0);
+  }
+
+  81% {
+    transform: translateY(-10px);
+  }
+
+  86% {
+    transform: translateY(0);
+  }
+
+  91% {
+    transform: translateY(-6px);
+  }
+
+  95%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes step-pulse-1 {
+
+  0%,
+  33%,
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+
+  5% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  25% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes step-pulse-2 {
+
+  0%,
+  33%,
+  66%,
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+
+  38% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  58% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes step-pulse-3 {
+
+  0%,
+  66%,
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+
+  71% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  91% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.step-circle {
+  position: relative;
+}
+
+.step-circle::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0;
+}
+
+.step-circle-1 {
+  animation: step-bounce-1 6s ease-in-out infinite;
+}
+
+.step-circle-1::before {
+  animation: step-pulse-1 6s ease-out infinite;
+  background: oklch(var(--color-primary));
+}
+
+.step-circle-2 {
+  animation: step-bounce-2 6s ease-in-out infinite;
+}
+
+.step-circle-2::before {
+  animation: step-pulse-2 6s ease-out infinite;
+  background: oklch(var(--color-secondary));
+}
+
+.step-circle-3 {
+  animation: step-bounce-3 6s ease-in-out infinite;
+}
+
+.step-circle-3::before {
+  animation: step-pulse-3 6s ease-out infinite;
+  background: oklch(var(--color-success));
+}
+
+/* Hover effect for step cards */
+.step-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+}
+
+.step-card:hover .step-circle {
+  animation-play-state: paused;
+  transform: scale(1.1);
 }

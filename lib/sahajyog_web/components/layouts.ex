@@ -147,11 +147,11 @@ defmodule SahajyogWeb.Layouts do
           </div>
 
           <%!-- Center: Quick Links --%>
-          <div class="text-center md:text-left">
+          <div class="text-center md:text-left md:pl-20">
             <h4 class="text-sm font-semibold text-base-content uppercase tracking-wider mb-4">
               {gettext("Explore")}
             </h4>
-            <nav class="flex flex-col gap-2 items-center md:items-start">
+            <nav class="flex flex-col gap-3 items-center md:items-start">
               <.link
                 href={~p"/"}
                 data-footer-path="/"
@@ -160,6 +160,7 @@ defmodule SahajyogWeb.Layouts do
                 {gettext("Home")}
               </.link>
               <.link
+                :if={@current_scope}
                 href={~p"/steps"}
                 data-footer-path="/steps"
                 class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"

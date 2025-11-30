@@ -41,6 +41,9 @@ defmodule Sahajyog.VideoProvider do
   def embed_url(video_id, provider, locale \\ "en")
 
   def embed_url(video_id, :youtube, locale) do
+    # rel=0 limits suggestions to same channel
+    # modestbranding=1 reduces YouTube branding
+    # Using youtube-nocookie.com for privacy-enhanced mode
     base_params = "rel=0&modestbranding=1&showinfo=0&controls=1"
 
     # Normalize locale - if not in supported list, default to English
@@ -54,7 +57,8 @@ defmodule Sahajyog.VideoProvider do
         ""
       end
 
-    "https://www.youtube.com/embed/#{video_id}?#{base_params}#{subtitle_params}"
+    # Use privacy-enhanced mode (youtube-nocookie.com)
+    "https://www.youtube-nocookie.com/embed/#{video_id}?#{base_params}#{subtitle_params}"
   end
 
   def embed_url(video_id, :vimeo, locale) do

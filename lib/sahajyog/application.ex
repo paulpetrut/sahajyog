@@ -12,8 +12,8 @@ defmodule Sahajyog.Application do
       Sahajyog.Repo,
       {DNSCluster, query: Application.get_env(:sahajyog, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Sahajyog.PubSub},
-      # Start a worker by calling: Sahajyog.Worker.start_link(arg)
-      # {Sahajyog.Worker, arg},
+      # API cache for external API responses (countries, years, categories, etc.)
+      Sahajyog.ApiCache,
       # Start to serve requests, typically the last entry
       SahajyogWeb.Endpoint
     ]

@@ -197,11 +197,18 @@ defmodule SahajyogWeb.TopicEditLive do
 
         <%!-- Topic Form --%>
         <.card size="lg" class="mb-4 sm:mb-6">
-          <h1 class="text-2xl sm:text-3xl font-bold text-base-content mb-4 sm:mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold text-base-content mb-4 sm:mb-6 flex items-center gap-3">
+            <.icon name="hero-pencil-square" class="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
             {gettext("Edit Topic")}
           </h1>
 
-          <.form for={@form} id="topic-form" phx-change="validate" phx-submit="save">
+          <.form
+            for={@form}
+            id="topic-form"
+            phx-change="validate"
+            phx-submit="save"
+            phx-hook="UnsavedChanges"
+          >
             <div class="space-y-6">
               <div>
                 <.input field={@form[:title]} type="text" label={gettext("Title")} required />

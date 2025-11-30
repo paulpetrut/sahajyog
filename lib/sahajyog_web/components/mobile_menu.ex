@@ -72,9 +72,6 @@ defmodule SahajyogWeb.MobileMenu do
             <% else %>
               <%!-- Public links for non-logged-in users --%>
               <li>
-                <.link href={~p"/steps"}>{gettext("Steps")}</.link>
-              </li>
-              <li>
                 <.link href={~p"/talks"}>{gettext("Talks")}</.link>
               </li>
               <li class="mt-2">
