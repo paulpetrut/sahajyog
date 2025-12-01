@@ -9,7 +9,7 @@ defmodule SahajyogWeb.UserSessionController do
   end
 
   def create(conn, params) do
-    create(conn, params, gettext("Welcome back!"))
+    create(conn, params, nil)
   end
 
   # magic link login
@@ -19,7 +19,7 @@ defmodule SahajyogWeb.UserSessionController do
         UserAuth.disconnect_sessions(tokens_to_disconnect)
 
         conn
-        |> put_flash(:info, info)
+        |> maybe_put_flash(:info, info)
         |> UserAuth.log_in_user(user, user_params)
 
       {:error, :password_required} ->
@@ -43,7 +43,7 @@ defmodule SahajyogWeb.UserSessionController do
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
       conn
-      |> put_flash(:info, info)
+      |> maybe_put_flash(:info, info)
       |> UserAuth.log_in_user(user, user_params)
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
@@ -72,4 +72,7 @@ defmodule SahajyogWeb.UserSessionController do
     |> put_flash(:info, gettext("Logged out successfully."))
     |> UserAuth.log_out_user()
   end
+
+  defp maybe_put_flash(conn, _key, nil), do: conn
+  defp maybe_put_flash(conn, key, message), do: put_flash(conn, key, message)
 end

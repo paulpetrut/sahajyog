@@ -17,6 +17,58 @@ defmodule SahajyogWeb.UserLive.Settings do
               {gettext("Manage your account email address and password settings")}
             </p>
           </div>
+          <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-xl p-6 mb-6">
+            <div class="mb-4">
+              <h2 class="text-xl font-semibold text-white">{gettext("Profile Information")}</h2>
+              <p class="text-sm text-gray-400 mt-1">{gettext("These details are optional.")}</p>
+            </div>
+            <.form
+              for={@profile_form}
+              id="profile_form"
+              phx-submit="update_profile"
+              phx-change="validate_profile"
+            >
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <.input field={@profile_form[:first_name]} type="text" label={gettext("First Name")} />
+                <.input field={@profile_form[:last_name]} type="text" label={gettext("Last Name")} />
+              </div>
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
+                <.input field={@profile_form[:city]} type="text" label={gettext("City")} />
+                <.input
+                  field={@profile_form[:country]}
+                  type="select"
+                  label={gettext("Country")}
+                  options={@country_options}
+                  prompt={gettext("Select a country")}
+                />
+              </div>
+              <div class="mt-4">
+                <label class="form-control">
+                  <span class="label">
+                    <span class="label-text">{gettext("Phone Number")}</span>
+                  </span>
+                  <div class="join w-full">
+                    <div class="join-item flex items-center px-3 bg-base-200 border border-base-300 text-base-content/70 select-none rounded-l-lg">
+                      {@phone_prefix}
+                    </div>
+                    <input
+                      type="tel"
+                      name={@profile_form[:phone_number].name}
+                      id={@profile_form[:phone_number].id}
+                      value={@profile_form[:phone_number].value}
+                      class="join-item input input-bordered w-full rounded-r-lg"
+                      placeholder="123456789"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div class="mt-4">
+                <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+                  {gettext("Save Profile")}
+                </.button>
+              </div>
+            </.form>
+          </div>
 
           <div class="bg-gray-800 rounded-lg border border-gray-700 shadow-xl p-6 mb-6">
             <h2 class="text-xl font-semibold text-white mb-4">{gettext("Email Address")}</h2>
@@ -104,18 +156,71 @@ defmodule SahajyogWeb.UserLive.Settings do
     email_changeset = Accounts.change_user_email(user, %{}, validate_unique: false)
     password_changeset = Accounts.change_user_password(user, %{}, hash_password: false)
 
+    country_codes = Sahajyog.Accounts.User.country_codes()
+    country_options = Enum.map(country_codes, fn {name, _code} -> name end) |> Enum.sort()
+
+    # Determine initial prefix based on user's country or default to +1
+    initial_prefix = get_prefix_for_country(user.country, country_codes)
+
     socket =
       socket
       |> assign(:page_title, "Settings")
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
+      |> assign(:profile_form, to_form(Accounts.change_user_profile(user)))
+      |> assign(:country_options, country_options)
+      |> assign(:country_codes, country_codes)
+      |> assign(:phone_prefix, initial_prefix)
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
   end
 
+  defp get_prefix_for_country(country, country_codes) do
+    case List.keyfind(country_codes, country, 0) do
+      {_, code} -> code
+      # Default fallback
+      nil -> "+1"
+    end
+  end
+
   @impl true
+  def handle_event("validate_profile", params, socket) do
+    %{"user" => user_params} = params
+
+    # Update prefix if country changed
+    country = user_params["country"]
+    phone_prefix = get_prefix_for_country(country, socket.assigns.country_codes)
+
+    profile_form =
+      socket.assigns.current_scope.user
+      |> Accounts.change_user_profile(user_params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    {:noreply,
+     socket
+     |> assign(profile_form: profile_form)
+     |> assign(phone_prefix: phone_prefix)}
+  end
+
+  def handle_event("update_profile", params, socket) do
+    %{"user" => user_params} = params
+    user = socket.assigns.current_scope.user
+
+    case Accounts.update_user_profile(user, user_params) do
+      {:ok, _user} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Profile updated successfully."))
+         |> push_navigate(to: ~p"/users/settings")}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, profile_form: to_form(changeset))}
+    end
+  end
+
   def handle_event("validate_email", params, socket) do
     %{"user" => user_params} = params
 

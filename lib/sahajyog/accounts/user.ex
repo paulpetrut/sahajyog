@@ -10,6 +10,11 @@ defmodule Sahajyog.Accounts.User do
     field :authenticated_at, :utc_datetime, virtual: true
     field :role, :string, default: "regular"
     field :level, :string, default: "Level1"
+    field :first_name, :string
+    field :last_name, :string
+    field :phone_number, :string
+    field :city, :string
+    field :country, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -145,5 +150,73 @@ defmodule Sahajyog.Accounts.User do
   def valid_password?(_, _) do
     Bcrypt.no_user_verify()
     false
+  end
+
+  @doc """
+  A user changeset for changing the profile.
+  """
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:first_name, :last_name, :phone_number, :city, :country])
+    |> validate_length(:first_name, max: 50)
+    |> validate_length(:last_name, max: 50)
+    |> validate_length(:phone_number, max: 20)
+    |> validate_length(:city, max: 100)
+    |> validate_length(:country, max: 100)
+  end
+
+  def country_codes do
+    [
+      {"United States", "+1"},
+      {"United Kingdom", "+44"},
+      {"Canada", "+1"},
+      {"Australia", "+61"},
+      {"India", "+91"},
+      {"Germany", "+49"},
+      {"France", "+33"},
+      {"Italy", "+39"},
+      {"Spain", "+34"},
+      {"Brazil", "+55"},
+      {"Mexico", "+52"},
+      {"Japan", "+81"},
+      {"China", "+86"},
+      {"Russia", "+7"},
+      {"South Africa", "+27"},
+      {"Romania", "+40"},
+      {"Poland", "+48"},
+      {"Netherlands", "+31"},
+      {"Turkey", "+90"},
+      {"Austria", "+43"},
+      {"Switzerland", "+41"},
+      {"Belgium", "+32"},
+      {"Sweden", "+46"},
+      {"Norway", "+47"},
+      {"Denmark", "+45"},
+      {"Finland", "+358"},
+      {"Ireland", "+353"},
+      {"Portugal", "+351"},
+      {"Greece", "+30"},
+      {"New Zealand", "+64"},
+      {"Singapore", "+65"},
+      {"Malaysia", "+60"},
+      {"Thailand", "+66"},
+      {"Indonesia", "+62"},
+      {"Vietnam", "+84"},
+      {"Philippines", "+63"},
+      {"Argentina", "+54"},
+      {"Chile", "+56"},
+      {"Colombia", "+57"},
+      {"Peru", "+51"},
+      {"Venezuela", "+58"},
+      {"Egypt", "+20"},
+      {"Nigeria", "+234"},
+      {"Kenya", "+254"},
+      {"Israel", "+972"},
+      {"Saudi Arabia", "+966"},
+      {"United Arab Emirates", "+971"},
+      {"Ukraine", "+380"},
+      {"Czech Republic", "+420"},
+      {"Hungary", "+36"}
+    ]
   end
 end
