@@ -161,7 +161,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </div>
 
           <%!-- About Sahaja Yoga Section --%>
-          <section class="mb-16 scroll-reveal">
+          <section class="mb-24 scroll-reveal">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-6 sm:mb-8">
               {gettext("What is Sahaja Yoga?")}
             </h2>
@@ -197,7 +197,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Chakra System --%>
-          <section class="mb-16 scroll-reveal">
+          <section class="mb-12 scroll-reveal">
             <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("The Subtle System")}
             </h3>
@@ -231,8 +231,11 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </section>
 
+          <div class="w-full max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-base-content/10 to-transparent my-12">
+          </div>
+
           <%!-- Quotes from Shri Mataji - Mobile/Tablet (single quote) --%>
-          <section class="mb-16 lg:hidden scroll-reveal">
+          <section class="mb-12 lg:hidden scroll-reveal">
             <h2 class="text-lg sm:text-2xl font-bold text-base-content text-center mb-4 sm:mb-6">
               {gettext("Quotes from Shri Mataji")}
             </h2>
@@ -256,7 +259,7 @@ defmodule SahajyogWeb.WelcomeLive do
           </section>
 
           <%!-- Quotes from Shri Mataji - Desktop Carousel --%>
-          <section class="mb-16 hidden lg:block scroll-reveal">
+          <section class="mb-12 hidden lg:block scroll-reveal">
             <h2 class="text-3xl font-bold text-base-content text-center mb-8">
               {gettext("Quotes from Shri Mataji")}
             </h2>
@@ -371,8 +374,11 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </section>
 
+          <div class="w-full max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-base-content/10 to-transparent my-12">
+          </div>
+
           <%!-- Testimonials Section --%>
-          <section class="mb-16 scroll-reveal">
+          <section class="mb-12 scroll-reveal">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("What Practitioners Say")}
             </h2>
@@ -398,8 +404,11 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </section>
 
+          <div class="w-full max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-base-content/10 to-transparent my-12">
+          </div>
+
           <%!-- Statistics Section with animated counters --%>
-          <section id="stats-section" class="mb-16 scroll-reveal">
+          <section id="stats-section" class="mb-12 scroll-reveal">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
               <div class="text-center p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20">
                 <div class="text-4xl md:text-5xl font-bold text-primary mb-2">
@@ -428,8 +437,11 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </section>
 
+          <div class="w-full max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-base-content/10 to-transparent my-12">
+          </div>
+
           <%!-- How It Works Section --%>
-          <section id="how-it-works" class="mb-16 scroll-reveal">
+          <section id="how-it-works" class="mb-12 scroll-reveal">
             <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-base-content text-center mb-4">
               {gettext("How It Works")}
             </h2>
@@ -452,7 +464,7 @@ defmodule SahajyogWeb.WelcomeLive do
                   </p>
                 </div>
                 <%!-- Connector line (hidden on mobile) --%>
-                <div class="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary/50 to-transparent">
+                <div class="hidden md:block absolute top-[4.5rem] left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary/50 to-transparent">
                 </div>
               </div>
 
@@ -469,7 +481,7 @@ defmodule SahajyogWeb.WelcomeLive do
                     {gettext("Follow guided meditations and experience Self Realization")}
                   </p>
                 </div>
-                <div class="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary/50 to-transparent">
+                <div class="hidden md:block absolute top-[4.5rem] left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary/50 to-transparent">
                 </div>
               </div>
 
@@ -490,18 +502,30 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </section>
 
+          <div class="w-full max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-base-content/10 to-transparent my-12">
+          </div>
+
           <%!-- Call to Action --%>
           <section class="scroll-reveal-scale">
             <%= if @current_scope do %>
               <%!-- Authenticated user CTA --%>
-              <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient">
-                <h3 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary-content mb-4">
+              <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient animate-gradient-cta">
+                <h3
+                  class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary-content mb-4"
+                  style="position: relative; z-index: 1;"
+                >
                   {gettext("Ready to Begin Your Journey?")}
                 </h3>
-                <p class="text-base sm:text-lg md:text-xl text-primary-content/80 mb-8 max-w-2xl mx-auto">
+                <p
+                  class="text-base sm:text-lg md:text-xl text-primary-content/80 mb-8 max-w-2xl mx-auto"
+                  style="position: relative; z-index: 1;"
+                >
                   {gettext("Explore our complete collection of talks and guided meditations")}
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <div
+                  class="flex flex-col sm:flex-row gap-4 justify-center"
+                  style="position: relative; z-index: 1;"
+                >
                   <.link
                     navigate="/steps"
                     class="px-8 py-4 bg-white text-primary rounded-full font-semibold hover:bg-white/90 transition-all duration-300 inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
@@ -511,7 +535,7 @@ defmodule SahajyogWeb.WelcomeLive do
                   </.link>
                   <.link
                     navigate="/talks"
-                    class="px-8 py-4 bg-primary-content/20 text-primary-content rounded-full font-semibold hover:bg-primary-content/30 transition-all duration-300 inline-flex items-center justify-center gap-2 border border-primary-content/30"
+                    class="px-8 py-4 bg-black/20 text-white rounded-full font-semibold hover:bg-black/30 transition-all duration-300 inline-flex items-center justify-center gap-2 border border-white/30"
                   >
                     <.icon name="hero-magnifying-glass" class="w-5 h-5" />
                     {gettext("Browse All Talks")}
@@ -527,15 +551,24 @@ defmodule SahajyogWeb.WelcomeLive do
               </div>
             <% else %>
               <%!-- Unauthenticated user CTA - encourage registration --%>
-              <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient">
-                <h3 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary-content mb-4">
+              <div class="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 md:p-12 text-center animate-gradient animate-gradient-cta">
+                <h3
+                  class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary-content mb-4"
+                  style="position: relative; z-index: 1;"
+                >
                   {gettext("Unlock Your Full Journey")}
                 </h3>
-                <p class="text-base sm:text-lg md:text-xl text-primary-content/80 mb-6 max-w-2xl mx-auto">
+                <p
+                  class="text-base sm:text-lg md:text-xl text-primary-content/80 mb-6 max-w-2xl mx-auto"
+                  style="position: relative; z-index: 1;"
+                >
                   {gettext("Register for free to access exclusive benefits")}
                 </p>
                 <%!-- Benefits list --%>
-                <div class="grid sm:grid-cols-3 gap-4 mb-8 max-w-3xl mx-auto text-left">
+                <div
+                  class="grid sm:grid-cols-3 gap-4 mb-8 max-w-3xl mx-auto text-left"
+                  style="position: relative; z-index: 1;"
+                >
                   <div class="bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                     <div class="flex items-center gap-3 mb-2">
                       <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
@@ -572,7 +605,10 @@ defmodule SahajyogWeb.WelcomeLive do
                     </p>
                   </div>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <div
+                  class="flex flex-col sm:flex-row gap-4 justify-center"
+                  style="position: relative; z-index: 1;"
+                >
                   <.link
                     navigate="/users/register"
                     class="px-8 py-4 bg-white text-primary rounded-full font-semibold hover:bg-white/90 transition-all duration-300 inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
@@ -582,15 +618,21 @@ defmodule SahajyogWeb.WelcomeLive do
                   </.link>
                   <.link
                     navigate="/talks"
-                    class="px-8 py-4 bg-primary-content/20 text-primary-content rounded-full font-semibold hover:bg-primary-content/30 transition-all duration-300 inline-flex items-center justify-center gap-2 border border-primary-content/30"
+                    class="px-8 py-4 bg-black/20 text-white rounded-full font-semibold hover:bg-black/30 transition-all duration-300 inline-flex items-center justify-center gap-2 border border-white/30"
                   >
                     <.icon name="hero-magnifying-glass" class="w-5 h-5" />
                     {gettext("Browse Talks")}
                   </.link>
                 </div>
-                <p class="mt-4 text-sm text-primary-content/60">
+                <p
+                  class="mt-4 text-sm text-white/90"
+                  style="position: relative; z-index: 1;"
+                >
                   {gettext("Already have an account?")}
-                  <.link navigate="/users/log-in" class="underline hover:text-primary-content ml-1">
+                  <.link
+                    navigate="/users/log-in"
+                    class="underline hover:text-white font-semibold ml-1"
+                  >
                     {gettext("Log in")}
                   </.link>
                 </p>

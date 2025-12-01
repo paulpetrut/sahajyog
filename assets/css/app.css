@@ -102,7 +102,7 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session],
 [data-phx-teleported-src] {
-  display: contents
+  display: contents;
 }
 
 /* This file is for your main application CSS */
@@ -158,7 +158,6 @@
 
 /* Subtle bounce animation for empty states */
 @keyframes bounce-subtle {
-
   0%,
   100% {
     transform: translateY(0);
@@ -175,7 +174,6 @@
 
 /* Slow bounce for scroll indicator */
 @keyframes bounce-slow {
-
   0%,
   100% {
     transform: translateY(0);
@@ -232,7 +230,6 @@
 
 /* Skeleton loading animation */
 @keyframes skeleton-pulse {
-
   0%,
   100% {
     opacity: 0.4;
@@ -245,7 +242,12 @@
 
 .skeleton {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
-  background: linear-gradient(90deg, oklch(var(--color-base-300)) 0%, oklch(var(--color-base-200)) 50%, oklch(var(--color-base-300)) 100%);
+  background: linear-gradient(
+    90deg,
+    oklch(var(--color-base-300)) 0%,
+    oklch(var(--color-base-200)) 50%,
+    oklch(var(--color-base-300)) 100%
+  );
   background-size: 200% 100%;
   border-radius: 0.25rem;
 }
@@ -284,10 +286,8 @@
   animation: hero-fade-up 0.8s ease-out 0.6s forwards;
 }
 
-
 /* Floating animation for images */
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -328,6 +328,33 @@
   animation: gradient-shift 15s ease infinite;
 }
 
+/* CTA Section specific: Rotating radial gradient overlay */
+.animate-gradient-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-gradient-cta::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate-gradient 15s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotate-gradient {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* Counter animation */
 @keyframes count-up {
   from {
@@ -347,7 +374,6 @@
 
 /* Pulse glow effect */
 @keyframes pulse-glow {
-
   0%,
   100% {
     box-shadow: 0 0 20px rgba(var(--color-primary), 0.3);
@@ -397,7 +423,6 @@ blockquote {
 
 /* Smaller text on very small screens */
 @media (max-width: 374px) {
-
   .card p,
   .text-base-content\/80 {
     font-size: 0.875rem;
@@ -411,7 +436,11 @@ blockquote {
   top: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, oklch(var(--color-primary)), oklch(var(--color-secondary)));
+  background: linear-gradient(
+    90deg,
+    oklch(var(--color-primary)),
+    oklch(var(--color-secondary))
+  );
   z-index: 9999;
   transition: width 0.1s ease-out;
 }
@@ -444,7 +473,12 @@ blockquote {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
   animation: shimmer 1.5s infinite;
 }
 
@@ -488,7 +522,6 @@ blockquote {
 /* Total cycle: 6s (2s per step) */
 
 @keyframes step-bounce-1 {
-
   0%,
   5% {
     transform: translateY(0);
@@ -521,7 +554,6 @@ blockquote {
 }
 
 @keyframes step-bounce-2 {
-
   0%,
   33% {
     transform: translateY(0);
@@ -554,7 +586,6 @@ blockquote {
 }
 
 @keyframes step-bounce-3 {
-
   0%,
   66% {
     transform: translateY(0);
@@ -587,7 +618,6 @@ blockquote {
 }
 
 @keyframes step-pulse-1 {
-
   0%,
   33%,
   100% {
@@ -607,7 +637,6 @@ blockquote {
 }
 
 @keyframes step-pulse-2 {
-
   0%,
   33%,
   66%,
@@ -628,7 +657,6 @@ blockquote {
 }
 
 @keyframes step-pulse-3 {
-
   0%,
   66%,
   100% {
@@ -700,3 +728,92 @@ blockquote {
   animation-play-state: paused;
   transform: scale(1.1);
 }
+
+/* ===== Scroll Reveal Animations ===== */
+
+/* Base state - elements are hidden before scrolling into view */
+.scroll-reveal,
+.scroll-reveal-left,
+.scroll-reveal-right,
+.scroll-reveal-scale {
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade up from bottom */
+.scroll-reveal {
+  transform: translateY(50px);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide in from left */
+.scroll-reveal-left {
+  transform: translateX(-50px);
+}
+
+.scroll-reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide in from right */
+.scroll-reveal-right {
+  transform: translateX(50px);
+}
+
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale up effect */
+.scroll-reveal-scale {
+  transform: scale(0.9);
+}
+
+.scroll-reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Add stagger delays for multiple elements */
+.scroll-reveal:nth-child(1),
+.scroll-reveal-left:nth-child(1),
+.scroll-reveal-right:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.scroll-reveal:nth-child(2),
+.scroll-reveal-left:nth-child(2),
+.scroll-reveal-right:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.scroll-reveal:nth-child(3),
+.scroll-reveal-left:nth-child(3),
+.scroll-reveal-right:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.scroll-reveal:nth-child(4),
+.scroll-reveal-left:nth-child(4),
+.scroll-reveal-right:nth-child(4) {
+  transition-delay: 0.4s;
+}
+
+/* Ensure animations work on mobile */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal-left,
+  .scroll-reveal-right,
+  .scroll-reveal-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
