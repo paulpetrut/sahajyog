@@ -731,17 +731,21 @@ blockquote {
 
 /* ===== Scroll Reveal Animations ===== */
 
-/* Base state - elements are hidden before scrolling into view */
+/* Base state - elements are visible by default (fallback) */
 .scroll-reveal,
 .scroll-reveal-left,
 .scroll-reveal-right,
 .scroll-reveal-scale {
-  opacity: 0;
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* JS will add this class to hide elements before animating */
+.prepare-reveal {
+  opacity: 0;
+}
+
 /* Fade up from bottom */
-.scroll-reveal {
+.prepare-reveal.scroll-reveal {
   transform: translateY(50px);
 }
 
@@ -751,7 +755,7 @@ blockquote {
 }
 
 /* Slide in from left */
-.scroll-reveal-left {
+.prepare-reveal.scroll-reveal-left {
   transform: translateX(-50px);
 }
 
@@ -761,7 +765,7 @@ blockquote {
 }
 
 /* Slide in from right */
-.scroll-reveal-right {
+.prepare-reveal.scroll-reveal-right {
   transform: translateX(50px);
 }
 
@@ -771,7 +775,7 @@ blockquote {
 }
 
 /* Scale up effect */
-.scroll-reveal-scale {
+.prepare-reveal.scroll-reveal-scale {
   transform: scale(0.9);
 }
 

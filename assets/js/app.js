@@ -222,15 +222,21 @@ Hooks.WelcomeAnimations = {
     const revealElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale')
     if (!revealElements.length) return
 
+    // Prepare elements for reveal (hide them)
+    // This ensures they are visible by default if JS fails
+    revealElements.forEach(el => el.classList.add('prepare-reveal'))
+
     const options = {
       root: null,
-      rootMargin: '0px 0px -150px 0px', // Trigger slightly before element is fully in view
+      rootMargin: '0px 0px -50px 0px', // Trigger when element is slightly in view
       threshold: 0.1,
     }
 
     this.revealObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
+          // Remove preparation class and add revealed class
+          entry.target.classList.remove('prepare-reveal')
           entry.target.classList.add('revealed')
           
           // Trigger stats animation if this is the stats section
@@ -239,8 +245,19 @@ Hooks.WelcomeAnimations = {
             this.countersAnimated = true
           }
 
-          // Optionally unobserve after reveal to improve performance
-          this.revealObserver.unobserve(entry.target)
+          // We do NOT unobserve here. Keeping the observer active ensures that 
+          // if the DOM is patched by LiveView and classes are lost, 
+          // the observer will re-apply the 'revealed' class when the element is in view.
+          // this.revealObserver.unobserve(entry.target)
+        } else {
+          // Element left the view. Reset it so it can animate again.
+          entry.target.classList.remove('revealed')
+          entry.target.classList.add('prepare-reveal')
+          
+          // Reset stats animation if this is the stats section
+          if (entry.target.id === 'stats-section') {
+            this.countersAnimated = false
+          }
         }
       })
     }, options)
