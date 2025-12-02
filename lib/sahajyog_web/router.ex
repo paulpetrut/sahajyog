@@ -27,6 +27,8 @@ defmodule SahajyogWeb.Router do
         {SahajyogWeb.LocaleLive, :default}
       ] do
       live "/", WelcomeLive
+      live "/demo", DemoLive
+      live "/demo2", DemoLive2
       live "/steps", StepsLive
       live "/talks", TalksLive
       live "/contact", ContactLive

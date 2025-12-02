@@ -108,6 +108,68 @@ Hooks.PreviewHandler = {
   },
 }
 
+// Apple-style scroll animations hook
+Hooks.AppleAnimations = {
+  mounted() {
+    // Find all elements with Apple animation classes
+    const animatedElements = this.el.querySelectorAll(
+      '.apple-reveal, .apple-scale, .apple-parallax, .apple-reveal-stagger'
+    )
+
+    if (!animatedElements.length) return
+
+    // Create IntersectionObserver with Apple-like timing
+    const options = {
+      root: null,
+      rootMargin: '0px 0px -100px 0px', // Trigger slightly before element is fully in view
+      threshold: 0.1,
+    }
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Add revealed class to trigger animation
+          entry.target.classList.add('revealed')
+
+          // Also reveal stagger children if present
+          const staggerChildren = entry.target.querySelectorAll('.apple-reveal-stagger')
+          staggerChildren.forEach((child) => child.classList.add('revealed'))
+        } else {
+          // Reset animation when element leaves viewport (for replay)
+          entry.target.classList.remove('revealed')
+
+          // Also reset stagger children
+          const staggerChildren = entry.target.querySelectorAll('.apple-reveal-stagger')
+          staggerChildren.forEach((child) => child.classList.remove('revealed'))
+        }
+      })
+    }, options)
+
+    // Observe all animated elements
+    animatedElements.forEach((el) => {
+      this.observer.observe(el)
+    })
+
+    // Immediately reveal elements already in viewport
+    requestAnimationFrame(() => {
+      animatedElements.forEach((el) => {
+        const rect = el.getBoundingClientRect()
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('revealed')
+          const staggerChildren = el.querySelectorAll('.apple-reveal-stagger')
+          staggerChildren.forEach((child) => child.classList.add('revealed'))
+        }
+      })
+    })
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect()
+    }
+  },
+}
+
 // Unsaved changes warning hook
 Hooks.UnsavedChanges = {
   mounted() {
