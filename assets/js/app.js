@@ -222,9 +222,15 @@ Hooks.WelcomeAnimations = {
     )
     if (!revealElements.length) return
 
-    // Prepare elements for reveal (hide them)
-    // This ensures they are visible by default if JS fails
-    revealElements.forEach((el) => el.classList.add('prepare-reveal'))
+    // Only hide elements that are BELOW the viewport
+    // Elements already visible on page load stay visible (better UX)
+    revealElements.forEach((el) => {
+      const rect = el.getBoundingClientRect()
+      // Only prepare (hide) elements that are below the viewport
+      if (rect.top >= window.innerHeight) {
+        el.classList.add('prepare-reveal')
+      }
+    })
 
     const options = {
       root: null,
