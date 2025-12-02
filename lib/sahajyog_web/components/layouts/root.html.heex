@@ -22,9 +22,9 @@
           }
         };
         if (!document.documentElement.hasAttribute("data-theme")) {
-          setTheme(localStorage.getItem("phx:theme") || "system");
+          setTheme(localStorage.getItem("phx:theme") || "dark");
         }
-        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "dark"));
         
         window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
       })();
@@ -110,9 +110,6 @@
             </li>
           <% end %>
         <% end %>
-        <li>
-          <.locale_switcher id="locale-select-desktop" current_locale={assigns[:locale] || "en"} />
-        </li>
         <%= if assigns[:current_scope] do %>
           <%!-- User Avatar Dropdown --%>
           <li class="dropdown dropdown-end">
@@ -157,11 +154,18 @@
               </li>
             </ul>
           </li>
-        <% else %>
+        <% end %>
+        <li>
+          <.locale_switcher id="locale-select-desktop" current_locale={assigns[:locale] || "en"} />
+        </li>
+        <li>
+          <.theme_toggle />
+        </li>
+        <%= unless assigns[:current_scope] do %>
           <li>
             <.link
               href={~p"/users/register"}
-              class="hover:text-base-content focus:outline-none"
+              class="btn btn-primary font-medium text-sm"
             >
               {gettext("Register")}
             </.link>

@@ -90,43 +90,6 @@ defmodule SahajyogWeb.Layouts do
   end
 
   @doc """
-  Provides dark vs light theme toggle based on themes defined in app.css.
-
-  See <head> in root.html.heex which applies the theme before page load.
-  """
-  def theme_toggle(assigns) do
-    ~H"""
-    <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
-      <div class="absolute w-1/3 h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left]" />
-
-      <button
-        class="flex p-2 cursor-pointer w-1/3"
-        phx-click={JS.dispatch("phx:set-theme")}
-        data-phx-theme="system"
-      >
-        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75 hover:opacity-100" />
-      </button>
-
-      <button
-        class="flex p-2 cursor-pointer w-1/3"
-        phx-click={JS.dispatch("phx:set-theme")}
-        data-phx-theme="light"
-      >
-        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
-      </button>
-
-      <button
-        class="flex p-2 cursor-pointer w-1/3"
-        phx-click={JS.dispatch("phx:set-theme")}
-        data-phx-theme="dark"
-      >
-        <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
-      </button>
-    </div>
-    """
-  end
-
-  @doc """
   Renders the site footer with navigation links and contact information.
   """
   attr :current_scope, :map, default: nil
@@ -155,7 +118,7 @@ defmodule SahajyogWeb.Layouts do
               <.link
                 href={~p"/"}
                 data-footer-path="/"
-                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+                class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
                 {gettext("Home")}
               </.link>
@@ -163,14 +126,14 @@ defmodule SahajyogWeb.Layouts do
                 :if={@current_scope}
                 href={~p"/steps"}
                 data-footer-path="/steps"
-                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+                class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
                 {gettext("Steps")}
               </.link>
               <.link
                 href={~p"/talks"}
                 data-footer-path="/talks"
-                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+                class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
                 {gettext("Talks")}
               </.link>
@@ -178,7 +141,7 @@ defmodule SahajyogWeb.Layouts do
                 :if={@current_scope}
                 href={~p"/resources"}
                 data-footer-path="/resources"
-                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+                class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
                 {gettext("Resources")}
               </.link>
@@ -186,7 +149,7 @@ defmodule SahajyogWeb.Layouts do
                 :if={@current_scope}
                 href={~p"/topics"}
                 data-footer-path="/topics"
-                class="footer-nav-link text-base-content/60 hover:text-primary transition-colors text-sm"
+                class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
                 {gettext("Topics")}
               </.link>
@@ -198,7 +161,7 @@ defmodule SahajyogWeb.Layouts do
             <h4 class="text-sm font-semibold text-base-content uppercase tracking-wider mb-4">
               {gettext("Get in Touch")}
             </h4>
-            <p class="text-base-content/60 text-sm mb-4">
+            <p class="text-base-content/70 text-sm mb-4">
               {gettext("Have questions? We'd love to hear from you.")}
             </p>
             <.link
@@ -214,11 +177,11 @@ defmodule SahajyogWeb.Layouts do
         <%!-- Bottom Bar --%>
         <div class="border-t border-base-content/10 mt-10 pt-6">
           <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p class="text-base-content/50 text-sm">
+            <p class="text-base-content/70 text-sm">
               © {DateTime.utc_now().year} SahajYog. {gettext("All rights reserved.")}
             </p>
             <div class="flex items-center gap-4">
-              <p class="text-base-content/40 text-xs">
+              <p class="text-base-content/60 text-xs">
                 {gettext("Sahaja Yoga is always free")}
               </p>
               <button

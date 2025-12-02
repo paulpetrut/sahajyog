@@ -247,10 +247,10 @@ defmodule SahajyogWeb.WelcomeLive do
                   class="w-20 h-20 rounded-full object-cover border-4 border-primary/20 shadow-lg"
                 />
               </div>
-              <p class="text-xs text-primary-content/90 font-medium mb-3 bg-primary/20 rounded-full px-3 py-1 inline-block">
+              <p class="text-xs text-primary-content font-medium mb-3 bg-primary rounded-full px-3 py-1 inline-block">
                 03 January 1988, Ganapatipule, India
               </p>
-              <blockquote class="text-sm sm:text-base text-base-content/80 italic leading-relaxed">
+              <blockquote class="text-sm sm:text-base text-base-content italic leading-relaxed">
                 "{gettext(
                   "Sahaja Yoga is a very subtle happening within us. It's a very subtle happening. And this subtler happening gives you sensitivity to divine joy."
                 )}"
@@ -281,10 +281,10 @@ defmodule SahajyogWeb.WelcomeLive do
                           class="w-32 h-32 rounded-full object-cover border-4 border-primary/20 shadow-lg"
                         />
                       </div>
-                      <p class="text-sm text-primary-content/90 font-medium mb-4 bg-primary/20 rounded-full px-3 py-1 inline-block">
+                      <p class="text-sm text-primary-content font-medium mb-4 bg-primary rounded-full px-3 py-1 inline-block">
                         03 January 1988, Ganapatipule, India
                       </p>
-                      <blockquote class="text-xl text-base-content/80 italic leading-relaxed max-w-3xl mx-auto">
+                      <blockquote class="text-xl text-base-content italic leading-relaxed max-w-3xl mx-auto">
                         "{gettext(
                           "Sahaja Yoga is a very subtle happening within us. It's a very subtle happening. And this subtler happening gives you sensitivity to divine joy."
                         )}"
@@ -302,10 +302,10 @@ defmodule SahajyogWeb.WelcomeLive do
                           class="w-32 h-32 rounded-full object-cover border-4 border-secondary/20 shadow-lg"
                         />
                       </div>
-                      <p class="text-sm text-secondary-content/90 font-medium mb-4 bg-secondary/20 rounded-full px-3 py-1 inline-block">
+                      <p class="text-sm text-primary-content font-medium mb-4 bg-primary rounded-full px-3 py-1 inline-block">
                         10 November 1980, Caxton Hall, UK
                       </p>
-                      <blockquote class="text-xl text-base-content/80 italic leading-relaxed max-w-3xl mx-auto">
+                      <blockquote class="text-xl text-base-content italic leading-relaxed max-w-3xl mx-auto">
                         "{gettext(
                           "What is yoga? In simple words, it is taking your attention to the Spirit. This is yoga. What does the Kundalini do? She raises your attention and takes it to the Spirit."
                         )}"
@@ -323,10 +323,10 @@ defmodule SahajyogWeb.WelcomeLive do
                           class="w-32 h-32 rounded-full object-cover border-4 border-accent/20 shadow-lg"
                         />
                       </div>
-                      <p class="text-sm text-accent-content/90 font-medium mb-4 bg-accent/20 rounded-full px-3 py-1 inline-block">
+                      <p class="text-sm text-primary-content font-medium mb-4 bg-primary rounded-full px-3 py-1 inline-block">
                         27 July 1988, Armonk, New York
                       </p>
-                      <blockquote class="text-xl text-base-content/80 italic leading-relaxed max-w-3xl mx-auto">
+                      <blockquote class="text-xl text-base-content italic leading-relaxed max-w-3xl mx-auto">
                         "{gettext(
                           "Meditation is the only way you can grow. Because when you meditate, you are in silence, you are in thoughtless awareness. Then the growth of awareness takes place."
                         )}"

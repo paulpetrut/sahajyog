@@ -88,12 +88,14 @@ Hooks.WatchedVideos = {
 
 Hooks.LocaleSelector = {
   mounted() {
-    this.el.addEventListener('change', (e) => {
-      const locale = e.target.value
-      // Reload the page with the new locale parameter
-      const url = new URL(window.location)
-      url.searchParams.set('locale', locale)
-      window.location.href = url.toString()
+    this.el.addEventListener('click', (e) => {
+      const locale = this.el.dataset.locale
+      if (locale) {
+        // Reload the page with the new locale parameter
+        const url = new URL(window.location)
+        url.searchParams.set('locale', locale)
+        window.location.href = url.toString()
+      }
     })
   },
 }
@@ -203,8 +205,6 @@ Hooks.WelcomeAnimations = {
     this.counterElements = document.querySelectorAll('[data-counter]')
     this.countersAnimated = false
 
-
-
     // Setup scroll reveal observer
     this.setupScrollRevealObserver()
 
@@ -216,15 +216,15 @@ Hooks.WelcomeAnimations = {
     this.handleScroll()
   },
 
-
-
   setupScrollRevealObserver() {
-    const revealElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale')
+    const revealElements = document.querySelectorAll(
+      '.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale'
+    )
     if (!revealElements.length) return
 
     // Prepare elements for reveal (hide them)
     // This ensures they are visible by default if JS fails
-    revealElements.forEach(el => el.classList.add('prepare-reveal'))
+    revealElements.forEach((el) => el.classList.add('prepare-reveal'))
 
     const options = {
       root: null,
@@ -238,22 +238,22 @@ Hooks.WelcomeAnimations = {
           // Remove preparation class and add revealed class
           entry.target.classList.remove('prepare-reveal')
           entry.target.classList.add('revealed')
-          
+
           // Trigger stats animation if this is the stats section
           if (entry.target.id === 'stats-section' && !this.countersAnimated) {
             this.animateCounters()
             this.countersAnimated = true
           }
 
-          // We do NOT unobserve here. Keeping the observer active ensures that 
-          // if the DOM is patched by LiveView and classes are lost, 
+          // We do NOT unobserve here. Keeping the observer active ensures that
+          // if the DOM is patched by LiveView and classes are lost,
           // the observer will re-apply the 'revealed' class when the element is in view.
           // this.revealObserver.unobserve(entry.target)
         } else {
           // Element left the view. Reset it so it can animate again.
           entry.target.classList.remove('revealed')
           entry.target.classList.add('prepare-reveal')
-          
+
           // Reset stats animation if this is the stats section
           if (entry.target.id === 'stats-section') {
             this.countersAnimated = false

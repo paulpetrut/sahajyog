@@ -55,9 +55,6 @@ defmodule SahajyogWeb.MobileMenu do
                 </li>
               <% end %>
               <li class="mt-2">
-                <.locale_switcher id="locale-select-mobile" current_locale={@locale} />
-              </li>
-              <li class="mt-2">
                 <.link href={~p"/users/settings"}>
                   <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
                   {gettext("Account settings")}
@@ -69,19 +66,42 @@ defmodule SahajyogWeb.MobileMenu do
                   {gettext("Sign out")}
                 </.link>
               </li>
+              <li class="border-t border-base-content/20 mt-4 pt-2">
+                <div class="flex items-center justify-between py-2 px-3">
+                  <span class="text-sm font-medium text-base-content/70">{gettext("Language")}</span>
+                  <.locale_switcher id="locale-select-mobile" current_locale={@locale} />
+                </div>
+              </li>
+              <li class="mt-2">
+                <div class="flex items-center justify-between py-2 px-3">
+                  <span class="text-sm font-medium text-base-content/70">{gettext("Theme")}</span>
+                  <.theme_toggle />
+                </div>
+              </li>
             <% else %>
               <%!-- Public links for non-logged-in users --%>
               <li>
                 <.link href={~p"/talks"}>{gettext("Talks")}</.link>
               </li>
+              <li class="border-t border-base-content/20 mt-4 pt-2">
+                <div class="flex items-center justify-between py-2 px-3">
+                  <span class="text-sm font-medium text-base-content/70">{gettext("Language")}</span>
+                  <.locale_switcher id="locale-select-mobile-public" current_locale={@locale} />
+                </div>
+              </li>
               <li class="mt-2">
-                <.locale_switcher id="locale-select-mobile" current_locale={@locale} />
+                <div class="flex items-center justify-between py-2 px-3">
+                  <span class="text-sm font-medium text-base-content/70">{gettext("Theme")}</span>
+                  <.theme_toggle />
+                </div>
               </li>
-              <li class="border-t border-base-content/20 mt-2 pt-2">
-                <.link href={~p"/users/register"}>{gettext("Register")}</.link>
+              <li class="border-t border-base-content/20 mt-4 pt-2">
+                <.link href={~p"/users/register"} class="btn btn-primary btn-sm w-full font-medium">
+                  {gettext("Register")}
+                </.link>
               </li>
-              <li>
-                <.link href={~p"/users/log-in"}>{gettext("Log in")}</.link>
+              <li class="mt-2">
+                <.link href={~p"/users/log-in"} class="text-center">{gettext("Log in")}</.link>
               </li>
             <% end %>
           </ul>

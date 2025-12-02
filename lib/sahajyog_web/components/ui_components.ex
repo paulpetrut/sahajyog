@@ -7,6 +7,8 @@ defmodule SahajyogWeb.UIComponents do
 
   import SahajyogWeb.CoreComponents, only: [icon: 1]
 
+  alias Phoenix.LiveView.JS
+
   @doc """
   Renders a page container with consistent gradient background.
 
@@ -643,6 +645,39 @@ defmodule SahajyogWeb.UIComponents do
         <div class="skeleton h-4 w-full rounded"></div>
         <div class="skeleton h-4 w-3/4 rounded"></div>
       </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Provides dark vs light theme toggle based on themes defined in app.css.
+
+  See <head> in root.html.heex which applies the theme before page load.
+  """
+  def theme_toggle(assigns) do
+    ~H"""
+    <div class="relative inline-flex items-center justify-center">
+      <%!-- Button to switch to Light mode (visible when in Dark mode) --%>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-circle hidden [[data-theme=dark]_&]:inline-flex text-base-content/70 hover:text-base-content transition-colors"
+        phx-click={JS.dispatch("phx:set-theme")}
+        data-phx-theme="light"
+        aria-label={gettext("Switch to light theme")}
+      >
+        <.icon name="hero-sun" class="w-5 h-5" />
+      </button>
+
+      <%!-- Button to switch to Dark mode (visible when in Light mode) --%>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-circle inline-flex [[data-theme=dark]_&]:hidden text-base-content/70 hover:text-base-content transition-colors"
+        phx-click={JS.dispatch("phx:set-theme")}
+        data-phx-theme="dark"
+        aria-label={gettext("Switch to dark theme")}
+      >
+        <.icon name="hero-moon" class="w-5 h-5" />
+      </button>
     </div>
     """
   end
