@@ -110,6 +110,12 @@
             </li>
           <% end %>
         <% end %>
+        <li>
+          <.locale_switcher id="locale-select-desktop" current_locale={assigns[:locale] || "en"} />
+        </li>
+        <li>
+          <.theme_toggle />
+        </li>
         <%= if assigns[:current_scope] do %>
           <%!-- User Avatar Dropdown --%>
           <li class="dropdown dropdown-end">
@@ -154,14 +160,7 @@
               </li>
             </ul>
           </li>
-        <% end %>
-        <li>
-          <.locale_switcher id="locale-select-desktop" current_locale={assigns[:locale] || "en"} />
-        </li>
-        <li>
-          <.theme_toggle />
-        </li>
-        <%= unless assigns[:current_scope] do %>
+        <% else %>
           <li>
             <.link
               href={~p"/users/register"}
