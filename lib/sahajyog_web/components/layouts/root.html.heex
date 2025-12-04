@@ -7,6 +7,13 @@
     <.live_title suffix=" · SahajYog">
       {assigns[:page_title] || "SahajYog"}
     </.live_title>
+    <%!-- Google Fonts: Playfair Display for headings/quotes, Inter for body --%>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
@@ -31,18 +38,18 @@
     </script>
   </head>
   <body class="overflow-x-hidden bg-base-300">
-    <div class="w-full max-w-full relative z-[9999] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 bg-base-300/95 backdrop-blur-sm border-b border-base-content/10">
+    <div class="sticky top-0 w-full max-w-full relative z-[9999] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 2xl:py-6 bg-base-100/95 backdrop-blur-sm border-b border-base-content/10 shadow-sm">
       <%!-- Left Section - Home Icon --%>
       <div class="flex items-center shrink-0">
         <%!-- Home Icon --%>
         <a
           href="/"
-          class="p-1.5 sm:p-2 text-base-content/70 hover:text-base-content transition-colors home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded"
+          class="p-1.5 sm:p-2 text-base-content hover:text-base-content transition-colors home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded"
           title="Home"
           style="visibility: hidden;"
         >
           <svg
-            class="w-5 h-5"
+            class="w-5 h-5 2xl:w-6 2xl:h-6"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -57,7 +64,7 @@
       </div>
 
       <%!-- Desktop Navigation --%>
-      <ul class="menu menu-horizontal hidden md:flex items-center gap-2 lg:gap-4 text-base-content/70 shrink-0">
+      <ul class="menu menu-horizontal hidden md:flex items-center gap-2 lg:gap-4 text-base-content shrink-0 2xl:text-lg">
         <%!-- Public navigation links - visible to all users --%>
         <li>
           <.link
@@ -111,7 +118,10 @@
           <% end %>
         <% end %>
         <li>
-          <.locale_switcher id="locale-select-desktop" current_locale={assigns[:locale] || "en"} />
+          <.locale_switcher
+            id="locale-select-desktop"
+            current_locale={assigns[:locale] || "en"}
+          />
         </li>
         <li>
           <.theme_toggle />
@@ -205,6 +215,12 @@
     </div>
     <.mobile_menu current_scope={assigns[:current_scope]} locale={assigns[:locale] || "en"} />
     <script>
+      // Ensure page always loads at the top
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+
       // Function to update home icon visibility based on current path
       const updateHomeIconVisibility = () => {
         const homeIcon = document.querySelector('.home-icon');
@@ -218,6 +234,11 @@
 
       // Update on LiveView navigation
       window.addEventListener('phx:page-loading-stop', updateHomeIconVisibility);
+      
+      // Reset scroll position on LiveView navigation
+      window.addEventListener('phx:page-loading-stop', () => {
+        window.scrollTo(0, 0);
+      });
 
       // Function to update active nav link
       const updateActiveNavLink = () => {

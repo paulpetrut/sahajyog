@@ -591,7 +591,7 @@ defmodule SahajyogWeb.TalksLive do
         <% end %>
 
         <%!-- Title --%>
-        <h3 class="text-lg sm:text-xl font-bold text-base-content mb-3 line-clamp-2 min-h-[3.5rem] leading-tight">
+        <h3 class="text-lg sm:text-xl font-bold text-base-content mb-3 line-clamp-3 leading-tight">
           {Map.get(@talk, "title", "Untitled")}
         </h3>
 
@@ -676,7 +676,7 @@ defmodule SahajyogWeb.TalksLive do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300">
+    <div class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 noise-overlay">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <%!-- Header --%>
         <div class="mb-6 sm:mb-8">

@@ -13,7 +13,7 @@ defmodule Sahajyog.Content do
   # :public means accessible to unauthenticated users
   @category_access %{
     "Welcome" => [:public, "Level1", "Level2", "Level3"],
-    "Getting Started" => ["Level1", "Level2", "Level3"],
+    "Getting Started" => [:public, "Level1", "Level2", "Level3"],
     "Advanced Topics" => ["Level1", "Level2"],
     "Excerpts" => ["Level1", "Level2"]
   }

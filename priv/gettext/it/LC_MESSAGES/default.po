@@ -39,17 +39,17 @@ msgstr "Non riusciamo a trovare internet"
 msgid "close"
 msgstr "chiudi"
 
-#: lib/sahajyog_web/live/welcome_live.ex:509
+#: lib/sahajyog_web/live/welcome_live.ex:593
 #, elixir-autogen, elixir-format
 msgid "Browse All Talks"
 msgstr "Sfoglia tutti i discorsi"
 
-#: lib/sahajyog_web/live/welcome_live.ex:97
+#: lib/sahajyog_web/live/welcome_live.ex:106
 #, elixir-autogen, elixir-format
 msgid "Discover inner peace through meditation"
 msgstr "Scopri la pace interiore attraverso la meditazione"
 
-#: lib/sahajyog_web/live/welcome_live.ex:494
+#: lib/sahajyog_web/live/welcome_live.ex:575
 #, elixir-autogen, elixir-format
 msgid "Explore our complete collection of talks and guided meditations"
 msgstr "Esplora la nostra collezione completa di discorsi e meditazioni guidate"
@@ -65,7 +65,7 @@ msgstr "Nascondi barra laterale"
 msgid "Mark as Watched"
 msgstr "Segna come visto"
 
-#: lib/sahajyog_web/live/welcome_live.ex:491
+#: lib/sahajyog_web/live/welcome_live.ex:569
 #, elixir-autogen, elixir-format
 msgid "Ready to Begin Your Journey?"
 msgstr "Pronto per iniziare il tuo viaggio?"
@@ -85,14 +85,12 @@ msgstr "Contenuto SahajYog"
 msgid "Show sidebar"
 msgstr "Mostra barra laterale"
 
-#: lib/sahajyog_web/live/welcome_live.ex:502
-#: lib/sahajyog_web/live/welcome_test_live.ex:75
-#: lib/sahajyog_web/live/welcome_test_live.ex:122
+#: lib/sahajyog_web/live/welcome_live.ex:586
 #, elixir-autogen, elixir-format
 msgid "Start Learning"
 msgstr "Inizia ad imparare"
 
-#: lib/sahajyog_web/live/welcome_live.ex:94
+#: lib/sahajyog_web/live/welcome_live.ex:103
 #, elixir-autogen, elixir-format
 msgid "Welcome to Sahaja Yoga"
 msgstr "Benvenuto a Sahaja Yoga"
@@ -154,6 +152,7 @@ msgid "Clear all"
 msgstr "Cancella tutto"
 
 #: lib/sahajyog_web/live/talks_live.ex:804
+#: lib/sahajyog_web/live/user_live/settings.ex:40
 #, elixir-autogen, elixir-format
 msgid "Country"
 msgstr "Paese"
@@ -184,6 +183,7 @@ msgid "Newest"
 msgstr "Più recenti"
 
 #: lib/sahajyog_web/live/talks_live.ex:1145
+#: lib/sahajyog_web/live/topics_live.ex:346
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "Successivo"
@@ -199,6 +199,7 @@ msgid "Oldest"
 msgstr "Più vecchi"
 
 #: lib/sahajyog_web/live/talks_live.ex:1105
+#: lib/sahajyog_web/live/topics_live.ex:306
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr "Precedente"
@@ -231,6 +232,7 @@ msgstr "Mostra"
 
 #: lib/sahajyog_web/live/talks_live.ex:1044
 #: lib/sahajyog_web/live/talks_live.ex:1077
+#: lib/sahajyog_web/live/topics_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Showing"
 msgstr "Mostrando"
@@ -252,6 +254,7 @@ msgstr "Anno"
 
 #: lib/sahajyog_web/live/talks_live.ex:1048
 #: lib/sahajyog_web/live/talks_live.ex:1085
+#: lib/sahajyog_web/live/topics_live.ex:287
 #, elixir-autogen, elixir-format
 msgid "of"
 msgstr "di"
@@ -265,6 +268,7 @@ msgstr[0] "discorso"
 msgstr[1] "discorsi"
 
 #: lib/sahajyog_web/live/talks_live.ex:1081
+#: lib/sahajyog_web/live/topics_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "to"
 msgstr "a"
@@ -296,7 +300,7 @@ msgstr "Non hai un account?"
 #: lib/sahajyog_web/live/user_live/login.ex:77
 #: lib/sahajyog_web/live/user_live/login.ex:137
 #: lib/sahajyog_web/live/user_live/registration.ex:30
-#: lib/sahajyog_web/live/user_live/settings.ex:32
+#: lib/sahajyog_web/live/user_live/settings.ex:84
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "Email"
@@ -383,12 +387,11 @@ msgstr "Crea un account"
 msgid "Creating account..."
 msgstr "Creazione account..."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:174
-#: lib/sahajyog_web/components/mobile_menu.ex:84
+#: lib/sahajyog_web/components/layouts/root.html.heex:187
+#: lib/sahajyog_web/components/mobile_menu.ex:104
 #: lib/sahajyog_web/live/user_live/confirmation.ex:56
 #: lib/sahajyog_web/live/user_live/registration.ex:18
-#: lib/sahajyog_web/live/welcome_live.ex:586
-#: lib/sahajyog_web/live/welcome_test_live.ex:471
+#: lib/sahajyog_web/live/welcome_live.ex:688
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr "Accedi"
@@ -423,8 +426,8 @@ msgstr "Solo se hai impostato una password sopra"
 msgid "Password (optional)"
 msgstr "Password"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:166
-#: lib/sahajyog_web/components/mobile_menu.ex:81
+#: lib/sahajyog_web/components/layouts/root.html.heex:179
+#: lib/sahajyog_web/components/mobile_menu.ex:100
 #: lib/sahajyog_web/live/user_live/registration.ex:76
 #, elixir-autogen, elixir-format
 msgid "Register"
@@ -441,7 +444,7 @@ msgstr "Account creato ma non siamo riusciti a inviare l'email di conferma. Cont
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Controlla la tua email! Se il tuo indirizzo è nel nostro sistema, riceverai a breve un link di accesso."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:144
+#: lib/sahajyog_web/live/user_live/settings.ex:249
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Un link per confermare la modifica dell'email è stato inviato al nuovo indirizzo."
@@ -451,27 +454,27 @@ msgstr "Un link per confermare la modifica dell'email è stato inviato al nuovo 
 msgid "Account Settings"
 msgstr "Impostazioni account"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:38
+#: lib/sahajyog_web/live/user_live/settings.ex:90
 #, elixir-autogen, elixir-format
 msgid "Change Email"
 msgstr "Cambia email"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:37
+#: lib/sahajyog_web/live/user_live/settings.ex:89
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr "Modifica in corso..."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:72
+#: lib/sahajyog_web/live/user_live/settings.ex:124
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
 msgstr "Conferma nuova password"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:96
+#: lib/sahajyog_web/live/user_live/settings.ex:148
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr "Il link di modifica email non è valido o è scaduto."
 
-#: lib/sahajyog_web/live/user_live/settings.ex:93
+#: lib/sahajyog_web/live/user_live/settings.ex:145
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr "Email modificata con successo."
@@ -481,17 +484,18 @@ msgstr "Email modificata con successo."
 msgid "Manage your account email address and password settings"
 msgstr "Gestisci l'indirizzo email e le impostazioni della password del tuo account"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:65
+#: lib/sahajyog_web/live/user_live/settings.ex:117
 #, elixir-autogen, elixir-format
 msgid "New password"
 msgstr "Nuova password"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:77
+#: lib/sahajyog_web/live/user_live/settings.ex:129
 #, elixir-autogen, elixir-format
 msgid "Save Password"
 msgstr "Salva password"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:76
+#: lib/sahajyog_web/live/user_live/settings.ex:66
+#: lib/sahajyog_web/live/user_live/settings.ex:128
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Salvataggio..."
@@ -521,17 +525,12 @@ msgstr "Il link non è valido o è scaduto."
 msgid "User confirmed successfully."
 msgstr "Utente confermato con successo."
 
-#: lib/sahajyog_web/controllers/user_session_controller.ex:12
-#, elixir-autogen, elixir-format
-msgid "Welcome back!"
-msgstr "Bentornato!"
-
 #: lib/sahajyog_web/controllers/user_session_controller.ex:29
 #, elixir-autogen, elixir-format
 msgid "Your account has been confirmed! Please log in with your password."
 msgstr "Il tuo account è stato confermato! Effettua il login con la tua password."
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:108
+#: lib/sahajyog_web/components/layouts/root.html.heex:115
 #: lib/sahajyog_web/components/mobile_menu.ex:54
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -640,12 +639,13 @@ msgid "No resources available for your level"
 msgstr "Nessuna risorsa disponibile per il tuo livello"
 
 #: lib/sahajyog_web/components/admin_nav.ex:50
-#: lib/sahajyog_web/components/layouts.ex:183
-#: lib/sahajyog_web/components/layouts/root.html.heex:97
+#: lib/sahajyog_web/components/layouts.ex:146
+#: lib/sahajyog_web/components/layouts/root.html.heex:104
 #: lib/sahajyog_web/components/mobile_menu.ex:50
 #: lib/sahajyog_web/live/admin/resources_live.ex:417
+#: lib/sahajyog_web/live/demo_live_2.ex:387
 #: lib/sahajyog_web/live/resources_live.ex:103
-#: lib/sahajyog_web/live/welcome_live.ex:549
+#: lib/sahajyog_web/live/welcome_live.ex:642
 #, elixir-autogen, elixir-format
 msgid "Resources"
 msgstr "Risorse"
@@ -699,13 +699,13 @@ msgstr "Carica Risorsa"
 msgid "Videos"
 msgstr "Video"
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:149
-#: lib/sahajyog_web/components/mobile_menu.ex:63
+#: lib/sahajyog_web/components/layouts/root.html.heex:162
+#: lib/sahajyog_web/components/mobile_menu.ex:60
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Account settings"
 msgstr "Impostazioni account"
 
-#: lib/sahajyog_web/live/user_live/settings.ex:45
+#: lib/sahajyog_web/live/user_live/settings.ex:97
 #, elixir-autogen, elixir-format
 msgid "Change Password"
 msgstr "Cambia Password"
@@ -715,7 +715,7 @@ msgstr "Cambia Password"
 msgid "Current thumbnail"
 msgstr ""
 
-#: lib/sahajyog_web/live/user_live/settings.ex:22
+#: lib/sahajyog_web/live/user_live/settings.ex:74
 #, elixir-autogen, elixir-format
 msgid "Email Address"
 msgstr ""
@@ -745,8 +745,8 @@ msgstr ""
 msgid "Preview not available for this file type"
 msgstr ""
 
-#: lib/sahajyog_web/components/layouts/root.html.heex:155
-#: lib/sahajyog_web/components/mobile_menu.ex:69
+#: lib/sahajyog_web/components/layouts/root.html.heex:168
+#: lib/sahajyog_web/components/mobile_menu.ex:66
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Disconnetti"
@@ -803,7 +803,7 @@ msgstr "Torna all'Argomento"
 msgid "Back to Topics"
 msgstr "Torna agli Argomenti"
 
-#: lib/sahajyog_web/live/topics_live.ex:188
+#: lib/sahajyog_web/live/topics_live.ex:360
 #, elixir-autogen, elixir-format
 msgid "Be the first to propose a topic"
 msgstr "Sii il primo a proporre un argomento"
@@ -813,11 +813,11 @@ msgstr "Sii il primo a proporre un argomento"
 msgid "Briefly describe what this topic should cover..."
 msgstr "Descrivi brevemente cosa dovrebbe coprire questo argomento..."
 
-#: lib/sahajyog_web/components/ui_components.ex:287
+#: lib/sahajyog_web/components/ui_components.ex:289
 #: lib/sahajyog_web/live/admin/topics_live.ex:388
 #: lib/sahajyog_web/live/steps_live.ex:365
 #: lib/sahajyog_web/live/steps_live.ex:464
-#: lib/sahajyog_web/live/welcome_live.ex:125
+#: lib/sahajyog_web/live/welcome_live.ex:137
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Close"
 msgstr "chiudi"
@@ -869,12 +869,13 @@ msgstr "Modifica Riferimento"
 msgid "Edit Topic"
 msgstr "Modifica Argomento"
 
-#: lib/sahajyog_web/live/welcome_live.ex:516
+#: lib/sahajyog_web/live/demo_live.ex:236
+#: lib/sahajyog_web/live/welcome_live.ex:600
 #, elixir-autogen, elixir-format
 msgid "Explore Topics"
 msgstr "Esplora Argomenti"
 
-#: lib/sahajyog_web/live/topics_live.ex:73
+#: lib/sahajyog_web/live/topics_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Explore in-depth articles on Sahaja Yoga"
 msgstr "Esplora articoli approfonditi sullo Sahaja Yoga"
@@ -904,6 +905,8 @@ msgstr ""
 msgid "Invite Co-Author"
 msgstr ""
 
+#: lib/sahajyog_web/components/mobile_menu.ex:71
+#: lib/sahajyog_web/components/mobile_menu.ex:88
 #: lib/sahajyog_web/live/admin/topic_proposals_live.ex:183
 #: lib/sahajyog_web/live/topic_edit_live.ex:244
 #, elixir-autogen, elixir-format, fuzzy
@@ -955,7 +958,7 @@ msgstr ""
 msgid "No topics match the selected filter"
 msgstr ""
 
-#: lib/sahajyog_web/live/topics_live.ex:187
+#: lib/sahajyog_web/live/topics_live.ex:359
 #, elixir-autogen, elixir-format
 msgid "No topics yet"
 msgstr "Nessun argomento ancora"
@@ -985,9 +988,9 @@ msgstr ""
 msgid "Proposals"
 msgstr ""
 
-#: lib/sahajyog_web/live/topics_live.ex:78
-#: lib/sahajyog_web/live/topics_live.ex:83
-#: lib/sahajyog_web/live/topics_live.ex:192
+#: lib/sahajyog_web/live/topics_live.ex:169
+#: lib/sahajyog_web/live/topics_live.ex:174
+#: lib/sahajyog_web/live/topics_live.ex:364
 #, elixir-autogen, elixir-format
 msgid "Propose Topic"
 msgstr "Proponi Argomento"
@@ -1155,10 +1158,11 @@ msgid "Topic updated successfully"
 msgstr "Argomento aggiornato con successo"
 
 #: lib/sahajyog_web/components/admin_nav.ex:64
-#: lib/sahajyog_web/components/layouts.ex:191
-#: lib/sahajyog_web/components/layouts/root.html.heex:88
+#: lib/sahajyog_web/components/layouts.ex:154
+#: lib/sahajyog_web/components/layouts/root.html.heex:95
 #: lib/sahajyog_web/components/mobile_menu.ex:47
-#: lib/sahajyog_web/live/topics_live.ex:70
+#: lib/sahajyog_web/live/demo_live_2.ex:338
+#: lib/sahajyog_web/live/topics_live.ex:161
 #, elixir-autogen, elixir-format
 msgid "Topics"
 msgstr "Argomenti"
@@ -1267,7 +1271,7 @@ msgstr ""
 msgid "Fetch Video Info"
 msgstr ""
 
-#: lib/sahajyog_web/components/ui_components.ex:530
+#: lib/sahajyog_web/components/ui_components.ex:532
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Loading"
 msgstr "Caricamento discorsi..."
@@ -1312,10 +1316,10 @@ msgstr "Seleziona un tipo"
 msgid "Step Number"
 msgstr ""
 
-#: lib/sahajyog_web/components/layouts.ex:175
-#: lib/sahajyog_web/components/layouts/root.html.heex:68
+#: lib/sahajyog_web/components/layouts.ex:138
+#: lib/sahajyog_web/components/layouts/root.html.heex:75
 #: lib/sahajyog_web/components/mobile_menu.ex:44
-#: lib/sahajyog_web/components/mobile_menu.ex:75
+#: lib/sahajyog_web/components/mobile_menu.ex:84
 #, elixir-autogen, elixir-format
 msgid "Talks"
 msgstr "Discorsi"
@@ -1350,8 +1354,8 @@ msgstr ""
 msgid "View Video"
 msgstr ""
 
-#: lib/sahajyog_web/components/layouts.ex:168
-#: lib/sahajyog_web/components/layouts/root.html.heex:79
+#: lib/sahajyog_web/components/layouts.ex:131
+#: lib/sahajyog_web/components/layouts/root.html.heex:86
 #: lib/sahajyog_web/components/mobile_menu.ex:41
 #, elixir-autogen, elixir-format
 msgid "Steps"
@@ -1425,7 +1429,7 @@ msgstr ""
 msgid "Tip Images: click to resize • use ◀ ▶ to wrap text around"
 msgstr "Suggerimento Immagini: clicca per ridimensionare • usa ◀ ▶ per avvolgere il testo"
 
-#: lib/sahajyog_web/components/layouts.ex:218
+#: lib/sahajyog_web/components/layouts.ex:181
 #, elixir-autogen, elixir-format
 msgid "All rights reserved."
 msgstr "Tutti i diritti riservati."
@@ -1435,26 +1439,24 @@ msgstr "Tutti i diritti riservati."
 msgid "Back to Home"
 msgstr "Torna alla home"
 
-#: lib/sahajyog_web/live/welcome_live.ex:206
-#: lib/sahajyog_web/live/welcome_test_live.ex:279
+#: lib/sahajyog_web/live/welcome_live.ex:226
 #, elixir-autogen, elixir-format
 msgid "Chakra System"
 msgstr "Il Sistema dei Chakra"
 
-#: lib/sahajyog_web/components/layouts.ex:209
+#: lib/sahajyog_web/components/layouts.ex:172
 #: lib/sahajyog_web/live/contact_live.ex:19
 #: lib/sahajyog_web/live/contact_live.ex:148
 #, elixir-autogen, elixir-format
 msgid "Contact Us"
 msgstr "Contattaci"
 
-#: lib/sahajyog_web/live/welcome_live.ex:114
-#: lib/sahajyog_web/live/welcome_test_live.ex:166
+#: lib/sahajyog_web/live/welcome_live.ex:126
 #, elixir-autogen, elixir-format
 msgid "Daily Update"
 msgstr "Aggiornamento giornaliero"
 
-#: lib/sahajyog_web/components/layouts.ex:143
+#: lib/sahajyog_web/components/layouts.ex:106
 #, elixir-autogen, elixir-format
 msgid "Discover inner peace through Sahaja Yoga meditation. Explore teachings, talks, and resources for your spiritual journey."
 msgstr "Scopri la pace interiore attraverso la meditazione Sahaja Yoga. Esplora insegnamenti, conferenze e risorse per il tuo viaggio spirituale."
@@ -1469,7 +1471,8 @@ msgstr "L'email non è valida"
 msgid "Email is required"
 msgstr "L'email è obbligatoria"
 
-#: lib/sahajyog_web/components/layouts.ex:152
+#: lib/sahajyog_web/components/layouts.ex:115
+#: lib/sahajyog_web/live/demo_live_2.ex:346
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Explore"
 msgstr "Esplora Argomenti"
@@ -1479,22 +1482,22 @@ msgstr "Esplora Argomenti"
 msgid "Failed to send message. Please try again or email us directly."
 msgstr "Invio del messaggio non riuscito. Riprova o inviaci un'email direttamente."
 
-#: lib/sahajyog_web/components/layouts.ex:199
+#: lib/sahajyog_web/components/layouts.ex:162
 #, elixir-autogen, elixir-format
 msgid "Get in Touch"
 msgstr "Mettiti in contatto"
 
-#: lib/sahajyog_web/live/welcome_live.ex:339
+#: lib/sahajyog_web/live/welcome_live.ex:391
 #, elixir-autogen, elixir-format
 msgid "Go to quote 1"
 msgstr "Vai alla citazione 1"
 
-#: lib/sahajyog_web/live/welcome_live.ex:345
+#: lib/sahajyog_web/live/welcome_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "Go to quote 2"
 msgstr "Vai alla citazione 2"
 
-#: lib/sahajyog_web/live/welcome_live.ex:351
+#: lib/sahajyog_web/live/welcome_live.ex:403
 #, elixir-autogen, elixir-format
 msgid "Go to quote 3"
 msgstr "Vai alla citazione 3"
@@ -1504,22 +1507,22 @@ msgstr "Vai alla citazione 3"
 msgid "Have a question or feedback? We'd love to hear from you."
 msgstr "Hai una domanda o un feedback? Ci piacerebbe sentirti."
 
-#: lib/sahajyog_web/components/layouts.ex:202
+#: lib/sahajyog_web/components/layouts.ex:165
 #, elixir-autogen, elixir-format
 msgid "Have questions? We'd love to hear from you."
 msgstr "Hai domande? Ci piacerebbe sentirti."
 
-#: lib/sahajyog_web/components/layouts.ex:160
+#: lib/sahajyog_web/components/layouts.ex:123
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr "Home"
 
-#: lib/sahajyog_web/live/welcome_live.ex:176
+#: lib/sahajyog_web/live/welcome_live.ex:195
 #, elixir-autogen, elixir-format
 msgid "In Sanskrit, Sahaja (सहज) means 'born with' and Yoga means union. The name translates to 'the union which one is born with' - the union between your true self and the all-pervading power that permeates all elements of life."
 msgstr "In sanscrito, Sahaja (सहज) significa 'nato con' e Yoga significa unione. Il nome si traduce come 'l'unione con cui si nasce' - l'unione tra il tuo vero sé e il potere onnipervadente che permea tutti gli elementi della vita."
 
-#: lib/sahajyog_web/live/welcome_live.ex:325
+#: lib/sahajyog_web/live/welcome_live.ex:373
 #, elixir-autogen, elixir-format
 msgid "Meditation is the only way you can grow. Because when you meditate, you are in silence, you are in thoughtless awareness. Then the growth of awareness takes place."
 msgstr "La meditazione è l'unico modo in cui puoi crescere. Perché quando mediti, sei nel silenzio, sei nella consapevolezza senza pensieri. Allora avviene la crescita della consapevolezza."
@@ -1549,40 +1552,39 @@ msgstr "Nome"
 msgid "Name is required"
 msgstr "Il nome è obbligatorio"
 
-#: lib/sahajyog_web/live/welcome_live.ex:365
+#: lib/sahajyog_web/live/welcome_live.ex:417
 #, elixir-autogen, elixir-format
 msgid "Next quote"
 msgstr "Citazione successiva"
 
-#: lib/sahajyog_web/live/welcome_live.ex:359
+#: lib/sahajyog_web/live/welcome_live.ex:411
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Previous quote"
 msgstr "Precedente"
 
-#: lib/sahajyog_web/live/welcome_live.ex:235
-#: lib/sahajyog_web/live/welcome_live.ex:259
+#: lib/sahajyog_web/live/welcome_live.ex:256
+#: lib/sahajyog_web/live/welcome_live.ex:286
 #, elixir-autogen, elixir-format
 msgid "Quotes from Shri Mataji"
 msgstr "Citazioni di Shri Mataji"
 
-#: lib/sahajyog_web/live/welcome_live.ex:171
-#: lib/sahajyog_web/live/welcome_test_live.ex:216
+#: lib/sahajyog_web/live/welcome_live.ex:190
 #, elixir-autogen, elixir-format
 msgid "Sahaja Yoga is a form of yoga initiated by Shri Mataji Nirmala Devi on May 5th, 1970. Through her profound meditation, she made the breakthrough that integrated the spiritual and physical dimensions, making Self Realisation accessible to all mankind."
 msgstr "Il Sahaja Yoga è una forma di yoga iniziata da Shri Mataji Nirmala Devi il 5 maggio 1970. Attraverso la sua profonda meditazione, ha fatto la scoperta che ha integrato le dimensioni spirituale e fisica, rendendo l'Autorealizzazione accessibile a tutta l'umanità."
 
-#: lib/sahajyog_web/live/welcome_live.ex:249
-#: lib/sahajyog_web/live/welcome_live.ex:283
+#: lib/sahajyog_web/live/welcome_live.ex:272
+#: lib/sahajyog_web/live/welcome_live.ex:315
 #, elixir-autogen, elixir-format
 msgid "Sahaja Yoga is a very subtle happening within us. It's a very subtle happening. And this subtler happening gives you sensitivity to divine joy."
 msgstr "Il Sahaja Yoga è un avvenimento molto sottile dentro di noi. È un avvenimento molto sottile. E questo avvenimento più sottile ti dà sensibilità alla gioia divina."
 
-#: lib/sahajyog_web/components/layouts.ex:222
+#: lib/sahajyog_web/components/layouts.ex:185
 #, elixir-autogen, elixir-format
 msgid "Sahaja Yoga is always free"
 msgstr "Sahaja Yoga è sempre gratuito"
 
-#: lib/sahajyog_web/live/welcome_live.ex:213
+#: lib/sahajyog_web/live/welcome_live.ex:233
 #, elixir-autogen, elixir-format
 msgid "Sahaja Yoga meditation works directly on the central nervous system that controls all of our mental, physical and emotional activity. It, therefore, has the potential to dramatically improve our wellbeing by going directly to the source of any problem."
 msgstr "La meditazione Sahaja Yoga agisce direttamente sul sistema nervoso centrale che controlla tutta la nostra attività mentale, fisica ed emotiva. Ha quindi il potenziale di migliorare drasticamente il nostro benessere andando direttamente alla fonte di qualsiasi problema."
@@ -1592,17 +1594,15 @@ msgstr "La meditazione Sahaja Yoga agisce direttamente sul sistema nervoso centr
 msgid "Send Message"
 msgstr "Invia messaggio"
 
-#: lib/sahajyog_web/live/welcome_live.ex:241
-#: lib/sahajyog_web/live/welcome_live.ex:275
-#: lib/sahajyog_web/live/welcome_live.ex:296
-#: lib/sahajyog_web/live/welcome_live.ex:317
+#: lib/sahajyog_web/live/welcome_live.ex:267
+#: lib/sahajyog_web/live/welcome_live.ex:310
+#: lib/sahajyog_web/live/welcome_live.ex:339
+#: lib/sahajyog_web/live/welcome_live.ex:368
 #, elixir-autogen, elixir-format
 msgid "Shri Mataji"
 msgstr "Shri Mataji"
 
-#: lib/sahajyog_web/live/welcome_live.ex:190
-#: lib/sahajyog_web/live/welcome_test_live.ex:226
-#: lib/sahajyog_web/live/welcome_test_live.ex:233
+#: lib/sahajyog_web/live/welcome_live.ex:209
 #, elixir-autogen, elixir-format
 msgid "Shri Mataji Nirmala Devi"
 msgstr "Shri Mataji Nirmala Devi"
@@ -1627,8 +1627,7 @@ msgstr "Raccontaci di più..."
 msgid "Thank you for reaching out!"
 msgstr "Grazie per averci contattato!"
 
-#: lib/sahajyog_web/live/welcome_live.ex:200
-#: lib/sahajyog_web/live/welcome_test_live.ex:286
+#: lib/sahajyog_web/live/welcome_live.ex:220
 #, elixir-autogen, elixir-format
 msgid "The Subtle System"
 msgstr "Il Sistema Sottile"
@@ -1639,12 +1638,12 @@ msgstr "Il Sistema Sottile"
 msgid "The content on this page is refreshed every Monday."
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:116
+#: lib/sahajyog_web/live/welcome_live.ex:128
 #, elixir-autogen, elixir-format
 msgid "The video on this page is replaced every day."
 msgstr "Il video su questa pagina viene sostituito ogni giorno."
 
-#: lib/sahajyog_web/live/welcome_live.ex:181
+#: lib/sahajyog_web/live/welcome_live.ex:200
 #, elixir-autogen, elixir-format
 msgid "This union is achieved through awakening the dormant Kundalini energy within each human being, leading to a blissful state of thoughtless awareness where the mind is silent and you simply witness the present moment."
 msgstr "Questa unione si ottiene attraverso il risveglio dell'energia Kundalini dormiente in ogni essere umano, portando a uno stato di beatitudine di consapevolezza senza pensieri dove la mente è silenziosa e semplicemente osservi il momento presente."
@@ -1660,8 +1659,7 @@ msgstr "Abbiamo ricevuto il tuo messaggio e risponderemo il prima possibile."
 msgid "Weekly Update"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:164
-#: lib/sahajyog_web/live/welcome_test_live.ex:192
+#: lib/sahajyog_web/live/welcome_live.ex:183
 #, elixir-autogen, elixir-format
 msgid "What is Sahaja Yoga?"
 msgstr "Cos'è Sahaja Yoga?"
@@ -1671,7 +1669,7 @@ msgstr "Cos'è Sahaja Yoga?"
 msgid "What is this about?"
 msgstr "Di cosa si tratta?"
 
-#: lib/sahajyog_web/live/welcome_live.ex:304
+#: lib/sahajyog_web/live/welcome_live.ex:344
 #, elixir-autogen, elixir-format
 msgid "What is yoga? In simple words, it is taking your attention to the Spirit. This is yoga. What does the Kundalini do? She raises your attention and takes it to the Spirit."
 msgstr "Cos'è lo yoga? In parole semplici, è portare la tua attenzione allo Spirito. Questo è lo yoga. Cosa fa la Kundalini? Eleva la tua attenzione e la porta allo Spirito."
@@ -1691,12 +1689,12 @@ msgstr "tua.email@esempio.it"
 msgid "%{count} video(s) assigned to this week"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:541
+#: lib/sahajyog_web/live/welcome_live.ex:634
 #, elixir-autogen, elixir-format
 msgid "A gradual, step-by-step introduction to Sahaja Yoga meditation"
 msgstr "Un'introduzione graduale alla meditazione Sahaja Yoga"
 
-#: lib/sahajyog_web/live/welcome_live.ex:552
+#: lib/sahajyog_web/live/welcome_live.ex:645
 #, elixir-autogen, elixir-format
 msgid "Access books, meditation photos, and other helpful materials"
 msgstr "Accedi a libri, foto di meditazione e altri materiali utili"
@@ -1716,8 +1714,7 @@ msgstr ""
 msgid "Add videos to the %{category} category first"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:584
-#: lib/sahajyog_web/live/welcome_test_live.ex:466
+#: lib/sahajyog_web/live/welcome_live.ex:683
 #, elixir-autogen, elixir-format
 msgid "Already have an account?"
 msgstr "Hai già un account?"
@@ -1742,20 +1739,19 @@ msgstr ""
 msgid "Assigned Videos"
 msgstr ""
 
-#: lib/sahajyog_web/components/layouts.ex:227
-#: lib/sahajyog_web/components/layouts.ex:228
-#: lib/sahajyog_web/live/welcome_test_live.ex:486
+#: lib/sahajyog_web/components/layouts.ex:190
+#: lib/sahajyog_web/components/layouts.ex:191
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Back to top"
 msgstr "Torna all'Argomento"
 
-#: lib/sahajyog_web/live/welcome_live.ex:435
-#: lib/sahajyog_web/live/welcome_test_live.ex:361
+#: lib/sahajyog_web/live/welcome_live.ex:503
 #, elixir-autogen, elixir-format
 msgid "Begin your journey to inner peace in three simple steps"
 msgstr "Inizia il tuo viaggio verso la pace interiore in tre semplici passi"
 
-#: lib/sahajyog_web/live/welcome_live.ex:580
+#: lib/sahajyog_web/live/demo_live.ex:208
+#: lib/sahajyog_web/live/welcome_live.ex:676
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Browse Talks"
 msgstr "Sfoglia tutti i discorsi"
@@ -1775,7 +1771,7 @@ msgstr ""
 msgid "Clear country filter"
 msgstr ""
 
-#: lib/sahajyog_web/live/topics_live.ex:109
+#: lib/sahajyog_web/live/topics_live.ex:200
 #, elixir-autogen, elixir-format
 msgid "Clear search"
 msgstr "Cancella ricerca"
@@ -1805,9 +1801,7 @@ msgstr ""
 msgid "Click 'Assign Videos' to add %{category} videos to this week"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:406
-#: lib/sahajyog_web/live/welcome_test_live.ex:94
-#: lib/sahajyog_web/live/welcome_test_live.ex:333
+#: lib/sahajyog_web/live/welcome_live.ex:463
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Countries"
 msgstr "Tutti i paesi"
@@ -1822,8 +1816,8 @@ msgstr ""
 msgid "Daily rotation pool - %{count}/31 videos"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:476
-#: lib/sahajyog_web/live/welcome_test_live.ex:395
+#: lib/sahajyog_web/live/demo_live_2.ex:226
+#: lib/sahajyog_web/live/welcome_live.ex:549
 #, elixir-autogen, elixir-format
 msgid "Experience"
 msgstr "Sperimenta"
@@ -1853,34 +1847,31 @@ msgstr ""
 msgid "Failed to shuffle pool"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:478
-#: lib/sahajyog_web/live/welcome_test_live.ex:397
+#: lib/sahajyog_web/live/demo_live_2.ex:229
+#: lib/sahajyog_web/live/welcome_live.ex:552
 #, elixir-autogen, elixir-format
 msgid "Feel the peace within and grow through regular practice"
 msgstr "Senti la pace interiore e cresci attraverso la pratica regolare"
 
-#: lib/sahajyog_web/live/welcome_live.ex:463
-#: lib/sahajyog_web/live/welcome_test_live.ex:387
+#: lib/sahajyog_web/live/demo_live_2.ex:214
+#: lib/sahajyog_web/live/welcome_live.ex:535
 #, elixir-autogen, elixir-format
 msgid "Follow guided meditations and experience Self Realization"
 msgstr "Segui le meditazioni guidate e sperimenta l'Autorealizzazione"
 
-#: lib/sahajyog_web/live/topics_live.ex:118
+#: lib/sahajyog_web/live/topics_live.ex:209
 #, elixir-autogen, elixir-format
 msgid "Found %{count} topic"
 msgid_plural "Found %{count} topics"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:418
-#: lib/sahajyog_web/live/welcome_test_live.ex:94
-#: lib/sahajyog_web/live/welcome_test_live.ex:343
+#: lib/sahajyog_web/live/welcome_live.ex:479
 #, elixir-autogen, elixir-format
 msgid "Free Forever"
 msgstr "Gratis per sempre"
 
-#: lib/sahajyog_web/live/welcome_live.ex:432
-#: lib/sahajyog_web/live/welcome_test_live.ex:358
+#: lib/sahajyog_web/live/welcome_live.ex:500
 #, elixir-autogen, elixir-format
 msgid "How It Works"
 msgstr "Come funziona"
@@ -1890,13 +1881,13 @@ msgstr "Come funziona"
 msgid "In Pool"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:378
+#: lib/sahajyog_web/live/welcome_live.ex:431
 #, elixir-autogen, elixir-format
 msgid "Join thousands of people who have found peace through Sahaja Yoga"
 msgstr "Unisciti a migliaia di persone che hanno trovato la pace attraverso Sahaja Yoga"
 
-#: lib/sahajyog_web/live/welcome_live.ex:445
-#: lib/sahajyog_web/live/welcome_test_live.ex:375
+#: lib/sahajyog_web/live/demo_live_2.ex:196
+#: lib/sahajyog_web/live/welcome_live.ex:514
 #, elixir-autogen, elixir-format
 msgid "Learn"
 msgstr "Impara"
@@ -1937,18 +1928,19 @@ msgstr ""
 msgid "Playing Today"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:461
-#: lib/sahajyog_web/live/welcome_test_live.ex:385
+#: lib/sahajyog_web/live/demo_live_2.ex:211
+#: lib/sahajyog_web/live/welcome_live.ex:532
 #, elixir-autogen, elixir-format
 msgid "Practice"
 msgstr "Pratica"
 
-#: lib/sahajyog_web/live/welcome_live.ex:573
+#: lib/sahajyog_web/live/demo_live_2.ex:401
+#: lib/sahajyog_web/live/welcome_live.ex:669
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Register for Free"
 msgstr "Registrati"
 
-#: lib/sahajyog_web/live/welcome_live.ex:527
+#: lib/sahajyog_web/live/welcome_live.ex:617
 #, elixir-autogen, elixir-format
 msgid "Register for free to access exclusive benefits"
 msgstr "Registrati gratuitamente per accedere a vantaggi esclusivi"
@@ -1978,17 +1970,17 @@ msgstr ""
 msgid "Save Assignments"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:563
+#: lib/sahajyog_web/live/welcome_live.ex:656
 #, elixir-autogen, elixir-format
 msgid "Save your progress and continue where you left off"
 msgstr "Salva i tuoi progressi e continua da dove hai lasciato"
 
-#: lib/sahajyog_web/live/welcome_live.ex:157
+#: lib/sahajyog_web/live/demo_live.ex:161
 #, elixir-autogen, elixir-format
 msgid "Scroll to explore"
 msgstr "Scorri per esplorare"
 
-#: lib/sahajyog_web/live/topics_live.ex:100
+#: lib/sahajyog_web/live/topics_live.ex:191
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Search topics..."
 msgstr "Cerca discorsi..."
@@ -2003,18 +1995,18 @@ msgstr ""
 msgid "Shuffle"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:537
+#: lib/sahajyog_web/live/demo_live_2.ex:383
+#: lib/sahajyog_web/live/welcome_live.ex:630
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Structured Learning"
 msgstr "Inizia ad imparare"
 
-#: lib/sahajyog_web/live/welcome_live.ex:424
-#: lib/sahajyog_web/live/welcome_test_live.ex:349
+#: lib/sahajyog_web/live/welcome_live.ex:487
 #, elixir-autogen, elixir-format
 msgid "Talks Available"
 msgstr "Discorsi disponibili"
 
-#: lib/sahajyog_web/live/welcome_live.ex:218
+#: lib/sahajyog_web/live/welcome_live.ex:238
 #, elixir-autogen, elixir-format, fuzzy
 msgid "The immediate effects of raising the Kundalini, and going into thoughtless awareness, can be felt as a gentle release from our mind and a spontaneous state of bliss where one merely witnesses and enjoys the present moment."
 msgstr "Gli effetti immediati del risveglio della Kundalini e dell'entrare nella consapevolezza senza pensieri possono essere percepiti come un dolce rilascio dalla nostra mente e uno stato spontaneo di beatitudine dove si osserva e si gode semplicemente il momento presente."
@@ -2024,12 +2016,14 @@ msgstr "Gli effetti immediati del risveglio della Kundalini e dell'entrare nella
 msgid "Today's video: Position %{position}"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:560
+#: lib/sahajyog_web/live/demo_live_2.ex:391
+#: lib/sahajyog_web/live/welcome_live.ex:653
 #, elixir-autogen, elixir-format
 msgid "Track Progress"
 msgstr "Traccia i progressi"
 
-#: lib/sahajyog_web/live/welcome_live.ex:524
+#: lib/sahajyog_web/live/demo_live_2.ex:371
+#: lib/sahajyog_web/live/welcome_live.ex:611
 #, elixir-autogen, elixir-format
 msgid "Unlock Your Full Journey"
 msgstr "Sblocca il tuo viaggio completo"
@@ -2039,7 +2033,7 @@ msgstr "Sblocca il tuo viaggio completo"
 msgid "Video added to Welcome pool"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:119
+#: lib/sahajyog_web/live/welcome_live.ex:131
 #, elixir-autogen, elixir-format
 msgid "Video changes daily."
 msgstr "Il video cambia ogni giorno."
@@ -2069,8 +2063,8 @@ msgstr ""
 msgid "Videos assigned to week successfully"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:447
-#: lib/sahajyog_web/live/welcome_test_live.ex:377
+#: lib/sahajyog_web/live/demo_live_2.ex:199
+#: lib/sahajyog_web/live/welcome_live.ex:517
 #, elixir-autogen, elixir-format
 msgid "Watch introductory videos and understand the basics of meditation"
 msgstr "Guarda i video introduttivi e comprendi le basi della meditazione"
@@ -2106,19 +2100,17 @@ msgstr ""
 msgid "Welcome pool shuffled successfully"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_live.ex:375
-#: lib/sahajyog_web/live/welcome_test_live.ex:408
+#: lib/sahajyog_web/live/welcome_live.ex:428
 #, elixir-autogen, elixir-format
 msgid "What Practitioners Say"
 msgstr "Cosa dicono i praticanti"
 
-#: lib/sahajyog_web/live/welcome_live.ex:223
+#: lib/sahajyog_web/live/welcome_live.ex:243
 #, elixir-autogen, elixir-format, fuzzy
 msgid "When the Kundalini rises, she removes the tensions occurring on our central nervous system that cause negative mental, emotional, or physical sensations, and brings our system into balance."
 msgstr "Quando la Kundalini si alza, rimuove le tensioni che si verificano nel nostro sistema nervoso centrale che causano sensazioni mentali, emotive o fisiche negative, e porta il nostro sistema in equilibrio."
 
-#: lib/sahajyog_web/live/welcome_live.ex:412
-#: lib/sahajyog_web/live/welcome_test_live.ex:339
+#: lib/sahajyog_web/live/welcome_live.ex:471
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Years"
 msgstr "Anno"
@@ -2128,118 +2120,268 @@ msgstr "Anno"
 msgid "You've reached the end"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_test_live.ex:142
-#, elixir-autogen, elixir-format
-msgid "5 min to start"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:195
-#, elixir-autogen, elixir-format
-msgid "A unique meditation technique that awakens your inner energy for lasting peace and balance."
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:258
-#, elixir-autogen, elixir-format
-msgid "Awaken the dormant spiritual energy within for balance and wellbeing."
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:460
-#, elixir-autogen, elixir-format
-msgid "Continue Learning"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:98
-#, elixir-autogen, elixir-format
-msgid "Discover"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:246
-#, elixir-autogen, elixir-format
-msgid "Experience a blissful state of thoughtless awareness where the mind is silent."
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:235
-#, elixir-autogen, elixir-format
-msgid "Founder of Sahaja Yoga"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:75
-#, elixir-autogen, elixir-format
-msgid "Get Started Free"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:100
-#: lib/sahajyog_web/live/welcome_test_live.ex:244
-#, elixir-autogen, elixir-format
-msgid "Inner Peace"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:106
-#, elixir-autogen, elixir-format
-msgid "Join thousands who have transformed their lives with Sahaja Yoga - a simple, natural meditation technique."
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:256
-#, elixir-autogen, elixir-format
-msgid "Kundalini Energy"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:138
-#, elixir-autogen, elixir-format
-msgid "No credit card"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:443
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Ready to Begin?"
-msgstr "Pronto per iniziare il tuo viaggio?"
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:294
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Sahaja Yoga meditation works directly on the central nervous system that controls all of our mental, physical and emotional activity."
-msgstr "La meditazione Sahaja Yoga agisce direttamente sul sistema nervoso centrale che controlla tutta la nostra attività mentale, fisica ed emotiva. Ha quindi il potenziale di migliorare drasticamente il nostro benessere andando direttamente alla fonte di qualsiasi problema."
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:210
+#: lib/sahajyog_web/live/demo_live_2.ex:304
 #, elixir-autogen, elixir-format
 msgid "Self Realization"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_test_live.ex:460
+#: lib/sahajyog_web/live/demo_live.ex:266
 #, elixir-autogen, elixir-format
-msgid "Start Free"
+msgid "7 Steps to Meditation"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_test_live.ex:446
+#: lib/sahajyog_web/live/demo_live.ex:269
 #, elixir-autogen, elixir-format
-msgid "Start your journey to inner peace today. It's free, simple, and takes just 5 minutes."
+msgid "A guided path to inner peace and self-discovery."
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_test_live.ex:212
+#: lib/sahajyog_web/live/demo_live_2.ex:290
 #, elixir-autogen, elixir-format
-msgid "The awakening within"
+msgid "A meditation that works"
+msgstr "Una meditazione che funziona"
+
+#: lib/sahajyog_web/live/demo_live_2.ex:306
+#, elixir-autogen, elixir-format
+msgid "Awaken your inner energy through a simple 10-minute guided experience."
+msgstr "Risveglia la tua energia interiore attraverso una semplice esperienza guidata di 10 minuti."
+
+#: lib/sahajyog_web/live/demo_live.ex:176
+#, elixir-autogen, elixir-format
+msgid "Awaken your inner energy. Experience thoughtless awareness."
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_test_live.ex:304
+#: lib/sahajyog_web/live/demo_live.ex:276
 #, elixir-autogen, elixir-format
-msgid "The immediate effects can be felt as a gentle release from our mind and a spontaneous state of bliss."
+msgid "Begin Your Journey"
 msgstr ""
 
-#: lib/sahajyog_web/live/welcome_test_live.ex:102
-#, elixir-autogen, elixir-format
-msgid "Through Meditation"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:123
-#, elixir-autogen, elixir-format
-msgid "Try Free Meditation"
-msgstr ""
-
-#: lib/sahajyog_web/live/welcome_test_live.ex:130
+#: lib/sahajyog_web/live/demo_live_2.ex:329
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Watch Talks"
-msgstr "Guarda il Discorso"
+msgid "Browse"
+msgstr "Sfoglia tutti i discorsi"
 
-#: lib/sahajyog_web/live/welcome_test_live.ex:314
+#: lib/sahajyog_web/live/user_live/settings.ex:36
 #, elixir-autogen, elixir-format
-msgid "When the Kundalini rises, she removes tensions and brings our system into balance."
+msgid "City"
 msgstr ""
+
+#: lib/sahajyog_web/live/demo_live.ex:131
+#, elixir-autogen, elixir-format
+msgid "Discover the peace within. Free meditation for everyone."
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live.ex:183
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Experience Now"
+msgstr "Sperimenta"
+
+#: lib/sahajyog_web/live/demo_live.ex:229
+#, elixir-autogen, elixir-format
+msgid "Explore teachings organized by subject."
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:340
+#, elixir-autogen, elixir-format
+msgid "Explore teachings organized by theme and subject matter."
+msgstr "Esplora gli insegnamenti organizzati per tema e argomento."
+
+#: lib/sahajyog_web/live/user_live/settings.ex:32
+#, elixir-autogen, elixir-format
+msgid "First Name"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:171
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Free Meditation"
+msgstr "Meditazione Gratuita"
+
+#: lib/sahajyog_web/live/demo_live.ex:296
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Get Started — It's Free"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live.ex:223
+#, elixir-autogen, elixir-format
+msgid "Knowledge"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:33
+#, elixir-autogen, elixir-format
+msgid "Last Name"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:48
+#, elixir-autogen, elixir-format
+msgid "Phone Number"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:22
+#, elixir-autogen, elixir-format
+msgid "Profile Information"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:216
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Profile updated successfully."
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:176
+#, elixir-autogen, elixir-format
+msgid "Realize your Self"
+msgstr "Realizza il tuo Sé"
+
+#: lib/sahajyog_web/live/demo_live_2.ex:374
+#, elixir-autogen, elixir-format
+msgid "Register for free to access structured learning, resources, and progress tracking"
+msgstr "Registrati gratuitamente per accedere all'apprendimento strutturato, alle risorse e al monitoraggio dei progressi"
+
+#: lib/sahajyog_web/live/demo_live.ex:128
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Sahaja Yoga"
+msgstr "Discorsi Sahaja Yoga"
+
+#: lib/sahajyog_web/live/demo_live_2.ex:182
+#, elixir-autogen, elixir-format
+msgid "Sahaja Yoga is a unique method of meditation that brings mental, physical and emotional balance."
+msgstr "Sahaja Yoga è un metodo unico di meditazione che porta equilibrio mentale, fisico ed emotivo."
+
+#: lib/sahajyog_web/live/demo_live.ex:289
+#, elixir-autogen, elixir-format
+msgid "Sahaja Yoga is always free. Join millions who have found inner peace."
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:415
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Sahaja Yoga meditation is always free"
+msgstr "Sahaja Yoga è sempre gratuito"
+
+#: lib/sahajyog_web/live/user_live/settings.ex:67
+#, elixir-autogen, elixir-format
+msgid "Save Profile"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:242
+#, elixir-autogen, elixir-format
+msgid "Scroll"
+msgstr "Scorri"
+
+#: lib/sahajyog_web/live/user_live/settings.ex:42
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Select a country"
+msgstr "Seleziona un tipo"
+
+#: lib/sahajyog_web/live/demo_live.ex:173
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Self-Realization"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:293
+#, elixir-autogen, elixir-format
+msgid "Simple techniques that anyone can practice. No experience needed."
+msgstr "Tecniche semplici che chiunque può praticare. Nessuna esperienza necessaria."
+
+#: lib/sahajyog_web/live/demo_live.ex:286
+#, elixir-autogen, elixir-format
+msgid "Start Your Journey Today"
+msgstr ""
+
+#: lib/sahajyog_web/components/ui_components.ex:677
+#, elixir-autogen, elixir-format
+msgid "Switch to dark theme"
+msgstr ""
+
+#: lib/sahajyog_web/components/ui_components.ex:666
+#, elixir-autogen, elixir-format
+msgid "Switch to light theme"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live.ex:198
+#: lib/sahajyog_web/live/demo_live_2.ex:321
+#, elixir-autogen, elixir-format
+msgid "Talks & Lectures"
+msgstr "Discorsi e Conferenze"
+
+#: lib/sahajyog_web/live/demo_live.ex:170
+#, elixir-autogen, elixir-format, fuzzy
+msgid "The Meditation"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:287
+#, elixir-autogen, elixir-format
+msgid "The Practice"
+msgstr "La Pratica"
+
+#: lib/sahajyog_web/components/mobile_menu.ex:77
+#: lib/sahajyog_web/components/mobile_menu.ex:94
+#, elixir-autogen, elixir-format
+msgid "Theme"
+msgstr ""
+
+#: lib/sahajyog_web/live/user_live/settings.ex:23
+#, elixir-autogen, elixir-format
+msgid "These details are optional."
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:323
+#, elixir-autogen, elixir-format
+msgid "Thousands of hours of wisdom from Shri Mataji Nirmala Devi."
+msgstr "Migliaia di ore di saggezza da Shri Mataji Nirmala Devi."
+
+#: lib/sahajyog_web/live/demo_live.ex:201
+#, elixir-autogen, elixir-format
+msgid "Timeless teachings from Shri Mataji Nirmala Devi."
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:266
+#: lib/sahajyog_web/live/welcome_live.ex:155
+#, elixir-autogen, elixir-format
+msgid "Today's Talk"
+msgstr "Conferenza di Oggi"
+
+#: lib/sahajyog_web/live/demo_live.ex:226
+#, elixir-autogen, elixir-format
+msgid "Topics & Themes"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:312
+#, elixir-autogen, elixir-format
+msgid "Try now"
+msgstr "Prova ora"
+
+#: lib/sahajyog_web/live/demo_live_2.ex:410
+#, elixir-autogen, elixir-format
+msgid "Try without account"
+msgstr "Prova senza account"
+
+#: lib/sahajyog_web/live/demo_live_2.ex:274
+#, elixir-autogen, elixir-format, fuzzy
+msgid "View all"
+msgstr "Vedi tutto"
+
+#: lib/sahajyog_web/live/demo_live.ex:195
+#, elixir-autogen, elixir-format
+msgid "Wisdom"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live.ex:249
+#: lib/sahajyog_web/live/demo_live_2.ex:357
+#, elixir-autogen, elixir-format
+msgid "You cannot know the meaning of your life until you are connected to the power that created you."
+msgstr "Non puoi conoscere il significato della tua vita finché non sei connesso al potere che ti ha creato."
+
+#: lib/sahajyog_web/live/demo_live.ex:263
+#, elixir-autogen, elixir-format
+msgid "Your Journey"
+msgstr ""
+
+#: lib/sahajyog_web/live/demo_live_2.ex:177
+#, elixir-autogen, elixir-format
+msgid "inner silence"
+msgstr "silenzio interiore"
+
+#: lib/sahajyog_web/live/topics_live.ex:289
+#, elixir-autogen, elixir-format, fuzzy
+msgid "topic"
+msgid_plural "topics"
+msgstr[0] "Argomenti"
+msgstr[1] "Argomenti"

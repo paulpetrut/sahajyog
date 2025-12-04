@@ -9,7 +9,7 @@ defmodule SahajyogWeb.UserLive.Settings do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8">
+      <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8 noise-overlay">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-white mb-2">{gettext("Account Settings")}</h1>

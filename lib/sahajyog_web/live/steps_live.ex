@@ -314,7 +314,7 @@ defmodule SahajyogWeb.StepsLive do
   def render(assigns) do
     ~H"""
     <div
-      class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 text-base-content"
+      class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 text-base-content noise-overlay"
       phx-hook="WatchedVideos"
       id="watched-videos-container"
     >

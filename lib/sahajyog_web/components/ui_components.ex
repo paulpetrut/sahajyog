@@ -26,7 +26,7 @@ defmodule SahajyogWeb.UIComponents do
     ~H"""
     <div
       class={[
-        "min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300",
+        "min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 noise-overlay",
         @class
       ]}
       {@rest}

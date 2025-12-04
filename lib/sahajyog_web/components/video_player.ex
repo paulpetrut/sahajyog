@@ -20,13 +20,12 @@ defmodule SahajyogWeb.VideoPlayer do
       </div>
       <iframe
         src={Sahajyog.VideoProvider.embed_url(@video_id, @provider, @locale)}
-        class={[@class, "relative z-10"]}
+        class="absolute inset-0 w-full h-full z-10"
         frameborder="0"
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
         allowfullscreen
         referrerpolicy="strict-origin-when-cross-origin"
         title={@title || gettext("Video player")}
-        loading="lazy"
       >
       </iframe>
     </div>

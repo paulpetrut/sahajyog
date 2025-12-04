@@ -129,6 +129,22 @@ defmodule SahajyogWeb.DemoLive2 do
           opacity: 0.03;
           pointer-events: none;
         }
+
+        /* Scroll indicator fade out */
+        .scroll-indicator {
+          opacity: 1;
+          transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+          display: none;
+        }
+        @media (min-width: 1024px) {
+          .scroll-indicator {
+            display: flex;
+          }
+        }
+        .scroll-indicator.hidden {
+          opacity: 0;
+          pointer-events: none;
+        }
       </style>
 
       <div
@@ -138,7 +154,7 @@ defmodule SahajyogWeb.DemoLive2 do
       >
         
     <!-- HERO: Full viewport, minimal, typographic -->
-        <section class="min-h-[90vh] flex flex-col justify-center relative overflow-hidden">
+        <section class="min-h-0 md:min-h-[90vh] flex flex-col justify-center relative overflow-hidden py-6 md:py-12 lg:py-0">
           <!-- Animated gradient orbs -->
           <div class="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[100px] float">
           </div>
@@ -151,53 +167,85 @@ defmodule SahajyogWeb.DemoLive2 do
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8">
             <div class="hero-reveal">
               <!-- Eyebrow -->
-              <p class="text-sm tracking-[0.3em] uppercase text-base-content/40 mb-6 font-medium">
+              <p class="text-xs md:text-sm tracking-[0.3em] uppercase text-base-content/40 mb-2 md:mb-6 font-medium">
                 {gettext("Free Meditation")}
               </p>
               
     <!-- Main headline -->
-              <h1 class="text-[clamp(3rem,10vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-8">
+              <h1 class="text-[clamp(2rem,8vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-3 md:mb-8">
                 <span class="block">{gettext("Realize your Self")}</span>
                 <span class="block gradient-text">{gettext("inner silence")}</span>
               </h1>
               
     <!-- Subhead -->
-              <p class="text-xl md:text-2xl text-base-content/50 max-w-xl leading-relaxed font-light mb-12">
+              <p class="text-base md:text-xl lg:text-2xl text-base-content/50 max-w-xl leading-relaxed font-light mb-4 md:mb-12">
                 {gettext(
                   "Sahaja Yoga is a unique method of meditation that brings mental, physical and emotional balance."
                 )}
               </p>
               
-    <!-- CTA -->
-              <div class="flex flex-wrap items-center gap-6">
-                <.link
-                  href={~p"/steps"}
-                  class="group inline-flex items-center gap-3 bg-base-content text-base-100 px-8 py-4 rounded-full font-medium hover-lift"
-                >
-                  {gettext("Start meditation")}
-                  <span class="w-8 h-8 rounded-full bg-base-100/20 flex items-center justify-center group-hover:bg-base-100/30 transition-colors">
-                    <.icon name="hero-arrow-right" class="w-4 h-4" />
-                  </span>
+    <!-- How It Works -->
+              <div class="grid grid-cols-3 gap-1 md:gap-4 lg:gap-8 mt-6 md:mt-16 lg:mt-20">
+                <!-- Step 1 -->
+                <.link href="#video" class="step-card group cursor-pointer">
+                  <div class="text-center p-2 md:p-6 rounded-xl hover:bg-base-200/30 transition-colors">
+                    <div class="step-circle step-circle-1 w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
+                      <span class="text-lg md:text-3xl font-bold text-primary-content">1</span>
+                    </div>
+                    <h3 class="text-xs md:text-lg font-bold text-base-content mb-0.5 md:mb-2">
+                      {gettext("Learn")}
+                    </h3>
+                    <p class="text-xs md:text-sm text-base-content/60 leading-relaxed hidden sm:block">
+                      {gettext("Watch introductory videos and understand the basics of meditation")}
+                    </p>
+                  </div>
                 </.link>
-                <.link
-                  href="#video"
-                  class="text-base-content/60 hover:text-base-content transition-colors font-medium"
-                >
-                  {gettext("Watch introduction")}
+                
+    <!-- Step 2 -->
+                <.link navigate={~p"/steps"} class="step-card group cursor-pointer">
+                  <div class="text-center p-2 md:p-6 rounded-xl hover:bg-base-200/30 transition-colors">
+                    <div class="step-circle step-circle-2 w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
+                      <span class="text-lg md:text-3xl font-bold text-primary-content">2</span>
+                    </div>
+                    <h3 class="text-xs md:text-lg font-bold text-base-content mb-0.5 md:mb-2">
+                      {gettext("Practice")}
+                    </h3>
+                    <p class="text-xs md:text-sm text-base-content/60 leading-relaxed hidden sm:block">
+                      {gettext("Follow guided meditations and experience Self Realization")}
+                    </p>
+                  </div>
+                </.link>
+                
+    <!-- Step 3 -->
+                <.link navigate={~p"/users/register"} class="step-card group cursor-pointer">
+                  <div class="text-center p-2 md:p-6 rounded-xl hover:bg-base-200/30 transition-colors">
+                    <div class="step-circle step-circle-3 w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
+                      <span class="text-lg md:text-3xl font-bold text-primary-content">3</span>
+                    </div>
+                    <h3 class="text-xs md:text-lg font-bold text-base-content mb-0.5 md:mb-2">
+                      {gettext("Experience")}
+                    </h3>
+                    <p class="text-xs md:text-sm text-base-content/60 leading-relaxed hidden sm:block">
+                      {gettext("Feel the peace within and grow through regular practice")}
+                    </p>
+                  </div>
                 </.link>
               </div>
             </div>
           </div>
           
     <!-- Scroll indicator -->
-          <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-base-content/30">
+          <div
+            id="scroll-indicator"
+            class="scroll-indicator absolute bottom-12 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 text-base-content/30"
+          >
             <span class="text-xs tracking-widest uppercase">{gettext("Scroll")}</span>
             <div class="w-px h-12 bg-gradient-to-b from-base-content/30 to-transparent"></div>
           </div>
         </section>
         
     <!-- VIDEO SECTION: Clean, wide -->
-        <section :if={@current_video} id="video" class="py-32 relative">
+        <section :if={@current_video} id="video" class="py-8 md:py-24 lg:py-32 relative">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="apple-reveal">
               <!-- Video container with subtle border -->
@@ -212,7 +260,7 @@ defmodule SahajyogWeb.DemoLive2 do
               </div>
               
     <!-- Video info -->
-              <div class="mt-8 flex items-center justify-between">
+              <div class="mt-6 md:mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
                 <div>
                   <p class="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-1">
                     {gettext("Today's Talk")}
@@ -221,7 +269,7 @@ defmodule SahajyogWeb.DemoLive2 do
                 </div>
                 <.link
                   href={~p"/talks"}
-                  class="text-sm text-base-content/50 hover:text-base-content transition-colors"
+                  class="text-sm text-base-content/50 hover:text-base-content transition-colors self-start md:self-auto"
                 >
                   {gettext("View all")} →
                 </.link>
@@ -231,10 +279,10 @@ defmodule SahajyogWeb.DemoLive2 do
         </section>
         
     <!-- FEATURES: Horizontal scroll or grid -->
-        <section class="py-32 border-t border-base-content/5">
+        <section class="py-8 md:py-24 lg:py-32 border-t border-base-content/5">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <!-- Section header -->
-            <div class="max-w-2xl mb-20 apple-reveal">
+            <div class="max-w-2xl mb-6 md:mb-16 lg:mb-20 apple-reveal">
               <p class="text-sm tracking-[0.2em] uppercase text-primary font-semibold mb-4">
                 {gettext("The Practice")}
               </p>
@@ -303,9 +351,9 @@ defmodule SahajyogWeb.DemoLive2 do
         </section>
         
     <!-- QUOTE: Full-width, dramatic -->
-        <section class="py-40 relative animated-gradient noise">
+        <section class="py-12 md:py-32 lg:py-40 relative animated-gradient noise">
           <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center relative z-10 apple-scale">
-            <blockquote class="font-serif text-3xl md:text-5xl lg:text-6xl italic leading-[1.2] text-base-content/90 mb-10">
+            <blockquote class="font-serif text-2xl md:text-4xl lg:text-5xl xl:text-6xl italic leading-[1.2] text-base-content/90 mb-6 md:mb-10">
               "{gettext(
                 "You cannot know the meaning of your life until you are connected to the power that created you."
               )}"
@@ -316,33 +364,56 @@ defmodule SahajyogWeb.DemoLive2 do
           </div>
         </section>
         
-    <!-- CTA: Simple, clean -->
-        <section class="py-32 border-t border-base-content/5">
-          <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-12 apple-reveal">
-              <div class="max-w-xl">
-                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                  {gettext("Ready to begin?")}
-                </h2>
-                <p class="text-xl text-base-content/50">
-                  {gettext("Sahaja Yoga is always free. Join millions who have found inner peace.")}
-                </p>
+    <!-- CTA: Unlock Your Full Journey -->
+        <section class="py-12 md:py-32 lg:py-40 border-t border-base-content/5">
+          <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center apple-reveal">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-4 md:mb-6 text-base-content">
+              {gettext("Unlock Your Full Journey")}
+            </h2>
+            <p class="text-lg md:text-xl lg:text-2xl text-base-content/50 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed">
+              {gettext(
+                "Register for free to access structured learning, resources, and progress tracking"
+              )}
+            </p>
+            
+    <!-- Minimal benefits list -->
+            <div class="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8 mb-8 md:mb-12 text-sm md:text-base text-base-content/60">
+              <div class="flex items-center gap-2">
+                <.icon name="hero-academic-cap" class="w-5 h-5 text-primary" />
+                <span>{gettext("Structured Learning")}</span>
               </div>
-              <div class="flex flex-wrap gap-4">
-                <.link
-                  href={~p"/users/register"}
-                  class="inline-flex items-center gap-3 bg-primary text-primary-content px-8 py-4 rounded-full font-medium hover-lift"
-                >
-                  {gettext("Create free account")}
-                </.link>
-                <.link
-                  href={~p"/steps"}
-                  class="inline-flex items-center gap-3 border border-base-content/10 px-8 py-4 rounded-full font-medium hover:bg-base-200/50 transition-colors"
-                >
-                  {gettext("Try without account")}
-                </.link>
+              <div class="flex items-center gap-2">
+                <.icon name="hero-book-open" class="w-5 h-5 text-secondary" />
+                <span>{gettext("Resources")}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <.icon name="hero-chart-bar" class="w-5 h-5 text-accent" />
+                <span>{gettext("Track Progress")}</span>
               </div>
             </div>
+            
+    <!-- CTA buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <.link
+                href={~p"/users/register"}
+                class="group inline-flex items-center gap-3 bg-base-content text-base-100 px-8 py-4 rounded-full font-medium hover-lift"
+              >
+                {gettext("Register for Free")}
+                <span class="w-8 h-8 rounded-full bg-base-100/20 flex items-center justify-center group-hover:bg-base-100/30 transition-colors">
+                  <.icon name="hero-arrow-right" class="w-4 h-4" />
+                </span>
+              </.link>
+              <.link
+                href={~p"/steps"}
+                class="text-base-content/60 hover:text-base-content transition-colors font-medium"
+              >
+                {gettext("Try without account")}
+              </.link>
+            </div>
+
+            <p class="mt-8 text-sm text-base-content/40">
+              {gettext("Sahaja Yoga meditation is always free")}
+            </p>
           </div>
         </section>
         
