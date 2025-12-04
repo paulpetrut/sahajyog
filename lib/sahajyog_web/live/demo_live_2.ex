@@ -217,7 +217,10 @@ defmodule SahajyogWeb.DemoLive2 do
                 </.link>
                 
     <!-- Step 3 -->
-                <.link navigate={~p"/users/register"} class="step-card group cursor-pointer">
+                <.link
+                  navigate={if assigns[:current_scope], do: ~p"/steps", else: ~p"/users/register"}
+                  class="step-card group cursor-pointer"
+                >
                   <div class="text-center p-2 md:p-6 rounded-xl hover:bg-base-200/30 transition-colors">
                     <div class="step-circle step-circle-3 w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
                       <span class="text-lg md:text-3xl font-bold text-primary-content">3</span>

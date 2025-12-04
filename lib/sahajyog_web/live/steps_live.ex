@@ -469,12 +469,14 @@ defmodule SahajyogWeb.StepsLive do
             </div>
 
             <%!-- Video player --%>
-            <div class="flex-1 bg-black rounded-lg overflow-hidden">
-              <.video_player
-                video_id={@current_video.video_id}
-                provider={@current_video.provider}
-                locale={@current_video.locale}
-              />
+            <div class="flex-1 flex items-start justify-center">
+              <div class="w-full max-w-5xl aspect-video bg-black rounded-lg overflow-hidden">
+                <.video_player
+                  video_id={@current_video.video_id}
+                  provider={@current_video.provider}
+                  locale={@current_video.locale}
+                />
+              </div>
             </div>
 
             <%!-- Mark as watched button --%>
