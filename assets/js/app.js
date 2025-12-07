@@ -504,24 +504,30 @@ Hooks.InfiniteScroll = {
   mounted() {
     this.observer = null
     this.pending = false
+    this.resizeTimeout = null
 
-    // Only enable on mobile/tablet
+    // Only enable on mobile/tablet (< 1024px)
     const isMobile = window.innerWidth < 1024
 
     if (isMobile) {
       this.setupObserver()
     }
 
-    // Re-check on resize
-    window.addEventListener("resize", () => {
-      const nowMobile = window.innerWidth < 1024
-      if (nowMobile && !this.observer) {
-        this.setupObserver()
-      } else if (!nowMobile && this.observer) {
-        this.observer.disconnect()
-        this.observer = null
-      }
-    })
+    // Debounced resize handler
+    this.resizeHandler = () => {
+      clearTimeout(this.resizeTimeout)
+      this.resizeTimeout = setTimeout(() => {
+        const nowMobile = window.innerWidth < 1024
+        if (nowMobile && !this.observer) {
+          this.setupObserver()
+        } else if (!nowMobile && this.observer) {
+          this.observer.disconnect()
+          this.observer = null
+        }
+      }, 150)
+    }
+
+    window.addEventListener("resize", this.resizeHandler)
 
     // Handle loading state from server
     this.handleEvent("loading_more", () => {
@@ -529,14 +535,20 @@ Hooks.InfiniteScroll = {
     })
 
     this.handleEvent("loaded_more", () => {
-      this.pending = false
+      // Small delay before allowing next load to prevent rapid firing
+      setTimeout(() => {
+        this.pending = false
+      }, 100)
     })
   },
 
   setupObserver() {
+    // Smaller rootMargin for tablet to prevent aggressive loading
+    const rootMargin = window.innerWidth < 640 ? "300px" : "150px"
+
     const options = {
       root: null,
-      rootMargin: "400px",
+      rootMargin: rootMargin,
       threshold: 0,
     }
 
@@ -560,6 +572,10 @@ Hooks.InfiniteScroll = {
     if (this.observer) {
       this.observer.disconnect()
     }
+    if (this.resizeHandler) {
+      window.removeEventListener("resize", this.resizeHandler)
+    }
+    clearTimeout(this.resizeTimeout)
   },
 }
 

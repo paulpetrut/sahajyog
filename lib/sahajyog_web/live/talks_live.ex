@@ -733,10 +733,10 @@ defmodule SahajyogWeb.TalksLive do
                 </div>
 
                 <%!-- Translation Language Filter --%>
-                <div>
-                  <label class="block text-xs sm:text-sm font-semibold text-base-content/80 mb-2 flex items-center gap-2">
-                    <.icon name="hero-language" class="w-4 h-4 text-success" />
-                    {gettext("Translation Language")}
+                <div class="min-w-0">
+                  <label class="block text-xs sm:text-sm font-semibold text-base-content/80 mb-2 flex items-center gap-2 whitespace-nowrap">
+                    <.icon name="hero-language" class="w-4 h-4 text-success shrink-0" />
+                    <span class="truncate">{gettext("Translation Language")}</span>
                   </label>
                   <select
                     name="translation_language"
