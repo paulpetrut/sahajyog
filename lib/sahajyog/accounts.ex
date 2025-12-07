@@ -214,6 +214,15 @@ defmodule Sahajyog.Accounts do
     |> Repo.update()
   end
 
+  @doc """
+  Updates the user level.
+  """
+  def update_user_level(user, level) do
+    user
+    |> Ecto.Changeset.change(level: level)
+    |> Repo.update()
+  end
+
   ## Session
 
   @doc """

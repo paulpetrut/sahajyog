@@ -199,6 +199,17 @@ defmodule SahajyogWeb.Layouts do
               >
                 {gettext("Topics")}
               </.link>
+
+              <.link
+                :if={
+                  @current_scope && Sahajyog.Accounts.User.eligible_for_upgrade?(@current_scope.user)
+                }
+                href={~p"/level-upgrade"}
+                data-footer-path="/level-upgrade"
+                class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
+              >
+                {gettext("Upgrade Access")}
+              </.link>
             </nav>
           </div>
 

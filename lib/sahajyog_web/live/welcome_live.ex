@@ -2,6 +2,7 @@ defmodule SahajyogWeb.WelcomeLive do
   use SahajyogWeb, :live_view
 
   alias Sahajyog.Content
+  alias Sahajyog.Events
   import SahajyogWeb.VideoPlayer
 
   @impl true
@@ -9,9 +10,20 @@ defmodule SahajyogWeb.WelcomeLive do
     current_video = Content.get_daily_video()
     locale = Gettext.get_locale(SahajyogWeb.Gettext)
 
+    user_level =
+      if socket.assigns[:current_scope] do
+        socket.assigns.current_scope.user.level
+      else
+        "Level1"
+      end
+
     socket =
       socket
       |> assign(:current_video, current_video)
+      |> assign(
+        :upcoming_events,
+        Events.list_upcoming_events(user_level: user_level) |> Enum.take(3)
+      )
       |> assign(:locale, locale)
 
     {:ok, socket}
@@ -344,6 +356,76 @@ defmodule SahajyogWeb.WelcomeLive do
                   {gettext("Explore")} <.icon name="hero-arrow-right" class="w-4 h-4" />
                 </.link>
               </div>
+            </div>
+          </div>
+        </section>
+        
+    <!-- EVENTS SECTION -->
+        <section :if={@upcoming_events != []} class="py-12 md:py-24 border-t border-base-content/5">
+          <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 apple-reveal">
+              <div class="max-w-2xl">
+                <p class="text-sm tracking-[0.2em] uppercase text-accent font-semibold mb-4">
+                  {gettext("Community")}
+                </p>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1]">
+                  {gettext("Upcoming Events")}
+                </h2>
+              </div>
+              <.link
+                href={~p"/events"}
+                class="group inline-flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
+              >
+                {gettext("View all events")}
+                <.icon
+                  name="hero-arrow-right"
+                  class="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                />
+              </.link>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 apple-reveal">
+              <%= for event <- @upcoming_events do %>
+                <.link
+                  navigate={~p"/events/#{event.slug}"}
+                  class="group relative bg-base-100 rounded-2xl p-6 lg:p-8 hover:bg-base-200/30 transition-all border border-base-content/5 hover:border-base-content/10 hover:-translate-y-1"
+                >
+                  <div class="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-medium bg-base-content/5 text-base-content/60">
+                    <%= if event.event_date do %>
+                      {Calendar.strftime(event.event_date, "%b %d")}
+                    <% else %>
+                      {gettext("TBD")}
+                    <% end %>
+                  </div>
+
+                  <div class="mb-4">
+                    <span class={[
+                      "inline-block w-2 h-2 rounded-full mb-1",
+                      if(event.status == "public", do: "bg-success", else: "bg-base-content/30")
+                    ]}>
+                    </span>
+                  </div>
+
+                  <h3 class="text-xl font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                    {event.title}
+                  </h3>
+
+                  <div class="flex items-center gap-2 text-sm text-base-content/60 mb-4">
+                    <.icon name="hero-map-pin" class="w-4 h-4" />
+                    <span class="truncate">
+                      {[event.city, event.country] |> Enum.reject(&is_nil/1) |> Enum.join(", ")}
+                    </span>
+                  </div>
+
+                  <div class="mt-auto pt-4 flex items-center text-sm font-medium text-base-content/40 group-hover:text-base-content transition-colors">
+                    {gettext("Learn more")}
+                    <.icon
+                      name="hero-arrow-right"
+                      class="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-all transform -translate-x-2 group-hover:translate-x-0"
+                    />
+                  </div>
+                </.link>
+              <% end %>
             </div>
           </div>
         </section>

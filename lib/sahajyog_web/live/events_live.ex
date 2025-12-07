@@ -41,12 +41,13 @@ defmodule SahajyogWeb.EventsLive do
   defp load_events(socket) do
     if connected?(socket) do
       user_id = socket.assigns.current_scope.user.id
+      user_level = socket.assigns.current_scope.user.level
 
       events =
         case socket.assigns.filter do
           "my_events" -> Events.list_my_events(user_id)
-          "past" -> Events.list_past_public_events()
-          _ -> Events.list_events_for_user(user_id)
+          "past" -> Events.list_past_public_events(user_level: user_level)
+          _ -> Events.list_events_for_user(user_id, user_level: user_level)
         end
 
       countries = extract_countries(events)

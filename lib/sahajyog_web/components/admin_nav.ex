@@ -105,6 +105,20 @@ defmodule SahajyogWeb.AdminNav do
             <.icon name="hero-inbox-stack" class="w-4 h-4 inline mr-1" />
             {gettext("Event Proposals")}
           </.link>
+
+          <.link
+            navigate={~p"/admin/access-codes"}
+            class={[
+              "px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2 shrink-0",
+              if(@current_page == :access_codes,
+                do: "text-orange-400 border-orange-400",
+                else: "text-gray-400 hover:text-white border-transparent"
+              )
+            ]}
+          >
+            <.icon name="hero-key" class="w-4 h-4 inline mr-1" />
+            {gettext("Access Codes")}
+          </.link>
         </nav>
       </div>
     </div>

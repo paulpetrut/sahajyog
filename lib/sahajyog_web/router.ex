@@ -81,6 +81,7 @@ defmodule SahajyogWeb.Router do
       live "/events/propose", EventProposeLive
       live "/events/:slug", EventShowLive
       live "/events/:slug/edit", EventEditLive
+      live "/level-upgrade", LevelUpgradeLive
     end
 
     get "/resources/:id/download", ResourceController, :download
@@ -105,6 +106,7 @@ defmodule SahajyogWeb.Router do
       live "/topic-proposals", TopicProposalsLive
       live "/events", EventsLive
       live "/event-proposals", EventProposalsLive
+      live "/access-codes", AccessCodesLive
     end
   end
 

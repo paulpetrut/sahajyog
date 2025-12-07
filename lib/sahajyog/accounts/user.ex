@@ -48,6 +48,17 @@ defmodule Sahajyog.Accounts.User do
   def can_access_events?(_), do: false
 
   @doc """
+  Checks if a user is eligible to see the upgrade option.
+  Requirement: Level1 user AND registered more than 30 days ago.
+  """
+  def eligible_for_upgrade?(%__MODULE__{level: "Level1", inserted_at: inserted_at}) do
+    thirty_days_ago = DateTime.utc_now() |> DateTime.add(-30, :day)
+    DateTime.compare(inserted_at, thirty_days_ago) == :lt
+  end
+
+  def eligible_for_upgrade?(_), do: false
+
+  @doc """
   A user changeset for registering or changing the email.
 
   It requires the email to change otherwise an error is added.

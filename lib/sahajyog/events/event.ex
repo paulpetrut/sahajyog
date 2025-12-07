@@ -46,6 +46,7 @@ defmodule Sahajyog.Events.Event do
     field :banking_swift, :string
     field :banking_notes, :string
     field :budget_type, :string, default: "open_for_donations"
+    field :level, :string, default: "Level1"
     field :published_at, :utc_datetime
     field :online_url, :string
     field :is_online, :boolean, default: false
@@ -100,15 +101,19 @@ defmodule Sahajyog.Events.Event do
       :published_at,
       :user_id,
       :budget_type,
-      :timezone
+      :timezone,
+      :level
     ])
     |> validate_required([:title, :user_id])
     |> validate_inclusion(:status, @statuses)
+    |> validate_inclusion(:level, ["Level1", "Level2", "Level3"])
     |> validate_inclusion(:invitation_type, @invitation_types)
     |> generate_slug()
     |> unique_constraint(:slug)
     |> maybe_set_published_at()
   end
+
+  # generate_upgrade_code has been removed as it's no longer used
 
   defp generate_slug(changeset) do
     case get_change(changeset, :title) do

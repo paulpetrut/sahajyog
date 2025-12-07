@@ -508,6 +508,13 @@ defmodule SahajyogWeb.EventEditLive do
                       label={gettext("Status")}
                       options={Event.statuses()}
                     />
+
+                    <.input
+                      field={@form[:level]}
+                      type="select"
+                      label={gettext("Access Level")}
+                      options={["Level1", "Level2", "Level3"]}
+                    />
                   </div>
 
                   <div class="pt-4">

@@ -26,8 +26,46 @@ defmodule Sahajyog.Events do
   ## Events
 
   @doc """
+  Upgrades a user to Level 2 using an Access Code.
+  """
+  def upgrade_user_via_code(user, code) do
+    with %Sahajyog.Admin.AccessCode{} = access_code <-
+           Sahajyog.Admin.get_access_code_by_code(code),
+         true <- user.level == "Level1",
+         true <- valid_access_code?(access_code) do
+      # Perform upgrade and increment usage in a transaction or sequential updates
+      Sahajyog.Repo.transaction(fn ->
+        Sahajyog.Accounts.update_user_level(user, "Level2")
+        Sahajyog.Admin.increment_usage(access_code)
+      end)
+      |> case do
+        {:ok, _} -> {:ok, %{user | level: "Level2"}}
+        error -> error
+      end
+    else
+      nil ->
+        {:error, :invalid_code}
+
+      false ->
+        if user.level != "Level1" do
+          {:error, :already_upgraded}
+        else
+          {:error, :code_max_uses_reached}
+        end
+
+      _ ->
+        {:error, :unknown}
+    end
+  end
+
+  defp valid_access_code?(%{max_uses: nil}), do: true
+
+  defp valid_access_code?(%{max_uses: max, usage_count: current}) when not is_nil(max),
+    do: current < max
+
+  @doc """
   Lists events with optional filters.
-  Filters: :status, :country, :city, :upcoming, :time_range
+  Filters: :status, :country, :city, :upcoming, :time_range, :user_level
   """
   def list_events(filters \\ %{}) do
     Event
@@ -40,11 +78,13 @@ defmodule Sahajyog.Events do
   @doc """
   Lists upcoming public events (default view).
   """
-  def list_upcoming_events do
+  def list_upcoming_events(opts \\ []) do
     today = Date.utc_today()
+    user_level = Keyword.get(opts, :user_level, "Level1")
 
     Event
     |> where([e], e.status == "public" and e.event_date >= ^today)
+    |> filter_by_level(user_level)
     |> order_by([e], asc: e.event_date)
     |> preload([:user, team_members: :user])
     |> Repo.all()
@@ -53,11 +93,13 @@ defmodule Sahajyog.Events do
   @doc """
   Lists past public events.
   """
-  def list_past_public_events do
+  def list_past_public_events(opts \\ []) do
     today = Date.utc_today()
+    user_level = Keyword.get(opts, :user_level, "Level1")
 
     Event
     |> where([e], e.status == "public" and e.event_date < ^today)
+    |> filter_by_level(user_level)
     |> order_by([e], desc: e.event_date)
     |> preload([:user, team_members: :user])
     |> Repo.all()
@@ -69,18 +111,44 @@ defmodule Sahajyog.Events do
   - Draft/archived events where user is the owner
   - Events where user is an accepted team member
   """
-  def list_events_for_user(user_id) do
+  def list_events_for_user(user_id, opts \\ []) do
     today = Date.utc_today()
+    user_level = Keyword.get(opts, :user_level, "Level1")
+
+    # Construct level-specific public access condition
+    public_access =
+      case user_level do
+        "Level1" ->
+          dynamic([e], e.status == "public" and e.event_date >= ^today and e.level == "Level1")
+
+        "Level2" ->
+          dynamic(
+            [e],
+            e.status == "public" and e.event_date >= ^today and e.level in ["Level1", "Level2"]
+          )
+
+        "Level3" ->
+          dynamic(
+            [e],
+            e.status == "public" and e.event_date >= ^today and
+              e.level in ["Level1", "Level2", "Level3"]
+          )
+
+        _ ->
+          dynamic([e], e.status == "public" and e.event_date >= ^today and e.level == "Level1")
+      end
+
+    # Condition for personal involvement (owner or team member)
+    personal_access = dynamic([e, tm], e.user_id == ^user_id or not is_nil(tm.id))
+
+    # Combine both with OR
+    final_condition = dynamic([e, tm], ^public_access or ^personal_access)
 
     Event
     |> join(:left, [e], tm in EventTeamMember,
       on: tm.event_id == e.id and tm.user_id == ^user_id and tm.status == "accepted"
     )
-    |> where(
-      [e, tm],
-      (e.status == "public" and e.event_date >= ^today) or e.user_id == ^user_id or
-        not is_nil(tm.id)
-    )
+    |> where(^final_condition)
     |> order_by([e], asc: e.event_date)
     |> preload([:user, team_members: :user])
     |> Repo.all()
@@ -899,6 +967,19 @@ defmodule Sahajyog.Events do
       _, query ->
         query
     end)
+    |> maybe_filter_by_level(filters[:user_level])
+  end
+
+  defp maybe_filter_by_level(query, nil), do: filter_by_level(query, "Level1")
+  defp maybe_filter_by_level(query, level), do: filter_by_level(query, level)
+
+  defp filter_by_level(query, level) do
+    case level do
+      "Level1" -> where(query, [e], e.level == "Level1")
+      "Level2" -> where(query, [e], e.level in ["Level1", "Level2"])
+      "Level3" -> where(query, [e], e.level in ["Level1", "Level2", "Level3"])
+      _ -> where(query, [e], e.level == "Level1")
+    end
   end
 
   defp apply_proposal_filters(query, filters) do
