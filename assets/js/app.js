@@ -235,21 +235,23 @@ Hooks.UnsavedChanges = {
       this.hasChanges = false
     })
 
-    // Listen for phx:page-loading-start to check if we should warn
+    // Warn on LiveView navigation
     this.pageLoadingHandler = (e) => {
       if (this.hasChanges && !this.formSubmitting) {
         const confirmed = window.confirm("You have unsaved changes. Are you sure you want to leave?")
         if (!confirmed) {
           e.preventDefault()
           e.stopImmediatePropagation()
-          window.liveSocket.replaceMain = () => {} // Prevent navigation
         }
       }
     }
+
+    window.addEventListener("phx:page-loading-start", this.pageLoadingHandler)
   },
 
   destroyed() {
     window.removeEventListener("beforeunload", this.beforeUnloadHandler)
+    window.removeEventListener("phx:page-loading-start", this.pageLoadingHandler)
   },
 }
 
@@ -316,28 +318,29 @@ Hooks.ScrollIndicator = {
     })
 
     // Hide on scroll
-    let lastScrollY = window.scrollY
-    let ticking = false
+    this.ticking = false
 
-    const updateIndicator = () => {
-      if (window.scrollY > 100) {
-        this.el.classList.add("is-hidden")
-      } else {
-        this.el.classList.remove("is-hidden")
+    this.scrollHandler = () => {
+      if (!this.ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 100) {
+            this.el.classList.add("is-hidden")
+          } else {
+            this.el.classList.remove("is-hidden")
+          }
+          this.ticking = false
+        })
+        this.ticking = true
       }
-      ticking = false
     }
 
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateIndicator)
-          ticking = true
-        }
-      },
-      { passive: true }
-    )
+    window.addEventListener("scroll", this.scrollHandler, { passive: true })
+  },
+
+  destroyed() {
+    if (this.scrollHandler) {
+      window.removeEventListener("scroll", this.scrollHandler)
+    }
   },
 }
 
