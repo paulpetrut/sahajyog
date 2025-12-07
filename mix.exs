@@ -78,7 +78,8 @@ defmodule Sahajyog.MixProject do
       {:ex_aws_s3, "~> 2.5"},
       {:sweet_xml, "~> 0.7"},
       {:hackney, "~> 1.20"},
-      {:thumbnex, "~> 0.5.1"}
+      {:thumbnex, "~> 0.5.1"},
+      {:timex, "~> 3.7"}
     ]
   end
 

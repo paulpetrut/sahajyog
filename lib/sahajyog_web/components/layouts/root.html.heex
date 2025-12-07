@@ -104,6 +104,18 @@
               {gettext("Resources")}
             </.link>
           </li>
+          <%!-- Events link - only for L1, L2, L3, or admin --%>
+          <%= if Sahajyog.Accounts.User.can_access_events?(@current_scope.user) do %>
+            <li>
+              <.link
+                href={~p"/events"}
+                data-nav-path="/events"
+                class="nav-link font-medium hover:text-base-content focus:outline-none"
+              >
+                {gettext("Events")}
+              </.link>
+            </li>
+          <% end %>
           <%!-- Admin link - only for admins --%>
           <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
             <li>
@@ -234,7 +246,7 @@
 
       // Update on LiveView navigation
       window.addEventListener('phx:page-loading-stop', updateHomeIconVisibility);
-      
+
       // Reset scroll position on LiveView navigation
       window.addEventListener('phx:page-loading-stop', () => {
         window.scrollTo(0, 0);

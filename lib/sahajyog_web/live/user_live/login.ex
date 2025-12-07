@@ -91,17 +91,25 @@ defmodule SahajyogWeb.UserLive.Login do
                     required
                   />
 
-                  <div class="form-control">
-                    <label class="label cursor-pointer justify-start gap-3">
-                      <input
-                        type="checkbox"
-                        name="remember_me_checkbox"
-                        checked={@remember_me}
-                        phx-click="toggle_remember"
-                        class="checkbox checkbox-primary"
-                      />
-                      <span class="label-text">{gettext("Keep me signed in")}</span>
-                    </label>
+                  <div class="flex items-center justify-between">
+                    <div class="form-control">
+                      <label class="label cursor-pointer justify-start gap-3">
+                        <input
+                          type="checkbox"
+                          name="remember_me_checkbox"
+                          checked={@remember_me}
+                          phx-click="toggle_remember"
+                          class="checkbox checkbox-primary"
+                        />
+                        <span class="label-text">{gettext("Keep me signed in")}</span>
+                      </label>
+                    </div>
+                    <.link
+                      navigate={~p"/users/forgot-password"}
+                      class="text-sm link link-primary"
+                    >
+                      {gettext("Forgot password?")}
+                    </.link>
                   </div>
 
                   <.button

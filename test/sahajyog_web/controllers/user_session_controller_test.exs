@@ -58,7 +58,8 @@ defmodule SahajyogWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back!"
+      # Personalized welcome message includes "Welcome back" and the user's name/email prefix
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back"
     end
 
     test "redirects to login page with invalid credentials", %{conn: conn, user: user} do

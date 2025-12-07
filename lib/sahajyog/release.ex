@@ -126,9 +126,8 @@ defmodule Sahajyog.Release do
                       {:ok, _} ->
                         IO.puts("✅ Created: #{key}")
 
-                      {:error, changeset} ->
+                      {:error, _changeset} ->
                         IO.puts("❌ Failed: #{key}")
-                        IO.inspect(changeset.errors)
                     end
                   end
                 end

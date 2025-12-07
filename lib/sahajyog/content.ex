@@ -21,10 +21,12 @@ defmodule Sahajyog.Content do
   @doc """
   Returns the list of categories accessible to a user based on their level.
 
+  Note: The order of returned categories is not guaranteed due to map enumeration.
+
   ## Examples
 
       iex> accessible_categories(nil)
-      ["Welcome"]
+      ["Welcome", "Getting Started"]  # Categories marked with :public
 
       iex> accessible_categories(%User{level: "Level3"})
       ["Welcome", "Getting Started"]

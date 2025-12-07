@@ -1,8 +1,6 @@
 defmodule SahajyogWeb.UserLive.Settings do
   use SahajyogWeb, :live_view
 
-  on_mount {SahajyogWeb.UserAuth, :require_sudo_mode}
-
   alias Sahajyog.Accounts
 
   @impl true
@@ -11,6 +9,18 @@ defmodule SahajyogWeb.UserLive.Settings do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8 noise-overlay">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <%= if @return_to do %>
+            <div class="mb-6">
+              <.link
+                navigate={@return_to}
+                class="text-info hover:text-info/80 inline-flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-info focus:ring-offset-2 focus:ring-offset-base-300 rounded"
+              >
+                <.icon name="hero-arrow-left" class="w-4 h-4" />
+                {gettext("Back to Event")}
+              </.link>
+            </div>
+          <% end %>
+
           <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-white mb-2">{gettext("Account Settings")}</h1>
             <p class="text-gray-400">
@@ -151,7 +161,7 @@ defmodule SahajyogWeb.UserLive.Settings do
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
   end
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     user = socket.assigns.current_scope.user
     email_changeset = Accounts.change_user_email(user, %{}, validate_unique: false)
     password_changeset = Accounts.change_user_password(user, %{}, hash_password: false)
@@ -173,8 +183,21 @@ defmodule SahajyogWeb.UserLive.Settings do
       |> assign(:country_codes, country_codes)
       |> assign(:phone_prefix, initial_prefix)
       |> assign(:trigger_submit, false)
+      |> assign(:return_to, params["return_to"])
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    # Ensure param is decoded if double-encoded, though Phoenix usually handles one layer.
+    return_to =
+      case params["return_to"] do
+        nil -> nil
+        val -> URI.decode(val)
+      end
+
+    {:noreply, assign(socket, :return_to, return_to)}
   end
 
   defp get_prefix_for_country(country, country_codes) do
@@ -214,7 +237,7 @@ defmodule SahajyogWeb.UserLive.Settings do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Profile updated successfully."))
-         |> push_navigate(to: ~p"/users/settings")}
+         |> push_navigate(to: socket.assigns.return_to || ~p"/users/settings")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, profile_form: to_form(changeset))}
@@ -236,21 +259,30 @@ defmodule SahajyogWeb.UserLive.Settings do
   def handle_event("update_email", params, socket) do
     %{"user" => user_params} = params
     user = socket.assigns.current_scope.user
-    true = Accounts.sudo_mode?(user)
 
-    case Accounts.change_user_email(user, user_params) do
-      %{valid?: true} = changeset ->
-        Accounts.deliver_user_update_email_instructions(
-          Ecto.Changeset.apply_action!(changeset, :insert),
-          user.email,
-          &url(~p"/users/settings/confirm-email/#{&1}")
-        )
+    if Accounts.sudo_mode?(user) do
+      case Accounts.change_user_email(user, user_params) do
+        %{valid?: true} = changeset ->
+          Accounts.deliver_user_update_email_instructions(
+            Ecto.Changeset.apply_action!(changeset, :insert),
+            user.email,
+            &url(~p"/users/settings/confirm-email/#{&1}")
+          )
 
-        info = gettext("A link to confirm your email change has been sent to the new address.")
-        {:noreply, socket |> put_flash(:info, info)}
+          info = gettext("A link to confirm your email change has been sent to the new address.")
+          {:noreply, socket |> put_flash(:info, info)}
 
-      changeset ->
-        {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}
+        changeset ->
+          {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}
+      end
+    else
+      {:noreply,
+       socket
+       |> put_flash(
+         :error,
+         gettext("Your session has expired. Please log in again to make changes.")
+       )
+       |> push_navigate(to: ~p"/users/log-in")}
     end
   end
 
@@ -269,14 +301,23 @@ defmodule SahajyogWeb.UserLive.Settings do
   def handle_event("update_password", params, socket) do
     %{"user" => user_params} = params
     user = socket.assigns.current_scope.user
-    true = Accounts.sudo_mode?(user)
 
-    case Accounts.change_user_password(user, user_params) do
-      %{valid?: true} = changeset ->
-        {:noreply, assign(socket, trigger_submit: true, password_form: to_form(changeset))}
+    if Accounts.sudo_mode?(user) do
+      case Accounts.change_user_password(user, user_params) do
+        %{valid?: true} = changeset ->
+          {:noreply, assign(socket, trigger_submit: true, password_form: to_form(changeset))}
 
-      changeset ->
-        {:noreply, assign(socket, password_form: to_form(changeset, action: :insert))}
+        changeset ->
+          {:noreply, assign(socket, password_form: to_form(changeset, action: :insert))}
+      end
+    else
+      {:noreply,
+       socket
+       |> put_flash(
+         :error,
+         gettext("Your session has expired. Please log in again to make changes.")
+       )
+       |> push_navigate(to: ~p"/users/log-in")}
     end
   end
 end

@@ -18,8 +18,11 @@ defmodule SahajyogWeb.UserSessionController do
       {:ok, {user, tokens_to_disconnect}} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
 
+        # Use provided info message, or default to personalized "Welcome back!" for returning users
+        flash_message = info || welcome_back_message(user)
+
         conn
-        |> maybe_put_flash(:info, info)
+        |> put_flash(:info, flash_message)
         |> UserAuth.log_in_user(user, user_params)
 
       {:error, :password_required} ->
@@ -42,8 +45,11 @@ defmodule SahajyogWeb.UserSessionController do
     %{"email" => email, "password" => password} = user_params
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
+      # Use provided info message, or default to personalized "Welcome back!" for returning users
+      flash_message = info || welcome_back_message(user)
+
       conn
-      |> maybe_put_flash(:info, info)
+      |> put_flash(:info, flash_message)
       |> UserAuth.log_in_user(user, user_params)
     else
       # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
@@ -56,15 +62,24 @@ defmodule SahajyogWeb.UserSessionController do
 
   def update_password(conn, %{"user" => user_params} = params) do
     user = conn.assigns.current_scope.user
-    true = Accounts.sudo_mode?(user)
-    {:ok, {_user, expired_tokens}} = Accounts.update_user_password(user, user_params)
 
-    # disconnect all existing LiveViews with old sessions
-    UserAuth.disconnect_sessions(expired_tokens)
+    if Accounts.sudo_mode?(user) do
+      {:ok, {_user, expired_tokens}} = Accounts.update_user_password(user, user_params)
 
-    conn
-    |> put_session(:user_return_to, ~p"/users/settings")
-    |> create(params, gettext("Password updated successfully!"))
+      # disconnect all existing LiveViews with old sessions
+      UserAuth.disconnect_sessions(expired_tokens)
+
+      conn
+      |> put_session(:user_return_to, ~p"/users/settings")
+      |> create(params, gettext("Password updated successfully!"))
+    else
+      conn
+      |> put_flash(
+        :error,
+        gettext("Your session has expired. Please log in again to make changes.")
+      )
+      |> redirect(to: ~p"/users/log-in")
+    end
   end
 
   def delete(conn, _params) do
@@ -73,6 +88,27 @@ defmodule SahajyogWeb.UserSessionController do
     |> UserAuth.log_out_user()
   end
 
-  defp maybe_put_flash(conn, _key, nil), do: conn
-  defp maybe_put_flash(conn, key, message), do: put_flash(conn, key, message)
+  # Generates a personalized welcome back message using the user's first name
+  # or email prefix if no first name is set
+  defp welcome_back_message(user) do
+    name = get_display_name(user) |> capitalize_name()
+    gettext("Welcome back %{name}!", name: name)
+  end
+
+  defp get_display_name(%{first_name: first_name})
+       when is_binary(first_name) and first_name != "" do
+    first_name
+  end
+
+  defp get_display_name(%{email: email}) when is_binary(email) do
+    email
+    |> String.split("@")
+    |> List.first()
+  end
+
+  defp get_display_name(_user), do: ""
+
+  # Capitalizes the first letter of the name (e.g., "mipa" -> "Mipa")
+  defp capitalize_name(""), do: ""
+  defp capitalize_name(name), do: String.capitalize(name)
 end

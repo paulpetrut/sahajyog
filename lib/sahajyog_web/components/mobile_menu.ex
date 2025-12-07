@@ -49,6 +49,11 @@ defmodule SahajyogWeb.MobileMenu do
               <li>
                 <.link href={~p"/resources"}>{gettext("Resources")}</.link>
               </li>
+              <%= if Sahajyog.Accounts.User.can_access_events?(@current_scope.user) do %>
+                <li>
+                  <.link href={~p"/events"}>{gettext("Events")}</.link>
+                </li>
+              <% end %>
               <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
                 <li>
                   <.link href={~p"/admin/videos"}>{gettext("Admin")}</.link>

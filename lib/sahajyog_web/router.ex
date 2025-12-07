@@ -77,6 +77,10 @@ defmodule SahajyogWeb.Router do
       live "/topics/propose", TopicProposeLive
       live "/topics/:slug", TopicShowLive
       live "/topics/:slug/edit", TopicEditLive
+      live "/events", EventsLive
+      live "/events/propose", EventProposeLive
+      live "/events/:slug", EventShowLive
+      live "/events/:slug/edit", EventEditLive
     end
 
     get "/resources/:id/download", ResourceController, :download
@@ -99,6 +103,8 @@ defmodule SahajyogWeb.Router do
       live "/resources/:id/edit", ResourcesLive, :edit
       live "/topics", TopicsLive
       live "/topic-proposals", TopicProposalsLive
+      live "/events", EventsLive
+      live "/event-proposals", EventProposalsLive
     end
   end
 
@@ -113,6 +119,8 @@ defmodule SahajyogWeb.Router do
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
+      live "/users/forgot-password", UserLive.ForgotPassword, :new
+      live "/users/reset-password/:token", UserLive.ResetPassword, :edit
     end
 
     post "/users/log-in", UserSessionController, :create

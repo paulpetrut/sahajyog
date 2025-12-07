@@ -25,9 +25,11 @@ import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import QuillEditor from "./quill_editor"
 import Sortable from "sortablejs"
+import LocalTime from "./hooks/local_time"
 
 const Hooks = {}
 
+Hooks.LocalTime = LocalTime
 Hooks.QuillEditor = QuillEditor
 
 // Pool Sortable hook for drag-and-drop reordering of Welcome pool videos
@@ -165,7 +167,7 @@ Hooks.AppleAnimations = {
     // Hide scroll indicator when video section is 50% visible
     const scrollIndicator = this.el.querySelector("#scroll-indicator")
     const videoSection = this.el.querySelector("#video")
-    
+
     if (scrollIndicator && videoSection) {
       const videoObserver = new IntersectionObserver(
         (entries) => {
@@ -251,31 +253,49 @@ Hooks.UnsavedChanges = {
   },
 }
 
+// Auto-dismiss flash messages after a delay
+Hooks.AutoDismissFlash = {
+  mounted() {
+    const delay = parseInt(this.el.dataset.autoDismiss || "5000", 10)
+
+    this.timeout = setTimeout(() => {
+      // Fade out animation
+      this.el.style.transition = "opacity 0.3s ease-out"
+      this.el.style.opacity = "0"
+
+      // Remove after animation
+      setTimeout(() => {
+        this.el.remove()
+      }, 300)
+    }, delay)
+  },
+
+  destroyed() {
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+    }
+  },
+}
+
 Hooks.ScheduleNotification = {
   mounted() {
     const key = this.el.dataset.key
     const permanentlyDismissed = localStorage.getItem(`${key}_dismissed`)
     const hasSeen = sessionStorage.getItem(key)
 
-    console.log(`[ScheduleNotification] Key: ${key}, HasSeen: ${hasSeen}, Dismissed: ${permanentlyDismissed}`)
-
     // Don't show if permanently dismissed
     if (permanentlyDismissed) {
-      console.log(`[ScheduleNotification] Permanently dismissed ${key}, skipping`)
       return
     }
 
     if (!hasSeen) {
-      console.log(`[ScheduleNotification] Showing notification for ${key}`)
       this.pushEvent("show_notification", {})
       sessionStorage.setItem(key, "true")
     } else {
-      console.log(`[ScheduleNotification] Already seen ${key}, skipping`)
     }
 
     // Listen for dismiss event from server
     this.handleEvent("permanently_dismiss", () => {
-      console.log(`[ScheduleNotification] Permanently dismissing ${key}`)
       localStorage.setItem(`${key}_dismissed`, "true")
     })
   },

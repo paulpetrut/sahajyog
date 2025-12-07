@@ -79,9 +79,8 @@ defmodule SahajyogWeb.UserLive.ConfirmationTest do
 
       conn = follow_trigger_action(form, conn)
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "Welcome back!"
-
+      # Personalized welcome message includes "Welcome back" and the user's name/email prefix
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back"
       assert Accounts.get_user!(user.id).confirmed_at == user.confirmed_at
 
       # log out, new conn

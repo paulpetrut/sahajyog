@@ -10,11 +10,16 @@ defmodule Sahajyog.Accounts.User do
     field :authenticated_at, :utc_datetime, virtual: true
     field :role, :string, default: "regular"
     field :level, :string, default: "Level1"
+    alias Sahajyog.Events.{EventAttendance, EventRideRequest}
+
     field :first_name, :string
     field :last_name, :string
     field :phone_number, :string
     field :city, :string
     field :country, :string
+
+    has_many :attendances, EventAttendance
+    has_many :ride_requests, EventRideRequest, foreign_key: :passenger_user_id
 
     timestamps(type: :utc_datetime)
   end
@@ -33,6 +38,14 @@ defmodule Sahajyog.Accounts.User do
 
   def regular?(%__MODULE__{role: "regular"}), do: true
   def regular?(_), do: false
+
+  @doc """
+  Checks if a user can access events.
+  Events are accessible to users with level L1, L2, L3, or admin role.
+  """
+  def can_access_events?(%__MODULE__{role: "admin"}), do: true
+  def can_access_events?(%__MODULE__{level: level}) when level in @levels, do: true
+  def can_access_events?(_), do: false
 
   @doc """
   A user changeset for registering or changing the email.
@@ -218,5 +231,11 @@ defmodule Sahajyog.Accounts.User do
       {"Czech Republic", "+420"},
       {"Hungary", "+36"}
     ]
+  end
+
+  def profile_complete?(user) do
+    !is_nil(user.first_name) && user.first_name != "" &&
+      !is_nil(user.last_name) && user.last_name != "" &&
+      !is_nil(user.phone_number) && user.phone_number != ""
   end
 end

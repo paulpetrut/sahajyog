@@ -273,7 +273,7 @@ defmodule SahajyogWeb.UIComponents do
           modal_size(@size),
           @class
         ]}
-        phx-click-away={@on_close}
+        phx-click={%JS{}}
       >
         <%!-- Modal Header --%>
         <div

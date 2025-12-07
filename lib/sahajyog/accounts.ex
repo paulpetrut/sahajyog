@@ -248,6 +248,20 @@ defmodule Sahajyog.Accounts do
   end
 
   @doc """
+  Gets the user with the given reset password token.
+
+  Returns the user if the token is valid and not expired, nil otherwise.
+  """
+  def get_user_by_reset_password_token(token) do
+    with {:ok, query} <- UserToken.verify_reset_password_token_query(token),
+         {user, _token} <- Repo.one(query) do
+      user
+    else
+      _ -> nil
+    end
+  end
+
+  @doc """
   Logs the user in by magic link.
 
   There are three cases to consider:
@@ -326,11 +340,76 @@ defmodule Sahajyog.Accounts do
   end
 
   @doc """
+  Delivers password reset instructions to the user's email.
+
+  If the user exists and has a password, generates a reset token and sends
+  the reset instructions email. If the user doesn't exist or has no password,
+  returns `{:ok, :no_op}` to prevent email enumeration attacks.
+
+  ## Examples
+
+      iex> deliver_password_reset_instructions("user@example.com", &url(~p"/users/reset-password/\#{&1}"))
+      {:ok, %Swoosh.Email{}}
+
+      iex> deliver_password_reset_instructions("unknown@example.com", &url(~p"/users/reset-password/\#{&1}"))
+      {:ok, :no_op}
+
+  """
+  def deliver_password_reset_instructions(email, reset_url_fun, locale \\ "en")
+      when is_function(reset_url_fun, 1) do
+    user = Repo.get_by(User, email: email)
+
+    if user && user.hashed_password do
+      # Delete any existing reset_password tokens for this user
+      Repo.delete_all(
+        from(t in UserToken, where: t.user_id == ^user.id and t.context == "reset_password")
+      )
+
+      # Generate new token
+      {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
+      Repo.insert!(user_token)
+
+      UserNotifier.deliver_password_reset_instructions(
+        user,
+        reset_url_fun.(encoded_token),
+        locale
+      )
+    else
+      {:ok, :no_op}
+    end
+  end
+
+  @doc """
   Deletes the signed token with the given context.
   """
   def delete_user_session_token(token) do
     Repo.delete_all(from(UserToken, where: [token: ^token, context: "session"]))
     :ok
+  end
+
+  @doc """
+  Resets the user password.
+
+  Validates and updates the password, then deletes all tokens for the user
+  (both session and reset tokens) to invalidate all existing sessions.
+
+  ## Examples
+
+      iex> reset_user_password(user, %{password: "new_password123"})
+      {:ok, %User{}}
+
+      iex> reset_user_password(user, %{password: "short"})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def reset_user_password(user, attrs) do
+    user
+    |> User.password_changeset(attrs)
+    |> update_user_and_delete_all_tokens()
+    |> case do
+      {:ok, {user, _expired_tokens}} -> {:ok, user}
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   ## Token helper

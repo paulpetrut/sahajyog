@@ -62,8 +62,12 @@ defmodule Sahajyog.ContentAccessControlTest do
   end
 
   describe "accessible_categories/1" do
-    test "unauthenticated users can only access Welcome" do
-      assert Content.accessible_categories(nil) == ["Welcome"]
+    test "unauthenticated users can access Welcome and Getting Started" do
+      categories = Content.accessible_categories(nil)
+      assert "Welcome" in categories
+      assert "Getting Started" in categories
+      refute "Advanced Topics" in categories
+      refute "Excerpts" in categories
     end
 
     test "Level3 users can access Welcome and Getting Started" do

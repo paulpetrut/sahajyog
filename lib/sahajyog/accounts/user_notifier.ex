@@ -18,7 +18,6 @@ defmodule Sahajyog.Accounts.UserNotifier do
     from_name = System.get_env("FROM_NAME") || "SahajYog"
 
     Logger.info("Attempting to send email to #{recipient} with subject: #{subject}")
-    Logger.debug("From: #{from_name} <#{from_email}>")
 
     email =
       new()
@@ -121,6 +120,33 @@ defmodule Sahajyog.Accounts.UserNotifier do
     #{t("This link will expire in 24 hours for security reasons.", locale)}
 
     #{t("If you didn't create an account with us, you can safely ignore this email.", locale)}
+
+    #{t("Best regards", locale)},
+    #{t("The SahajYog Team", locale)}
+    """
+
+    deliver(user.email, subject, body)
+  end
+
+  @doc """
+  Deliver password reset instructions to the user.
+  """
+  def deliver_password_reset_instructions(user, url, locale \\ "en") do
+    subject = t("Reset Your SahajYog Password", locale)
+
+    body = """
+
+    #{t("Hello", locale)},
+
+    #{t("You requested to reset your password for your SahajYog account.", locale)}
+
+    #{t("Click the link below to reset your password:", locale)}
+
+    #{url}
+
+    #{t("This link will expire in 1 hour for security reasons.", locale)}
+
+    #{t("If you didn't request this, you can safely ignore this email.", locale)}
 
     #{t("Best regards", locale)},
     #{t("The SahajYog Team", locale)}

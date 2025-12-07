@@ -12,6 +12,8 @@ defmodule Sahajyog.Application do
       Sahajyog.Repo,
       {DNSCluster, query: Application.get_env(:sahajyog, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Sahajyog.PubSub},
+      # Real-time Presence
+      SahajyogWeb.Presence,
       # API cache for external API responses (countries, years, categories, etc.)
       Sahajyog.ApiCache,
       # Start to serve requests, typically the last entry

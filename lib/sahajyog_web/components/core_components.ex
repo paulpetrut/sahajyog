@@ -55,6 +55,8 @@ defmodule SahajyogWeb.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      phx-hook={if @kind == :info, do: "AutoDismissFlash"}
+      data-auto-dismiss={if @kind == :info, do: "3000"}
       role="alert"
       class="toast toast-top toast-end z-[99999] mt-16"
       {@rest}
@@ -75,6 +77,34 @@ defmodule SahajyogWeb.CoreComponents do
           <.icon name="hero-x-mark" class="size-5 opacity-40 group-hover:opacity-70" />
         </button>
       </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders an alert component.
+  """
+  attr :kind, :atom, default: :info, values: [:info, :success, :warning, :error]
+  attr :class, :string, default: nil
+  attr :icon, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def alert(assigns) do
+    ~H"""
+    <div
+      class={[
+        "alert",
+        @kind == :info && "alert-info",
+        @kind == :success && "alert-success",
+        @kind == :warning && "alert-warning",
+        @kind == :error && "alert-error",
+        @class
+      ]}
+      {@rest}
+    >
+      <.icon :if={@icon} name={@icon} class="w-6 h-6 shrink-0" />
+      <div>{render_slot(@inner_block)}</div>
     </div>
     """
   end

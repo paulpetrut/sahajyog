@@ -185,7 +185,7 @@ defmodule Sahajyog.ApiCache do
       )
 
     if expired_count > 0 do
-      Logger.debug("ApiCache: Cleaned up #{expired_count} expired entries")
+      # Logger.debug("ApiCache: Cleaned up #{expired_count} expired entries")
     end
 
     schedule_cleanup()

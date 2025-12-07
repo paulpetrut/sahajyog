@@ -47,6 +47,52 @@ defmodule SahajyogWeb.Layouts do
   end
 
   @doc """
+  Renders the secondary navigation for events.
+  """
+  attr :current_page, :atom, required: true
+
+  def events_nav(assigns) do
+    ~H"""
+    <nav class="flex items-center gap-2 sm:gap-4 mb-6 sm:mb-8 border-b border-base-content/10 pb-4 overflow-x-auto">
+      <.link
+        navigate={~p"/events"}
+        class={[
+          "px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap",
+          @current_page == :list && "bg-primary text-primary-content",
+          @current_page != :list && "text-base-content/70 hover:bg-base-200 hover:text-base-content"
+        ]}
+      >
+        {gettext("All Events")}
+      </.link>
+
+      <.link
+        navigate={~p"/events?filter=my_events"}
+        class={[
+          "px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap",
+          @current_page == :my_events && "bg-primary text-primary-content",
+          @current_page != :my_events &&
+            "text-base-content/70 hover:bg-base-200 hover:text-base-content"
+        ]}
+      >
+        {gettext("My Events")}
+      </.link>
+
+      <.link
+        navigate={~p"/events?filter=past"}
+        class={[
+          "px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap",
+          @current_page == :past && "bg-primary text-primary-content",
+          @current_page != :past &&
+            "text-base-content/70 hover:bg-base-200 hover:text-base-content"
+        ]}
+      >
+        {gettext("Past Events")}
+      </.link>
+    </nav>
+    """
+  end
+
+  @doc """
   Shows the flash group with standard titles and content.
 
   ## Examples
