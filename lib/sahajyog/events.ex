@@ -975,10 +975,10 @@ defmodule Sahajyog.Events do
 
   defp filter_by_level(query, level) do
     case level do
-      "Level1" -> where(query, [e], e.level == "Level1")
-      "Level2" -> where(query, [e], e.level in ["Level1", "Level2"])
-      "Level3" -> where(query, [e], e.level in ["Level1", "Level2", "Level3"])
-      _ -> where(query, [e], e.level == "Level1")
+      "Level1" -> where(query, [e], e.level == "Level1" or is_nil(e.level))
+      "Level2" -> where(query, [e], e.level in ["Level1", "Level2"] or is_nil(e.level))
+      "Level3" -> where(query, [e], e.level in ["Level1", "Level2", "Level3"] or is_nil(e.level))
+      _ -> where(query, [e], e.level == "Level1" or is_nil(e.level))
     end
   end
 
