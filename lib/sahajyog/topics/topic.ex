@@ -6,7 +6,7 @@ defmodule Sahajyog.Topics.Topic do
   alias Sahajyog.Topics.{TopicCoAuthor, TopicReference}
 
   @statuses ~w(draft published archived)
-  @languages ~w(en es fr de it pt)
+  @languages ~w(en es fr de it ro)
 
   schema "topics" do
     field :title, :string
@@ -16,6 +16,7 @@ defmodule Sahajyog.Topics.Topic do
     field :language, :string, default: "en"
     field :published_at, :utc_datetime
     field :views_count, :integer, default: 0
+    field :is_publicly_accessible, :boolean, default: false
 
     belongs_to :user, User
     has_many :co_authors, TopicCoAuthor
@@ -29,7 +30,16 @@ defmodule Sahajyog.Topics.Topic do
 
   def changeset(topic, attrs) do
     topic
-    |> cast(attrs, [:title, :slug, :content, :status, :language, :published_at, :user_id])
+    |> cast(attrs, [
+      :title,
+      :slug,
+      :content,
+      :status,
+      :language,
+      :published_at,
+      :user_id,
+      :is_publicly_accessible
+    ])
     |> validate_required([:title, :user_id])
     |> validate_inclusion(:status, @statuses)
     |> validate_inclusion(:language, @languages)

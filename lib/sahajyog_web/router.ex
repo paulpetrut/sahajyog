@@ -32,6 +32,8 @@ defmodule SahajyogWeb.Router do
       live "/steps", StepsLive
       live "/talks", TalksLive
       live "/contact", ContactLive
+      live "/public/events/:slug", PublicEventShowLive
+      live "/public/topics/:slug", PublicTopicShowLive
     end
   end
 

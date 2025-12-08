@@ -1054,6 +1054,12 @@ defmodule SahajyogWeb.EventShowLive do
                       {[@event.city, @event.country] |> Enum.reject(&is_nil/1) |> Enum.join(", ")}
                     </span>
                   <% end %>
+                  <%= if @event.languages && @event.languages != [] do %>
+                    <span class="flex items-center gap-2" title={gettext("Languages")}>
+                      <.icon name="hero-language" class="w-4 h-4" />
+                      {@event.languages |> Enum.map(&String.upcase/1) |> Enum.join(", ")}
+                    </span>
+                  <% end %>
                   <%= if @participant_count > 0 do %>
                     <span class="flex items-center gap-2" title={gettext("Confirmed Attendees")}>
                       <.icon name="hero-users" class="w-4 h-4" />

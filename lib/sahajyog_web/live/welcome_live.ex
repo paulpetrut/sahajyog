@@ -3,6 +3,7 @@ defmodule SahajyogWeb.WelcomeLive do
 
   alias Sahajyog.Content
   alias Sahajyog.Events
+  alias Sahajyog.Topics
   import SahajyogWeb.VideoPlayer
 
   @impl true
@@ -10,19 +11,16 @@ defmodule SahajyogWeb.WelcomeLive do
     current_video = Content.get_daily_video()
     locale = Gettext.get_locale(SahajyogWeb.Gettext)
 
-    user_level =
-      if socket.assigns[:current_scope] do
-        socket.assigns.current_scope.user.level
-      else
-        "Level1"
-      end
-
     socket =
       socket
       |> assign(:current_video, current_video)
       |> assign(
-        :upcoming_events,
-        Events.list_upcoming_events(user_level: user_level) |> Enum.take(3)
+        :featured_events,
+        Events.list_publicly_accessible_events() |> Enum.take(3)
+      )
+      |> assign(
+        :featured_topics,
+        Topics.list_publicly_accessible_topics() |> Enum.take(3)
       )
       |> assign(:locale, locale)
 
@@ -351,17 +349,64 @@ defmodule SahajyogWeb.WelcomeLive do
                 </p>
                 <.link
                   href={~p"/topics"}
-                  class="inline-flex items-center gap-2 text-sm font-medium text-accent hover:gap-3 transition-all"
+                  class="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all"
                 >
-                  {gettext("Explore")} <.icon name="hero-arrow-right" class="w-4 h-4" />
+                  {gettext("Explore (Login Required)")}
+                  <.icon name="hero-arrow-right" class="w-4 h-4" />
                 </.link>
               </div>
             </div>
           </div>
         </section>
         
+    <!-- TOPICS SECTION -->
+        <section
+          :if={@featured_topics != []}
+          class="py-12 md:py-24 border-t border-base-content/5 bg-base-200/30"
+        >
+          <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-12 md:mb-16 apple-reveal">
+              <p class="text-sm tracking-[0.2em] uppercase text-secondary font-semibold mb-4">
+                {gettext("Knowledge")}
+              </p>
+              <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1] mb-4">
+                {gettext("Featured Topics")}
+              </h2>
+              <p class="text-lg text-base-content/60">
+                {gettext("These topics are generally available to everyone.")}
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 apple-reveal">
+              <%= for topic <- @featured_topics do %>
+                <.link
+                  navigate={~p"/public/topics/#{topic.slug}"}
+                  class="group relative bg-base-100 rounded-2xl p-6 lg:p-8 hover:bg-base-200/30 transition-all border border-base-content/5 hover:border-base-content/10 hover:-translate-y-1"
+                >
+                  <div class="min-h-[120px]">
+                    <h3 class="text-xl font-bold mb-3 group-hover:text-secondary transition-colors font-serif">
+                      {topic.title}
+                    </h3>
+                    <p class="text-sm text-base-content/60 line-clamp-3">
+                      {topic.content |> fast_strip_tags() |> String.slice(0, 150)}...
+                    </p>
+                  </div>
+                  <div class="mt-4 pt-4 border-t border-base-content/5 flex items-center justify-between text-xs text-base-content/40">
+                    <span>
+                      {Calendar.strftime(topic.published_at || DateTime.utc_now(), "%b %d, %Y")}
+                    </span>
+                    <span class="flex items-center gap-1 group-hover:text-secondary transition-colors">
+                      {gettext("Read")} <.icon name="hero-arrow-right" class="w-3 h-3" />
+                    </span>
+                  </div>
+                </.link>
+              <% end %>
+            </div>
+          </div>
+        </section>
+        
     <!-- EVENTS SECTION -->
-        <section :if={@upcoming_events != []} class="py-12 md:py-24 border-t border-base-content/5">
+        <section :if={@featured_events != []} class="py-12 md:py-24 border-t border-base-content/5">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 apple-reveal">
               <div class="max-w-2xl">
@@ -385,9 +430,9 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
 
             <div class="grid md:grid-cols-3 gap-6 apple-reveal">
-              <%= for event <- @upcoming_events do %>
+              <%= for event <- @featured_events do %>
                 <.link
-                  navigate={~p"/events/#{event.slug}"}
+                  navigate={~p"/public/events/#{event.slug}"}
                   class="group relative bg-base-100 rounded-2xl p-6 lg:p-8 hover:bg-base-200/30 transition-all border border-base-content/5 hover:border-base-content/10 hover:-translate-y-1"
                 >
                   <div class="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-medium bg-base-content/5 text-base-content/60">
@@ -502,5 +547,14 @@ defmodule SahajyogWeb.WelcomeLive do
       </div>
     </Layouts.app>
     """
+  end
+
+  defp fast_strip_tags(nil), do: ""
+
+  defp fast_strip_tags(html) do
+    html
+    |> String.replace(~r/<[^>]*>/, " ")
+    |> String.replace(~r/\s+/, " ")
+    |> String.trim()
   end
 end

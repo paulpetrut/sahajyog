@@ -509,6 +509,23 @@ defmodule SahajyogWeb.EventEditLive do
                       options={Event.statuses()}
                     />
 
+                    <div class="flex items-center gap-2 py-2">
+                      <.input
+                        field={@form[:is_publicly_accessible]}
+                        type="checkbox"
+                        label={gettext("Feature on Welcome Page (Publicly Accessible)")}
+                      />
+                    </div>
+
+                    <.input
+                      field={@form[:languages]}
+                      type="select"
+                      label={gettext("Languages")}
+                      multiple={true}
+                      options={Event.languages()}
+                      class="h-32"
+                    />
+
                     <.input
                       field={@form[:level]}
                       type="select"

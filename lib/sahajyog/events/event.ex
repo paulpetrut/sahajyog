@@ -18,6 +18,7 @@ defmodule Sahajyog.Events.Event do
 
   @statuses ~w(draft public archived cancelled)
   @invitation_types ~w(none pdf image)
+  @languages ~w(en es fr de it ro)
 
   schema "events" do
     field :title, :string
@@ -51,6 +52,8 @@ defmodule Sahajyog.Events.Event do
     field :online_url, :string
     field :is_online, :boolean, default: false
     field :timezone, :string, default: "Etc/UTC"
+    field :languages, {:array, :string}, default: ["en"]
+    field :is_publicly_accessible, :boolean, default: false
 
     belongs_to :user, User
     has_many :team_members, EventTeamMember
@@ -67,6 +70,7 @@ defmodule Sahajyog.Events.Event do
 
   def statuses, do: @statuses
   def invitation_types, do: @invitation_types
+  def languages, do: @languages
 
   def changeset(event, attrs) do
     event
@@ -102,9 +106,13 @@ defmodule Sahajyog.Events.Event do
       :user_id,
       :budget_type,
       :timezone,
-      :level
+      :timezone,
+      :level,
+      :languages,
+      :is_publicly_accessible
     ])
     |> validate_required([:title, :user_id])
+    |> validate_subset(:languages, @languages)
     |> validate_inclusion(:status, @statuses)
     |> validate_inclusion(:level, ["Level1", "Level2", "Level3"])
     |> validate_inclusion(:invitation_type, @invitation_types)

@@ -91,6 +91,20 @@ defmodule Sahajyog.Events do
   end
 
   @doc """
+  Lists upcoming events that are flagged as publicly accessible (for Welcome page).
+  """
+  def list_publicly_accessible_events do
+    today = Date.utc_today()
+
+    Event
+    |> where([e], e.status == "public" and e.event_date >= ^today)
+    |> where([e], e.is_publicly_accessible == true)
+    |> order_by([e], asc: e.event_date)
+    |> preload([:user, team_members: :user])
+    |> Repo.all()
+  end
+
+  @doc """
   Lists past public events.
   """
   def list_past_public_events(opts \\ []) do

@@ -22,6 +22,18 @@ defmodule Sahajyog.Topics do
   end
 
   @doc """
+  Lists topics that are flagged as publicly accessible (for Welcome page).
+  """
+  def list_publicly_accessible_topics do
+    Topic
+    |> where([t], t.status == "published")
+    |> where([t], t.is_publicly_accessible == true)
+    |> order_by([t], desc: t.published_at)
+    |> preload([:user, co_authors: :user, references: []])
+    |> Repo.all()
+  end
+
+  @doc """
   Lists topics visible to a specific user:
   - Published topics (everyone can see)
   - Draft/archived topics where user is the author

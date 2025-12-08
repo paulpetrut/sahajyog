@@ -245,6 +245,13 @@ defmodule SahajyogWeb.TopicEditLive do
                     options={Topic.languages()}
                     required
                   />
+                  <div class="flex items-center gap-2 py-4">
+                    <.input
+                      field={@form[:is_publicly_accessible]}
+                      type="checkbox"
+                      label={gettext("Feature on Welcome Page (Publicly Accessible)")}
+                    />
+                  </div>
                 </div>
               </div>
 
