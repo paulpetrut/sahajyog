@@ -237,6 +237,11 @@ defmodule SahajyogWeb.WelcomeLive do
                     </div>
                     <h3 class="text-xs md:text-lg font-bold text-base-content mb-0.5 md:mb-2">
                       {gettext("Experience")}
+                      <%= if !assigns[:current_scope] do %>
+                        <span class="text-[0.6em] md:text-[0.65em] text-base-content/50 font-normal">
+                          ({gettext("Login Required")})
+                        </span>
+                      <% end %>
                     </h3>
                     <p class="text-xs md:text-sm text-base-content/60 leading-relaxed hidden sm:block">
                       {gettext("Feel the peace within and grow through regular practice")}
