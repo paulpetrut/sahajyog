@@ -256,6 +256,14 @@ defmodule Sahajyog.ExternalApi do
   defp maybe_add_param(params, key, value), do: Map.put(params, key, value)
 
   defp make_request(url, endpoint \\ :talks) do
+    # Replace base URL if overridden by env var, mostly for dev/testing
+    url =
+      if System.get_env("API_BASE_URL") do
+        String.replace(url, @base_url, System.get_env("API_BASE_URL"))
+      else
+        url
+      end
+
     start_time = System.monotonic_time(:millisecond)
     metadata = %{url: url, endpoint: endpoint}
 
@@ -281,7 +289,8 @@ defmodule Sahajyog.ExternalApi do
       end,
       retry_log_level: :warning,
       headers: [
-        {"user-agent", "SahajyogApp/1.0"},
+        {"user-agent",
+         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
         {"accept", "application/json"}
       ]
     ]
