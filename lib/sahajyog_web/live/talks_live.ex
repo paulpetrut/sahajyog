@@ -34,6 +34,8 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:error, nil)
       |> assign(:retry_count, 0)
       |> assign(:params_applied, false)
+      |> assign(:cached_results, nil)
+      |> assign(:last_fetch_params, nil)
       |> stream_configure(:talks, dom_id: fn talk -> "talk-#{talk["id"]}" end)
       |> stream(:talks, [])
 
@@ -93,8 +95,8 @@ defmodule SahajyogWeb.TalksLive do
       filters = build_filters_from_assigns(socket)
 
       socket =
-        case fetch_talks(filters) do
-          {:ok, talks, total} ->
+        case get_paginated_talks(socket, filters) do
+          {:ok, talks, total, socket} ->
             socket
             |> stream(:talks, talks, reset: true)
             |> assign(:total_results, total)
@@ -102,7 +104,7 @@ defmodule SahajyogWeb.TalksLive do
             |> assign(:loading, false)
             |> assign(:error, nil)
 
-          {:error, reason} ->
+          {:error, reason, socket} ->
             Logger.error("Failed to load talks in handle_params: #{inspect(reason)}")
 
             # Schedule a retry after 5 seconds for deployment scenarios
@@ -192,24 +194,19 @@ defmodule SahajyogWeb.TalksLive do
     params
   end
 
-  defp fetch_talks(filters) do
-    case Sahajyog.ExternalApi.fetch_talks(filters) do
-      {:ok, results, _total} ->
-        search_query = filters[:search_query]
-
-        # Use results as-is since API returns complete data
-        enriched_results = results
-
+  defp get_paginated_talks(socket, filters) do
+    case get_or_fetch_talks(socket, filters) do
+      {:ok, raw_results, socket} ->
         # Apply client-side filtering if searching
         filtered_results =
-          if search_query != nil and search_query != "" do
-            enriched_results
+          if filters[:search_query] != nil and filters[:search_query] != "" do
+            raw_results
             |> filter_by_country(filters[:country])
             |> filter_by_year(filters[:year])
             |> filter_by_category(filters[:category])
             |> filter_by_spoken_language(filters[:spoken_language])
           else
-            enriched_results
+            raw_results
           end
 
         # Apply sorting
@@ -227,10 +224,51 @@ defmodule SahajyogWeb.TalksLive do
           sorted_results
           |> Enum.slice(start_index, per_page)
 
-        {:ok, paginated_results, total_after_filter}
+        {:ok, paginated_results, total_after_filter, socket}
 
       {:error, reason} ->
-        {:error, reason}
+        {:error, reason, socket}
+    end
+  end
+
+  defp get_or_fetch_talks(socket, filters) do
+    fetch_params = get_fetch_params(filters)
+
+    if socket.assigns[:last_fetch_params] == fetch_params and socket.assigns[:cached_results] do
+      {:ok, socket.assigns.cached_results, socket}
+    else
+      # If we are fetching new data, we should probably clear the old cache first to free memory
+      # but in LiveView it's just replacing the assign.
+      case Sahajyog.ExternalApi.fetch_talks(filters) do
+        {:ok, results, _total} ->
+          # If searching, results are prioritized by relevance, but we don't have "date" sort guaranteed from API in search mode
+          # If not searching, API returns sorted by date ASC.
+          # We store the raw results.
+
+          socket =
+            socket
+            |> assign(:cached_results, results)
+            |> assign(:last_fetch_params, fetch_params)
+
+          {:ok, results, socket}
+
+        {:error, reason} ->
+          {:error, reason}
+      end
+    end
+  end
+
+  defp get_fetch_params(filters) do
+    if filters[:search_query] && filters[:search_query] != "" do
+      %{search_query: filters[:search_query]}
+    else
+      Map.take(filters, [
+        :country,
+        :year,
+        :category,
+        :spoken_language,
+        :translation_language
+      ])
     end
   end
 
@@ -458,8 +496,8 @@ defmodule SahajyogWeb.TalksLive do
 
       socket = push_event(socket, "loading_more", %{})
 
-      case fetch_talks(filters) do
-        {:ok, talks, _total} ->
+      case get_paginated_talks(socket, filters) do
+        {:ok, talks, _total, socket} ->
           socket =
             socket
             |> stream(:talks, talks, at: -1)
@@ -468,7 +506,7 @@ defmodule SahajyogWeb.TalksLive do
 
           {:noreply, socket}
 
-        {:error, _reason} ->
+        {:error, _reason, socket} ->
           {:noreply, push_event(socket, "loaded_more", %{})}
       end
     else
@@ -485,8 +523,23 @@ defmodule SahajyogWeb.TalksLive do
 
       socket = load_filter_options(socket)
 
-      case fetch_talks(%{}) do
-        {:ok, talks, total} ->
+      socket = load_filter_options(socket)
+
+      # We pass empty filters, but actually we should probably respect current filters?
+      # The original code called fetch_talks(%{}), which essentially reset filters.
+      # To keep behavior consistent, we'll try to use current assigns if available, or empty.
+      # However, fetch_talks(%{}) implies we want ALL talks.
+      # Let's stick to %{} as per original code for safety, or better:
+      # If we are retrying, we probably want to load what was intended.
+      # But since original was %{}, let's keep it safe.
+
+      # Wait, original was fetch_talks(%{}). This loads defaults (en language, no filters).
+      # This might have been a bug or a safe fallback.
+      # Let's use build_filters_from_assigns(socket) to retry the ACTUAL request.
+      filters = build_filters_from_assigns(socket)
+
+      case get_paginated_talks(socket, filters) do
+        {:ok, talks, total, socket} ->
           {:noreply,
            socket
            |> stream(:talks, talks, reset: true)
@@ -495,7 +548,7 @@ defmodule SahajyogWeb.TalksLive do
            |> assign(:loading, false)
            |> assign(:error, nil)}
 
-        {:error, reason} ->
+        {:error, reason, socket} ->
           Logger.warning("Retry #{retry_count + 1} failed: #{inspect(reason)}")
           Process.send_after(self(), :retry_load, 5000)
 
