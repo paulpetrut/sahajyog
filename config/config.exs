@@ -73,6 +73,15 @@ config :logger, :default_formatter,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :ex_aws,
+  json_codec: Jason,
+  http_client: ExAws.Request.Hackney,
+  retries: [
+    max_attempts: 10,
+    base_backoff_in_ms: 10,
+    max_backoff_in_ms: 10_000
+  ]
+
 # Configure Gettext
 config :sahajyog, SahajyogWeb.Gettext,
   default_locale: "en",

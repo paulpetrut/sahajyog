@@ -5,18 +5,23 @@ defmodule Sahajyog.Resources.R2Storage do
 
   @doc """
   Uploads a file to R2 and returns the key.
+  Uses direct put_object for reliability (no multipart upload issues).
   """
   def upload(file_path, key, opts \\ []) do
     bucket = get_bucket()
     content_type = Keyword.get(opts, :content_type, "application/octet-stream")
 
-    file_path
-    |> ExAws.S3.Upload.stream_file()
-    |> ExAws.S3.upload(bucket, key, content_type: content_type)
-    |> ExAws.request()
-    |> case do
-      {:ok, _response} -> {:ok, key}
-      {:error, reason} -> {:error, reason}
+    case File.read(file_path) do
+      {:ok, content} ->
+        ExAws.S3.put_object(bucket, key, content, content_type: content_type)
+        |> ExAws.request(http_opts: [recv_timeout: 120_000, connect_timeout: 30_000])
+        |> case do
+          {:ok, _response} -> {:ok, key}
+          {:error, reason} -> {:error, reason}
+        end
+
+      {:error, reason} ->
+        {:error, {:file_read_error, reason}}
     end
   end
 

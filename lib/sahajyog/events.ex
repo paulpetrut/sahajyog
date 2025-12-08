@@ -17,8 +17,10 @@ defmodule Sahajyog.Events do
     EventCarpoolRequest,
     EventCarpoolRequest,
     EventDonation,
-    EventAttendance,
-    EventRideRequest
+    EventRideRequest,
+    EventReview,
+    EventPhoto,
+    EventAttendance
   }
 
   alias Sahajyog.Accounts.User
@@ -1069,6 +1071,114 @@ defmodule Sahajyog.Events do
       carpool -> carpool.driver_user_id == user.id
     end
   end
+
+  ## Event Reviews
+
+  def list_event_reviews(event_id) do
+    EventReview
+    |> where([r], r.event_id == ^event_id)
+    |> order_by([r], desc: r.inserted_at)
+    |> preload(:user)
+    |> Repo.all()
+  end
+
+  def create_event_review(user, event, attrs) do
+    if can_review?(user, event) do
+      case %EventReview{}
+           |> EventReview.changeset(
+             Map.merge(attrs, %{"user_id" => user.id, "event_id" => event.id})
+           )
+           |> Repo.insert() do
+        {:ok, review} ->
+          review = Repo.preload(review, :user)
+          broadcast(event.id, {:review_created, review})
+          {:ok, review}
+
+        error ->
+          error
+      end
+    else
+      {:error, :cannot_review}
+    end
+  end
+
+  def delete_event_review(%EventReview{} = review) do
+    case Repo.delete(review) do
+      {:ok, _} ->
+        broadcast(review.event_id, {:review_deleted, review.id})
+        {:ok, review}
+
+      error ->
+        error
+    end
+  end
+
+  def can_review?(user, event) do
+    # 1. Check time window (Event period + 7 days)
+    end_date = event.end_date || event.event_date
+    review_deadline = Date.add(end_date, 7)
+    today = Date.utc_today()
+
+    within_window = Date.compare(today, review_deadline) != :gt
+
+    # 2. Check max reviews (3 per user)
+    review_count =
+      EventReview
+      |> where([r], r.event_id == ^event.id and r.user_id == ^user.id)
+      |> Repo.aggregate(:count, :id)
+
+    within_window && review_count < 3
+  end
+
+  ## Event Gallery (Photos)
+
+  def list_event_photos(event_id) do
+    EventPhoto
+    |> where([p], p.event_id == ^event_id)
+    |> order_by([p], desc: p.inserted_at)
+    |> preload(:user)
+    |> Repo.all()
+  end
+
+  def count_user_event_photos(event_id, user_id) do
+    EventPhoto
+    |> where([p], p.event_id == ^event_id and p.user_id == ^user_id)
+    |> Repo.aggregate(:count, :id)
+  end
+
+  def create_event_photo(attrs) do
+    case %EventPhoto{}
+         |> EventPhoto.changeset(attrs)
+         |> Repo.insert() do
+      {:ok, photo} ->
+        photo = Repo.preload(photo, :user)
+        broadcast(photo.event_id, {:photo_created, photo})
+        {:ok, photo}
+
+      error ->
+        error
+    end
+  end
+
+  def delete_event_photo(%EventPhoto{} = photo) do
+    # Delete from R2 storage first (if it's an R2 key, not a legacy URL)
+    if photo.url && !String.starts_with?(photo.url, "http") do
+      key = String.trim_leading(photo.url, "/")
+      Sahajyog.Resources.R2Storage.delete(key)
+    end
+
+    case Repo.delete(photo) do
+      {:ok, _} ->
+        broadcast(photo.event_id, {:photo_deleted, photo.id})
+        {:ok, photo}
+
+      error ->
+        error
+    end
+  end
+
+  def get_event_review!(id), do: Repo.get!(EventReview, id)
+  def get_event_photo!(id), do: Repo.get!(EventPhoto, id)
 
   ## PubSub
 

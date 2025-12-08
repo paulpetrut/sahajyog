@@ -56,6 +56,8 @@ defmodule Sahajyog.Events.Event do
     field :is_publicly_accessible, :boolean, default: false
 
     belongs_to :user, User
+    has_many :reviews, Sahajyog.Events.EventReview
+    has_many :photos, Sahajyog.Events.EventPhoto
     has_many :team_members, EventTeamMember
     has_many :location_photos, EventLocationPhoto
     has_many :tasks, EventTask

@@ -3,8 +3,11 @@ defmodule SahajyogWeb.EventShowLive do
 
   alias Sahajyog.Events
   alias Sahajyog.Events.{EventCarpool, EventNotifier}
+  alias Sahajyog.Resources.R2Storage
   alias Phoenix.LiveView.JS
   alias Timex
+
+  require Logger
 
   @impl true
   def mount(%{"slug" => slug}, _session, socket) do
@@ -77,33 +80,60 @@ defmodule SahajyogWeb.EventShowLive do
     participant_count = Events.count_attendees(event.id)
 
     # Presence Logic for Online Events
-    if connected?(socket) && event.is_online do
-      topic = "event_presence:#{event.id}"
-      SahajyogWeb.Endpoint.subscribe(topic)
+    if connected?(socket) do
+      if event.is_online do
+        topic = "event_presence:#{event.id}"
+        SahajyogWeb.Endpoint.subscribe(topic)
 
-      presence_meta = %{
-        online_at: inspect(System.system_time(:second)),
-        user_id: socket.assigns.current_scope.user.id,
-        email: socket.assigns.current_scope.user.email,
-        first_name: socket.assigns.current_scope.user.first_name,
-        last_name: socket.assigns.current_scope.user.last_name,
-        # Use avatar URL if available, else derive initials
-        avatar: nil
-      }
+        presence_meta = %{
+          online_at: inspect(System.system_time(:second)),
+          user_id: socket.assigns.current_scope.user.id,
+          email: socket.assigns.current_scope.user.email,
+          first_name: socket.assigns.current_scope.user.first_name,
+          last_name: socket.assigns.current_scope.user.last_name,
+          # Use avatar URL if available, else derive initials
+          avatar: nil
+        }
 
-      {:ok, _} =
-        SahajyogWeb.Presence.track(
-          self(),
-          topic,
-          socket.assigns.current_scope.user.id,
-          presence_meta
-        )
+        {:ok, _} =
+          SahajyogWeb.Presence.track(
+            self(),
+            topic,
+            socket.assigns.current_scope.user.id,
+            presence_meta
+          )
+      end
+
+      # Subscribe to event updates (reviews, photos)
+      Events.subscribe(event.id)
     end
+
+    # Fetch reviews and photos
+    reviews = Events.list_event_reviews(event.id)
+    photos = Events.list_event_photos(event.id)
+    can_review = Events.can_review?(socket.assigns.current_scope.user, event)
+
+    # Count user's photos for this event (limit: 25 per user)
+    user_photo_count =
+      Events.count_user_event_photos(event.id, socket.assigns.current_scope.user.id)
+
+    socket =
+      socket
+      |> allow_upload(:photos,
+        accept: ~w(.jpg .jpeg .png .webp),
+        max_entries: min(5, 25 - user_photo_count),
+        max_file_size: 10_000_000,
+        auto_upload: true
+      )
 
     {:ok,
      socket
      |> assign(:page_title, event.title)
      |> assign(:event, event)
+     |> assign(:reviews, reviews)
+     |> assign(:photos, photos)
+     |> assign(:user_photo_count, user_photo_count)
+     |> assign(:can_review, can_review)
      |> assign(:can_edit, can_edit)
      |> assign(:profile_incomplete, profile_incomplete)
      |> assign(:pending_invitation, pending_invitation)
@@ -123,6 +153,8 @@ defmodule SahajyogWeb.EventShowLive do
      |> assign(:show_contact_modal, false)
      |> assign(:show_contact_button, show_contact_button)
      |> assign(:focus_mode, false)
+     |> assign(:selected_photo, nil)
+     |> assign(:active_tab, "details")
      # Will be populated by handle_info
      |> assign(:connected_users, [])
      |> handle_presence_state(event)}
@@ -216,6 +248,42 @@ defmodule SahajyogWeb.EventShowLive do
     else
       {:noreply, socket}
     end
+  end
+
+  # Real-time updates for Reviews & Photos
+  @impl true
+  def handle_info({:review_created, review}, socket) do
+    updated_reviews = [review | socket.assigns.reviews] |> Enum.uniq_by(& &1.id)
+    {:noreply, assign(socket, :reviews, updated_reviews)}
+  end
+
+  @impl true
+  def handle_info({:review_deleted, id}, socket) do
+    updated_reviews = Enum.reject(socket.assigns.reviews, &(&1.id == id))
+
+    can_review = Events.can_review?(socket.assigns.current_scope.user, socket.assigns.event)
+
+    {:noreply,
+     socket
+     |> assign(:reviews, updated_reviews)
+     |> assign(:can_review, can_review)}
+  end
+
+  @impl true
+  def handle_info({:photo_created, photo}, socket) do
+    updated_photos = [photo | socket.assigns.photos] |> Enum.uniq_by(& &1.id)
+    {:noreply, assign(socket, :photos, updated_photos)}
+  end
+
+  @impl true
+  def handle_info({:photo_deleted, id}, socket) do
+    updated_photos = Enum.reject(socket.assigns.photos, &(&1.id == id))
+    {:noreply, assign(socket, :photos, updated_photos)}
+  end
+
+  @impl true
+  def handle_event("change_tab", %{"tab" => tab}, socket) do
+    {:noreply, assign(socket, :active_tab, tab)}
   end
 
   @impl true
@@ -580,6 +648,143 @@ defmodule SahajyogWeb.EventShowLive do
     {:noreply, assign(socket, :show_contact_modal, false)}
   end
 
+  # Reviews
+  def handle_event("save_review", review_params, socket) do
+    case Events.create_event_review(
+           socket.assigns.current_scope.user,
+           socket.assigns.event,
+           review_params
+         ) do
+      {:ok, _review} ->
+        updated_reviews = Events.list_event_reviews(socket.assigns.event.id)
+        # Re-check reviews count/eligibility
+        can_review = Events.can_review?(socket.assigns.current_scope.user, socket.assigns.event)
+
+        {:noreply,
+         socket
+         |> assign(:reviews, updated_reviews)
+         |> assign(:can_review, can_review)
+         |> put_flash(:info, gettext("Review posted!"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not post review."))}
+    end
+  end
+
+  # Photos
+  def handle_event("validate_photo", _params, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :photos, ref)}
+  end
+
+  def handle_event("save_photo", _params, socket) do
+    # Check if all uploads are complete before consuming
+    entries = socket.assigns.uploads.photos.entries
+
+    if Enum.any?(entries, fn entry -> entry.progress < 100 end) do
+      {:noreply, put_flash(socket, :error, gettext("Please wait for uploads to complete."))}
+    else
+      do_save_photos(socket)
+    end
+  end
+
+  def handle_event("delete_review", %{"id" => id}, socket) do
+    review = Events.get_event_review!(id)
+
+    if socket.assigns.can_edit || review.user_id == socket.assigns.current_scope.user.id do
+      {:ok, _} = Events.delete_event_review(review)
+      updated_reviews = Events.list_event_reviews(socket.assigns.event.id)
+      can_review = Events.can_review?(socket.assigns.current_scope.user, socket.assigns.event)
+
+      {:noreply,
+       socket
+       |> assign(:reviews, updated_reviews)
+       |> assign(:can_review, can_review)
+       |> put_flash(:info, gettext("Review deleted."))}
+    else
+      {:noreply, put_flash(socket, :error, gettext("Unauthorized."))}
+    end
+  end
+
+  def handle_event("delete_photo", %{"id" => id}, socket) do
+    # Handle both string and integer id
+    photo_id = if is_binary(id), do: String.to_integer(id), else: id
+    photo = Events.get_event_photo!(photo_id)
+    current_user_id = socket.assigns.current_scope.user.id
+
+    if socket.assigns.can_edit || photo.user_id == current_user_id do
+      {:ok, _} = Events.delete_event_photo(photo)
+
+      # Update photos list immediately (don't wait for broadcast)
+      updated_photos = Enum.reject(socket.assigns.photos, &(&1.id == photo_id))
+
+      # Update user photo count if they deleted their own photo
+      new_count =
+        if photo.user_id == current_user_id do
+          max(0, socket.assigns.user_photo_count - 1)
+        else
+          socket.assigns.user_photo_count
+        end
+
+      {:noreply,
+       socket
+       |> assign(:photos, updated_photos)
+       |> assign(:selected_photo, nil)
+       |> assign(:user_photo_count, new_count)
+       |> put_flash(:info, gettext("Photo deleted."))}
+    else
+      {:noreply, put_flash(socket, :error, gettext("Unauthorized."))}
+    end
+  end
+
+  def handle_event("select_photo", %{"id" => id}, socket) do
+    photo = Enum.find(socket.assigns.photos, &(&1.id == String.to_integer(id)))
+    {:noreply, assign(socket, :selected_photo, photo)}
+  end
+
+  def handle_event("close_photo_modal", _, socket) do
+    {:noreply, assign(socket, :selected_photo, nil)}
+  end
+
+  def handle_event("next_photo", _, socket) do
+    photos = socket.assigns.photos
+    current = socket.assigns.selected_photo
+
+    next_photo =
+      case current do
+        nil ->
+          List.first(photos)
+
+        _ ->
+          current_index = Enum.find_index(photos, &(&1.id == current.id)) || 0
+          next_index = rem(current_index + 1, length(photos))
+          Enum.at(photos, next_index)
+      end
+
+    {:noreply, assign(socket, :selected_photo, next_photo)}
+  end
+
+  def handle_event("prev_photo", _, socket) do
+    photos = socket.assigns.photos
+    current = socket.assigns.selected_photo
+
+    prev_photo =
+      case current do
+        nil ->
+          List.last(photos)
+
+        _ ->
+          current_index = Enum.find_index(photos, &(&1.id == current.id)) || 0
+          prev_index = if current_index == 0, do: length(photos) - 1, else: current_index - 1
+          Enum.at(photos, prev_index)
+      end
+
+    {:noreply, assign(socket, :selected_photo, prev_photo)}
+  end
+
   def handle_event(
         "send_contact_message",
         %{"sender_name" => name, "sender_email" => email, "message" => message},
@@ -602,6 +807,103 @@ defmodule SahajyogWeb.EventShowLive do
      |> assign(:show_contact_modal, false)
      |> put_flash(:info, gettext("Message sent to the organizers."))}
   end
+
+  defp do_save_photos(socket) do
+    event_slug = socket.assigns.event.slug
+
+    # First, quickly consume entries and copy files to temp location
+    # This prevents the upload channel from timing out
+    file_infos =
+      consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
+        uuid = Ecto.UUID.generate() |> String.slice(0, 8)
+        sanitized_name = sanitize_filename(entry.client_name)
+        key = "Events/#{event_slug}/photos/#{uuid}-#{sanitized_name}"
+
+        # Copy to temp file to preserve the data after consume completes
+        temp_path = Path.join(System.tmp_dir!(), "#{uuid}-#{sanitized_name}")
+        File.cp!(path, temp_path)
+
+        {:ok,
+         %{
+           temp_path: temp_path,
+           key: key,
+           content_type: entry.client_type,
+           name: entry.client_name
+         }}
+      end)
+
+    # Now upload to R2 outside of consume_uploaded_entries
+    successful_keys =
+      Enum.reduce(file_infos, [], fn file_info, acc ->
+        Logger.info("Uploading event photo: #{file_info.name} to key: #{file_info.key}")
+
+        result =
+          case R2Storage.upload(file_info.temp_path, file_info.key,
+                 content_type: file_info.content_type
+               ) do
+            {:ok, key} ->
+              Logger.info("Successfully uploaded event photo: #{key}")
+              [key | acc]
+
+            {:error, reason} ->
+              Logger.error("Failed to upload event photo: #{inspect(reason)}")
+              acc
+          end
+
+        # Clean up temp file
+        File.rm(file_info.temp_path)
+        result
+      end)
+
+    # Save to DB
+    for key <- successful_keys do
+      Events.create_event_photo(%{
+        url: key,
+        event_id: socket.assigns.event.id,
+        user_id: socket.assigns.current_scope.user.id
+      })
+    end
+
+    if length(successful_keys) > 0 do
+      # Update user photo count
+      new_count = socket.assigns.user_photo_count + length(successful_keys)
+
+      {:noreply,
+       socket
+       |> assign(:user_photo_count, new_count)
+       |> put_flash(:info, gettext("Photos uploaded successfully!"))}
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, gettext("Failed to upload photos. Please try again."))}
+    end
+  end
+
+  defp sanitize_filename(filename) do
+    filename
+    |> String.replace(~r/[^a-zA-Z0-9._-]/, "_")
+    |> String.slice(0, 100)
+  end
+
+  defp error_to_string(:too_large), do: gettext("File is too large (max 10MB)")
+  defp error_to_string(:too_many_files), do: gettext("Too many files (max 5)")
+  defp error_to_string(:not_accepted), do: gettext("Invalid file type")
+  defp error_to_string(err), do: inspect(err)
+
+  # Generate photo URL - handles both R2 keys and legacy full URLs
+  defp photo_url(url_or_key) when is_binary(url_or_key) do
+    if String.starts_with?(url_or_key, "http") do
+      # Already a full URL
+      url_or_key
+    else
+      # It's an R2 key, generate presigned URL (valid for 1 hour)
+      # Remove leading slash if present (legacy URLs stored with leading slash)
+      key = String.trim_leading(url_or_key, "/")
+      R2Storage.generate_download_url(key, expires_in: 3600)
+    end
+  end
+
+  defp photo_url(_), do: ""
 
   defp format_date(date), do: Calendar.strftime(date, "%B %d, %Y")
 
@@ -1152,648 +1454,1069 @@ defmodule SahajyogWeb.EventShowLive do
             <% end %>
           </.card>
 
+          <%!-- Tabs Navigation --%>
+          <div role="tablist" class="tabs tabs-bordered mb-6">
+            <a
+              role="tab"
+              class={["tab", @active_tab == "details" && "tab-active"]}
+              phx-click="change_tab"
+              phx-value-tab="details"
+            >
+              {gettext("Details")}
+            </a>
+            <a
+              role="tab"
+              class={["tab", @active_tab == "reviews" && "tab-active"]}
+              phx-click="change_tab"
+              phx-value-tab="reviews"
+            >
+              {gettext("Reviews")}
+            </a>
+            <a
+              role="tab"
+              class={["tab", @active_tab == "gallery" && "tab-active"]}
+              phx-click="change_tab"
+              phx-value-tab="gallery"
+            >
+              {gettext("Gallery")}
+            </a>
+          </div>
+
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-6">
-              <%!-- Description --%>
-              <%= if @event.description do %>
-                <.card size="lg" class="mb-6">
-                  <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
-                    <.icon name="hero-document-text" class="w-5 h-5" />
-                    {gettext("About this Event")}
-                  </h2>
-                  <div class="prose prose-invert max-w-none text-base-content/80">
-                    {Phoenix.HTML.raw(@event.description)}
-                  </div>
-                </.card>
-              <% end %>
-
-              <%!-- Transportation Section --%>
-              <%= if !@event.is_online and (@event.status == "public" || @event.transportation_options != [] || @event.carpools != []) do %>
-                <.card size="lg" class="mb-6">
-                  <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
-                    <.icon name="hero-truck" class="w-5 h-5" />
-                    {gettext("Transportation")}
-                  </h2>
-
-                  <%!-- Public/Bus Transportation --%>
-                  <%= if @event.transportation_options != [] do %>
-                    <div class="space-y-3 mb-6">
-                      <div
-                        :for={trans <- @event.transportation_options}
-                        class="p-4 bg-base-100/50 rounded-lg border border-base-content/10"
-                      >
-                        <div class="flex items-start gap-3">
-                          <div class="p-2 bg-primary/10 rounded-lg">
-                            <.icon
-                              name={transport_type_icon(trans.transport_type)}
-                              class="w-5 h-5 text-primary"
-                            />
-                          </div>
-                          <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                              <h4 class="font-semibold text-base-content">{trans.title}</h4>
-                              <span class="px-2 py-0.5 bg-base-200 text-base-content/70 rounded text-xs">
-                                {trans.transport_type}
-                              </span>
-                            </div>
-                            <%= if trans.description do %>
-                              <p class="text-sm text-base-content/60 mb-2">{trans.description}</p>
-                            <% end %>
-                            <div class="flex flex-wrap gap-4 text-xs text-base-content/50">
-                              <%= if trans.departure_location do %>
-                                <span class="flex items-center gap-1">
-                                  <.icon name="hero-map-pin" class="w-3 h-3" />
-                                  {trans.departure_location}
-                                </span>
-                              <% end %>
-                              <%= if trans.departure_time do %>
-                                <span class="flex items-center gap-1">
-                                  <.icon name="hero-clock" class="w-3 h-3" />
-                                  {format_time(trans.departure_time)}
-                                </span>
-                              <% end %>
-                              <%= if trans.estimated_cost do %>
-                                <span class="flex items-center gap-1">
-                                  <.icon name="hero-currency-euro" class="w-3 h-3" />
-                                  €{Decimal.to_string(trans.estimated_cost)}
-                                </span>
-                              <% end %>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+              <%= if @active_tab == "details" do %>
+                <%!-- Description --%>
+                <%= if @event.description do %>
+                  <.card size="lg" class="mb-6">
+                    <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
+                      <.icon name="hero-document-text" class="w-5 h-5" />
+                      {gettext("About this Event")}
+                    </h2>
+                    <div class="prose prose-invert max-w-none text-base-content/80">
+                      {Phoenix.HTML.raw(@event.description)}
                     </div>
-                  <% end %>
+                  </.card>
+                <% end %>
 
-                  <%!-- Carpooling Section --%>
-                  <div class="border-t border-base-content/10 pt-6">
-                    <div class="flex items-center justify-between mb-4">
-                      <h3 class="font-semibold text-base-content flex items-center gap-2">
-                        <.icon name="hero-users" class="w-5 h-5" />
-                        {gettext("Carpooling")}
-                      </h3>
-                      <div class="flex gap-2">
-                        <%= if @event.status == "public" do %>
-                          <%= if @confirmed_ride do %>
-                            <div class="px-3 py-1.5 bg-success/10 text-success rounded-lg text-sm border border-success/20 flex items-center gap-2">
-                              <.icon name="hero-check-circle" class="w-4 h-4" />
-                              {gettext("Ride Confirmed")}
-                            </div>
-                          <% else %>
-                            <%= unless @my_carpool do %>
-                              <% has_pending =
-                                Enum.any?(
-                                  @ride_requests,
-                                  &(&1.passenger_user_id == @current_scope.user.id)
-                                ) %>
-                              <%= if has_pending do %>
-                                <div class="px-3 py-1.5 bg-warning/10 text-warning rounded-lg text-sm border border-warning/20 flex items-center gap-2">
-                                  <.icon name="hero-clock" class="w-4 h-4" />
-                                  {gettext("Request Pending")}
-                                </div>
-                              <% else %>
-                                <button
-                                  phx-click="show_request_form"
-                                  class="px-3 py-1.5 bg-secondary text-secondary-content rounded-lg text-sm hover:bg-secondary/90"
-                                >
-                                  {gettext("Request a Ride")}
-                                </button>
-                              <% end %>
-                              <button
-                                phx-click="show_carpool_form"
-                                class="px-3 py-1.5 bg-primary text-primary-content rounded-lg text-sm hover:bg-primary/90"
-                              >
-                                {gettext("Offer a Ride")}
-                              </button>
-                            <% else %>
-                              <div class="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm border border-primary/20 flex items-center gap-2">
-                                <.icon name="hero-check-badge" class="w-4 h-4" />
-                                {gettext("You are offering a ride")}
-                              </div>
-                            <% end %>
-                          <% end %>
-                        <% end %>
-                      </div>
-                    </div>
+                <%!-- Transportation Section --%>
+                <%= if !@event.is_online and (@event.status == "public" || @event.transportation_options != [] || @event.carpools != []) do %>
+                  <.card size="lg" class="mb-6">
+                    <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
+                      <.icon name="hero-truck" class="w-5 h-5" />
+                      {gettext("Transportation")}
+                    </h2>
 
-                    <%!-- Confirmed Ride Details --%>
-                    <%= if @confirmed_ride do %>
-                      <div class="mb-6 p-4 bg-success/5 rounded-lg border border-success/20">
-                        <h4 class="font-medium text-base-content mb-2 flex items-center justify-between gap-2">
-                          <span class="flex items-center gap-2">
-                            <.icon name="hero-check-circle" class="w-5 h-5 text-success" />
-                            {gettext("Your Ride Details")}
-                          </span>
-                          <button
-                            phx-click="leave_ride"
-                            data-confirm={gettext("Are you sure you want to leave this ride?")}
-                            class="text-xs text-error hover:underline"
-                          >
-                            {gettext("Leave Ride")}
-                          </button>
-                        </h4>
-                        <p class="text-sm text-base-content/70 mb-4">
-                          {gettext("You have a ride with %{driver}",
-                            driver: @confirmed_ride.driver_user.email
-                          )}
-                        </p>
-                        <div class="grid sm:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p class="text-base-content/50">{gettext("Pick up")}</p>
-                            <p class="font-medium">{@confirmed_ride.departure_location}</p>
-                          </div>
-                          <%= if @confirmed_ride.departure_time do %>
-                            <div>
-                              <p class="text-base-content/50">{gettext("Time")}</p>
-                              <p class="font-medium">{format_time(@confirmed_ride.departure_time)}</p>
-                            </div>
-                          <% end %>
-
-                          <%= if @confirmed_ride.departure_date do %>
-                            <div>
-                              <p class="text-base-content/50">{gettext("Date")}</p>
-                              <p class="font-medium">{@confirmed_ride.departure_date}</p>
-                            </div>
-                          <% end %>
-                          <%= if @confirmed_ride.cost do %>
-                            <div>
-                              <p class="text-base-content/50">{gettext("Cost")}</p>
-                              <p class="font-medium">
-                                <%= case @confirmed_ride.payment_method do %>
-                                  <% "free" -> %>
-                                    {gettext("Free")}
-                                  <% "at_destination" -> %>
-                                    €{@confirmed_ride.cost} ({gettext("At Destination")})
-                                  <% "upfront" -> %>
-                                    €{@confirmed_ride.cost} ({gettext("Upfront")})
-                                  <% _ -> %>
-                                    €{@confirmed_ride.cost}
-                                <% end %>
-                              </p>
-                            </div>
-                          <% end %>
-                        </div>
-                      </div>
-                    <% end %>
-
-                    <%!-- Request Form --%>
-                    <%= if @show_request_form do %>
-                      <div class="mb-6 p-4 bg-secondary/5 rounded-lg border border-secondary/20">
-                        <h4 class="font-medium text-base-content mb-4">
-                          {gettext("Request a Ride")}
-                        </h4>
-                        <.form
-                          for={@request_form}
-                          phx-change="validate_request"
-                          phx-submit="create_request"
-                        >
-                          <div class="grid sm:grid-cols-2 gap-4 mb-4">
-                            <.input
-                              field={@request_form[:location]}
-                              type="text"
-                              label={gettext("Pickup Location")}
-                              placeholder={gettext("e.g., Downtown")}
-                              required
-                            />
-                            <.input
-                              field={@request_form[:contact_info]}
-                              type="text"
-                              label={gettext("Contact Info")}
-                              placeholder={gettext("Phone or Email")}
-                              required
-                            />
-                          </div>
-                          <div class="flex gap-2 mt-4">
-                            <.primary_button type="submit">{gettext("Post Request")}</.primary_button>
-                            <.secondary_button type="button" phx-click="hide_request_form">
-                              {gettext("Cancel")}
-                            </.secondary_button>
-                          </div>
-                        </.form>
-                      </div>
-                    <% end %>
-
-                    <%!-- Ride Requests List --%>
-                    <%= if @ride_requests != [] do %>
-                      <div class="mb-6">
-                        <h4 class="text-sm font-semibold text-base-content uppercase tracking-wider mb-3">
-                          {gettext("Ride Requests")}
-                        </h4>
-                        <div class="grid sm:grid-cols-2 gap-4">
-                          <div
-                            :for={req <- @ride_requests}
-                            class="p-3 bg-base-100/50 rounded-lg border border-base-content/10 flex items-center justify-between"
-                          >
-                            <div>
-                              <p class="font-medium text-base-content">
-                                {req.passenger_user.email |> String.split("@") |> List.first()}
-                              </p>
-                              <p class="text-sm text-base-content/60">
-                                <.icon name="hero-map-pin" class="w-3 h-3 inline" /> {req.location}
-                              </p>
-                            </div>
-
-                            <%= if @my_carpool && req.status == "pending" do %>
-                              <button
-                                phx-click="pick_up_passenger"
-                                phx-value-request_id={req.id}
-                                class="px-3 py-1 bg-primary text-primary-content rounded text-xs hover:bg-primary/90 transition-colors"
-                              >
-                                {gettext("Pick Up")}
-                              </button>
-                            <% else %>
-                              <span class={[
-                                "px-2 py-1 rounded text-xs font-medium",
-                                if(req.status == "fulfilled",
-                                  do: "bg-success/10 text-success",
-                                  else: "bg-base-200 text-base-content/60"
-                                )
-                              ]}>
-                                <%= if req.status == "fulfilled" do %>
-                                  {gettext("Ride Found")}
-                                <% else %>
-                                  {gettext("Looking for ride")}
-                                <% end %>
-                              </span>
-                              <%= if req.passenger_user_id == @current_scope.user.id do %>
-                                <button
-                                  phx-click="delete_ride_request"
-                                  phx-value-request_id={req.id}
-                                  class="ml-2 text-error hover:text-error/80"
-                                  data-confirm={gettext("Cancel request?")}
-                                >
-                                  <.icon name="hero-trash" class="w-4 h-4" />
-                                </button>
-                              <% end %>
-                            <% end %>
-                          </div>
-                        </div>
-                      </div>
-                    <% end %>
-
-                    <%!-- Carpool Form --%>
-                    <%= if @show_carpool_form do %>
-                      <div class="mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
-                        <h4 class="font-medium text-base-content mb-4">{gettext("Offer a Ride")}</h4>
-                        <.form
-                          for={@carpool_form}
-                          phx-change="validate_carpool"
-                          phx-submit="create_carpool"
-                        >
-                          <div class="grid sm:grid-cols-2 gap-4 mb-4">
-                            <.input
-                              field={@carpool_form[:departure_location]}
-                              type="text"
-                              label={gettext("Pickup Location")}
-                              placeholder={gettext("e.g., City Center, Train Station")}
-                              required
-                            />
-                            <.input
-                              field={@carpool_form[:available_seats]}
-                              type="number"
-                              label={gettext("Available Seats")}
-                              min="1"
-                              max="8"
-                              required
-                            />
-                          </div>
-                          <div class="grid sm:grid-cols-2 gap-4 mb-4">
-                            <.input
-                              field={@carpool_form[:departure_time]}
-                              type="time"
-                              label={gettext("Departure Time")}
-                            />
-                            <.input
-                              field={@carpool_form[:contact_phone]}
-                              type="tel"
-                              label={gettext("Contact Phone")}
-                            />
-                          </div>
-                          <.input
-                            field={@carpool_form[:notes]}
-                            type="textarea"
-                            label={gettext("Additional Notes")}
-                            rows="2"
-                          />
-                          <div class="grid sm:grid-cols-2 gap-4 mb-4">
-                            <.input
-                              field={@carpool_form[:departure_date]}
-                              type="date"
-                              label={gettext("Departure Date")}
-                              value={@carpool_form[:departure_date].value || @event.event_date}
-                            />
-                            <div>
-                              <label class="block text-sm font-semibold leading-6 text-base-content mb-2">
-                                {gettext("Payment Method")}
-                              </label>
-                              <.input
-                                field={@carpool_form[:payment_method]}
-                                type="select"
-                                options={[
-                                  {gettext("Free"), "free"},
-                                  {gettext("Pay at Destination / Flexible Cost"), "at_destination"},
-                                  {gettext("Upfront"), "upfront"}
-                                ]}
-                              />
-                            </div>
-                          </div>
-                          <%= if @carpool_form[:payment_method].value == "upfront" do %>
-                            <div class="mb-4">
-                              <.input
-                                field={@carpool_form[:cost]}
-                                type="number"
-                                label={gettext("Cost per Seat (€)")}
-                                step="0.01"
-                                min="0"
-                              />
-                            </div>
-                          <% end %>
-                          <div class="flex gap-2 mt-4">
-                            <.primary_button type="submit">{gettext("Create Offer")}</.primary_button>
-                            <.secondary_button type="button" phx-click="hide_carpool_form">
-                              {gettext("Cancel")}
-                            </.secondary_button>
-                          </div>
-                        </.form>
-                      </div>
-                    <% end %>
-
-                    <%!-- Carpool List --%>
-                    <%= if @event.carpools != [] do %>
-                      <div class="grid sm:grid-cols-2 gap-4">
+                    <%!-- Public/Bus Transportation --%>
+                    <%= if @event.transportation_options != [] do %>
+                      <div class="space-y-3 mb-6">
                         <div
-                          :for={carpool <- @event.carpools}
-                          class={[
-                            "p-4 rounded-lg border",
-                            "border-#{carpool_status_color(carpool)}/30 bg-#{carpool_status_color(carpool)}/5"
-                          ]}
+                          :for={trans <- @event.transportation_options}
+                          class="p-4 bg-base-100/50 rounded-lg border border-base-content/10"
                         >
-                          <div class="flex items-start justify-between mb-3">
-                            <div>
-                              <p class="font-medium text-base-content">
-                                {carpool.driver_user.email |> String.split("@") |> List.first()}
-                              </p>
-                              <p class="text-sm text-base-content/60">{carpool.departure_location}</p>
+                          <div class="flex items-start gap-3">
+                            <div class="p-2 bg-primary/10 rounded-lg">
+                              <.icon
+                                name={transport_type_icon(trans.transport_type)}
+                                class="w-5 h-5 text-primary"
+                              />
                             </div>
-                            <div class="text-right">
-                              <span class={[
-                                "px-2 py-1 rounded-full text-xs font-medium",
-                                "bg-#{carpool_status_color(carpool)}/10 text-#{carpool_status_color(carpool)}"
-                              ]}>
-                                {EventCarpool.remaining_seats(carpool)}/{carpool.available_seats} {gettext(
-                                  "seats"
-                                )}
-                              </span>
-                              <%= if carpool.driver_user_id == @current_scope.user.id do %>
-                                <button
-                                  phx-click="delete_carpool"
-                                  phx-value-carpool_id={carpool.id}
-                                  data-confirm={
-                                    gettext(
-                                      "Are you sure? This will cancel the ride for all passengers."
-                                    )
-                                  }
-                                  class="ml-2 text-error hover:text-error/80"
-                                >
-                                  <.icon name="hero-trash" class="w-4 h-4" />
-                                </button>
+                            <div class="flex-1">
+                              <div class="flex items-center gap-2 mb-1">
+                                <h4 class="font-semibold text-base-content">{trans.title}</h4>
+                                <span class="px-2 py-0.5 bg-base-200 text-base-content/70 rounded text-xs">
+                                  {trans.transport_type}
+                                </span>
+                              </div>
+                              <%= if trans.description do %>
+                                <p class="text-sm text-base-content/60 mb-2">{trans.description}</p>
                               <% end %>
-                            </div>
-                          </div>
-
-                          <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-base-content/60 mb-2">
-                            <%= if carpool.departure_date do %>
-                              <p class="flex items-center gap-1">
-                                <.icon name="hero-calendar" class="w-3 h-3" />
-                                {Calendar.strftime(carpool.departure_date, "%b %d, %Y")}
-                              </p>
-                            <% end %>
-                            <%= if carpool.departure_time do %>
-                              <p class="flex items-center gap-1">
-                                <.icon name="hero-clock" class="w-3 h-3" />
-                                {format_time(carpool.departure_time)}
-                              </p>
-                            <% end %>
-                          </div>
-
-                          <p class="text-xs text-base-content/60 mb-2 flex items-center gap-1">
-                            <.icon name="hero-banknotes" class="w-3 h-3" />
-                            <%= case carpool.payment_method do %>
-                              <% "free" -> %>
-                                <span class="text-success font-medium">{gettext("Free")}</span>
-                              <% "at_destination" -> %>
-                                <span>{gettext("Pay at Destination / Flexible Cost")}</span>
-                              <% "upfront" -> %>
-                                <span>
-                                  {gettext("Upfront")}:
-                                  <span class="font-medium text-base-content">€{carpool.cost}</span>
-                                </span>
-                              <% _ -> %>
-                                <span>{gettext("Flexible")}</span>
-                            <% end %>
-                          </p>
-
-                          <%!-- Accepted Passengers --%>
-                          <% accepted = Enum.filter(carpool.requests, &(&1.status == "accepted")) %>
-                          <%= if accepted != [] do %>
-                            <div class="mb-3">
-                              <p class="text-xs text-base-content/50 mb-1">
-                                {gettext("Passengers")}:
-                              </p>
-                              <div class="flex flex-wrap gap-1">
-                                <% visible_passengers = Enum.take(accepted, 5) %>
-                                <% remaining_count = length(accepted) - length(visible_passengers) %>
-                                <span
-                                  :for={req <- visible_passengers}
-                                  class="px-2 py-0.5 bg-success/10 text-success rounded text-xs"
-                                >
-                                  {req.passenger_user.email |> String.split("@") |> List.first()}
-                                </span>
-                                <%= if remaining_count > 0 do %>
-                                  <span class="px-2 py-0.5 bg-base-content/10 text-base-content/60 rounded text-xs">
-                                    +{remaining_count} {gettext("more")}
+                              <div class="flex flex-wrap gap-4 text-xs text-base-content/50">
+                                <%= if trans.departure_location do %>
+                                  <span class="flex items-center gap-1">
+                                    <.icon name="hero-map-pin" class="w-3 h-3" />
+                                    {trans.departure_location}
+                                  </span>
+                                <% end %>
+                                <%= if trans.departure_time do %>
+                                  <span class="flex items-center gap-1">
+                                    <.icon name="hero-clock" class="w-3 h-3" />
+                                    {format_time(trans.departure_time)}
+                                  </span>
+                                <% end %>
+                                <%= if trans.estimated_cost do %>
+                                  <span class="flex items-center gap-1">
+                                    <.icon name="hero-currency-euro" class="w-3 h-3" />
+                                    €{Decimal.to_string(trans.estimated_cost)}
                                   </span>
                                 <% end %>
                               </div>
                             </div>
-                          <% end %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
 
-                          <%!-- Pending Requests (Driver Only) --%>
-                          <% pending = Enum.filter(carpool.requests, &(&1.status == "pending")) %>
-                          <%= if pending != [] && carpool.driver_user_id == @current_scope.user.id do %>
-                            <div class="mb-3 pt-3 border-t border-base-content/10">
-                              <p class="text-xs font-bold text-warning mb-2">
-                                {gettext("Pending Requests")}
-                              </p>
-                              <div class="space-y-2">
-                                <div
-                                  :for={req <- pending}
-                                  class="flex items-center justify-between p-2 bg-warning/10 rounded-lg"
-                                >
-                                  <span class="text-xs text-base-content font-medium">
-                                    {req.passenger_user.email |> String.split("@") |> List.first()}
-                                  </span>
-                                  <div class="flex gap-1">
-                                    <button
-                                      phx-click="accept_request"
-                                      phx-value-request_id={req.id}
-                                      class="px-2 py-1 bg-success text-success-content rounded text-xs hover:bg-success/90"
-                                    >
-                                      {gettext("Accept")}
-                                    </button>
-                                    <button
-                                      phx-click="reject_request"
-                                      phx-value-request_id={req.id}
-                                      class="px-2 py-1 bg-error text-error-content rounded text-xs hover:bg-error/90"
-                                    >
-                                      {gettext("Decline")}
-                                    </button>
-                                  </div>
-                                </div>
+                    <%!-- Carpooling Section --%>
+                    <div class="border-t border-base-content/10 pt-6">
+                      <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-base-content flex items-center gap-2">
+                          <.icon name="hero-users" class="w-5 h-5" />
+                          {gettext("Carpooling")}
+                        </h3>
+                        <div class="flex gap-2">
+                          <%= if @event.status == "public" do %>
+                            <%= if @confirmed_ride do %>
+                              <div class="px-3 py-1.5 bg-success/10 text-success rounded-lg text-sm border border-success/20 flex items-center gap-2">
+                                <.icon name="hero-check-circle" class="w-4 h-4" />
+                                {gettext("Ride Confirmed")}
                               </div>
-                            </div>
-                          <% end %>
-
-                          <%= if carpool.status == "open" && EventCarpool.remaining_seats(carpool) > 0 && carpool.driver_user_id != @current_scope.user.id do %>
-                            <% my_request =
-                              Enum.find(
-                                carpool.requests,
-                                &(&1.passenger_user_id == @current_scope.user.id)
-                              ) %>
-                            <%= if my_request do %>
-                              <%= if my_request.status == "pending" do %>
-                                <%= if my_request.status == "pending" do %>
+                            <% else %>
+                              <%= unless @my_carpool do %>
+                                <% has_pending =
+                                  Enum.any?(
+                                    @ride_requests,
+                                    &(&1.passenger_user_id == @current_scope.user.id)
+                                  ) %>
+                                <%= if has_pending do %>
+                                  <div class="px-3 py-1.5 bg-warning/10 text-warning rounded-lg text-sm border border-warning/20 flex items-center gap-2">
+                                    <.icon name="hero-clock" class="w-4 h-4" />
+                                    {gettext("Request Pending")}
+                                  </div>
+                                <% else %>
                                   <button
-                                    phx-click="cancel_carpool_request"
-                                    phx-value-carpool_id={carpool.id}
-                                    class="text-xs text-warning hover:underline"
+                                    phx-click="show_request_form"
+                                    class="px-3 py-1.5 bg-secondary text-secondary-content rounded-lg text-sm hover:bg-secondary/90"
                                   >
-                                    {gettext("Request pending... (Cancel)")}
+                                    {gettext("Request a Ride")}
+                                  </button>
+                                <% end %>
+                                <button
+                                  phx-click="show_carpool_form"
+                                  class="px-3 py-1.5 bg-primary text-primary-content rounded-lg text-sm hover:bg-primary/90"
+                                >
+                                  {gettext("Offer a Ride")}
+                                </button>
+                              <% else %>
+                                <div class="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm border border-primary/20 flex items-center gap-2">
+                                  <.icon name="hero-check-badge" class="w-4 h-4" />
+                                  {gettext("You are offering a ride")}
+                                </div>
+                              <% end %>
+                            <% end %>
+                          <% end %>
+                        </div>
+                      </div>
+
+                      <%!-- Confirmed Ride Details --%>
+                      <%= if @confirmed_ride do %>
+                        <div class="mb-6 p-4 bg-success/5 rounded-lg border border-success/20">
+                          <h4 class="font-medium text-base-content mb-2 flex items-center justify-between gap-2">
+                            <span class="flex items-center gap-2">
+                              <.icon name="hero-check-circle" class="w-5 h-5 text-success" />
+                              {gettext("Your Ride Details")}
+                            </span>
+                            <button
+                              phx-click="leave_ride"
+                              data-confirm={gettext("Are you sure you want to leave this ride?")}
+                              class="text-xs text-error hover:underline"
+                            >
+                              {gettext("Leave Ride")}
+                            </button>
+                          </h4>
+                          <p class="text-sm text-base-content/70 mb-4">
+                            {gettext("You have a ride with %{driver}",
+                              driver: @confirmed_ride.driver_user.email
+                            )}
+                          </p>
+                          <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <p class="text-base-content/50">{gettext("Pick up")}</p>
+                              <p class="font-medium">{@confirmed_ride.departure_location}</p>
+                            </div>
+                            <%= if @confirmed_ride.departure_time do %>
+                              <div>
+                                <p class="text-base-content/50">{gettext("Time")}</p>
+                                <p class="font-medium">
+                                  {format_time(@confirmed_ride.departure_time)}
+                                </p>
+                              </div>
+                            <% end %>
+
+                            <%= if @confirmed_ride.departure_date do %>
+                              <div>
+                                <p class="text-base-content/50">{gettext("Date")}</p>
+                                <p class="font-medium">{@confirmed_ride.departure_date}</p>
+                              </div>
+                            <% end %>
+                            <%= if @confirmed_ride.cost do %>
+                              <div>
+                                <p class="text-base-content/50">{gettext("Cost")}</p>
+                                <p class="font-medium">
+                                  <%= case @confirmed_ride.payment_method do %>
+                                    <% "free" -> %>
+                                      {gettext("Free")}
+                                    <% "at_destination" -> %>
+                                      €{@confirmed_ride.cost} ({gettext("At Destination")})
+                                    <% "upfront" -> %>
+                                      €{@confirmed_ride.cost} ({gettext("Upfront")})
+                                    <% _ -> %>
+                                      €{@confirmed_ride.cost}
+                                  <% end %>
+                                </p>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      <% end %>
+
+                      <%!-- Request Form --%>
+                      <%= if @show_request_form do %>
+                        <div class="mb-6 p-4 bg-secondary/5 rounded-lg border border-secondary/20">
+                          <h4 class="font-medium text-base-content mb-4">
+                            {gettext("Request a Ride")}
+                          </h4>
+                          <.form
+                            for={@request_form}
+                            phx-change="validate_request"
+                            phx-submit="create_request"
+                          >
+                            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                              <.input
+                                field={@request_form[:location]}
+                                type="text"
+                                label={gettext("Pickup Location")}
+                                placeholder={gettext("e.g., Downtown")}
+                                required
+                              />
+                              <.input
+                                field={@request_form[:contact_info]}
+                                type="text"
+                                label={gettext("Contact Info")}
+                                placeholder={gettext("Phone or Email")}
+                                required
+                              />
+                            </div>
+                            <div class="flex gap-2 mt-4">
+                              <.primary_button type="submit">
+                                {gettext("Post Request")}
+                              </.primary_button>
+                              <.secondary_button type="button" phx-click="hide_request_form">
+                                {gettext("Cancel")}
+                              </.secondary_button>
+                            </div>
+                          </.form>
+                        </div>
+                      <% end %>
+
+                      <%!-- Ride Requests List --%>
+                      <%= if @ride_requests != [] do %>
+                        <div class="mb-6">
+                          <h4 class="text-sm font-semibold text-base-content uppercase tracking-wider mb-3">
+                            {gettext("Ride Requests")}
+                          </h4>
+                          <div class="grid sm:grid-cols-2 gap-4">
+                            <div
+                              :for={req <- @ride_requests}
+                              class="p-3 bg-base-100/50 rounded-lg border border-base-content/10 flex items-center justify-between"
+                            >
+                              <div>
+                                <p class="font-medium text-base-content">
+                                  {req.passenger_user.email |> String.split("@") |> List.first()}
+                                </p>
+                                <p class="text-sm text-base-content/60">
+                                  <.icon name="hero-map-pin" class="w-3 h-3 inline" /> {req.location}
+                                </p>
+                              </div>
+
+                              <%= if @my_carpool && req.status == "pending" do %>
+                                <button
+                                  phx-click="pick_up_passenger"
+                                  phx-value-request_id={req.id}
+                                  class="px-3 py-1 bg-primary text-primary-content rounded text-xs hover:bg-primary/90 transition-colors"
+                                >
+                                  {gettext("Pick Up")}
+                                </button>
+                              <% else %>
+                                <span class={[
+                                  "px-2 py-1 rounded text-xs font-medium",
+                                  if(req.status == "fulfilled",
+                                    do: "bg-success/10 text-success",
+                                    else: "bg-base-200 text-base-content/60"
+                                  )
+                                ]}>
+                                  <%= if req.status == "fulfilled" do %>
+                                    {gettext("Ride Found")}
+                                  <% else %>
+                                    {gettext("Looking for ride")}
+                                  <% end %>
+                                </span>
+                                <%= if req.passenger_user_id == @current_scope.user.id do %>
+                                  <button
+                                    phx-click="delete_ride_request"
+                                    phx-value-request_id={req.id}
+                                    class="ml-2 text-error hover:text-error/80"
+                                    data-confirm={gettext("Cancel request?")}
+                                  >
+                                    <.icon name="hero-trash" class="w-4 h-4" />
                                   </button>
                                 <% end %>
                               <% end %>
-                              <%= if my_request.status == "accepted" do %>
-                                <span class="text-xs text-success">{gettext("Seat Confirmed")}</span>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+
+                      <%!-- Carpool Form --%>
+                      <%= if @show_carpool_form do %>
+                        <div class="mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                          <h4 class="font-medium text-base-content mb-4">
+                            {gettext("Offer a Ride")}
+                          </h4>
+                          <.form
+                            for={@carpool_form}
+                            phx-change="validate_carpool"
+                            phx-submit="create_carpool"
+                          >
+                            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                              <.input
+                                field={@carpool_form[:departure_location]}
+                                type="text"
+                                label={gettext("Pickup Location")}
+                                placeholder={gettext("e.g., City Center, Train Station")}
+                                required
+                              />
+                              <.input
+                                field={@carpool_form[:available_seats]}
+                                type="number"
+                                label={gettext("Available Seats")}
+                                min="1"
+                                max="8"
+                                required
+                              />
+                            </div>
+                            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                              <.input
+                                field={@carpool_form[:departure_time]}
+                                type="time"
+                                label={gettext("Departure Time")}
+                              />
+                              <.input
+                                field={@carpool_form[:contact_phone]}
+                                type="tel"
+                                label={gettext("Contact Phone")}
+                              />
+                            </div>
+                            <.input
+                              field={@carpool_form[:notes]}
+                              type="textarea"
+                              label={gettext("Additional Notes")}
+                              rows="2"
+                            />
+                            <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                              <.input
+                                field={@carpool_form[:departure_date]}
+                                type="date"
+                                label={gettext("Departure Date")}
+                                value={@carpool_form[:departure_date].value || @event.event_date}
+                              />
+                              <div>
+                                <label class="block text-sm font-semibold leading-6 text-base-content mb-2">
+                                  {gettext("Payment Method")}
+                                </label>
+                                <.input
+                                  field={@carpool_form[:payment_method]}
+                                  type="select"
+                                  options={[
+                                    {gettext("Free"), "free"},
+                                    {gettext("Pay at Destination / Flexible Cost"), "at_destination"},
+                                    {gettext("Upfront"), "upfront"}
+                                  ]}
+                                />
+                              </div>
+                            </div>
+                            <%= if @carpool_form[:payment_method].value == "upfront" do %>
+                              <div class="mb-4">
+                                <.input
+                                  field={@carpool_form[:cost]}
+                                  type="number"
+                                  label={gettext("Cost per Seat (€)")}
+                                  step="0.01"
+                                  min="0"
+                                />
+                              </div>
+                            <% end %>
+                            <div class="flex gap-2 mt-4">
+                              <.primary_button type="submit">
+                                {gettext("Create Offer")}
+                              </.primary_button>
+                              <.secondary_button type="button" phx-click="hide_carpool_form">
+                                {gettext("Cancel")}
+                              </.secondary_button>
+                            </div>
+                          </.form>
+                        </div>
+                      <% end %>
+
+                      <%!-- Carpool List --%>
+                      <%= if @event.carpools != [] do %>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                          <div
+                            :for={carpool <- @event.carpools}
+                            class={[
+                              "p-4 rounded-lg border",
+                              "border-#{carpool_status_color(carpool)}/30 bg-#{carpool_status_color(carpool)}/5"
+                            ]}
+                          >
+                            <div class="flex items-start justify-between mb-3">
+                              <div>
+                                <p class="font-medium text-base-content">
+                                  {carpool.driver_user.email |> String.split("@") |> List.first()}
+                                </p>
+                                <p class="text-sm text-base-content/60">
+                                  {carpool.departure_location}
+                                </p>
+                              </div>
+                              <div class="text-right">
+                                <span class={[
+                                  "px-2 py-1 rounded-full text-xs font-medium",
+                                  "bg-#{carpool_status_color(carpool)}/10 text-#{carpool_status_color(carpool)}"
+                                ]}>
+                                  {EventCarpool.remaining_seats(carpool)}/{carpool.available_seats} {gettext(
+                                    "seats"
+                                  )}
+                                </span>
+                                <%= if carpool.driver_user_id == @current_scope.user.id do %>
+                                  <button
+                                    phx-click="delete_carpool"
+                                    phx-value-carpool_id={carpool.id}
+                                    data-confirm={
+                                      gettext(
+                                        "Are you sure? This will cancel the ride for all passengers."
+                                      )
+                                    }
+                                    class="ml-2 text-error hover:text-error/80"
+                                  >
+                                    <.icon name="hero-trash" class="w-4 h-4" />
+                                  </button>
+                                <% end %>
+                              </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-base-content/60 mb-2">
+                              <%= if carpool.departure_date do %>
+                                <p class="flex items-center gap-1">
+                                  <.icon name="hero-calendar" class="w-3 h-3" />
+                                  {Calendar.strftime(carpool.departure_date, "%b %d, %Y")}
+                                </p>
                               <% end %>
+                              <%= if carpool.departure_time do %>
+                                <p class="flex items-center gap-1">
+                                  <.icon name="hero-clock" class="w-3 h-3" />
+                                  {format_time(carpool.departure_time)}
+                                </p>
+                              <% end %>
+                            </div>
+
+                            <p class="text-xs text-base-content/60 mb-2 flex items-center gap-1">
+                              <.icon name="hero-banknotes" class="w-3 h-3" />
+                              <%= case carpool.payment_method do %>
+                                <% "free" -> %>
+                                  <span class="text-success font-medium">{gettext("Free")}</span>
+                                <% "at_destination" -> %>
+                                  <span>{gettext("Pay at Destination / Flexible Cost")}</span>
+                                <% "upfront" -> %>
+                                  <span>
+                                    {gettext("Upfront")}:
+                                    <span class="font-medium text-base-content">€{carpool.cost}</span>
+                                  </span>
+                                <% _ -> %>
+                                  <span>{gettext("Flexible")}</span>
+                              <% end %>
+                            </p>
+
+                            <%!-- Accepted Passengers --%>
+                            <% accepted = Enum.filter(carpool.requests, &(&1.status == "accepted")) %>
+                            <%= if accepted != [] do %>
+                              <div class="mb-3">
+                                <p class="text-xs text-base-content/50 mb-1">
+                                  {gettext("Passengers")}:
+                                </p>
+                                <div class="flex flex-wrap gap-1">
+                                  <% visible_passengers = Enum.take(accepted, 5) %>
+                                  <% remaining_count = length(accepted) - length(visible_passengers) %>
+                                  <span
+                                    :for={req <- visible_passengers}
+                                    class="px-2 py-0.5 bg-success/10 text-success rounded text-xs"
+                                  >
+                                    {req.passenger_user.email |> String.split("@") |> List.first()}
+                                  </span>
+                                  <%= if remaining_count > 0 do %>
+                                    <span class="px-2 py-0.5 bg-base-content/10 text-base-content/60 rounded text-xs">
+                                      +{remaining_count} {gettext("more")}
+                                    </span>
+                                  <% end %>
+                                </div>
+                              </div>
+                            <% end %>
+
+                            <%!-- Pending Requests (Driver Only) --%>
+                            <% pending = Enum.filter(carpool.requests, &(&1.status == "pending")) %>
+                            <%= if pending != [] && carpool.driver_user_id == @current_scope.user.id do %>
+                              <div class="mb-3 pt-3 border-t border-base-content/10">
+                                <p class="text-xs font-bold text-warning mb-2">
+                                  {gettext("Pending Requests")}
+                                </p>
+                                <div class="space-y-2">
+                                  <div
+                                    :for={req <- pending}
+                                    class="flex items-center justify-between p-2 bg-warning/10 rounded-lg"
+                                  >
+                                    <span class="text-xs text-base-content font-medium">
+                                      {req.passenger_user.email |> String.split("@") |> List.first()}
+                                    </span>
+                                    <div class="flex gap-1">
+                                      <button
+                                        phx-click="accept_request"
+                                        phx-value-request_id={req.id}
+                                        class="px-2 py-1 bg-success text-success-content rounded text-xs hover:bg-success/90"
+                                      >
+                                        {gettext("Accept")}
+                                      </button>
+                                      <button
+                                        phx-click="reject_request"
+                                        phx-value-request_id={req.id}
+                                        class="px-2 py-1 bg-error text-error-content rounded text-xs hover:bg-error/90"
+                                      >
+                                        {gettext("Decline")}
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            <% end %>
+
+                            <%= if carpool.status == "open" && EventCarpool.remaining_seats(carpool) > 0 && carpool.driver_user_id != @current_scope.user.id do %>
+                              <% my_request =
+                                Enum.find(
+                                  carpool.requests,
+                                  &(&1.passenger_user_id == @current_scope.user.id)
+                                ) %>
+                              <%= if my_request do %>
+                                <%= if my_request.status == "pending" do %>
+                                  <%= if my_request.status == "pending" do %>
+                                    <button
+                                      phx-click="cancel_carpool_request"
+                                      phx-value-carpool_id={carpool.id}
+                                      class="text-xs text-warning hover:underline"
+                                    >
+                                      {gettext("Request pending... (Cancel)")}
+                                    </button>
+                                  <% end %>
+                                <% end %>
+                                <%= if my_request.status == "accepted" do %>
+                                  <span class="text-xs text-success">
+                                    {gettext("Seat Confirmed")}
+                                  </span>
+                                <% end %>
+                              <% else %>
+                                <button
+                                  phx-click="request_carpool"
+                                  phx-value-carpool_id={carpool.id}
+                                  class="w-full px-3 py-2 bg-primary text-primary-content rounded-lg text-sm hover:bg-primary/90"
+                                >
+                                  {gettext("Request Seat")}
+                                </button>
+                              <% end %>
+                            <% end %>
+                          </div>
+                        </div>
+                      <% else %>
+                        <p class="text-sm text-base-content/50 text-center py-4">
+                          {gettext("No carpool offers yet. Be the first to offer a ride!")}
+                        </p>
+                      <% end %>
+                    </div>
+                  </.card>
+                <% end %>
+
+                <%!-- Tasks Section (for organizers/team and attendees) --%>
+                <%= if (@can_edit || (@attendance && @attendance.status == "attending")) && @event.tasks != [] do %>
+                  <.card size="lg" class="mb-6">
+                    <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
+                      <.icon name="hero-clipboard-document-check" class="w-5 h-5" />
+                      {gettext("Tasks")}
+                    </h2>
+
+                    <div class="space-y-3">
+                      <div
+                        :for={task <- @event.tasks}
+                        class="p-4 bg-base-100/50 rounded-lg border border-base-content/10 flex flex-col sm:flex-row justify-between gap-4"
+                      >
+                        <div class="space-y-2 grow">
+                          <div class="flex items-center gap-3 flex-wrap">
+                            <span class={[
+                              "px-2 py-1 rounded text-xs font-medium",
+                              task_status_class(task.status)
+                            ]}>
+                              {task.status}
+                            </span>
+                            <span class="text-base-content font-medium">{task.title}</span>
+                          </div>
+                          <%= if task.description do %>
+                            <p class="text-sm text-base-content/70">{task.description}</p>
+                          <% end %>
+
+                          <div class="flex flex-wrap gap-4 text-xs text-base-content/60">
+                            <span class="flex items-center gap-1">
+                              <.icon name="hero-calendar" class="w-3 h-3" />
+                              {gettext("Start")}: {if task.start_date,
+                                do: Calendar.strftime(task.start_date, "%b %d, %Y"),
+                                else: "TBD"}
+                            </span>
+                            <span class="flex items-center gap-1">
+                              <.icon name="hero-flag" class="w-3 h-3" />
+                              {gettext("Due")}: {if task.due_date,
+                                do: Calendar.strftime(task.due_date, "%b %d, %Y"),
+                                else: "TBD"}
+                            </span>
+                          </div>
+
+                          <%!-- Assigned User (Legacy/Lead) --%>
+                          <%= if task.assigned_user do %>
+                            <div class="text-xs text-base-content/50">
+                              {gettext("Lead")}: {task.assigned_user.email
+                              |> String.split("@")
+                              |> List.first()}
+                            </div>
+                          <% end %>
+
+                          <%!-- Volunteers --%>
+                          <%= if task.volunteers != [] do %>
+                            <div class="flex flex-wrap gap-2 items-center">
+                              <span class="text-xs text-base-content/60">
+                                {gettext("Volunteers")}:
+                              </span>
+                              <span
+                                :for={vol <- task.volunteers}
+                                class="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs"
+                              >
+                                {vol.email |> String.split("@") |> List.first()}
+                              </span>
+                            </div>
+                          <% end %>
+                        </div>
+
+                        <div class="shrink-0 flex items-start gap-3">
+                          <%= if task.actual_expense do %>
+                            <span class="text-sm text-base-content/60 pt-1">
+                              €{Decimal.to_string(task.actual_expense)}
+                            </span>
+                          <% end %>
+
+                          <%!-- Action Buttons --%>
+                          <%= if @attendance && @attendance.status == "attending" do %>
+                            <% am_volunteering =
+                              Enum.any?(task.volunteers, &(&1.id == @current_scope.user.id)) %>
+                            <%= if am_volunteering do %>
+                              <button
+                                phx-click="leave_task"
+                                phx-value-task_id={task.id}
+                                class="px-3 py-1.5 bg-error/10 text-error text-xs font-medium rounded hover:bg-error/20 transition-colors"
+                              >
+                                {gettext("Leave Task")}
+                              </button>
                             <% else %>
                               <button
-                                phx-click="request_carpool"
-                                phx-value-carpool_id={carpool.id}
-                                class="w-full px-3 py-2 bg-primary text-primary-content rounded-lg text-sm hover:bg-primary/90"
+                                phx-click="volunteer_task"
+                                phx-value-task_id={task.id}
+                                class="px-3 py-1.5 bg-primary/10 text-primary text-xs font-medium rounded hover:bg-primary/20 transition-colors"
                               >
-                                {gettext("Request Seat")}
+                                {gettext("Volunteer")}
                               </button>
                             <% end %>
                           <% end %>
                         </div>
                       </div>
+                    </div>
+                  </.card>
+                <% end %>
+              <% end %>
+
+              <%!-- Reviews Tab --%>
+              <%= if @active_tab == "reviews" do %>
+                <.card size="lg">
+                  <h2 class="text-xl font-bold mb-4">{gettext("Reviews")}</h2>
+                  <%= if @can_review do %>
+                    <form phx-submit="save_review" class="mb-6">
+                      <textarea
+                        name="content"
+                        class="textarea textarea-bordered w-full"
+                        placeholder={gettext("Share your experience (max 3 allowed)...")}
+                        required
+                        rows="3"
+                      ></textarea>
+                      <div class="mt-2 flex justify-end">
+                        <button class="btn btn-primary btn-sm">{gettext("Post Review")}</button>
+                      </div>
+                    </form>
+                  <% end %>
+
+                  <div class="space-y-6">
+                    <%= if @reviews == [] do %>
+                      <p class="text-base-content/60 italic">{gettext("No reviews yet.")}</p>
                     <% else %>
-                      <p class="text-sm text-base-content/50 text-center py-4">
-                        {gettext("No carpool offers yet. Be the first to offer a ride!")}
-                      </p>
+                      <div
+                        :for={review <- @reviews}
+                        class="border-b border-base-content/10 last:border-0 pb-4 last:pb-0"
+                      >
+                        <div class="flex justify-between items-start">
+                          <div>
+                            <span class="font-bold">
+                              {review.user.first_name || review.user.email}
+                            </span>
+                            <span class="text-xs text-base-content/50 ml-2">
+                              {Calendar.strftime(review.inserted_at, "%b %d, %Y")}
+                            </span>
+                          </div>
+                          <%= if @can_edit || review.user_id == @current_scope.user.id do %>
+                            <button
+                              phx-click="delete_review"
+                              phx-value-id={review.id}
+                              data-confirm={gettext("Are you sure?")}
+                              class="text-error hover:text-error-content btn btn-ghost btn-xs"
+                            >
+                              <.icon name="hero-trash" class="w-4 h-4" />
+                            </button>
+                          <% end %>
+                        </div>
+                        <p class="mt-2 text-base-content/80 whitespace-pre-wrap">{review.content}</p>
+                      </div>
                     <% end %>
                   </div>
                 </.card>
               <% end %>
 
-              <%!-- Tasks Section (for organizers/team and attendees) --%>
-              <%= if (@can_edit || (@attendance && @attendance.status == "attending")) && @event.tasks != [] do %>
-                <.card size="lg" class="mb-6">
-                  <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
-                    <.icon name="hero-clipboard-document-check" class="w-5 h-5" />
-                    {gettext("Tasks")}
-                  </h2>
-
-                  <div class="space-y-3">
-                    <div
-                      :for={task <- @event.tasks}
-                      class="p-4 bg-base-100/50 rounded-lg border border-base-content/10 flex flex-col sm:flex-row justify-between gap-4"
-                    >
-                      <div class="space-y-2 grow">
-                        <div class="flex items-center gap-3 flex-wrap">
-                          <span class={[
-                            "px-2 py-1 rounded text-xs font-medium",
-                            task_status_class(task.status)
-                          ]}>
-                            {task.status}
-                          </span>
-                          <span class="text-base-content font-medium">{task.title}</span>
-                        </div>
-                        <%= if task.description do %>
-                          <p class="text-sm text-base-content/70">{task.description}</p>
-                        <% end %>
-
-                        <div class="flex flex-wrap gap-4 text-xs text-base-content/60">
-                          <span class="flex items-center gap-1">
-                            <.icon name="hero-calendar" class="w-3 h-3" />
-                            {gettext("Start")}: {if task.start_date,
-                              do: Calendar.strftime(task.start_date, "%b %d, %Y"),
-                              else: "TBD"}
-                          </span>
-                          <span class="flex items-center gap-1">
-                            <.icon name="hero-flag" class="w-3 h-3" />
-                            {gettext("Due")}: {if task.due_date,
-                              do: Calendar.strftime(task.due_date, "%b %d, %Y"),
-                              else: "TBD"}
-                          </span>
-                        </div>
-
-                        <%!-- Assigned User (Legacy/Lead) --%>
-                        <%= if task.assigned_user do %>
-                          <div class="text-xs text-base-content/50">
-                            {gettext("Lead")}: {task.assigned_user.email
-                            |> String.split("@")
-                            |> List.first()}
-                          </div>
-                        <% end %>
-
-                        <%!-- Volunteers --%>
-                        <%= if task.volunteers != [] do %>
-                          <div class="flex flex-wrap gap-2 items-center">
-                            <span class="text-xs text-base-content/60">{gettext("Volunteers")}:</span>
-                            <span
-                              :for={vol <- task.volunteers}
-                              class="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs"
-                            >
-                              {vol.email |> String.split("@") |> List.first()}
-                            </span>
-                          </div>
-                        <% end %>
-                      </div>
-
-                      <div class="shrink-0 flex items-start gap-3">
-                        <%= if task.actual_expense do %>
-                          <span class="text-sm text-base-content/60 pt-1">
-                            €{Decimal.to_string(task.actual_expense)}
-                          </span>
-                        <% end %>
-
-                        <%!-- Action Buttons --%>
-                        <%= if @attendance && @attendance.status == "attending" do %>
-                          <% am_volunteering =
-                            Enum.any?(task.volunteers, &(&1.id == @current_scope.user.id)) %>
-                          <%= if am_volunteering do %>
-                            <button
-                              phx-click="leave_task"
-                              phx-value-task_id={task.id}
-                              class="px-3 py-1.5 bg-error/10 text-error text-xs font-medium rounded hover:bg-error/20 transition-colors"
-                            >
-                              {gettext("Leave Task")}
-                            </button>
-                          <% else %>
-                            <button
-                              phx-click="volunteer_task"
-                              phx-value-task_id={task.id}
-                              class="px-3 py-1.5 bg-primary/10 text-primary text-xs font-medium rounded hover:bg-primary/20 transition-colors"
-                            >
-                              {gettext("Volunteer")}
-                            </button>
-                          <% end %>
-                        <% end %>
-                      </div>
+              <%!-- Gallery Tab --%>
+              <%= if @active_tab == "gallery" do %>
+                <% max_photos_per_user = 25 %>
+                <% remaining_uploads = max_photos_per_user - @user_photo_count %>
+                <.card size="lg">
+                  <div class="flex justify-between items-center mb-6">
+                    <div>
+                      <h2 class="text-xl font-bold">{gettext("Event Gallery")}</h2>
+                      <%= if @can_review do %>
+                        <p class="text-xs text-base-content/60 mt-1">
+                          {gettext("Your uploads: %{count}/%{max}",
+                            count: @user_photo_count,
+                            max: max_photos_per_user
+                          )}
+                        </p>
+                      <% end %>
                     </div>
+                    <%= if @can_review do %>
+                      <div class="text-sm">
+                        <%= if remaining_uploads > 0 do %>
+                          <form phx-submit="save_photo" phx-change="validate_photo">
+                            <label class="btn btn-primary btn-sm gap-2 cursor-pointer">
+                              <.icon name="hero-camera" class="w-4 h-4" />
+                              {gettext("Upload Photos")}
+                              <.live_file_input upload={@uploads.photos} class="hidden" />
+                            </label>
+                            <button type="submit" class="hidden">Submit</button>
+                          </form>
+                        <% else %>
+                          <span class="text-warning text-xs">
+                            {gettext("Upload limit reached")}
+                          </span>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <%!-- Unsaved Upload Previews --%>
+                  <%= if @uploads.photos.entries != [] do %>
+                    <div class="mb-6 p-4 bg-base-200 rounded-lg">
+                      <h4 class="font-medium mb-3">{gettext("Pending Uploads")}</h4>
+                      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <div :for={entry <- @uploads.photos.entries} class="relative">
+                          <div class="aspect-square rounded-lg overflow-hidden bg-base-300">
+                            <.live_img_preview entry={entry} class="w-full h-full object-cover" />
+                          </div>
+                          <%!-- Progress bar overlay --%>
+                          <%= if entry.progress < 100 do %>
+                            <div class="absolute inset-0 bg-black/50 rounded-lg flex flex-col items-center justify-center">
+                              <div class="w-3/4 bg-base-300 rounded-full h-2 mb-2">
+                                <div
+                                  class="bg-primary h-2 rounded-full transition-all duration-300"
+                                  style={"width: #{entry.progress}%"}
+                                >
+                                </div>
+                              </div>
+                              <span class="text-white text-xs font-medium">
+                                {entry.progress}%
+                              </span>
+                            </div>
+                          <% else %>
+                            <div class="absolute top-1 left-1">
+                              <span class="flex items-center justify-center w-5 h-5 bg-success rounded-full">
+                                <.icon name="hero-check" class="w-3 h-3 text-success-content" />
+                              </span>
+                            </div>
+                          <% end %>
+                          <%!-- Cancel button --%>
+                          <button
+                            type="button"
+                            phx-click="cancel-upload"
+                            phx-value-ref={entry.ref}
+                            class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error shadow-lg"
+                          >
+                            ×
+                          </button>
+                          <%!-- File name --%>
+                          <p
+                            class="text-xs text-base-content/70 mt-1 truncate"
+                            title={entry.client_name}
+                          >
+                            {entry.client_name}
+                          </p>
+                          <%!-- Error display --%>
+                          <%= for err <- upload_errors(@uploads.photos, entry) do %>
+                            <p class="text-xs text-error mt-1">{error_to_string(err)}</p>
+                          <% end %>
+                        </div>
+                      </div>
+                      <%!-- Overall progress --%>
+                      <% total_progress =
+                        if length(@uploads.photos.entries) > 0 do
+                          Enum.sum(Enum.map(@uploads.photos.entries, & &1.progress)) /
+                            length(@uploads.photos.entries)
+                        else
+                          0
+                        end %>
+                      <%= if total_progress > 0 and total_progress < 100 do %>
+                        <div class="mt-4">
+                          <div class="flex justify-between text-xs text-base-content/70 mb-1">
+                            <span>{gettext("Overall Progress")}</span>
+                            <span>{trunc(total_progress)}%</span>
+                          </div>
+                          <div class="w-full bg-base-300 rounded-full h-2">
+                            <div
+                              class="bg-primary h-2 rounded-full transition-all duration-300"
+                              style={"width: #{total_progress}%"}
+                            >
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                      <% has_errors =
+                        length(@uploads.photos.errors) > 0 ||
+                          Enum.any?(@uploads.photos.entries, fn e ->
+                            length(upload_errors(@uploads.photos, e)) > 0
+                          end) %>
+                      <% valid_entries =
+                        Enum.filter(@uploads.photos.entries, fn e ->
+                          length(upload_errors(@uploads.photos, e)) == 0
+                        end) %>
+                      <% uploads_complete =
+                        length(valid_entries) > 0 &&
+                          Enum.all?(valid_entries, fn e -> e.progress == 100 end) %>
+
+                      <%= if has_errors do %>
+                        <div class="mt-4 p-4 bg-error border-2 border-error-content/20 rounded-lg">
+                          <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0">
+                              <.icon name="hero-exclamation-circle-solid" class="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <p class="text-white font-bold text-base">
+                                {gettext("Upload Error")}
+                              </p>
+                              <p class="text-white/90 text-sm mt-1">
+                                {gettext("One or more files exceed the 10MB size limit.")}
+                              </p>
+                              <p class="text-white/80 text-sm mt-2">
+                                {gettext("Click the")}
+                                <span class="inline-flex items-center justify-center w-5 h-5 bg-white text-error rounded-full text-xs font-bold mx-1">
+                                  ×
+                                </span>
+                                {gettext("button on the file to remove it.")}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+
+                      <%= if length(valid_entries) > 0 do %>
+                        <form phx-submit="save_photo" phx-change="validate_photo" class="mt-4">
+                          <button
+                            type="submit"
+                            class={[
+                              "btn btn-primary btn-sm w-full",
+                              !uploads_complete && "btn-disabled"
+                            ]}
+                            disabled={!uploads_complete}
+                          >
+                            <%= if uploads_complete do %>
+                              <.icon name="hero-cloud-arrow-up" class="w-4 h-4" />
+                              {gettext("Confirm Upload (%{count})", count: length(valid_entries))}
+                            <% else %>
+                              <span class="loading loading-spinner loading-xs"></span>
+                              {gettext("Uploading... %{progress}%", progress: trunc(total_progress))}
+                            <% end %>
+                          </button>
+                        </form>
+                      <% end %>
+                    </div>
+                  <% end %>
+
+                  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <%= if @photos == [] do %>
+                      <div class="col-span-full text-center py-8 text-base-content/60 italic">
+                        {gettext("No photos shared yet.")}
+                      </div>
+                    <% else %>
+                      <div
+                        :for={photo <- @photos}
+                        class="relative group aspect-square rounded-lg overflow-hidden bg-base-300 cursor-pointer"
+                        phx-click="select_photo"
+                        phx-value-id={photo.id}
+                      >
+                        <img
+                          src={photo_url(photo.url)}
+                          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                          <div class="flex justify-between items-end w-full">
+                            <span class="text-white text-xs font-medium truncate">
+                              {gettext("By")} {photo.user.first_name || photo.user.email}
+                            </span>
+                            <%= if @can_edit || photo.user_id == @current_scope.user.id do %>
+                              <span
+                                phx-click="delete_photo"
+                                phx-value-id={photo.id}
+                                data-confirm={gettext("Delete photo?")}
+                                class="text-white hover:text-error transition-colors p-1 cursor-pointer"
+                              >
+                                <.icon name="hero-trash" class="w-5 h-5" />
+                              </span>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
                 </.card>
+
+                <%= if @selected_photo do %>
+                  <% current_index = Enum.find_index(@photos, &(&1.id == @selected_photo.id)) || 0 %>
+                  <% total_photos = length(@photos) %>
+                  <% is_first = current_index == 0 %>
+                  <% is_last = current_index == total_photos - 1 %>
+                  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-4">
+                    <%!-- Top bar with close button and counter --%>
+                    <div class="absolute top-4 left-4 right-4 flex items-center justify-between">
+                      <span class="text-white/70 text-sm font-medium bg-black/50 px-3 py-1 rounded-full">
+                        {current_index + 1} / {total_photos}
+                      </span>
+                      <button
+                        phx-click="close_photo_modal"
+                        class="text-white/50 hover:text-white transition-colors p-2"
+                      >
+                        <.icon name="hero-x-mark" class="w-8 h-8" />
+                      </button>
+                    </div>
+
+                    <%!-- Desktop Navigation - Left side (prev only) --%>
+                    <button
+                      phx-click="prev_photo"
+                      disabled={is_first}
+                      class={[
+                        "absolute left-4 p-2 transition-colors hidden sm:block",
+                        if(is_first,
+                          do: "text-white/20 cursor-not-allowed",
+                          else: "text-white/50 hover:text-white"
+                        )
+                      ]}
+                      title={gettext("Previous photo")}
+                    >
+                      <.icon name="hero-chevron-left" class="w-10 h-10" />
+                    </button>
+
+                    <div class="max-w-5xl max-h-screen w-full flex flex-col items-center">
+                      <img
+                        src={photo_url(@selected_photo.url)}
+                        class="max-w-full max-h-[70vh] object-contain rounded shadow-2xl"
+                      />
+
+                      <div class="mt-4 flex items-center justify-between w-full max-w-2xl px-4">
+                        <div class="text-white">
+                          <p class="font-medium text-lg">
+                            {gettext("Uploaded by")} {@selected_photo.user.first_name ||
+                              @selected_photo.user.email}
+                          </p>
+                          <p class="text-white/50 text-sm">
+                            {Calendar.strftime(@selected_photo.inserted_at, "%B %d, %Y")}
+                          </p>
+                        </div>
+
+                        <%= if @can_edit || @selected_photo.user_id == @current_scope.user.id do %>
+                          <button
+                            phx-click="delete_photo"
+                            phx-value-id={@selected_photo.id}
+                            data-confirm={gettext("Delete photo?")}
+                            class="btn btn-error btn-sm gap-2"
+                          >
+                            <.icon name="hero-trash" class="w-4 h-4" />
+                            {gettext("Delete")}
+                          </button>
+                        <% end %>
+                      </div>
+
+                      <%!-- Mobile Navigation --%>
+                      <div class="flex w-full justify-center items-center gap-4 mt-6 sm:hidden px-4">
+                        <button
+                          phx-click="prev_photo"
+                          disabled={is_first}
+                          class={[
+                            "btn btn-circle btn-ghost",
+                            if(is_first, do: "text-white/20", else: "text-white")
+                          ]}
+                        >
+                          <.icon name="hero-chevron-left" class="w-6 h-6" />
+                        </button>
+                        <span class="text-white/70 text-sm min-w-[60px] text-center">
+                          {current_index + 1} / {total_photos}
+                        </span>
+                        <button
+                          phx-click="next_photo"
+                          disabled={is_last}
+                          class={[
+                            "btn btn-circle btn-ghost",
+                            if(is_last, do: "text-white/20", else: "text-white")
+                          ]}
+                        >
+                          <.icon name="hero-chevron-right" class="w-6 h-6" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <%!-- Desktop Navigation - Right side (next only) --%>
+                    <button
+                      phx-click="next_photo"
+                      disabled={is_last}
+                      class={[
+                        "absolute right-4 p-2 transition-colors hidden sm:block",
+                        if(is_last,
+                          do: "text-white/20 cursor-not-allowed",
+                          else: "text-white/50 hover:text-white"
+                        )
+                      ]}
+                      title={gettext("Next photo")}
+                    >
+                      <.icon name="hero-chevron-right" class="w-10 h-10" />
+                    </button>
+                  </div>
+                <% end %>
               <% end %>
             </div>
             <div class="space-y-6">
