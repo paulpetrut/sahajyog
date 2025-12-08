@@ -288,11 +288,15 @@ defmodule Sahajyog.ExternalApi do
         trunc(base_delay + jitter)
       end,
       retry_log_level: :warning,
-      headers: [
-        {"user-agent",
-         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
-        {"accept", "application/json"}
-      ]
+      headers:
+        [
+          {"user-agent", System.get_env("API_USER_AGENT") || "SahajyogApp/1.0"},
+          {"accept", "application/json"}
+        ] ++
+          if(System.get_env("API_HOST_HEADER"),
+            do: [{"host", System.get_env("API_HOST_HEADER")}],
+            else: []
+          )
     ]
 
     result = Req.get(url, options)
