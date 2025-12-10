@@ -26,7 +26,7 @@ defmodule SahajyogWeb.PublicEventShowLive do
     <Layouts.app flash={@flash}>
       <div class="max-w-4xl mx-auto px-6 py-12 lg:py-20">
         <.link
-          href={~p"/"}
+          navigate={~p"/"}
           class="inline-flex items-center gap-2 text-sm text-base-content/60 hover:text-primary mb-8 transition-colors"
         >
           <.icon name="hero-arrow-left" class="w-4 h-4" />
@@ -107,7 +107,7 @@ defmodule SahajyogWeb.PublicEventShowLive do
           </div>
 
           <div class="mt-12 pt-8 border-t border-base-content/10 flex justify-center">
-            <.link href={~p"/users/register"} class="btn btn-primary btn-lg rounded-full px-8">
+            <.link navigate={~p"/users/register"} class="btn btn-primary btn-lg rounded-full px-8">
               {gettext("Register to Join")}
             </.link>
           </div>

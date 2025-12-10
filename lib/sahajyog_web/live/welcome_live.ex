@@ -281,7 +281,7 @@ defmodule SahajyogWeb.WelcomeLive do
                   <h3 class="text-lg font-medium">{@current_video.title}</h3>
                 </div>
                 <.link
-                  href={~p"/talks"}
+                  navigate={~p"/talks"}
                   class="text-sm text-base-content/50 hover:text-base-content transition-colors self-start md:self-auto"
                 >
                   {gettext("View all")} →
@@ -310,16 +310,20 @@ defmodule SahajyogWeb.WelcomeLive do
     <!-- Feature cards - minimal, text-focused -->
             <div class="grid md:grid-cols-3 gap-px bg-base-content/5 rounded-2xl overflow-hidden apple-reveal">
               <!-- Card 1 -->
-              <div class="bg-base-100 p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
-                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-8">
-                  <.icon name="hero-sparkles" class="w-6 h-6" />
-                </span>
-                <h3 class="text-xl font-semibold mb-3">{gettext("Self Realization")}</h3>
-                <p class="text-base-content/50 leading-relaxed mb-6">
+              <div class="bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
+                <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
+                  <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 text-primary md:mb-8 shrink-0">
+                    <.icon name="hero-sparkles" class="w-5 h-5 md:w-6 md:h-6" />
+                  </span>
+                  <h3 class="text-lg md:text-xl font-semibold md:mb-3">
+                    {gettext("Self Realization")}
+                  </h3>
+                </div>
+                <p class="text-sm md:text-base text-base-content/50 leading-relaxed mb-4 md:mb-6">
                   {gettext("Awaken your inner energy through a simple 10-minute guided experience.")}
                 </p>
                 <.link
-                  href={~p"/steps"}
+                  navigate={~p"/steps"}
                   class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-3 transition-all"
                 >
                   {gettext("Try now")} <.icon name="hero-arrow-right" class="w-4 h-4" />
@@ -327,16 +331,20 @@ defmodule SahajyogWeb.WelcomeLive do
               </div>
               
     <!-- Card 2 -->
-              <div class="bg-base-100 p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
-                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-secondary/10 text-secondary mb-8">
-                  <.icon name="hero-microphone" class="w-6 h-6" />
-                </span>
-                <h3 class="text-xl font-semibold mb-3">{gettext("Talks & Lectures")}</h3>
-                <p class="text-base-content/50 leading-relaxed mb-6">
+              <div class="bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
+                <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
+                  <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary/10 text-secondary md:mb-8 shrink-0">
+                    <.icon name="hero-microphone" class="w-5 h-5 md:w-6 md:h-6" />
+                  </span>
+                  <h3 class="text-lg md:text-xl font-semibold md:mb-3">
+                    {gettext("Talks & Lectures")}
+                  </h3>
+                </div>
+                <p class="text-sm md:text-base text-base-content/50 leading-relaxed mb-4 md:mb-6">
                   {gettext("Thousands of hours of wisdom from Shri Mataji Nirmala Devi.")}
                 </p>
                 <.link
-                  href={~p"/talks"}
+                  navigate={~p"/talks"}
                   class="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all"
                 >
                   {gettext("Browse")} <.icon name="hero-arrow-right" class="w-4 h-4" />
@@ -344,16 +352,18 @@ defmodule SahajyogWeb.WelcomeLive do
               </div>
               
     <!-- Card 3 -->
-              <div class="bg-base-100 p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
-                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent/10 text-accent mb-8">
-                  <.icon name="hero-book-open" class="w-6 h-6" />
-                </span>
-                <h3 class="text-xl font-semibold mb-3">{gettext("Topics")}</h3>
-                <p class="text-base-content/50 leading-relaxed mb-6">
+              <div class="bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
+                <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
+                  <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent/10 text-accent md:mb-8 shrink-0">
+                    <.icon name="hero-book-open" class="w-5 h-5 md:w-6 md:h-6" />
+                  </span>
+                  <h3 class="text-lg md:text-xl font-semibold md:mb-3">{gettext("Topics")}</h3>
+                </div>
+                <p class="text-sm md:text-base text-base-content/50 leading-relaxed mb-4 md:mb-6">
                   {gettext("Explore teachings organized by theme and subject matter.")}
                 </p>
                 <.link
-                  href={~p"/topics"}
+                  navigate={~p"/topics"}
                   class="inline-flex items-center gap-2 text-sm font-medium text-secondary hover:gap-3 transition-all"
                 >
                   {gettext("Explore (Login Required)")}
@@ -423,7 +433,7 @@ defmodule SahajyogWeb.WelcomeLive do
                 </h2>
               </div>
               <.link
-                href={~p"/events"}
+                navigate={~p"/events"}
                 class="group inline-flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
               >
                 {gettext("View all events")}
@@ -525,7 +535,7 @@ defmodule SahajyogWeb.WelcomeLive do
     <!-- CTA buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <.link
-                href={~p"/users/register"}
+                navigate={~p"/users/register"}
                 class="group inline-flex items-center gap-3 bg-base-content text-base-100 px-8 py-4 rounded-full font-medium hover-lift"
               >
                 {gettext("Register for Free")}
@@ -534,7 +544,7 @@ defmodule SahajyogWeb.WelcomeLive do
                 </span>
               </.link>
               <.link
-                href={~p"/steps"}
+                navigate={~p"/steps"}
                 class="text-base-content/60 hover:text-base-content transition-colors font-medium"
               >
                 {gettext("Try without account")}

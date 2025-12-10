@@ -162,7 +162,7 @@ defmodule SahajyogWeb.Layouts do
             </h4>
             <nav class="flex flex-col gap-3 items-center md:items-start">
               <.link
-                href={~p"/"}
+                navigate={~p"/"}
                 data-footer-path="/"
                 class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
@@ -170,14 +170,14 @@ defmodule SahajyogWeb.Layouts do
               </.link>
               <.link
                 :if={@current_scope}
-                href={~p"/steps"}
+                navigate={~p"/steps"}
                 data-footer-path="/steps"
                 class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
                 {gettext("Steps")}
               </.link>
               <.link
-                href={~p"/talks"}
+                navigate={~p"/talks"}
                 data-footer-path="/talks"
                 class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
@@ -185,7 +185,7 @@ defmodule SahajyogWeb.Layouts do
               </.link>
               <.link
                 :if={@current_scope}
-                href={~p"/resources"}
+                navigate={~p"/resources"}
                 data-footer-path="/resources"
                 class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
@@ -193,7 +193,7 @@ defmodule SahajyogWeb.Layouts do
               </.link>
               <.link
                 :if={@current_scope}
-                href={~p"/topics"}
+                navigate={~p"/topics"}
                 data-footer-path="/topics"
                 class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
@@ -204,7 +204,7 @@ defmodule SahajyogWeb.Layouts do
                 :if={
                   @current_scope && Sahajyog.Accounts.User.eligible_for_upgrade?(@current_scope.user)
                 }
-                href={~p"/level-upgrade"}
+                navigate={~p"/level-upgrade"}
                 data-footer-path="/level-upgrade"
                 class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
               >
@@ -222,7 +222,7 @@ defmodule SahajyogWeb.Layouts do
               {gettext("Have questions? We'd love to hear from you.")}
             </p>
             <.link
-              href={~p"/contact"}
+              navigate={~p"/contact"}
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-content hover:bg-primary/90 rounded-lg transition-all duration-200 text-sm font-medium"
             >
               <.icon name="hero-envelope" class="w-4 h-4" />

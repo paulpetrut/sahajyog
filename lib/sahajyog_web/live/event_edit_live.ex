@@ -5,6 +5,7 @@ defmodule SahajyogWeb.EventEditLive do
   alias Sahajyog.Accounts
   alias Sahajyog.Events
   alias Sahajyog.Events.{Event, EventTask, EventTransportation, EventTeamMember, EventNotifier}
+  alias Sahajyog.Resources.R2Storage
 
   @tabs ~w(basic location transportation tasks team finances)
 
@@ -66,7 +67,14 @@ defmodule SahajyogWeb.EventEditLive do
          # For finances
          # Placeholder logic?
          |> assign(:transactions, Events.list_donations(event.id))
-         |> assign(:timezones, timezones)}
+         |> assign(:timezones, timezones)
+         # Video upload support (500MB max)
+         |> allow_upload(:video,
+           accept: ~w(.mp4 .webm .mov),
+           max_entries: 1,
+           max_file_size: 500_000_000,
+           auto_upload: true
+         )}
       else
         {:ok,
          socket
@@ -114,6 +122,9 @@ defmodule SahajyogWeb.EventEditLive do
 
   @impl true
   def handle_event("save", %{"event" => event_params}, socket) do
+    # Handle video upload if present
+    event_params = handle_video_upload(socket, event_params)
+
     case Events.update_event(socket.assigns.event, event_params) do
       {:ok, event} ->
         msg =
@@ -136,6 +147,57 @@ defmodule SahajyogWeb.EventEditLive do
   end
 
   @impl true
+  def handle_event("cancel-video-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :video, ref)}
+  end
+
+  defp handle_video_upload(socket, event_params) do
+    video_type = Map.get(event_params, "presentation_video_type")
+
+    if video_type == "r2" && socket.assigns.uploads.video.entries != [] do
+      event = socket.assigns.event
+
+      uploaded_videos =
+        consume_uploaded_entries(socket, :video, fn %{path: path}, entry ->
+          key = generate_video_key(event.slug, entry.client_name)
+          content_type = entry.client_type || "video/mp4"
+
+          case R2Storage.upload(path, key, content_type: content_type) do
+            {:ok, ^key} -> {:ok, key}
+            {:error, reason} -> {:postpone, {:error, reason}}
+          end
+        end)
+
+      case uploaded_videos do
+        [key | _] when is_binary(key) ->
+          # Delete old video if exists
+          if event.presentation_video_type == "r2" && event.presentation_video_url do
+            R2Storage.delete(event.presentation_video_url)
+          end
+
+          Map.put(event_params, "presentation_video_url", key)
+
+        _ ->
+          event_params
+      end
+    else
+      event_params
+    end
+  end
+
+  defp generate_video_key(slug, filename) do
+    uuid = Ecto.UUID.generate() |> String.slice(0, 8)
+    sanitized_filename = sanitize_filename(filename)
+    "Events/#{slug}/videos/#{uuid}-#{sanitized_filename}"
+  end
+
+  defp sanitize_filename(filename) do
+    filename
+    |> String.replace(~r/[^a-zA-Z0-9._-]/, "_")
+    |> String.slice(0, 200)
+  end
+
+  @impl true
   def handle_event("publish", _, socket) do
     case Events.update_event(socket.assigns.event, %{status: "public"}) do
       {:ok, event} ->
@@ -147,6 +209,33 @@ defmodule SahajyogWeb.EventEditLive do
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Could not publish event"))}
+    end
+  end
+
+  # Video Management
+  @impl true
+  def handle_event("delete_video", _, socket) do
+    event = socket.assigns.event
+
+    # Delete from R2 if it's an R2 video
+    if event.presentation_video_type == "r2" && event.presentation_video_url do
+      Sahajyog.Resources.R2Storage.delete(event.presentation_video_url)
+    end
+
+    # Clear video fields from the event
+    case Events.update_event(event, %{
+           presentation_video_type: nil,
+           presentation_video_url: nil
+         }) do
+      {:ok, updated_event} ->
+        {:noreply,
+         socket
+         |> assign(:event, updated_event)
+         |> assign(:form, to_form(Events.change_event(updated_event)))
+         |> put_flash(:info, gettext("Video deleted successfully"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not delete video"))}
     end
   end
 
@@ -372,6 +461,14 @@ defmodule SahajyogWeb.EventEditLive do
     |> String.trim()
   end
 
+  defp error_to_string(:too_large), do: gettext("File is too large. Maximum size is 500MB.")
+
+  defp error_to_string(:not_accepted),
+    do: gettext("Invalid file type. Please upload MP4, WebM, or MOV.")
+
+  defp error_to_string(:too_many_files), do: gettext("Only one video file can be uploaded.")
+  defp error_to_string(err), do: inspect(err)
+
   defp tab_class(current_tab, tab) do
     if current_tab == tab do
       "px-4 py-2 border-b-2 border-primary text-primary font-medium"
@@ -501,6 +598,162 @@ defmodule SahajyogWeb.EventEditLive do
                       label={gettext("Online Link (YouTube)")}
                       placeholder="https://youtube.com/..."
                     />
+
+                    <%!-- Online Event Settings --%>
+                    <div class="border-t border-base-content/10 pt-4 mt-4">
+                      <h4 class="font-medium text-base-content mb-3">
+                        {gettext("Online Event Settings")}
+                      </h4>
+
+                      <div class="flex items-center gap-2 py-2">
+                        <.input
+                          field={@form[:is_online]}
+                          type="checkbox"
+                          label={gettext("This is an Online Event")}
+                        />
+                      </div>
+
+                      <% is_online = Ecto.Changeset.get_field(@form.source, :is_online) || false %>
+
+                      <%= if is_online do %>
+                        <div class="mt-3 p-4 bg-info/5 rounded-lg border border-info/20">
+                          <.input
+                            field={@form[:meeting_platform_link]}
+                            type="text"
+                            label={gettext("Meeting Platform Link")}
+                            placeholder="https://teams.microsoft.com/... or https://meet.google.com/..."
+                          />
+                          <p class="text-xs text-base-content/60 mt-1">
+                            {gettext(
+                              "Link to Microsoft Teams, Google Meet, Zoom, or other meeting platform"
+                            )}
+                          </p>
+                        </div>
+                      <% end %>
+                    </div>
+
+                    <%!-- Presentation Video Settings --%>
+                    <div class="border-t border-base-content/10 pt-4 mt-4">
+                      <h4 class="font-medium text-base-content mb-3">
+                        {gettext("Presentation Video")}
+                      </h4>
+
+                      <.input
+                        field={@form[:presentation_video_type]}
+                        type="select"
+                        label={gettext("Video Source")}
+                        prompt={gettext("No video")}
+                        options={[
+                          {gettext("YouTube"), "youtube"},
+                          {gettext("Uploaded (R2)"), "r2"}
+                        ]}
+                      />
+
+                      <% video_type = Ecto.Changeset.get_field(@form.source, :presentation_video_type) %>
+                      <% video_url = Ecto.Changeset.get_field(@form.source, :presentation_video_url) %>
+
+                      <%= if video_type == "youtube" do %>
+                        <div class="mt-3">
+                          <.input
+                            field={@form[:presentation_video_url]}
+                            type="text"
+                            label={gettext("YouTube Video URL")}
+                            placeholder="https://www.youtube.com/watch?v=..."
+                          />
+                        </div>
+                      <% end %>
+
+                      <%= if video_type == "r2" do %>
+                        <div class="mt-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                          <%= if video_url do %>
+                            <div class="flex items-center justify-between">
+                              <div class="flex items-center gap-2">
+                                <.icon name="hero-play-circle" class="w-5 h-5 text-primary" />
+                                <span class="text-sm text-base-content">
+                                  {gettext("Video uploaded")}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                phx-click="delete_video"
+                                data-confirm={gettext("Are you sure you want to delete this video?")}
+                                class="text-error hover:text-error/80 text-sm font-medium"
+                              >
+                                {gettext("Delete Video")}
+                              </button>
+                            </div>
+                            <p class="text-xs text-base-content/60 mt-2 truncate">{video_url}</p>
+                          <% else %>
+                            <div>
+                              <label class="block text-sm font-medium text-base-content/80 mb-2">
+                                {gettext("Upload Video File")}
+                              </label>
+                              <div
+                                id="video-upload-area"
+                                class="border-2 border-dashed border-base-content/30 rounded-lg p-6 text-center bg-base-100 hover:bg-base-200 transition-colors"
+                                phx-drop-target={@uploads.video.ref}
+                              >
+                                <.live_file_input upload={@uploads.video} class="hidden" />
+                                <label for={@uploads.video.ref} class="cursor-pointer">
+                                  <.icon
+                                    name="hero-video-camera"
+                                    class="w-12 h-12 mx-auto text-base-content/40"
+                                  />
+                                  <p class="mt-2 text-sm text-base-content/80">
+                                    {gettext("Click to upload or drag and drop")}
+                                  </p>
+                                  <p class="text-xs text-base-content/60">
+                                    {gettext("MP4, WebM, MOV - Max 500MB")}
+                                  </p>
+                                </label>
+                              </div>
+
+                              <%= for entry <- @uploads.video.entries do %>
+                                <div class="mt-4 bg-base-100 p-4 rounded-lg">
+                                  <div class="flex items-start justify-between mb-3">
+                                    <div class="flex-1">
+                                      <p class="text-sm font-medium text-base-content">
+                                        {entry.client_name}
+                                      </p>
+                                      <p class="text-xs text-base-content/60 mt-1">
+                                        {format_file_size(entry.client_size)}
+                                      </p>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      phx-click="cancel-video-upload"
+                                      phx-value-ref={entry.ref}
+                                      class="text-error hover:text-error/80 ml-4"
+                                    >
+                                      <.icon name="hero-x-mark" class="w-5 h-5" />
+                                    </button>
+                                  </div>
+
+                                  <div class="mt-3">
+                                    <div class="w-full bg-base-300 rounded-full h-2">
+                                      <div
+                                        class="bg-warning h-2 rounded-full transition-all duration-300"
+                                        style={"width: #{entry.progress}%"}
+                                      >
+                                      </div>
+                                    </div>
+                                    <p class="text-xs text-base-content/60 mt-1">{entry.progress}%</p>
+                                  </div>
+
+                                  <%= for err <- upload_errors(@uploads.video, entry) do %>
+                                    <p class="mt-2 text-xs text-error">{error_to_string(err)}</p>
+                                  <% end %>
+                                </div>
+                              <% end %>
+
+                              <%= for err <- upload_errors(@uploads.video) do %>
+                                <p class="mt-2 text-xs text-error">{error_to_string(err)}</p>
+                              <% end %>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
 
                     <.input
                       field={@form[:status]}

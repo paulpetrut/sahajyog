@@ -2,7 +2,7 @@ defmodule SahajyogWeb.EventShowLive do
   use SahajyogWeb, :live_view
 
   alias Sahajyog.Events
-  alias Sahajyog.Events.{EventCarpool, EventNotifier}
+  alias Sahajyog.Events.{EventCarpool, EventNotifier, Validators}
   alias Sahajyog.Resources.R2Storage
   alias Phoenix.LiveView.JS
   alias Timex
@@ -905,6 +905,24 @@ defmodule SahajyogWeb.EventShowLive do
 
   defp photo_url(_), do: ""
 
+  # Generate presentation video URL for R2-hosted videos
+  defp presentation_video_url(r2_key) when is_binary(r2_key) do
+    key = String.trim_leading(r2_key, "/")
+    R2Storage.generate_download_url(key, expires_in: 3600)
+  end
+
+  defp presentation_video_url(_), do: nil
+
+  # Extract YouTube video ID from presentation video URL
+  defp extract_presentation_video_id(url) when is_binary(url) do
+    case Validators.extract_youtube_id(url) do
+      {:ok, video_id} -> video_id
+      :error -> nil
+    end
+  end
+
+  defp extract_presentation_video_id(_), do: nil
+
   defp format_date(date), do: Calendar.strftime(date, "%B %d, %Y")
 
   defp format_time(nil), do: ""
@@ -1403,6 +1421,19 @@ defmodule SahajyogWeb.EventShowLive do
                   <% end %>
                 </button>
               <% end %>
+
+              <%!-- Join Meeting Button for Online Events --%>
+              <%= if @event.is_online && @event.meeting_platform_link do %>
+                <a
+                  href={@event.meeting_platform_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 bg-success text-success-content hover:bg-success/90"
+                >
+                  <.icon name="hero-video-camera" class="w-5 h-5" />
+                  {gettext("Join Meeting")}
+                </a>
+              <% end %>
             </div>
 
             <%= if @attendance do %>
@@ -1494,6 +1525,74 @@ defmodule SahajyogWeb.EventShowLive do
                     </h2>
                     <div class="prose prose-invert max-w-none text-base-content/80">
                       {Phoenix.HTML.raw(@event.description)}
+                    </div>
+                  </.card>
+                <% end %>
+
+                <%!-- Presentation Video Section --%>
+                <%= if @event.presentation_video_type && @event.presentation_video_url do %>
+                  <.card size="lg" class="mb-6">
+                    <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
+                      <.icon name="hero-play-circle" class="w-5 h-5" />
+                      {gettext("Presentation Video")}
+                    </h2>
+                    <div class="aspect-video rounded-lg overflow-hidden bg-base-300">
+                      <%= case @event.presentation_video_type do %>
+                        <% "youtube" -> %>
+                          <% video_id = extract_presentation_video_id(@event.presentation_video_url) %>
+                          <%= if video_id do %>
+                            <iframe
+                              src={"https://www.youtube.com/embed/#{video_id}"}
+                              title={gettext("Presentation Video")}
+                              frameborder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowfullscreen
+                              class="w-full h-full"
+                            >
+                            </iframe>
+                          <% else %>
+                            <div class="w-full h-full flex items-center justify-center text-base-content/60">
+                              <div class="text-center">
+                                <.icon
+                                  name="hero-exclamation-triangle"
+                                  class="w-12 h-12 mx-auto mb-2"
+                                />
+                                <p>{gettext("Video unavailable")}</p>
+                              </div>
+                            </div>
+                          <% end %>
+                        <% "r2" -> %>
+                          <% video_url = presentation_video_url(@event.presentation_video_url) %>
+                          <%= if video_url do %>
+                            <video
+                              controls
+                              class="w-full h-full"
+                              preload="metadata"
+                            >
+                              <source src={video_url} type="video/mp4" />
+                              <source src={video_url} type="video/webm" />
+                              <source src={video_url} type="video/quicktime" />
+                              {gettext("Your browser does not support the video tag.")}
+                            </video>
+                          <% else %>
+                            <div class="w-full h-full flex items-center justify-center text-base-content/60">
+                              <div class="text-center">
+                                <.icon
+                                  name="hero-exclamation-triangle"
+                                  class="w-12 h-12 mx-auto mb-2"
+                                />
+                                <p>{gettext("Video unavailable")}</p>
+                              </div>
+                            </div>
+                          <% end %>
+                        <% _ -> %>
+                          <div class="w-full h-full flex items-center justify-center text-base-content/60">
+                            <div class="text-center">
+                              <.icon name="hero-exclamation-triangle" class="w-12 h-12 mx-auto mb-2" />
+                              <p>{gettext("Video unavailable")}</p>
+                            </div>
+                          </div>
+                      <% end %>
                     </div>
                   </.card>
                 <% end %>

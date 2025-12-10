@@ -43,7 +43,7 @@ Hooks.PoolSortable = {
       ghostClass: "opacity-50",
       dragClass: "shadow-lg",
       handle: ".cursor-grab",
-      onEnd: function (evt) {
+      onEnd: function () {
         // Get all video IDs in the new order
         const ids = Array.from(el.children).map((child) => child.dataset.id)
         hook.pushEvent("reorder_pool", { ids: ids })
@@ -90,7 +90,7 @@ Hooks.WatchedVideos = {
 
 Hooks.LocaleSelector = {
   mounted() {
-    this.el.addEventListener("click", (e) => {
+    this.clickHandler = () => {
       const locale = this.el.dataset.locale
       if (locale) {
         // Reload the page with the new locale parameter
@@ -98,7 +98,14 @@ Hooks.LocaleSelector = {
         url.searchParams.set("locale", locale)
         window.location.href = url.toString()
       }
-    })
+    }
+    this.el.addEventListener("click", this.clickHandler)
+  },
+
+  destroyed() {
+    if (this.clickHandler) {
+      this.el.removeEventListener("click", this.clickHandler)
+    }
   },
 }
 
@@ -259,6 +266,7 @@ Hooks.UnsavedChanges = {
 Hooks.AutoDismissFlash = {
   mounted() {
     const delay = parseInt(this.el.dataset.autoDismiss || "5000", 10)
+    this.innerTimeout = null
 
     this.timeout = setTimeout(() => {
       // Fade out animation
@@ -266,8 +274,10 @@ Hooks.AutoDismissFlash = {
       this.el.style.opacity = "0"
 
       // Remove after animation
-      setTimeout(() => {
-        this.el.remove()
+      this.innerTimeout = setTimeout(() => {
+        if (this.el && this.el.parentNode) {
+          this.el.remove()
+        }
       }, 300)
     }, delay)
   },
@@ -275,6 +285,9 @@ Hooks.AutoDismissFlash = {
   destroyed() {
     if (this.timeout) {
       clearTimeout(this.timeout)
+    }
+    if (this.innerTimeout) {
+      clearTimeout(this.innerTimeout)
     }
   },
 }
@@ -642,35 +655,44 @@ Hooks.QuotesCarousel = {
       }
     }
 
-    // Event listeners
-    this.nextBtn.addEventListener("click", () => {
+    // Store handlers for cleanup
+    this.nextBtnHandler = () => {
       this.stopAutoSlide()
       this.nextSlide()
       this.startAutoSlide()
-    })
+    }
 
-    this.prevBtn.addEventListener("click", () => {
+    this.prevBtnHandler = () => {
       this.stopAutoSlide()
       this.prevSlide()
       this.startAutoSlide()
-    })
+    }
 
+    this.mouseEnterHandler = () => {
+      this.stopAutoSlide()
+    }
+
+    this.mouseLeaveHandler = () => {
+      this.startAutoSlide()
+    }
+
+    // Store indicator handlers
+    this.indicatorHandlers = []
     this.indicators.forEach((indicator, index) => {
-      indicator.addEventListener("click", () => {
+      const handler = () => {
         this.stopAutoSlide()
         this.goToSlide(index)
         this.startAutoSlide()
-      })
+      }
+      this.indicatorHandlers.push({ indicator, handler })
+      indicator.addEventListener("click", handler)
     })
 
-    // Pause on hover
-    this.el.addEventListener("mouseenter", () => {
-      this.stopAutoSlide()
-    })
-
-    this.el.addEventListener("mouseleave", () => {
-      this.startAutoSlide()
-    })
+    // Event listeners
+    this.nextBtn.addEventListener("click", this.nextBtnHandler)
+    this.prevBtn.addEventListener("click", this.prevBtnHandler)
+    this.el.addEventListener("mouseenter", this.mouseEnterHandler)
+    this.el.addEventListener("mouseleave", this.mouseLeaveHandler)
 
     // Initialize
     this.updateSlide()
@@ -679,10 +701,27 @@ Hooks.QuotesCarousel = {
 
   destroyed() {
     this.stopAutoSlide()
+
+    // Clean up event listeners
+    if (this.nextBtn && this.nextBtnHandler) {
+      this.nextBtn.removeEventListener("click", this.nextBtnHandler)
+    }
+    if (this.prevBtn && this.prevBtnHandler) {
+      this.prevBtn.removeEventListener("click", this.prevBtnHandler)
+    }
+    if (this.mouseEnterHandler) {
+      this.el.removeEventListener("mouseenter", this.mouseEnterHandler)
+    }
+    if (this.mouseLeaveHandler) {
+      this.el.removeEventListener("mouseleave", this.mouseLeaveHandler)
+    }
+    if (this.indicatorHandlers) {
+      this.indicatorHandlers.forEach(({ indicator, handler }) => {
+        indicator.removeEventListener("click", handler)
+      })
+    }
   },
 }
-
-const Uploaders = {}
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
@@ -723,8 +762,8 @@ if (window.location.hostname === "localhost" || window.location.hostname === "12
     //   * click with "c" key pressed to open at caller location
     //   * click with "d" key pressed to open at function component definition location
     let keyDown
-    window.addEventListener("keydown", (e) => (keyDown = e.key))
-    window.addEventListener("keyup", (e) => (keyDown = null))
+    window.addEventListener("keydown", (event) => (keyDown = event.key))
+    window.addEventListener("keyup", () => (keyDown = null))
     window.addEventListener(
       "click",
       (e) => {

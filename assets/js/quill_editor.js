@@ -107,9 +107,12 @@ const QuillEditor = {
     editorContainer.appendChild(toolbar)
     this.imageToolbar = toolbar
 
+    // Store handlers for cleanup
+    this.toolbarButtonHandlers = []
+
     // Handle alignment button clicks
     toolbar.querySelectorAll("button").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
+      const handler = (e) => {
         e.preventDefault()
         e.stopPropagation()
         if (this.selectedImage) {
@@ -118,24 +121,29 @@ const QuillEditor = {
           this.updateToolbarPosition()
           this.triggerChange()
         }
-      })
+      }
+      this.toolbarButtonHandlers.push({ btn, handler })
+      btn.addEventListener("click", handler)
     })
 
     // Handle image selection
-    editorContainer.addEventListener("click", (e) => {
+    this.editorClickHandler = (e) => {
       if (e.target.tagName === "IMG") {
         this.selectImage(e.target)
       } else if (!toolbar.contains(e.target)) {
         this.deselectImage()
       }
-    })
+    }
+    editorContainer.addEventListener("click", this.editorClickHandler)
+    this.editorContainer = editorContainer
 
     // Hide toolbar when clicking outside
-    document.addEventListener("click", (e) => {
+    this.documentClickHandler = (e) => {
       if (!editorContainer.contains(e.target) && !toolbar.contains(e.target)) {
         this.deselectImage()
       }
-    })
+    }
+    document.addEventListener("click", this.documentClickHandler)
   },
 
   selectImage(img) {
@@ -226,6 +234,19 @@ const QuillEditor = {
   },
 
   destroyed() {
+    // Clean up event listeners
+    if (this.documentClickHandler) {
+      document.removeEventListener("click", this.documentClickHandler)
+    }
+    if (this.editorContainer && this.editorClickHandler) {
+      this.editorContainer.removeEventListener("click", this.editorClickHandler)
+    }
+    if (this.toolbarButtonHandlers) {
+      this.toolbarButtonHandlers.forEach(({ btn, handler }) => {
+        btn.removeEventListener("click", handler)
+      })
+    }
+
     if (this.quill) {
       this.quill = null
     }

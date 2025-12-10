@@ -28,7 +28,7 @@ defmodule SahajyogWeb.PublicTopicShowLive do
     <Layouts.app flash={@flash}>
       <div class="max-w-4xl mx-auto px-6 py-12 lg:py-20">
         <.link
-          href={~p"/"}
+          navigate={~p"/"}
           class="inline-flex items-center gap-2 text-sm text-base-content/60 hover:text-primary mb-8 transition-colors"
         >
           <.icon name="hero-arrow-left" class="w-4 h-4" />

@@ -45,7 +45,10 @@ defmodule SahajyogWeb.Admin.EventProposalsLive do
         online_url: proposal.online_url,
         city: proposal.city,
         country: proposal.country,
-        budget_type: proposal.budget_type
+        budget_type: proposal.budget_type,
+        meeting_platform_link: proposal.meeting_platform_link,
+        presentation_video_type: proposal.presentation_video_type,
+        presentation_video_url: proposal.presentation_video_url
       })
 
     changeset = Events.change_event(event)
@@ -89,7 +92,10 @@ defmodule SahajyogWeb.Admin.EventProposalsLive do
           city: proposal.city,
           country: proposal.country,
           budget_type: proposal.budget_type,
-          user_id: user_id
+          user_id: user_id,
+          meeting_platform_link: proposal.meeting_platform_link,
+          presentation_video_type: proposal.presentation_video_type,
+          presentation_video_url: proposal.presentation_video_url
         })
 
       changeset =
@@ -241,6 +247,51 @@ defmodule SahajyogWeb.Admin.EventProposalsLive do
                 </span>
               <% end %>
             </div>
+
+            <%!-- Meeting Platform Link (for online events) --%>
+            <%= if @reviewing_proposal.is_online && @reviewing_proposal.meeting_platform_link do %>
+              <div class="mt-3 p-3 bg-info/10 rounded-lg border border-info/20">
+                <div class="flex items-center gap-2 text-sm">
+                  <.icon name="hero-video-camera" class="w-4 h-4 text-info" />
+                  <span class="font-medium text-info">{gettext("Meeting Link")}:</span>
+                  <a
+                    href={@reviewing_proposal.meeting_platform_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-info hover:underline truncate max-w-xs"
+                  >
+                    {@reviewing_proposal.meeting_platform_link}
+                  </a>
+                </div>
+              </div>
+            <% end %>
+
+            <%!-- Presentation Video Information --%>
+            <%= if @reviewing_proposal.presentation_video_type do %>
+              <div class="mt-3 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <div class="flex items-center gap-2 text-sm">
+                  <.icon name="hero-play-circle" class="w-4 h-4 text-primary" />
+                  <span class="font-medium text-primary">{gettext("Presentation Video")}:</span>
+                  <span class="px-2 py-0.5 bg-primary/20 text-primary rounded text-xs uppercase">
+                    {@reviewing_proposal.presentation_video_type}
+                  </span>
+                </div>
+                <%= if @reviewing_proposal.presentation_video_type == "youtube" do %>
+                  <a
+                    href={@reviewing_proposal.presentation_video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary hover:underline text-sm mt-1 block truncate"
+                  >
+                    {@reviewing_proposal.presentation_video_url}
+                  </a>
+                <% else %>
+                  <p class="text-sm text-base-content/60 mt-1">
+                    {gettext("R2 Storage")}: {@reviewing_proposal.presentation_video_url}
+                  </p>
+                <% end %>
+              </div>
+            <% end %>
           </div>
 
           <.form
@@ -287,12 +338,34 @@ defmodule SahajyogWeb.Admin.EventProposalsLive do
                       label={gettext("Start Time")}
                     />
                   </div>
-                  <div>
-                    <.input
-                      field={@review_form[:online_url]}
-                      type="text"
-                      label={gettext("Online URL")}
-                    />
+                </div>
+
+                <div class="bg-base-200/50 border border-base-content/10 rounded-lg p-4 mt-4">
+                  <p class="text-sm text-base-content/70 mb-3">
+                    {gettext("Provide at least one: a YouTube link OR a meeting platform link")}
+                  </p>
+                  <div class="space-y-4">
+                    <div>
+                      <.input
+                        field={@review_form[:online_url]}
+                        type="text"
+                        label={gettext("YouTube Link")}
+                        placeholder="https://youtube.com/..."
+                      />
+                    </div>
+                    <div>
+                      <.input
+                        field={@review_form[:meeting_platform_link]}
+                        type="text"
+                        label={gettext("Meeting Platform Link")}
+                        placeholder={
+                          gettext("https://teams.microsoft.com/... or https://zoom.us/...")
+                        }
+                      />
+                      <p class="mt-1 text-xs text-base-content/60">
+                        {gettext("Teams, Zoom, Google Meet, etc.")}
+                      </p>
+                    </div>
                   </div>
                 </div>
               <% else %>
@@ -440,6 +513,18 @@ defmodule SahajyogWeb.Admin.EventProposalsLive do
                         {[proposal.city, proposal.country]
                         |> Enum.reject(&is_nil/1)
                         |> Enum.join(", ")}
+                      </span>
+                    <% end %>
+                    <%= if proposal.is_online && proposal.meeting_platform_link do %>
+                      <span class="flex items-center gap-1 text-info">
+                        <.icon name="hero-video-camera" class="w-4 h-4" />
+                        {gettext("Meeting Link")}
+                      </span>
+                    <% end %>
+                    <%= if proposal.presentation_video_type do %>
+                      <span class="flex items-center gap-1 text-primary">
+                        <.icon name="hero-play-circle" class="w-4 h-4" />
+                        {String.upcase(proposal.presentation_video_type)}
                       </span>
                     <% end %>
                     <span class="flex items-center gap-1">

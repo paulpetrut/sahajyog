@@ -19,6 +19,7 @@ defmodule Sahajyog.Events.Event do
   @statuses ~w(draft public archived cancelled)
   @invitation_types ~w(none pdf image)
   @languages ~w(en es fr de it ro)
+  @video_types ~w(youtube r2)
 
   schema "events" do
     field :title, :string
@@ -54,6 +55,9 @@ defmodule Sahajyog.Events.Event do
     field :timezone, :string, default: "Etc/UTC"
     field :languages, {:array, :string}, default: ["en"]
     field :is_publicly_accessible, :boolean, default: false
+    field :meeting_platform_link, :string
+    field :presentation_video_type, :string
+    field :presentation_video_url, :string
 
     belongs_to :user, User
     has_many :reviews, Sahajyog.Events.EventReview
@@ -73,6 +77,7 @@ defmodule Sahajyog.Events.Event do
   def statuses, do: @statuses
   def invitation_types, do: @invitation_types
   def languages, do: @languages
+  def video_types, do: @video_types
 
   def changeset(event, attrs) do
     event
@@ -111,7 +116,10 @@ defmodule Sahajyog.Events.Event do
       :timezone,
       :level,
       :languages,
-      :is_publicly_accessible
+      :is_publicly_accessible,
+      :meeting_platform_link,
+      :presentation_video_type,
+      :presentation_video_url
     ])
     |> validate_required([:title, :user_id])
     |> validate_subset(:languages, @languages)

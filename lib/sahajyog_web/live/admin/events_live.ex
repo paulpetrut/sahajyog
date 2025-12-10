@@ -90,6 +90,24 @@ defmodule SahajyogWeb.Admin.EventsLive do
                         {[event.city, event.country] |> Enum.reject(&is_nil/1) |> Enum.join(", ")}
                       </span>
                     <% end %>
+                    <%= if event.is_online do %>
+                      <span class="flex items-center gap-1 text-info">
+                        <.icon name="hero-globe-alt" class="w-4 h-4" />
+                        {gettext("Online")}
+                      </span>
+                    <% end %>
+                    <%= if event.meeting_platform_link do %>
+                      <span class="flex items-center gap-1 text-info">
+                        <.icon name="hero-video-camera" class="w-4 h-4" />
+                        {gettext("Meeting Link")}
+                      </span>
+                    <% end %>
+                    <%= if event.presentation_video_type do %>
+                      <span class="flex items-center gap-1 text-primary">
+                        <.icon name="hero-play-circle" class="w-4 h-4" />
+                        {String.upcase(event.presentation_video_type)}
+                      </span>
+                    <% end %>
                   </div>
                 </div>
 

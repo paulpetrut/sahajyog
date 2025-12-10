@@ -177,7 +177,7 @@ defmodule SahajyogWeb.DemoLive do
             </p>
             <div>
               <.link
-                href={~p"/steps"}
+                navigate={~p"/steps"}
                 class="btn-apple px-6 py-2.5 bg-primary text-primary-content rounded-full text-sm font-medium inline-block"
               >
                 {gettext("Experience Now")}
@@ -202,7 +202,7 @@ defmodule SahajyogWeb.DemoLive do
               </p>
               <div>
                 <.link
-                  href={~p"/talks"}
+                  navigate={~p"/talks"}
                   class="btn-apple inline-block px-5 py-2 bg-sky-600 text-white rounded-full text-sm font-medium"
                 >
                   {gettext("Browse Talks")}
@@ -230,7 +230,7 @@ defmodule SahajyogWeb.DemoLive do
               </p>
               <div>
                 <.link
-                  href={~p"/topics"}
+                  navigate={~p"/topics"}
                   class="btn-apple inline-block px-5 py-2 bg-amber-600 text-white rounded-full text-sm font-medium"
                 >
                   {gettext("Explore Topics")}
@@ -270,7 +270,7 @@ defmodule SahajyogWeb.DemoLive do
             </p>
             <div>
               <.link
-                href={~p"/steps"}
+                navigate={~p"/steps"}
                 class="btn-apple inline-block px-6 py-2.5 bg-emerald-600 text-white rounded-full text-sm font-medium"
               >
                 {gettext("Begin Your Journey")}
@@ -290,7 +290,7 @@ defmodule SahajyogWeb.DemoLive do
             </p>
             <div>
               <.link
-                href={~p"/users/register"}
+                navigate={~p"/users/register"}
                 class="btn-apple inline-block px-10 py-4 bg-primary text-primary-content rounded-full text-lg font-medium shadow-lg"
               >
                 {gettext("Get Started — It's Free")}

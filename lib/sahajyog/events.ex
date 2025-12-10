@@ -238,6 +238,11 @@ defmodule Sahajyog.Events do
   end
 
   def delete_event(%Event{} = event) do
+    # Clean up R2-hosted video if present
+    if event.presentation_video_type == "r2" && event.presentation_video_url do
+      Sahajyog.Resources.R2Storage.delete(event.presentation_video_url)
+    end
+
     Repo.delete(event)
   end
 
@@ -298,6 +303,13 @@ defmodule Sahajyog.Events do
       # Set the event owner to the user who proposed it
       event_attrs = Map.put(event_attrs, "user_id", proposal.proposed_by_id)
 
+      # Transfer meeting link and video data from proposal to event
+      event_attrs =
+        event_attrs
+        |> maybe_transfer_field(proposal, :meeting_platform_link)
+        |> maybe_transfer_field(proposal, :presentation_video_type)
+        |> maybe_transfer_field(proposal, :presentation_video_url)
+
       with {:ok, event} <- struct(Event, %{}) |> Event.changeset(event_attrs) |> Repo.insert(),
            {:ok, updated_proposal} <-
              update_proposal(proposal, %{
@@ -310,6 +322,19 @@ defmodule Sahajyog.Events do
         {:error, changeset} -> Repo.rollback(changeset)
       end
     end)
+  end
+
+  # Transfers a field from proposal to event_attrs if not already set in event_attrs
+  defp maybe_transfer_field(event_attrs, proposal, field) do
+    string_key = Atom.to_string(field)
+    proposal_value = Map.get(proposal, field)
+
+    # Only transfer if proposal has a value and event_attrs doesn't already have it
+    if proposal_value && !Map.has_key?(event_attrs, string_key) do
+      Map.put(event_attrs, string_key, proposal_value)
+    else
+      event_attrs
+    end
   end
 
   def reject_proposal(current_scope, %EventProposal{} = proposal, review_notes) do

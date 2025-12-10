@@ -38,29 +38,29 @@ defmodule SahajyogWeb.MobileMenu do
               </li>
               <%!-- Main Menu Items --%>
               <li>
-                <.link href={~p"/steps"}>{gettext("Steps")}</.link>
+                <.link navigate={~p"/steps"}>{gettext("Steps")}</.link>
               </li>
               <li>
-                <.link href={~p"/talks"}>{gettext("Talks")}</.link>
+                <.link navigate={~p"/talks"}>{gettext("Talks")}</.link>
               </li>
               <li>
-                <.link href={~p"/topics"}>{gettext("Topics")}</.link>
+                <.link navigate={~p"/topics"}>{gettext("Topics")}</.link>
               </li>
               <li>
-                <.link href={~p"/resources"}>{gettext("Resources")}</.link>
+                <.link navigate={~p"/resources"}>{gettext("Resources")}</.link>
               </li>
               <%= if Sahajyog.Accounts.User.can_access_events?(@current_scope.user) do %>
                 <li>
-                  <.link href={~p"/events"}>{gettext("Events")}</.link>
+                  <.link navigate={~p"/events"}>{gettext("Events")}</.link>
                 </li>
               <% end %>
               <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
                 <li>
-                  <.link href={~p"/admin/videos"}>{gettext("Admin")}</.link>
+                  <.link navigate={~p"/admin/videos"}>{gettext("Admin")}</.link>
                 </li>
               <% end %>
               <li class="mt-2">
-                <.link href={~p"/users/settings"}>
+                <.link navigate={~p"/users/settings"}>
                   <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
                   {gettext("Account settings")}
                 </.link>
@@ -86,7 +86,7 @@ defmodule SahajyogWeb.MobileMenu do
             <% else %>
               <%!-- Public links for non-logged-in users --%>
               <li>
-                <.link href={~p"/talks"}>{gettext("Talks")}</.link>
+                <.link navigate={~p"/talks"}>{gettext("Talks")}</.link>
               </li>
               <li class="border-t border-base-content/20 mt-4 pt-2">
                 <div class="flex items-center justify-between py-2 px-3">
@@ -101,12 +101,15 @@ defmodule SahajyogWeb.MobileMenu do
                 </div>
               </li>
               <li class="border-t border-base-content/20 mt-4 pt-2">
-                <.link href={~p"/users/register"} class="btn btn-primary btn-sm w-full font-medium">
+                <.link
+                  navigate={~p"/users/register"}
+                  class="btn btn-primary btn-sm w-full font-medium"
+                >
                   {gettext("Register")}
                 </.link>
               </li>
               <li class="mt-2">
-                <.link href={~p"/users/log-in"} class="text-center">{gettext("Log in")}</.link>
+                <.link navigate={~p"/users/log-in"} class="text-center">{gettext("Log in")}</.link>
               </li>
             <% end %>
           </ul>
