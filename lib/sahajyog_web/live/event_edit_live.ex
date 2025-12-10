@@ -151,52 +151,6 @@ defmodule SahajyogWeb.EventEditLive do
     {:noreply, cancel_upload(socket, :video, ref)}
   end
 
-  defp handle_video_upload(socket, event_params) do
-    video_type = Map.get(event_params, "presentation_video_type")
-
-    if video_type == "r2" && socket.assigns.uploads.video.entries != [] do
-      event = socket.assigns.event
-
-      uploaded_videos =
-        consume_uploaded_entries(socket, :video, fn %{path: path}, entry ->
-          key = generate_video_key(event.slug, entry.client_name)
-          content_type = entry.client_type || "video/mp4"
-
-          case R2Storage.upload(path, key, content_type: content_type) do
-            {:ok, ^key} -> {:ok, key}
-            {:error, reason} -> {:postpone, {:error, reason}}
-          end
-        end)
-
-      case uploaded_videos do
-        [key | _] when is_binary(key) ->
-          # Delete old video if exists
-          if event.presentation_video_type == "r2" && event.presentation_video_url do
-            R2Storage.delete(event.presentation_video_url)
-          end
-
-          Map.put(event_params, "presentation_video_url", key)
-
-        _ ->
-          event_params
-      end
-    else
-      event_params
-    end
-  end
-
-  defp generate_video_key(slug, filename) do
-    uuid = Ecto.UUID.generate() |> String.slice(0, 8)
-    sanitized_filename = sanitize_filename(filename)
-    "Events/#{slug}/videos/#{uuid}-#{sanitized_filename}"
-  end
-
-  defp sanitize_filename(filename) do
-    filename
-    |> String.replace(~r/[^a-zA-Z0-9._-]/, "_")
-    |> String.slice(0, 200)
-  end
-
   @impl true
   def handle_event("publish", _, socket) do
     case Events.update_event(socket.assigns.event, %{status: "public"}) do
@@ -212,7 +166,6 @@ defmodule SahajyogWeb.EventEditLive do
     end
   end
 
-  # Video Management
   @impl true
   def handle_event("delete_video", _, socket) do
     event = socket.assigns.event
@@ -240,6 +193,7 @@ defmodule SahajyogWeb.EventEditLive do
   end
 
   # Transportation Management
+  @impl true
   def handle_event("add_transport", _, socket) do
     changeset = Events.change_transportation(%EventTransportation{})
 
@@ -249,6 +203,7 @@ defmodule SahajyogWeb.EventEditLive do
      |> assign(:transport_form, to_form(changeset))}
   end
 
+  @impl true
   def handle_event("validate_transport", %{"event_transportation" => params}, socket) do
     changeset =
       %EventTransportation{}
@@ -258,6 +213,7 @@ defmodule SahajyogWeb.EventEditLive do
     {:noreply, assign(socket, :transport_form, to_form(changeset))}
   end
 
+  @impl true
   def handle_event("save_transport", %{"event_transportation" => params}, socket) do
     params = Map.put(params, "event_id", socket.assigns.event.id)
 
@@ -276,6 +232,7 @@ defmodule SahajyogWeb.EventEditLive do
     end
   end
 
+  @impl true
   def handle_event("delete_transport", %{"id" => id}, socket) do
     transport = Repo.get!(EventTransportation, id)
     {:ok, _} = Events.delete_transportation(transport)
@@ -287,11 +244,13 @@ defmodule SahajyogWeb.EventEditLive do
      |> put_flash(:info, gettext("Transportation option deleted"))}
   end
 
+  @impl true
   def handle_event("cancel_transport_modal", _, socket) do
     {:noreply, assign(socket, :show_transport_modal, false)}
   end
 
   # Task Management
+  @impl true
   def handle_event("add_task", _, socket) do
     changeset = Events.change_task(%EventTask{})
 
@@ -302,6 +261,7 @@ defmodule SahajyogWeb.EventEditLive do
      |> assign(:task_form, to_form(changeset))}
   end
 
+  @impl true
   def handle_event("edit_task", %{"id" => id}, socket) do
     task = Events.get_task!(id)
     changeset = Events.change_task(task)
@@ -313,6 +273,7 @@ defmodule SahajyogWeb.EventEditLive do
      |> assign(:task_form, to_form(changeset))}
   end
 
+  @impl true
   def handle_event("validate_task", %{"event_task" => params}, socket) do
     changeset =
       %EventTask{}
@@ -322,6 +283,7 @@ defmodule SahajyogWeb.EventEditLive do
     {:noreply, assign(socket, :task_form, to_form(changeset))}
   end
 
+  @impl true
   def handle_event("save_task", %{"event_task" => params}, socket) do
     params = Map.put(params, "event_id", socket.assigns.event.id)
 
@@ -352,6 +314,7 @@ defmodule SahajyogWeb.EventEditLive do
     end
   end
 
+  @impl true
   def handle_event("delete_task", %{"id" => id}, socket) do
     task = Repo.get!(EventTask, id)
     {:ok, _} = Events.delete_task(task)
@@ -363,11 +326,13 @@ defmodule SahajyogWeb.EventEditLive do
      |> put_flash(:info, gettext("Task deleted"))}
   end
 
+  @impl true
   def handle_event("cancel_task_modal", _, socket) do
     {:noreply, assign(socket, :show_task_modal, false)}
   end
 
   # Team Management
+  @impl true
   def handle_event("invite_collaborator", %{"email" => email}, socket) do
     email = String.trim(email)
 
@@ -431,6 +396,7 @@ defmodule SahajyogWeb.EventEditLive do
     end
   end
 
+  @impl true
   def handle_event("remove_collaborator", %{"id" => id}, socket) do
     # Verify owner? Or let any editor remove?
     # Usually owner should control this. Co-owners might remove others?
@@ -449,6 +415,52 @@ defmodule SahajyogWeb.EventEditLive do
      socket
      |> assign(:event, event)
      |> put_flash(:info, gettext("Team member removed."))}
+  end
+
+  defp handle_video_upload(socket, event_params) do
+    video_type = Map.get(event_params, "presentation_video_type")
+
+    if video_type == "r2" && socket.assigns.uploads.video.entries != [] do
+      event = socket.assigns.event
+
+      uploaded_videos =
+        consume_uploaded_entries(socket, :video, fn %{path: path}, entry ->
+          key = generate_video_key(event.slug, entry.client_name)
+          content_type = entry.client_type || "video/mp4"
+
+          case R2Storage.upload(path, key, content_type: content_type) do
+            {:ok, ^key} -> {:ok, key}
+            {:error, reason} -> {:postpone, {:error, reason}}
+          end
+        end)
+
+      case uploaded_videos do
+        [key | _] when is_binary(key) ->
+          # Delete old video if exists
+          if event.presentation_video_type == "r2" && event.presentation_video_url do
+            R2Storage.delete(event.presentation_video_url)
+          end
+
+          Map.put(event_params, "presentation_video_url", key)
+
+        _ ->
+          event_params
+      end
+    else
+      event_params
+    end
+  end
+
+  defp generate_video_key(slug, filename) do
+    uuid = Ecto.UUID.generate() |> String.slice(0, 8)
+    sanitized_filename = sanitize_filename(filename)
+    "Events/#{slug}/videos/#{uuid}-#{sanitized_filename}"
+  end
+
+  defp sanitize_filename(filename) do
+    filename
+    |> String.replace(~r/[^a-zA-Z0-9._-]/, "_")
+    |> String.slice(0, 200)
   end
 
   defp strip_html(nil), do: nil
