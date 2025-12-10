@@ -20,7 +20,8 @@ defmodule Sahajyog.Events do
     EventRideRequest,
     EventReview,
     EventPhoto,
-    EventAttendance
+    EventAttendance,
+    EventInvitationMaterial
   }
 
   alias Sahajyog.Accounts.User
@@ -195,6 +196,7 @@ defmodule Sahajyog.Events do
     Event
     |> preload([
       :user,
+      :invitation_materials,
       team_members: :user,
       location_photos: [],
       tasks: [:assigned_user, :volunteers],
@@ -213,6 +215,7 @@ defmodule Sahajyog.Events do
     |> where([e], e.slug == ^slug)
     |> preload([
       :user,
+      :invitation_materials,
       team_members: :user,
       location_photos: [],
       tasks: [:assigned_user, :volunteers],
@@ -242,6 +245,9 @@ defmodule Sahajyog.Events do
     if event.presentation_video_type == "r2" && event.presentation_video_url do
       Sahajyog.Resources.R2Storage.delete(event.presentation_video_url)
     end
+
+    # Clean up invitation materials from R2
+    delete_event_invitation_materials(event.id)
 
     Repo.delete(event)
   end
@@ -1213,5 +1219,108 @@ defmodule Sahajyog.Events do
 
   defp broadcast(event_id, message) do
     Phoenix.PubSub.broadcast(Sahajyog.PubSub, "event:#{event_id}", message)
+  end
+
+  ## Invitation Materials
+
+  @doc """
+  Lists all invitation materials for an event.
+  """
+  def list_invitation_materials(event_id) do
+    EventInvitationMaterial
+    |> where([m], m.event_id == ^event_id)
+    |> order_by([m], asc: m.uploaded_at)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single invitation material.
+  """
+  def get_invitation_material!(id), do: Repo.get!(EventInvitationMaterial, id)
+
+  @doc """
+  Creates an invitation material record.
+  """
+  def create_invitation_material(attrs \\ %{}) do
+    %EventInvitationMaterial{}
+    |> EventInvitationMaterial.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Deletes an invitation material and its R2 file.
+  """
+  def delete_invitation_material(%EventInvitationMaterial{} = material) do
+    # Delete from R2 first
+    Sahajyog.Resources.R2Storage.delete(material.r2_key)
+    # Then delete from database
+    Repo.delete(material)
+  end
+
+  @doc """
+  Deletes all invitation materials for an event.
+  Used when deleting an event to clean up R2 storage.
+  """
+  def delete_event_invitation_materials(event_id) do
+    materials = list_invitation_materials(event_id)
+
+    Enum.each(materials, fn material ->
+      Sahajyog.Resources.R2Storage.delete(material.r2_key)
+    end)
+
+    EventInvitationMaterial
+    |> where([m], m.event_id == ^event_id)
+    |> Repo.delete_all()
+  end
+
+  @doc """
+  Generates a unique R2 key for an invitation material.
+  """
+  def generate_invitation_key(event_slug, filename) do
+    uuid = Ecto.UUID.generate() |> String.slice(0, 8)
+    sanitized = sanitize_invitation_filename(filename)
+    "Events/#{event_slug}/invitations/#{uuid}-#{sanitized}"
+  end
+
+  defp sanitize_invitation_filename(filename) do
+    filename
+    |> String.replace(~r/[^a-zA-Z0-9._-]/, "_")
+    |> String.slice(0, 200)
+  end
+
+  @doc """
+  Detects the file type from a filename extension.
+  Returns the normalized extension (lowercase) or nil if invalid.
+  """
+  def detect_invitation_file_type(filename) when is_binary(filename) do
+    extension = EventInvitationMaterial.extract_extension(filename)
+
+    if EventInvitationMaterial.valid_file_type?(extension) do
+      extension
+    else
+      nil
+    end
+  end
+
+  def detect_invitation_file_type(_), do: nil
+
+  @doc """
+  Gets the content type for an invitation material file.
+  """
+  def invitation_content_type(file_type) do
+    case file_type do
+      "jpg" -> "image/jpeg"
+      "jpeg" -> "image/jpeg"
+      "png" -> "image/png"
+      "pdf" -> "application/pdf"
+      _ -> "application/octet-stream"
+    end
+  end
+
+  @doc """
+  Returns a changeset for tracking invitation material changes.
+  """
+  def change_invitation_material(%EventInvitationMaterial{} = material, attrs \\ %{}) do
+    EventInvitationMaterial.changeset(material, attrs)
   end
 end

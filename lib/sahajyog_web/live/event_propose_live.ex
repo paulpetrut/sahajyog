@@ -6,6 +6,8 @@ defmodule SahajyogWeb.EventProposeLive do
 
   # 500MB max file size for video uploads
   @max_video_size 500_000_000
+  # 10MB max file size for invitation materials
+  @max_invitation_size 10_485_760
 
   @impl true
   def mount(_params, _session, socket) do
@@ -32,10 +34,17 @@ defmodule SahajyogWeb.EventProposeLive do
        |> assign(:page_title, "Propose Event")
        |> assign(:proposal, proposal)
        |> assign(:form, to_form(changeset))
+       |> assign(:uploaded_invitations, [])
        |> allow_upload(:video,
          accept: ~w(.mp4 .webm .mov),
          max_entries: 1,
          max_file_size: @max_video_size,
+         auto_upload: true
+       )
+       |> allow_upload(:invitation_materials,
+         accept: ~w(.jpg .jpeg .png .pdf),
+         max_entries: 10,
+         max_file_size: @max_invitation_size,
          auto_upload: true
        )}
     end
@@ -74,6 +83,11 @@ defmodule SahajyogWeb.EventProposeLive do
   @impl true
   def handle_event("cancel-video-upload", %{"ref" => ref}, socket) do
     {:noreply, cancel_upload(socket, :video, ref)}
+  end
+
+  @impl true
+  def handle_event("cancel-invitation-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :invitation_materials, ref)}
   end
 
   defp handle_video_upload(socket, proposal_params) do
@@ -126,6 +140,17 @@ defmodule SahajyogWeb.EventProposeLive do
 
   defp error_to_string(:too_many_files), do: gettext("Only one video file can be uploaded.")
   defp error_to_string(err), do: inspect(err)
+
+  defp invitation_error_to_string(:too_large),
+    do: gettext("File is too large. Maximum size is 10MB.")
+
+  defp invitation_error_to_string(:not_accepted),
+    do: gettext("Invalid file type. Please upload JPG, PNG, or PDF.")
+
+  defp invitation_error_to_string(:too_many_files),
+    do: gettext("Maximum 10 files can be uploaded.")
+
+  defp invitation_error_to_string(err), do: inspect(err)
 
   defp slugify(title) when is_binary(title) do
     slug =
@@ -389,6 +414,82 @@ defmodule SahajyogWeb.EventProposeLive do
                     </div>
                   <% end %>
                 </div>
+              </div>
+
+              <%!-- Invitation Materials Section --%>
+              <div class="border border-base-content/20 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-base-content mb-3">
+                  {gettext("Invitation Materials")}
+                  <span class="text-base-content/50 text-xs ml-1">({gettext("Optional")})</span>
+                </h3>
+                <p class="text-xs text-base-content/60 mb-4">
+                  {gettext("Upload photos or PDF files to showcase your event invitation")}
+                </p>
+
+                <div
+                  id="invitation-upload-area"
+                  class="border-2 border-dashed border-base-content/30 rounded-lg p-6 text-center bg-base-100 hover:bg-base-200 transition-colors"
+                  phx-drop-target={@uploads.invitation_materials.ref}
+                >
+                  <.live_file_input upload={@uploads.invitation_materials} class="hidden" />
+                  <label for={@uploads.invitation_materials.ref} class="cursor-pointer">
+                    <.icon name="hero-photo" class="w-12 h-12 mx-auto text-base-content/40" />
+                    <p class="mt-2 text-sm text-base-content/80">
+                      {gettext("Click to upload or drag and drop")}
+                    </p>
+                    <p class="text-xs text-base-content/60">
+                      {gettext("JPG, PNG, PDF - Max 10MB each (up to 10 files)")}
+                    </p>
+                  </label>
+                </div>
+
+                <%= for entry <- @uploads.invitation_materials.entries do %>
+                  <div class="mt-4 bg-base-100 p-4 rounded-lg border border-base-content/10">
+                    <div class="flex items-start justify-between mb-3">
+                      <div class="flex items-center gap-3 flex-1">
+                        <%= if String.ends_with?(String.downcase(entry.client_name), ".pdf") do %>
+                          <.icon name="hero-document" class="w-8 h-8 text-error/70" />
+                        <% else %>
+                          <.icon name="hero-photo" class="w-8 h-8 text-primary/70" />
+                        <% end %>
+                        <div>
+                          <p class="text-sm font-medium text-base-content">{entry.client_name}</p>
+                          <p class="text-xs text-base-content/60 mt-1">
+                            {format_file_size(entry.client_size)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        phx-click="cancel-invitation-upload"
+                        phx-value-ref={entry.ref}
+                        class="text-error hover:text-error/80 ml-4 focus:outline-none focus:ring-2 focus:ring-error rounded"
+                      >
+                        <.icon name="hero-x-mark" class="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <%!-- Upload progress --%>
+                    <div class="mt-3">
+                      <div class="w-full bg-base-300 rounded-full h-2">
+                        <div
+                          class="bg-success h-2 rounded-full transition-all duration-300"
+                          style={"width: #{entry.progress}%"}
+                        >
+                        </div>
+                      </div>
+                      <p class="text-xs text-base-content/60 mt-1">{entry.progress}%</p>
+                    </div>
+
+                    <%= for err <- upload_errors(@uploads.invitation_materials, entry) do %>
+                      <p class="mt-2 text-xs text-error">{invitation_error_to_string(err)}</p>
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <%= for err <- upload_errors(@uploads.invitation_materials) do %>
+                  <p class="mt-2 text-xs text-error">{invitation_error_to_string(err)}</p>
+                <% end %>
               </div>
 
               <div class="bg-info/10 border border-info/20 rounded-lg p-4">

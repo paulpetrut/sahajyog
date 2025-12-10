@@ -913,6 +913,14 @@ defmodule SahajyogWeb.EventShowLive do
 
   defp presentation_video_url(_), do: nil
 
+  # Generate invitation material URL for R2-hosted files
+  defp invitation_material_url(r2_key) when is_binary(r2_key) do
+    key = String.trim_leading(r2_key, "/")
+    R2Storage.generate_download_url(key, expires_in: 3600)
+  end
+
+  defp invitation_material_url(_), do: nil
+
   # Extract YouTube video ID from presentation video URL
   defp extract_presentation_video_id(url) when is_binary(url) do
     case Validators.extract_youtube_id(url) do
@@ -1592,6 +1600,67 @@ defmodule SahajyogWeb.EventShowLive do
                               <p>{gettext("Video unavailable")}</p>
                             </div>
                           </div>
+                      <% end %>
+                    </div>
+                  </.card>
+                <% end %>
+
+                <%!-- Invitation Materials Section --%>
+                <%= if @event.invitation_materials != [] do %>
+                  <.card size="lg" class="mb-6">
+                    <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
+                      <.icon name="hero-photo" class="w-5 h-5" />
+                      {gettext("Invitation Materials")}
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <%= for material <- @event.invitation_materials do %>
+                        <%= if material.file_type in ~w(jpg jpeg png) do %>
+                          <%!-- Image Preview --%>
+                          <div class="group relative aspect-square rounded-lg overflow-hidden bg-base-300 border border-base-content/10">
+                            <img
+                              src={invitation_material_url(material.r2_key)}
+                              alt={material.original_filename}
+                              class="w-full h-full object-cover transition-transform group-hover:scale-105"
+                              loading="lazy"
+                            />
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                              <a
+                                href={invitation_material_url(material.r2_key)}
+                                target="_blank"
+                                class="opacity-0 group-hover:opacity-100 transition-opacity px-4 py-2 bg-white/90 text-base-content rounded-lg text-sm font-medium"
+                              >
+                                {gettext("View Full Size")}
+                              </a>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
+                              <p class="text-white text-xs truncate">{material.original_filename}</p>
+                            </div>
+                          </div>
+                        <% else %>
+                          <%!-- PDF Download Link --%>
+                          <div class="p-4 rounded-lg bg-base-100 border border-base-content/10 flex items-center gap-4">
+                            <div class="p-3 bg-error/10 rounded-lg">
+                              <.icon name="hero-document" class="w-8 h-8 text-error" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                              <p class="text-sm font-medium text-base-content truncate">
+                                {material.original_filename}
+                              </p>
+                              <p class="text-xs text-base-content/60">
+                                {format_file_size(material.file_size)}
+                              </p>
+                              <a
+                                href={invitation_material_url(material.r2_key)}
+                                target="_blank"
+                                download={material.original_filename}
+                                class="text-primary hover:text-primary/80 text-sm font-medium mt-1 inline-block"
+                              >
+                                {gettext("Download")}
+                              </a>
+                            </div>
+                          </div>
+                        <% end %>
                       <% end %>
                     </div>
                   </.card>

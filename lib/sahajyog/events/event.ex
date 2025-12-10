@@ -70,6 +70,7 @@ defmodule Sahajyog.Events.Event do
     has_many :donations, EventDonation
     has_many :attendances, EventAttendance
     has_many :ride_requests, EventRideRequest
+    has_many :invitation_materials, Sahajyog.Events.EventInvitationMaterial
 
     timestamps(type: :utc_datetime)
   end

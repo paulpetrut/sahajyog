@@ -74,6 +74,13 @@ defmodule SahajyogWeb.EventEditLive do
            max_entries: 1,
            max_file_size: 500_000_000,
            auto_upload: true
+         )
+         # Invitation materials upload (10MB max, up to 10 files)
+         |> allow_upload(:invitation_materials,
+           accept: ~w(.jpg .jpeg .png .pdf),
+           max_entries: 10,
+           max_file_size: 10_485_760,
+           auto_upload: true
          )}
       else
         {:ok,
@@ -189,6 +196,80 @@ defmodule SahajyogWeb.EventEditLive do
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Could not delete video"))}
+    end
+  end
+
+  # Invitation Materials Management
+  @impl true
+  def handle_event("cancel-invitation-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :invitation_materials, ref)}
+  end
+
+  @impl true
+  def handle_event("upload_invitation_materials", _, socket) do
+    event = socket.assigns.event
+
+    uploaded_materials =
+      consume_uploaded_entries(socket, :invitation_materials, fn %{path: path}, entry ->
+        file_type = Events.detect_invitation_file_type(entry.client_name) || "jpg"
+        key = Events.generate_invitation_key(event.slug, entry.client_name)
+        content_type = Events.invitation_content_type(file_type)
+
+        case R2Storage.upload(path, key, content_type: content_type) do
+          {:ok, ^key} ->
+            attrs = %{
+              event_id: event.id,
+              filename: Path.basename(key),
+              original_filename: entry.client_name,
+              file_type: file_type,
+              file_size: entry.client_size,
+              r2_key: key
+            }
+
+            case Events.create_invitation_material(attrs) do
+              {:ok, material} -> {:ok, material}
+              {:error, _} -> {:postpone, {:error, :db_error}}
+            end
+
+          {:error, reason} ->
+            {:postpone, {:error, reason}}
+        end
+      end)
+
+    successful_count =
+      Enum.count(uploaded_materials, &match?(%Events.EventInvitationMaterial{}, &1))
+
+    if successful_count > 0 do
+      # Reload event to get updated materials
+      event = Events.get_event!(event.id)
+
+      {:noreply,
+       socket
+       |> assign(:event, event)
+       |> put_flash(
+         :info,
+         gettext("%{count} invitation material(s) uploaded successfully", count: successful_count)
+       )}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("delete_invitation_material", %{"id" => id}, socket) do
+    material = Events.get_invitation_material!(id)
+
+    case Events.delete_invitation_material(material) do
+      {:ok, _} ->
+        event = Events.get_event!(socket.assigns.event.id)
+
+        {:noreply,
+         socket
+         |> assign(:event, event)
+         |> put_flash(:info, gettext("Invitation material deleted successfully"))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not delete invitation material"))}
     end
   end
 
@@ -481,6 +562,17 @@ defmodule SahajyogWeb.EventEditLive do
   defp error_to_string(:too_many_files), do: gettext("Only one video file can be uploaded.")
   defp error_to_string(err), do: inspect(err)
 
+  defp invitation_error_to_string(:too_large),
+    do: gettext("File is too large. Maximum size is 10MB.")
+
+  defp invitation_error_to_string(:not_accepted),
+    do: gettext("Invalid file type. Please upload JPG, PNG, or PDF.")
+
+  defp invitation_error_to_string(:too_many_files),
+    do: gettext("Maximum 10 files can be uploaded.")
+
+  defp invitation_error_to_string(err), do: inspect(err)
+
   defp tab_class(current_tab, tab) do
     if current_tab == tab do
       "px-4 py-2 border-b-2 border-primary text-primary font-medium"
@@ -763,6 +855,134 @@ defmodule SahajyogWeb.EventEditLive do
                               <% end %>
                             </div>
                           <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+
+                    <%!-- Invitation Materials Section --%>
+                    <div class="border-t border-base-content/10 pt-4 mt-4">
+                      <h4 class="font-medium text-base-content mb-3">
+                        {gettext("Invitation Materials")}
+                      </h4>
+                      <p class="text-xs text-base-content/60 mb-4">
+                        {gettext("Upload photos or PDF files to showcase your event invitation")}
+                      </p>
+
+                      <%!-- Existing Materials --%>
+                      <%= if @event.invitation_materials != [] do %>
+                        <div class="mb-4 space-y-2">
+                          <p class="text-sm font-medium text-base-content/80">
+                            {gettext("Uploaded Materials")}
+                          </p>
+                          <%= for material <- @event.invitation_materials do %>
+                            <div class="flex items-center justify-between p-3 bg-base-100 rounded-lg border border-base-content/10">
+                              <div class="flex items-center gap-3">
+                                <%= if material.file_type in ~w(jpg jpeg png) do %>
+                                  <.icon name="hero-photo" class="w-6 h-6 text-primary/70" />
+                                <% else %>
+                                  <.icon name="hero-document" class="w-6 h-6 text-error/70" />
+                                <% end %>
+                                <div>
+                                  <p class="text-sm font-medium text-base-content">
+                                    {material.original_filename}
+                                  </p>
+                                  <p class="text-xs text-base-content/60">
+                                    {format_file_size(material.file_size)}
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                phx-click="delete_invitation_material"
+                                phx-value-id={material.id}
+                                data-confirm={
+                                  gettext("Are you sure you want to delete this material?")
+                                }
+                                class="text-error hover:text-error/80 text-sm font-medium"
+                              >
+                                {gettext("Delete")}
+                              </button>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% end %>
+
+                      <%!-- Upload New Materials --%>
+                      <div
+                        id="invitation-upload-area"
+                        class="border-2 border-dashed border-base-content/30 rounded-lg p-6 text-center bg-base-100 hover:bg-base-200 transition-colors"
+                        phx-drop-target={@uploads.invitation_materials.ref}
+                      >
+                        <.live_file_input upload={@uploads.invitation_materials} class="hidden" />
+                        <label for={@uploads.invitation_materials.ref} class="cursor-pointer">
+                          <.icon name="hero-photo" class="w-12 h-12 mx-auto text-base-content/40" />
+                          <p class="mt-2 text-sm text-base-content/80">
+                            {gettext("Click to upload or drag and drop")}
+                          </p>
+                          <p class="text-xs text-base-content/60">
+                            {gettext("JPG, PNG, PDF - Max 10MB each (up to 10 files)")}
+                          </p>
+                        </label>
+                      </div>
+
+                      <%= for entry <- @uploads.invitation_materials.entries do %>
+                        <div class="mt-4 bg-base-100 p-4 rounded-lg border border-base-content/10">
+                          <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3 flex-1">
+                              <%= if String.ends_with?(String.downcase(entry.client_name), ".pdf") do %>
+                                <.icon name="hero-document" class="w-8 h-8 text-error/70" />
+                              <% else %>
+                                <.icon name="hero-photo" class="w-8 h-8 text-primary/70" />
+                              <% end %>
+                              <div>
+                                <p class="text-sm font-medium text-base-content">
+                                  {entry.client_name}
+                                </p>
+                                <p class="text-xs text-base-content/60 mt-1">
+                                  {format_file_size(entry.client_size)}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              phx-click="cancel-invitation-upload"
+                              phx-value-ref={entry.ref}
+                              class="text-error hover:text-error/80 ml-4"
+                            >
+                              <.icon name="hero-x-mark" class="w-5 h-5" />
+                            </button>
+                          </div>
+
+                          <div class="mt-3">
+                            <div class="w-full bg-base-300 rounded-full h-2">
+                              <div
+                                class="bg-success h-2 rounded-full transition-all duration-300"
+                                style={"width: #{entry.progress}%"}
+                              >
+                              </div>
+                            </div>
+                            <p class="text-xs text-base-content/60 mt-1">{entry.progress}%</p>
+                          </div>
+
+                          <%= for err <- upload_errors(@uploads.invitation_materials, entry) do %>
+                            <p class="mt-2 text-xs text-error">{invitation_error_to_string(err)}</p>
+                          <% end %>
+                        </div>
+                      <% end %>
+
+                      <%= for err <- upload_errors(@uploads.invitation_materials) do %>
+                        <p class="mt-2 text-xs text-error">{invitation_error_to_string(err)}</p>
+                      <% end %>
+
+                      <%= if @uploads.invitation_materials.entries != [] do %>
+                        <div class="mt-4">
+                          <button
+                            type="button"
+                            phx-click="upload_invitation_materials"
+                            class="px-4 py-2 bg-primary text-primary-content rounded-lg hover:bg-primary/90 text-sm font-medium"
+                          >
+                            {gettext("Upload Materials")}
+                          </button>
                         </div>
                       <% end %>
                     </div>
