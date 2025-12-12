@@ -157,6 +157,9 @@ defmodule SahajyogWeb.EventShowLive do
      |> assign(:active_tab, "details")
      # Will be populated by handle_info
      |> assign(:connected_users, [])
+     # Invitation material preview
+     |> assign(:preview_material, nil)
+     |> assign(:preview_material_url, nil)
      |> handle_presence_state(event)}
   end
 
@@ -749,6 +752,30 @@ defmodule SahajyogWeb.EventShowLive do
     {:noreply, assign(socket, :selected_photo, nil)}
   end
 
+  # Invitation Material Preview
+  def handle_event("preview_material", %{"id" => id}, socket) do
+    material =
+      Enum.find(socket.assigns.event.invitation_materials, &(&1.id == String.to_integer(id)))
+
+    if material do
+      preview_url = R2Storage.generate_download_url(material.r2_key, expires_in: 3600)
+
+      {:noreply,
+       socket
+       |> assign(:preview_material, material)
+       |> assign(:preview_material_url, preview_url)}
+    else
+      {:noreply, put_flash(socket, :error, gettext("Material not found"))}
+    end
+  end
+
+  def handle_event("close_material_preview", _, socket) do
+    {:noreply,
+     socket
+     |> assign(:preview_material, nil)
+     |> assign(:preview_material_url, nil)}
+  end
+
   def handle_event("next_photo", _, socket) do
     photos = socket.assigns.photos
     current = socket.assigns.selected_photo
@@ -1098,6 +1125,88 @@ defmodule SahajyogWeb.EventShowLive do
                   <button type="submit" class="btn btn-primary">{gettext("Send Message")}</button>
                 </div>
               </form>
+            </div>
+          </div>
+        <% end %>
+
+        <%!-- Invitation Material Preview Modal --%>
+        <%= if @preview_material do %>
+          <div
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            phx-click="close_material_preview"
+          >
+            <div
+              class="bg-base-100 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-200"
+              phx-click-away="close_material_preview"
+            >
+              <%!-- Modal Header --%>
+              <div class="flex items-center justify-between p-4 border-b border-base-content/10">
+                <div class="flex items-center gap-3">
+                  <div class={[
+                    "p-2 rounded-lg border",
+                    if(@preview_material.file_type == "pdf",
+                      do: "bg-base-content/5 border-base-content/10",
+                      else: "bg-primary/10 border-primary/20"
+                    )
+                  ]}>
+                    <%= if @preview_material.file_type == "pdf" do %>
+                      <.icon name="hero-document" class="w-5 h-5 text-base-content/60" />
+                    <% else %>
+                      <.icon name="hero-photo" class="w-5 h-5 text-primary" />
+                    <% end %>
+                  </div>
+                  <div>
+                    <div class="font-bold text-base-content">
+                      {@preview_material.original_filename}
+                    </div>
+                    <div class="text-sm text-base-content/60">
+                      {format_file_size(@preview_material.file_size)} • {String.upcase(
+                        @preview_material.file_type
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <a
+                    href={@preview_material_url}
+                    target="_blank"
+                    download={@preview_material.original_filename}
+                    class="btn btn-sm btn-ghost"
+                    onclick="event.stopPropagation()"
+                  >
+                    <.icon name="hero-arrow-down-tray" class="w-4 h-4" />
+                    {gettext("Download")}
+                  </a>
+                  <button
+                    type="button"
+                    phx-click="close_material_preview"
+                    class="btn btn-sm btn-circle btn-ghost"
+                  >
+                    <.icon name="hero-x-mark" class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <%!-- Modal Content --%>
+              <div class="p-4 overflow-auto max-h-[calc(90vh-80px)]" onclick="event.stopPropagation()">
+                <%= if @preview_material.file_type in ~w(jpg jpeg png) do %>
+                  <%!-- Image Preview --%>
+                  <div class="flex items-center justify-center">
+                    <img
+                      src={@preview_material_url}
+                      alt={@preview_material.original_filename}
+                      class="max-w-full max-h-[70vh] rounded-lg shadow-lg object-contain"
+                    />
+                  </div>
+                <% else %>
+                  <%!-- PDF Preview --%>
+                  <iframe
+                    src={@preview_material_url}
+                    class="w-full h-[70vh] rounded-lg border border-base-content/20"
+                    title={@preview_material.original_filename}
+                  />
+                <% end %>
+              </div>
             </div>
           </div>
         <% end %>
@@ -1616,8 +1725,12 @@ defmodule SahajyogWeb.EventShowLive do
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <%= for material <- @event.invitation_materials do %>
                         <%= if material.file_type in ~w(jpg jpeg png) do %>
-                          <%!-- Image Preview --%>
-                          <div class="group relative aspect-square rounded-lg overflow-hidden bg-base-300 border border-base-content/10">
+                          <%!-- Image Preview - Clickable --%>
+                          <div
+                            class="group relative aspect-square rounded-lg overflow-hidden bg-base-300 border border-base-content/10 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all"
+                            phx-click="preview_material"
+                            phx-value-id={material.id}
+                          >
                             <img
                               src={invitation_material_url(material.r2_key)}
                               alt={material.original_filename}
@@ -1625,23 +1738,24 @@ defmodule SahajyogWeb.EventShowLive do
                               loading="lazy"
                             />
                             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                              <a
-                                href={invitation_material_url(material.r2_key)}
-                                target="_blank"
-                                class="opacity-0 group-hover:opacity-100 transition-opacity px-4 py-2 bg-white/90 text-base-content rounded-lg text-sm font-medium"
-                              >
-                                {gettext("View Full Size")}
-                              </a>
+                              <span class="opacity-0 group-hover:opacity-100 transition-opacity px-4 py-2 bg-white/90 text-gray-800 rounded-lg text-sm font-medium flex items-center gap-2">
+                                <.icon name="hero-eye" class="w-4 h-4" />
+                                {gettext("Preview")}
+                              </span>
                             </div>
                             <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
                               <p class="text-white text-xs truncate">{material.original_filename}</p>
                             </div>
                           </div>
                         <% else %>
-                          <%!-- PDF Download Link --%>
-                          <div class="p-4 rounded-lg bg-base-100 border border-base-content/10 flex items-center gap-4">
-                            <div class="p-3 bg-error/10 rounded-lg">
-                              <.icon name="hero-document" class="w-8 h-8 text-error" />
+                          <%!-- PDF Preview - Clickable --%>
+                          <div
+                            class="p-4 rounded-lg bg-base-100 border border-base-content/10 flex items-center gap-4 cursor-pointer hover:bg-base-200 hover:ring-2 hover:ring-primary/50 transition-all"
+                            phx-click="preview_material"
+                            phx-value-id={material.id}
+                          >
+                            <div class="p-3 bg-base-content/5 rounded-lg">
+                              <.icon name="hero-document" class="w-8 h-8 text-base-content/60" />
                             </div>
                             <div class="flex-1 min-w-0">
                               <p class="text-sm font-medium text-base-content truncate">
@@ -1650,14 +1764,10 @@ defmodule SahajyogWeb.EventShowLive do
                               <p class="text-xs text-base-content/60">
                                 {format_file_size(material.file_size)}
                               </p>
-                              <a
-                                href={invitation_material_url(material.r2_key)}
-                                target="_blank"
-                                download={material.original_filename}
-                                class="text-primary hover:text-primary/80 text-sm font-medium mt-1 inline-block"
-                              >
-                                {gettext("Download")}
-                              </a>
+                              <span class="text-primary text-sm font-medium mt-1 inline-flex items-center gap-1">
+                                <.icon name="hero-eye" class="w-3 h-3" />
+                                {gettext("Preview")}
+                              </span>
                             </div>
                           </div>
                         <% end %>
@@ -2289,7 +2399,7 @@ defmodule SahajyogWeb.EventShowLive do
                               <button
                                 phx-click="leave_task"
                                 phx-value-task_id={task.id}
-                                class="px-3 py-1.5 bg-error/10 text-error text-xs font-medium rounded hover:bg-error/20 transition-colors"
+                                class="px-3 py-1.5 bg-orange-500/10 text-orange-400 text-xs font-medium rounded hover:bg-orange-500/20 transition-colors"
                               >
                                 {gettext("Leave Task")}
                               </button>

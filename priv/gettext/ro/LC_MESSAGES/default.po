@@ -302,33 +302,33 @@ msgstr "Te rugăm să adaugi videoclipuri pentru a începe"
 msgid "Dev mode:"
 msgstr "Mod dezvoltare:"
 
-#: lib/sahajyog_web/live/user_live/login.ex:164
+#: lib/sahajyog_web/live/user_live/login.ex:165
 #, elixir-autogen, elixir-format
 msgid "Don't have an account?"
 msgstr "Nu ai un cont?"
 
 #: lib/sahajyog_web/live/contact_live.ex:174
 #: lib/sahajyog_web/live/user_live/forgot_password.ex:27
-#: lib/sahajyog_web/live/user_live/login.ex:77
-#: lib/sahajyog_web/live/user_live/login.ex:145
-#: lib/sahajyog_web/live/user_live/registration.ex:30
+#: lib/sahajyog_web/live/user_live/login.ex:78
+#: lib/sahajyog_web/live/user_live/login.ex:146
+#: lib/sahajyog_web/live/user_live/registration.ex:41
 #: lib/sahajyog_web/live/user_live/settings.ex:94
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "Email"
 
-#: lib/sahajyog_web/live/user_live/login.ex:89
+#: lib/sahajyog_web/live/user_live/login.ex:90
 #, elixir-autogen, elixir-format
 msgid "Enter your password"
 msgstr "Introdu parola"
 
-#: lib/sahajyog_web/live/user_live/login.ex:104
+#: lib/sahajyog_web/live/user_live/login.ex:105
 #, elixir-autogen, elixir-format
 msgid "Keep me signed in"
 msgstr "Ține-mă autentificat"
 
 #: lib/sahajyog_web/live/user_live/login.ex:48
-#: lib/sahajyog_web/live/user_live/login.ex:88
+#: lib/sahajyog_web/live/user_live/login.ex:89
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Parolă"
@@ -338,12 +338,12 @@ msgstr "Parolă"
 msgid "Please reauthenticate to continue"
 msgstr "Te rugăm să te autentifici din nou pentru a continua"
 
-#: lib/sahajyog_web/live/user_live/login.ex:154
+#: lib/sahajyog_web/live/user_live/login.ex:155
 #, elixir-autogen, elixir-format
 msgid "Send magic link"
 msgstr "Trimite link magic"
 
-#: lib/sahajyog_web/live/user_live/login.ex:121
+#: lib/sahajyog_web/live/user_live/login.ex:122
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Autentificare"
@@ -353,7 +353,7 @@ msgstr "Autentificare"
 msgid "Sign in to your account to continue"
 msgstr "Autentifică-te în contul tău pentru a continua"
 
-#: lib/sahajyog_web/live/user_live/login.ex:166
+#: lib/sahajyog_web/live/user_live/login.ex:174
 #, elixir-autogen, elixir-format
 msgid "Sign up"
 msgstr "Înregistrează-te"
@@ -363,7 +363,7 @@ msgstr "Înregistrează-te"
 msgid "View mailbox"
 msgstr "Vezi căsuța poștală"
 
-#: lib/sahajyog_web/live/user_live/login.ex:138
+#: lib/sahajyog_web/live/user_live/login.ex:139
 #, elixir-autogen, elixir-format
 msgid "We'll email you a secure link to sign in without a password."
 msgstr "Îți vom trimite un link securizat prin email pentru a te autentifica fără parolă."
@@ -374,28 +374,23 @@ msgid "Welcome back"
 msgstr "Bine ai revenit"
 
 #: lib/sahajyog_web/live/user_live/forgot_password.ex:28
-#: lib/sahajyog_web/live/user_live/login.ex:78
-#: lib/sahajyog_web/live/user_live/login.ex:146
+#: lib/sahajyog_web/live/user_live/login.ex:79
+#: lib/sahajyog_web/live/user_live/login.ex:147
 #, elixir-autogen, elixir-format
 msgid "you@example.com"
 msgstr "tu@exemplu.com"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:16
-#, elixir-autogen, elixir-format
-msgid "Already registered?"
-msgstr "Deja înregistrat?"
-
-#: lib/sahajyog_web/live/user_live/registration.ex:97
+#: lib/sahajyog_web/live/user_live/registration.ex:113
 #, elixir-autogen, elixir-format
 msgid "An email was sent to %{email}, please access it to confirm your account."
 msgstr "Un email a fost trimis la %{email}, te rugăm să îl accesezi pentru a confirma contul."
 
-#: lib/sahajyog_web/live/user_live/registration.ex:56
+#: lib/sahajyog_web/live/user_live/registration.ex:67
 #, elixir-autogen, elixir-format
 msgid "Create an account"
 msgstr "Creează un cont"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:53
+#: lib/sahajyog_web/live/user_live/registration.ex:64
 #, elixir-autogen, elixir-format
 msgid "Creating account..."
 msgstr "Se creează contul..."
@@ -403,8 +398,10 @@ msgstr "Se creează contul..."
 #: lib/sahajyog_web/components/layouts/root.html.heex:205
 #: lib/sahajyog_web/components/mobile_menu.ex:112
 #: lib/sahajyog_web/live/demo_live_2.ex:688
+#: lib/sahajyog_web/live/public_event_show_live.ex:122
+#: lib/sahajyog_web/live/public_topic_show_live.ex:88
 #: lib/sahajyog_web/live/user_live/confirmation.ex:56
-#: lib/sahajyog_web/live/user_live/registration.ex:18
+#: lib/sahajyog_web/live/user_live/registration.ex:30
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr "Autentificare"
@@ -414,45 +411,40 @@ msgstr "Autentificare"
 msgid "Register for an account"
 msgstr "Înregistrează-te pentru un cont"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:20
-#, elixir-autogen, elixir-format
-msgid "to your account now."
-msgstr "în contul tău acum."
-
-#: lib/sahajyog_web/live/user_live/registration.ex:47
+#: lib/sahajyog_web/live/user_live/registration.ex:58
 #, elixir-autogen, elixir-format
 msgid "Confirm password (optional)"
 msgstr "Confirmă parola (opțional)"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:40
+#: lib/sahajyog_web/live/user_live/registration.ex:51
 #, elixir-autogen, elixir-format
 msgid "Leave blank to use magic link login"
 msgstr "Lasă gol pentru a folosi autentificarea cu link magic"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:48
+#: lib/sahajyog_web/live/user_live/registration.ex:59
 #, elixir-autogen, elixir-format
 msgid "Only if you set a password above"
 msgstr "Doar dacă ai setat o parolă mai sus"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:39
+#: lib/sahajyog_web/live/user_live/registration.ex:50
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Password (optional)"
 msgstr "Parolă (opțional)"
 
 #: lib/sahajyog_web/components/layouts/root.html.heex:197
 #: lib/sahajyog_web/components/mobile_menu.ex:108
-#: lib/sahajyog_web/live/user_live/registration.ex:76
+#: lib/sahajyog_web/live/user_live/registration.ex:91
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "Înregistrează-te"
 
-#: lib/sahajyog_web/live/user_live/registration.ex:111
+#: lib/sahajyog_web/live/user_live/registration.ex:127
 #, elixir-autogen, elixir-format
 msgid "Account created but we couldn't send the confirmation email. Please contact support."
 msgstr "Contul a fost creat dar nu am putut trimite emailul de confirmare. Te rugăm să contactezi suportul."
 
-#: lib/sahajyog_web/live/user_live/login.ex:221
-#: lib/sahajyog_web/live/user_live/login.ex:247
+#: lib/sahajyog_web/live/user_live/login.ex:233
+#: lib/sahajyog_web/live/user_live/login.ex:259
 #, elixir-autogen, elixir-format
 msgid "Check your email! If your address is in our system, you'll receive a sign-in link shortly."
 msgstr "Verifică-ți emailul! Dacă adresa ta este în sistemul nostru, vei primi în curând un link de autentificare."
@@ -515,17 +507,17 @@ msgstr "Salvează parola"
 msgid "Saving..."
 msgstr "Se salvează..."
 
-#: lib/sahajyog_web/controllers/user_session_controller.ex:57
+#: lib/sahajyog_web/controllers/user_session_controller.ex:65
 #, elixir-autogen, elixir-format
 msgid "Invalid email or password"
 msgstr "Email sau parolă invalidă"
 
-#: lib/sahajyog_web/controllers/user_session_controller.ex:87
+#: lib/sahajyog_web/controllers/user_session_controller.ex:95
 #, elixir-autogen, elixir-format
 msgid "Logged out successfully."
 msgstr "Deconectat cu succes."
 
-#: lib/sahajyog_web/controllers/user_session_controller.ex:74
+#: lib/sahajyog_web/controllers/user_session_controller.ex:82
 #, elixir-autogen, elixir-format
 msgid "Password updated successfully!"
 msgstr "Parolă actualizată cu succes!"
@@ -564,7 +556,7 @@ msgstr "Toate"
 #: lib/sahajyog_web/live/admin/topics_live.ex:182
 #: lib/sahajyog_web/live/admin/topics_live.ex:263
 #: lib/sahajyog_web/live/event_edit_live.ex:1217
-#: lib/sahajyog_web/live/event_show_live.ex:2353
+#: lib/sahajyog_web/live/event_show_live.ex:2463
 #: lib/sahajyog_web/live/topic_edit_live.ex:428
 #, elixir-autogen, elixir-format
 msgid "Are you sure?"
@@ -584,9 +576,9 @@ msgstr "Înapoi la Resurse"
 #: lib/sahajyog_web/live/event_edit_live.ex:1438
 #: lib/sahajyog_web/live/event_edit_live.ex:1499
 #: lib/sahajyog_web/live/event_propose_live.ex:514
-#: lib/sahajyog_web/live/event_show_live.ex:1096
-#: lib/sahajyog_web/live/event_show_live.ex:1872
-#: lib/sahajyog_web/live/event_show_live.ex:2021
+#: lib/sahajyog_web/live/event_show_live.ex:1123
+#: lib/sahajyog_web/live/event_show_live.ex:1982
+#: lib/sahajyog_web/live/event_show_live.ex:2131
 #: lib/sahajyog_web/live/topic_edit_live.ex:263
 #: lib/sahajyog_web/live/topic_edit_live.ex:368
 #: lib/sahajyog_web/live/topic_propose_live.ex:94
@@ -613,7 +605,7 @@ msgstr "Faceți clic pentru a încărca sau trageți și plasați"
 #: lib/sahajyog_web/live/admin/videos_live.ex:630
 #: lib/sahajyog_web/live/event_edit_live.ex:903
 #: lib/sahajyog_web/live/event_edit_live.ex:1219
-#: lib/sahajyog_web/live/event_show_live.ex:2638
+#: lib/sahajyog_web/live/event_show_live.ex:2748
 #: lib/sahajyog_web/live/topic_edit_live.ex:431
 #, elixir-autogen, elixir-format
 msgid "Delete"
@@ -632,7 +624,7 @@ msgstr "Șterge"
 msgid "Description"
 msgstr "Descriere"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1659
+#: lib/sahajyog_web/live/event_show_live.ex:1178
 #: lib/sahajyog_web/live/resources_live.ex:187
 #: lib/sahajyog_web/live/resources_live.ex:267
 #, elixir-autogen, elixir-format
@@ -785,6 +777,8 @@ msgstr "JPG, PNG, GIF - Max 5MB"
 msgid "Optional"
 msgstr "Opțional"
 
+#: lib/sahajyog_web/live/event_show_live.ex:1743
+#: lib/sahajyog_web/live/event_show_live.ex:1769
 #: lib/sahajyog_web/live/resources_live.ex:180
 #, elixir-autogen, elixir-format
 msgid "Preview"
@@ -899,7 +893,7 @@ msgstr "Conținut"
 
 #: lib/sahajyog_web/live/admin/topics_live.ex:165
 #: lib/sahajyog_web/live/admin/topics_live.ex:246
-#: lib/sahajyog_web/live/event_show_live.ex:1504
+#: lib/sahajyog_web/live/event_show_live.ex:1613
 #, elixir-autogen, elixir-format
 msgid "Details"
 msgstr "Detalii"
@@ -1280,7 +1274,7 @@ msgstr "Nu ai permisiunea de a edita acest subiect"
 msgid "e.g., Understanding the Chakras"
 msgstr "de ex., Înțelegerea Chakrelor"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2123
+#: lib/sahajyog_web/live/event_show_live.ex:2233
 #: lib/sahajyog_web/live/talks_live.ex:702
 #, elixir-autogen, elixir-format
 msgid "more"
@@ -1481,7 +1475,7 @@ msgstr "Sfat: Dacă preferi parole, le poți activa în setările contului."
 msgid "Welcome %{email}"
 msgstr "Bine ai venit %{email}"
 
-#: lib/sahajyog_web/live/user_live/login.ex:238
+#: lib/sahajyog_web/live/user_live/login.ex:250
 #, elixir-autogen, elixir-format
 msgid "Failed to send email. Please try again or contact support if the problem persists."
 msgstr ""
@@ -1596,7 +1590,7 @@ msgid "Meditation is the only way you can grow. Because when you meditate, you a
 msgstr "Meditația este singura cale prin care poți crește. Pentru că atunci când meditezi, ești în liniște, ești în conștiință fără gânduri. Atunci are loc creșterea conștiinței."
 
 #: lib/sahajyog_web/live/contact_live.ex:190
-#: lib/sahajyog_web/live/event_show_live.ex:1083
+#: lib/sahajyog_web/live/event_show_live.ex:1110
 #, elixir-autogen, elixir-format
 msgid "Message"
 msgstr "Mesaj"
@@ -1659,7 +1653,7 @@ msgid "Sahaja Yoga meditation works directly on the central nervous system that 
 msgstr "Meditația Sahaja Yoga acționează direct asupra sistemului nervos central care controlează toată activitatea noastră mentală, fizică și emoțională. Prin urmare, are potențialul de a îmbunătăți dramatic bunăstarea noastră mergând direct la sursa oricărei probleme."
 
 #: lib/sahajyog_web/live/contact_live.ex:201
-#: lib/sahajyog_web/live/event_show_live.ex:1098
+#: lib/sahajyog_web/live/event_show_live.ex:1125
 #, elixir-autogen, elixir-format
 msgid "Send Message"
 msgstr "Trimite mesajul"
@@ -1785,6 +1779,9 @@ msgid "Add videos to the %{category} category first"
 msgstr ""
 
 #: lib/sahajyog_web/live/demo_live_2.ex:683
+#: lib/sahajyog_web/live/public_event_show_live.ex:117
+#: lib/sahajyog_web/live/public_topic_show_live.ex:83
+#: lib/sahajyog_web/live/user_live/registration.ex:20
 #, elixir-autogen, elixir-format
 msgid "Already have an account?"
 msgstr "Ai deja un cont?"
@@ -2479,7 +2476,7 @@ msgstr ""
 #: lib/sahajyog_web/live/welcome_live.ex:187
 #, elixir-autogen, elixir-format
 msgid "inner silence"
-msgstr "tăcere interioară"
+msgstr "liniște interioară"
 
 #: lib/sahajyog_web/live/topics_live.ex:289
 #, elixir-autogen, elixir-format, fuzzy
@@ -2489,28 +2486,28 @@ msgstr[0] "Subiecte"
 msgstr[1] "Subiecte"
 msgstr[2] "Subiecte"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1166
+#: lib/sahajyog_web/live/event_show_live.ex:1275
 #, elixir-autogen, elixir-format
 msgid "%{count} Watching Now"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1400
+#: lib/sahajyog_web/live/event_show_live.ex:1509
 #, elixir-autogen, elixir-format
 msgid "%{count} expected"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1458
+#: lib/sahajyog_web/live/event_show_live.ex:1567
 #, elixir-autogen, elixir-format
 msgid "'My Events' list"
 msgstr "'Evenimentele Mele'"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1532
+#: lib/sahajyog_web/live/event_show_live.ex:1641
 #, elixir-autogen, elixir-format
 msgid "About this Event"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1141
-#: lib/sahajyog_web/live/event_show_live.ex:2151
+#: lib/sahajyog_web/live/event_show_live.ex:1250
+#: lib/sahajyog_web/live/event_show_live.ex:2261
 #, elixir-autogen, elixir-format
 msgid "Accept"
 msgstr ""
@@ -2520,7 +2517,7 @@ msgstr ""
 msgid "Account Holder Name"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2903
+#: lib/sahajyog_web/live/event_show_live.ex:3013
 #, elixir-autogen, elixir-format
 msgid "Account Name"
 msgstr ""
@@ -2555,7 +2552,7 @@ msgstr ""
 msgid "Add Transportation Option"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1980
+#: lib/sahajyog_web/live/event_show_live.ex:2090
 #, elixir-autogen, elixir-format
 msgid "Additional Notes"
 msgstr ""
@@ -2590,17 +2587,17 @@ msgstr ""
 msgid "Are you sure you want to delete this event?"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1788
+#: lib/sahajyog_web/live/event_show_live.ex:1898
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to leave this ride?"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2061
+#: lib/sahajyog_web/live/event_show_live.ex:2171
 #, elixir-autogen, elixir-format
 msgid "Are you sure? This will cancel the ride for all passengers."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1827
+#: lib/sahajyog_web/live/event_show_live.ex:1937
 #, elixir-autogen, elixir-format
 msgid "At Destination"
 msgstr ""
@@ -2610,18 +2607,18 @@ msgstr ""
 msgid "At least 12 characters"
 msgstr "Cel puțin 12 caractere"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1428
+#: lib/sahajyog_web/live/event_show_live.ex:1537
 #, elixir-autogen, elixir-format
 msgid "Attend"
 msgstr "Participă"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1394
-#: lib/sahajyog_web/live/event_show_live.ex:1425
+#: lib/sahajyog_web/live/event_show_live.ex:1503
+#: lib/sahajyog_web/live/event_show_live.ex:1534
 #, elixir-autogen, elixir-format
 msgid "Attending"
 msgstr "Participă"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1959
+#: lib/sahajyog_web/live/event_show_live.ex:2069
 #, elixir-autogen, elixir-format
 msgid "Available Seats"
 msgstr ""
@@ -2638,7 +2635,7 @@ msgstr "Înapoi la Subiect"
 msgid "Back to login"
 msgstr "Înapoi la autentificare"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2871
+#: lib/sahajyog_web/live/event_show_live.ex:2981
 #, elixir-autogen, elixir-format
 msgid "Balance"
 msgstr ""
@@ -2673,7 +2670,7 @@ msgstr ""
 msgid "Budget & Finances updated successfully"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2808
+#: lib/sahajyog_web/live/event_show_live.ex:2918
 #, elixir-autogen, elixir-format
 msgid "Budget & Resources"
 msgstr ""
@@ -2683,7 +2680,7 @@ msgstr ""
 msgid "Budget Breakdown/Notes"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2823
+#: lib/sahajyog_web/live/event_show_live.ex:2933
 #, elixir-autogen, elixir-format
 msgid "Budget Notes"
 msgstr ""
@@ -2695,7 +2692,7 @@ msgstr ""
 msgid "Budget Type"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1926
+#: lib/sahajyog_web/live/event_show_live.ex:2036
 #, elixir-autogen, elixir-format
 msgid "Cancel request?"
 msgstr ""
@@ -2705,22 +2702,22 @@ msgstr ""
 msgid "Carpool Offers"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:459
+#: lib/sahajyog_web/live/event_show_live.ex:462
 #, elixir-autogen, elixir-format
 msgid "Carpool offer created successfully!"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:596
+#: lib/sahajyog_web/live/event_show_live.ex:599
 #, elixir-autogen, elixir-format
 msgid "Carpool offer deleted."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:349
+#: lib/sahajyog_web/live/event_show_live.ex:352
 #, elixir-autogen, elixir-format
 msgid "Carpool seat requested! The driver will review your request."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1732
+#: lib/sahajyog_web/live/event_show_live.ex:1842
 #, elixir-autogen, elixir-format
 msgid "Carpooling"
 msgstr ""
@@ -2735,58 +2732,58 @@ msgstr ""
 msgid "Clear filters"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1392
+#: lib/sahajyog_web/live/event_show_live.ex:1501
 #, elixir-autogen, elixir-format
 msgid "Confirmed Attendees"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1862
+#: lib/sahajyog_web/live/event_show_live.ex:1972
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Contact Info"
 msgstr "Contactați-ne"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1477
+#: lib/sahajyog_web/live/event_show_live.ex:1586
 #, elixir-autogen, elixir-format
 msgid "Contact Organizer"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1058
+#: lib/sahajyog_web/live/event_show_live.ex:1085
 #, elixir-autogen, elixir-format
 msgid "Contact Organizers"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1974
+#: lib/sahajyog_web/live/event_show_live.ex:2084
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Contact Phone"
 msgstr "Contactați-ne"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1821
+#: lib/sahajyog_web/live/event_show_live.ex:1931
 #: lib/sahajyog_web/live/public_event_show_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "Cost"
 msgstr "Cost"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2010
+#: lib/sahajyog_web/live/event_show_live.ex:2120
 #, elixir-autogen, elixir-format
 msgid "Cost per Seat (€)"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:600
+#: lib/sahajyog_web/live/event_show_live.ex:603
 #, elixir-autogen, elixir-format
 msgid "Could not delete carpool."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:385
+#: lib/sahajyog_web/live/event_show_live.ex:388
 #, elixir-autogen, elixir-format
 msgid "Could not join task"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:583
+#: lib/sahajyog_web/live/event_show_live.ex:586
 #, elixir-autogen, elixir-format
 msgid "Could not leave ride."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:529
+#: lib/sahajyog_web/live/event_show_live.ex:532
 #, elixir-autogen, elixir-format
 msgid "Could not pick up passenger."
 msgstr ""
@@ -2796,7 +2793,7 @@ msgstr ""
 msgid "Could not publish event"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:357
+#: lib/sahajyog_web/live/event_show_live.ex:360
 #, elixir-autogen, elixir-format
 msgid "Could not request seat. You may have already requested this carpool."
 msgstr ""
@@ -2806,13 +2803,13 @@ msgstr ""
 msgid "Could not send invitation."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2018
+#: lib/sahajyog_web/live/event_show_live.ex:2128
 #, elixir-autogen, elixir-format
 msgid "Create Offer"
 msgstr ""
 
 #: lib/sahajyog_web/live/admin/event_proposals_live.ex:239
-#: lib/sahajyog_web/live/event_show_live.ex:1815
+#: lib/sahajyog_web/live/event_show_live.ex:1925
 #: lib/sahajyog_web/live/public_event_show_live.ex:44
 #, elixir-autogen, elixir-format
 msgid "Date"
@@ -2823,13 +2820,13 @@ msgstr "Dată"
 msgid "Date TBD"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1279
+#: lib/sahajyog_web/live/event_show_live.ex:1388
 #, elixir-autogen, elixir-format
 msgid "Days"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1147
-#: lib/sahajyog_web/live/event_show_live.ex:2158
+#: lib/sahajyog_web/live/event_show_live.ex:1256
+#: lib/sahajyog_web/live/event_show_live.ex:2268
 #, elixir-autogen, elixir-format
 msgid "Decline"
 msgstr ""
@@ -2844,7 +2841,7 @@ msgstr "Șterge"
 msgid "Delete task?"
 msgstr "Șterge"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1987
+#: lib/sahajyog_web/live/event_show_live.ex:2097
 #, elixir-autogen, elixir-format
 msgid "Departure Date"
 msgstr ""
@@ -2855,7 +2852,7 @@ msgid "Departure Location"
 msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1477
-#: lib/sahajyog_web/live/event_show_live.ex:1969
+#: lib/sahajyog_web/live/event_show_live.ex:2079
 #, elixir-autogen, elixir-format
 msgid "Departure Time"
 msgstr ""
@@ -2873,12 +2870,12 @@ msgstr "Descoperă și alătură-te evenimentelor viitoare Sahaja Yoga"
 #: lib/sahajyog_web/live/admin/event_proposals_live.ex:413
 #: lib/sahajyog_web/live/event_edit_live.ex:1083
 #: lib/sahajyog_web/live/event_propose_live.ex:280
-#: lib/sahajyog_web/live/event_show_live.ex:2881
+#: lib/sahajyog_web/live/event_show_live.ex:2991
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Donations"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2246
+#: lib/sahajyog_web/live/event_show_live.ex:2356
 #, elixir-autogen, elixir-format
 msgid "Due"
 msgstr ""
@@ -2888,7 +2885,7 @@ msgstr ""
 msgid "Due Date"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1408
+#: lib/sahajyog_web/live/event_show_live.ex:1517
 #, elixir-autogen, elixir-format
 msgid "Edit Event"
 msgstr "Editează Evenimentul"
@@ -2951,7 +2948,7 @@ msgstr ""
 msgid "Event Date"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1236
+#: lib/sahajyog_web/live/event_show_live.ex:1345
 #, elixir-autogen, elixir-format
 msgid "Event Ended"
 msgstr ""
@@ -2977,7 +2974,7 @@ msgstr ""
 msgid "Event deleted"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2701
+#: lib/sahajyog_web/live/event_show_live.ex:2811
 #, elixir-autogen, elixir-format
 msgid "Event invitation"
 msgstr ""
@@ -3005,12 +3002,12 @@ msgstr "Subiectul a fost actualizat cu succes"
 msgid "Events"
 msgstr "Evenimente"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1224
+#: lib/sahajyog_web/live/event_show_live.ex:1333
 #, elixir-autogen, elixir-format
 msgid "Exit Focus Mode"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2858
+#: lib/sahajyog_web/live/event_show_live.ex:2968
 #, elixir-autogen, elixir-format
 msgid "Expenses"
 msgstr ""
@@ -3020,7 +3017,7 @@ msgstr ""
 msgid "Finances"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2847
+#: lib/sahajyog_web/live/event_show_live.ex:2957
 #, elixir-autogen, elixir-format
 msgid "Financial Summary"
 msgstr ""
@@ -3032,12 +3029,12 @@ msgstr ""
 msgid "Fixed Budget"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2101
+#: lib/sahajyog_web/live/event_show_live.ex:2211
 #, elixir-autogen, elixir-format
 msgid "Flexible"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1227
+#: lib/sahajyog_web/live/event_show_live.ex:1336
 #, elixir-autogen, elixir-format
 msgid "Focus Mode"
 msgstr ""
@@ -3047,7 +3044,7 @@ msgstr ""
 msgid "Forgot Password"
 msgstr "Parolă uitată"
 
-#: lib/sahajyog_web/live/user_live/login.ex:111
+#: lib/sahajyog_web/live/user_live/login.ex:112
 #, elixir-autogen, elixir-format
 msgid "Forgot password?"
 msgstr "Ai uitat parola?"
@@ -3057,9 +3054,9 @@ msgstr "Ai uitat parola?"
 msgid "Forgot your password?"
 msgstr "Ai uitat parola?"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1825
-#: lib/sahajyog_web/live/event_show_live.ex:1998
-#: lib/sahajyog_web/live/event_show_live.ex:2092
+#: lib/sahajyog_web/live/event_show_live.ex:1935
+#: lib/sahajyog_web/live/event_show_live.ex:2108
+#: lib/sahajyog_web/live/event_show_live.ex:2202
 #: lib/sahajyog_web/live/public_event_show_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Free"
@@ -3090,18 +3087,18 @@ msgstr ""
 msgid "History"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1287
+#: lib/sahajyog_web/live/event_show_live.ex:1396
 #, elixir-autogen, elixir-format
 msgid "Hours"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1089
+#: lib/sahajyog_web/live/event_show_live.ex:1116
 #, elixir-autogen, elixir-format
 msgid "How can we help you?"
 msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1123
-#: lib/sahajyog_web/live/event_show_live.ex:2908
+#: lib/sahajyog_web/live/event_show_live.ex:3018
 #, elixir-autogen, elixir-format
 msgid "IBAN"
 msgstr ""
@@ -3116,7 +3113,7 @@ msgstr ""
 msgid "If your email is in our system and has a password, you will receive reset instructions shortly."
 msgstr "Dacă emailul tău este în sistemul nostru și are o parolă, vei primi în curând instrucțiunile de resetare."
 
-#: lib/sahajyog_web/live/event_show_live.ex:1356
+#: lib/sahajyog_web/live/event_show_live.ex:1465
 #: lib/sahajyog_web/live/events_live.ex:517
 #, elixir-autogen, elixir-format
 msgid "In %{days} days"
@@ -3127,22 +3124,22 @@ msgstr ""
 msgid "Inbox"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2852
+#: lib/sahajyog_web/live/event_show_live.ex:2962
 #, elixir-autogen, elixir-format
 msgid "Income"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2696
+#: lib/sahajyog_web/live/event_show_live.ex:2806
 #, elixir-autogen, elixir-format
 msgid "Invitation"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:317
+#: lib/sahajyog_web/live/event_show_live.ex:320
 #, elixir-autogen, elixir-format
 msgid "Invitation accepted! You are now a co-owner."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:334
+#: lib/sahajyog_web/live/event_show_live.ex:337
 #, elixir-autogen, elixir-format
 msgid "Invitation declined."
 msgstr ""
@@ -3162,29 +3159,29 @@ msgstr ""
 msgid "Is Online Event"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1268
+#: lib/sahajyog_web/live/event_show_live.ex:1377
 #, elixir-autogen, elixir-format
 msgid "Join us for the live stream. The video will appear here automatically when the event starts."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2255
+#: lib/sahajyog_web/live/event_show_live.ex:2365
 #, elixir-autogen, elixir-format
 msgid "Lead"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1791
+#: lib/sahajyog_web/live/event_show_live.ex:1901
 #, elixir-autogen, elixir-format
 msgid "Leave Ride"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2294
+#: lib/sahajyog_web/live/event_show_live.ex:2404
 #, elixir-autogen, elixir-format
 msgid "Leave Task"
 msgstr ""
 
 #: lib/sahajyog_web/live/admin/event_proposals_live.ex:244
 #: lib/sahajyog_web/live/event_edit_live.ex:585
-#: lib/sahajyog_web/live/event_show_live.ex:2723
+#: lib/sahajyog_web/live/event_show_live.ex:2833
 #: lib/sahajyog_web/live/public_event_show_live.ex:75
 #, elixir-autogen, elixir-format
 msgid "Location"
@@ -3195,7 +3192,7 @@ msgstr "Locație"
 msgid "Location updated successfully"
 msgstr "Subiectul a fost actualizat cu succes"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1918
+#: lib/sahajyog_web/live/event_show_live.ex:2028
 #, elixir-autogen, elixir-format
 msgid "Looking for ride"
 msgstr ""
@@ -3210,12 +3207,12 @@ msgstr ""
 msgid "Manage tasks and assign work."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:808
+#: lib/sahajyog_web/live/event_show_live.ex:835
 #, elixir-autogen, elixir-format
 msgid "Message sent to the organizers."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1295
+#: lib/sahajyog_web/live/event_show_live.ex:1404
 #, elixir-autogen, elixir-format
 msgid "Minutes"
 msgstr ""
@@ -3225,7 +3222,7 @@ msgstr ""
 msgid "My Events"
 msgstr "Evenimentele Mele"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2203
+#: lib/sahajyog_web/live/event_show_live.ex:2313
 #, elixir-autogen, elixir-format
 msgid "No carpool offers yet. Be the first to offer a ride!"
 msgstr ""
@@ -3275,13 +3272,13 @@ msgstr ""
 msgid "No upcoming events"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1765
-#: lib/sahajyog_web/live/event_show_live.ex:1941
+#: lib/sahajyog_web/live/event_show_live.ex:1875
+#: lib/sahajyog_web/live/event_show_live.ex:2051
 #, elixir-autogen, elixir-format
 msgid "Offer a Ride"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1261
+#: lib/sahajyog_web/live/event_show_live.ex:1370
 #, elixir-autogen, elixir-format
 msgid "Online Event"
 msgstr ""
@@ -3292,22 +3289,22 @@ msgstr ""
 msgid "Online Link (YouTube)"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2749
+#: lib/sahajyog_web/live/event_show_live.ex:2859
 #, elixir-autogen, elixir-format
 msgid "Open in Maps"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1470
+#: lib/sahajyog_web/live/event_show_live.ex:1579
 #, elixir-autogen, elixir-format
 msgid "Organized by"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:526
+#: lib/sahajyog_web/live/event_show_live.ex:529
 #, elixir-autogen, elixir-format
 msgid "Passenger picked up!"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2110
+#: lib/sahajyog_web/live/event_show_live.ex:2220
 #, elixir-autogen, elixir-format
 msgid "Passengers"
 msgstr ""
@@ -3323,8 +3320,8 @@ msgid "Past"
 msgstr "Trecut"
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1484
-#: lib/sahajyog_web/live/event_show_live.ex:1999
-#: lib/sahajyog_web/live/event_show_live.ex:2094
+#: lib/sahajyog_web/live/event_show_live.ex:2109
+#: lib/sahajyog_web/live/event_show_live.ex:2204
 #, elixir-autogen, elixir-format
 msgid "Pay at Destination / Flexible Cost"
 msgstr ""
@@ -3334,7 +3331,7 @@ msgstr ""
 msgid "Pay at destination"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1992
+#: lib/sahajyog_web/live/event_show_live.ex:2102
 #, elixir-autogen, elixir-format
 msgid "Payment Method"
 msgstr ""
@@ -3344,28 +3341,28 @@ msgstr ""
 msgid "Payment Notes"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2135
+#: lib/sahajyog_web/live/event_show_live.ex:2245
 #, elixir-autogen, elixir-format
 msgid "Pending Requests"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1863
+#: lib/sahajyog_web/live/event_show_live.ex:1973
 #, elixir-autogen, elixir-format
 msgid "Phone or Email"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1905
+#: lib/sahajyog_web/live/event_show_live.ex:2015
 #, elixir-autogen, elixir-format
 msgid "Pick Up"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1801
+#: lib/sahajyog_web/live/event_show_live.ex:1911
 #, elixir-autogen, elixir-format
 msgid "Pick up"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1855
-#: lib/sahajyog_web/live/event_show_live.ex:1952
+#: lib/sahajyog_web/live/event_show_live.ex:1965
+#: lib/sahajyog_web/live/event_show_live.ex:2062
 #, elixir-autogen, elixir-format
 msgid "Pickup Location"
 msgstr ""
@@ -3380,12 +3377,12 @@ msgstr ""
 msgid "Please complete your profile (First Name, Last Name, Phone Number) before proposing an event."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1117
+#: lib/sahajyog_web/live/event_show_live.ex:1226
 #, elixir-autogen, elixir-format
 msgid "Please complete your profile (First Name, Last Name, Phone Number) to manage this event."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:300
+#: lib/sahajyog_web/live/event_show_live.ex:303
 #, elixir-autogen, elixir-format
 msgid "Please complete your profile details (First Name, Last Name, Phone Number) before accepting this invitation."
 msgstr ""
@@ -3395,7 +3392,7 @@ msgstr ""
 msgid "Please enter an email address."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1869
+#: lib/sahajyog_web/live/event_show_live.ex:1979
 #, elixir-autogen, elixir-format
 msgid "Post Request"
 msgstr ""
@@ -3436,48 +3433,48 @@ msgstr "Confirmă parola"
 msgid "Remove this team member?"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1751
+#: lib/sahajyog_web/live/event_show_live.ex:1861
 #, elixir-autogen, elixir-format
 msgid "Request Pending"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2195
+#: lib/sahajyog_web/live/event_show_live.ex:2305
 #, elixir-autogen, elixir-format
 msgid "Request Seat"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1758
-#: lib/sahajyog_web/live/event_show_live.ex:1844
+#: lib/sahajyog_web/live/event_show_live.ex:1868
+#: lib/sahajyog_web/live/event_show_live.ex:1954
 #, elixir-autogen, elixir-format
 msgid "Request a Ride"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:373
+#: lib/sahajyog_web/live/event_show_live.ex:376
 #, elixir-autogen, elixir-format
 msgid "Request accepted"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:633
+#: lib/sahajyog_web/live/event_show_live.ex:636
 #, elixir-autogen, elixir-format
 msgid "Request cancelled."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:566
+#: lib/sahajyog_web/live/event_show_live.ex:569
 #, elixir-autogen, elixir-format
 msgid "Request deleted."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:635
+#: lib/sahajyog_web/live/event_show_live.ex:638
 #, elixir-autogen, elixir-format
 msgid "Request not found."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2180
+#: lib/sahajyog_web/live/event_show_live.ex:2290
 #, elixir-autogen, elixir-format
 msgid "Request pending... (Cancel)"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:409
+#: lib/sahajyog_web/live/event_show_live.ex:412
 #, elixir-autogen, elixir-format
 msgid "Request rejected."
 msgstr ""
@@ -3499,7 +3496,7 @@ msgid "Reset password link is invalid or has expired."
 msgstr "Linkul pentru resetarea parolei este invalid sau a expirat."
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1106
-#: lib/sahajyog_web/live/event_show_live.ex:2832
+#: lib/sahajyog_web/live/event_show_live.ex:2942
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Resources Required"
 msgstr "Resurse"
@@ -3509,28 +3506,28 @@ msgstr "Resurse"
 msgid "Review Event Proposal"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1739
+#: lib/sahajyog_web/live/event_show_live.ex:1849
 #, elixir-autogen, elixir-format
 msgid "Ride Confirmed"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1916
+#: lib/sahajyog_web/live/event_show_live.ex:2026
 #, elixir-autogen, elixir-format
 msgid "Ride Found"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1883
+#: lib/sahajyog_web/live/event_show_live.ex:1993
 #, elixir-autogen, elixir-format
 msgid "Ride Requests"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:552
+#: lib/sahajyog_web/live/event_show_live.ex:555
 #, elixir-autogen, elixir-format
 msgid "Ride request posted successfully!"
 msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1126
-#: lib/sahajyog_web/live/event_show_live.ex:2915
+#: lib/sahajyog_web/live/event_show_live.ex:3025
 #, elixir-autogen, elixir-format
 msgid "SWIFT/BIC"
 msgstr ""
@@ -3550,12 +3547,12 @@ msgstr "Salvează"
 msgid "Search events..."
 msgstr "Caută evenimente..."
 
-#: lib/sahajyog_web/live/event_show_live.ex:2186
+#: lib/sahajyog_web/live/event_show_live.ex:2296
 #, elixir-autogen, elixir-format
 msgid "Seat Confirmed"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1303
+#: lib/sahajyog_web/live/event_show_live.ex:1412
 #, elixir-autogen, elixir-format
 msgid "Seconds"
 msgstr ""
@@ -3578,7 +3575,7 @@ msgstr[0] "Se afișează %{count} eveniment"
 msgstr[1] "Se afișează %{count} evenimente"
 msgstr[2] "Se afișează %{count} de evenimente"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2240
+#: lib/sahajyog_web/live/event_show_live.ex:2350
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Start"
 msgstr "Status"
@@ -3596,7 +3593,7 @@ msgstr ""
 msgid "Start Time"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1265
+#: lib/sahajyog_web/live/event_show_live.ex:1374
 #, elixir-autogen, elixir-format
 msgid "Starting Soon"
 msgstr ""
@@ -3606,7 +3603,7 @@ msgstr ""
 msgid "Suggest an event for the community. An admin will review and approve it."
 msgstr "Sugerează un subiect pentru comunitate. Un administrator îl va revizui și aproba."
 
-#: lib/sahajyog_web/live/event_show_live.ex:2893
+#: lib/sahajyog_web/live/event_show_live.ex:3003
 #, elixir-autogen, elixir-format
 msgid "Support This Event"
 msgstr ""
@@ -3632,13 +3629,13 @@ msgid "Task updated successfully"
 msgstr "Subiectul a fost actualizat cu succes"
 
 #: lib/sahajyog_web/live/event_edit_live.ex:587
-#: lib/sahajyog_web/live/event_show_live.ex:2215
+#: lib/sahajyog_web/live/event_show_live.ex:2325
 #, elixir-autogen, elixir-format
 msgid "Tasks"
 msgstr "Sarcini"
 
 #: lib/sahajyog_web/live/event_edit_live.ex:589
-#: lib/sahajyog_web/live/event_show_live.ex:1485
+#: lib/sahajyog_web/live/event_show_live.ex:1594
 #, elixir-autogen, elixir-format
 msgid "Team"
 msgstr ""
@@ -3653,7 +3650,7 @@ msgstr ""
 msgid "Team member removed."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1243
+#: lib/sahajyog_web/live/event_show_live.ex:1352
 #, elixir-autogen, elixir-format
 msgid "Thank you for your interest. Please check our other events."
 msgstr ""
@@ -3668,12 +3665,12 @@ msgstr ""
 msgid "The user must already have an account on the platform."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1240
+#: lib/sahajyog_web/live/event_show_live.ex:1349
 #, elixir-autogen, elixir-format
 msgid "This event has ended"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1453
+#: lib/sahajyog_web/live/event_show_live.ex:1562
 #, elixir-autogen, elixir-format
 msgid "This event will appear in your"
 msgstr "Acest eveniment va apărea în lista ta"
@@ -3684,7 +3681,7 @@ msgstr "Acest eveniment va apărea în lista ta"
 msgid "This is an Online Event"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1806
+#: lib/sahajyog_web/live/event_show_live.ex:1916
 #: lib/sahajyog_web/live/public_event_show_live.ex:58
 #, elixir-autogen, elixir-format
 msgid "Time"
@@ -3695,19 +3692,19 @@ msgstr "Oră"
 msgid "Today"
 msgstr "Astăzi"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1343
-#: lib/sahajyog_web/live/event_show_live.ex:1347
+#: lib/sahajyog_web/live/event_show_live.ex:1452
+#: lib/sahajyog_web/live/event_show_live.ex:1456
 #, elixir-autogen, elixir-format
 msgid "Today!"
 msgstr "Astăzi!"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1352
+#: lib/sahajyog_web/live/event_show_live.ex:1461
 #: lib/sahajyog_web/live/events_live.ex:515
 #, elixir-autogen, elixir-format
 msgid "Tomorrow"
 msgstr "Mâine"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2813
+#: lib/sahajyog_web/live/event_show_live.ex:2923
 #, elixir-autogen, elixir-format
 msgid "Total Budget"
 msgstr ""
@@ -3718,7 +3715,7 @@ msgid "Total Budget (€)"
 msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:586
-#: lib/sahajyog_web/live/event_show_live.ex:1674
+#: lib/sahajyog_web/live/event_show_live.ex:1784
 #, elixir-autogen, elixir-format
 msgid "Transportation"
 msgstr ""
@@ -3738,26 +3735,26 @@ msgstr ""
 msgid "Try adjusting your filters"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:375
+#: lib/sahajyog_web/live/event_show_live.ex:378
 #, elixir-autogen, elixir-format
 msgid "Unauthorized"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:411
+#: lib/sahajyog_web/live/event_show_live.ex:414
 #, elixir-autogen, elixir-format
 msgid "Unauthorized action."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:603
-#: lib/sahajyog_web/live/event_show_live.ex:708
-#: lib/sahajyog_web/live/event_show_live.ex:739
+#: lib/sahajyog_web/live/event_show_live.ex:606
+#: lib/sahajyog_web/live/event_show_live.ex:711
+#: lib/sahajyog_web/live/event_show_live.ex:742
 #, elixir-autogen, elixir-format
 msgid "Unauthorized."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1829
-#: lib/sahajyog_web/live/event_show_live.ex:2000
-#: lib/sahajyog_web/live/event_show_live.ex:2097
+#: lib/sahajyog_web/live/event_show_live.ex:1939
+#: lib/sahajyog_web/live/event_show_live.ex:2110
+#: lib/sahajyog_web/live/event_show_live.ex:2207
 #, elixir-autogen, elixir-format
 msgid "Upfront"
 msgstr ""
@@ -3777,34 +3774,34 @@ msgstr ""
 msgid "Venue Name"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2785
+#: lib/sahajyog_web/live/event_show_live.ex:2895
 #, elixir-autogen, elixir-format
 msgid "Venue Photos"
 msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1065
-#: lib/sahajyog_web/live/event_show_live.ex:2760
+#: lib/sahajyog_web/live/event_show_live.ex:2870
 #, elixir-autogen, elixir-format
 msgid "Venue Website"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2793
+#: lib/sahajyog_web/live/event_show_live.ex:2903
 #, elixir-autogen, elixir-format
 msgid "Venue photo"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2712
+#: lib/sahajyog_web/live/event_show_live.ex:2822
 #, elixir-autogen, elixir-format
 msgid "View Invitation PDF"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2302
+#: lib/sahajyog_web/live/event_show_live.ex:2412
 #, elixir-autogen, elixir-format
 msgid "Volunteer"
 msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1277
-#: lib/sahajyog_web/live/event_show_live.ex:2265
+#: lib/sahajyog_web/live/event_show_live.ex:2375
 #, elixir-autogen, elixir-format
 msgid "Volunteers"
 msgstr ""
@@ -3814,17 +3811,17 @@ msgstr ""
 msgid "What happens next?"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1173
+#: lib/sahajyog_web/live/event_show_live.ex:1282
 #, elixir-autogen, elixir-format
 msgid "Who is here"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1451
+#: lib/sahajyog_web/live/event_show_live.ex:1560
 #, elixir-autogen, elixir-format
 msgid "You are attending this event!"
 msgstr "Participi la acest eveniment!"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1770
+#: lib/sahajyog_web/live/event_show_live.ex:1880
 #, elixir-autogen, elixir-format
 msgid "You are offering a ride"
 msgstr ""
@@ -3844,37 +3841,37 @@ msgstr ""
 msgid "You cannot invite yourself."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1795
+#: lib/sahajyog_web/live/event_show_live.ex:1905
 #, elixir-autogen, elixir-format
 msgid "You have a ride with %{driver}"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1133
+#: lib/sahajyog_web/live/event_show_live.ex:1242
 #, elixir-autogen, elixir-format
 msgid "You have been invited to be a co-owner of this event."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1131
+#: lib/sahajyog_web/live/event_show_live.ex:1240
 #, elixir-autogen, elixir-format
 msgid "You have been invited!"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:382
+#: lib/sahajyog_web/live/event_show_live.ex:385
 #, elixir-autogen, elixir-format
 msgid "You have joined the task!"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:578
+#: lib/sahajyog_web/live/event_show_live.ex:581
 #, elixir-autogen, elixir-format
 msgid "You have left the ride."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:391
+#: lib/sahajyog_web/live/event_show_live.ex:394
 #, elixir-autogen, elixir-format
 msgid "You have left the task."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:533
+#: lib/sahajyog_web/live/event_show_live.ex:536
 #, elixir-autogen, elixir-format
 msgid "You must have a carpool to pick up passengers."
 msgstr ""
@@ -3884,22 +3881,22 @@ msgstr ""
 msgid "You no longer have permission to edit this event"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1073
+#: lib/sahajyog_web/live/event_show_live.ex:1100
 #, elixir-autogen, elixir-format
 msgid "Your Email"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1063
+#: lib/sahajyog_web/live/event_show_live.ex:1090
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Your Name"
 msgstr "Numele dumneavoastră"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1784
+#: lib/sahajyog_web/live/event_show_live.ex:1894
 #, elixir-autogen, elixir-format
 msgid "Your Ride Details"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2897
+#: lib/sahajyog_web/live/event_show_live.ex:3007
 #, elixir-autogen, elixir-format
 msgid "Your donation helps make this event possible. Thank you for your support!"
 msgstr ""
@@ -3909,17 +3906,17 @@ msgstr ""
 msgid "Your proposal will be reviewed by an admin"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1207
+#: lib/sahajyog_web/live/event_show_live.ex:1316
 #, elixir-autogen, elixir-format
 msgid "and %{count} more..."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1953
+#: lib/sahajyog_web/live/event_show_live.ex:2063
 #, elixir-autogen, elixir-format
 msgid "e.g., City Center, Train Station"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1856
+#: lib/sahajyog_web/live/event_show_live.ex:1966
 #, elixir-autogen, elixir-format
 msgid "e.g., Downtown"
 msgstr ""
@@ -3969,7 +3966,7 @@ msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1175
 #: lib/sahajyog_web/live/event_edit_live.ex:1239
-#: lib/sahajyog_web/live/event_show_live.ex:2052
+#: lib/sahajyog_web/live/event_show_live.ex:2162
 #, elixir-autogen, elixir-format
 msgid "seats"
 msgstr ""
@@ -4081,12 +4078,12 @@ msgstr "Toate țările"
 msgid "Back to Events"
 msgstr "Înapoi la Subiect"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2559
+#: lib/sahajyog_web/live/event_show_live.ex:2669
 #, elixir-autogen, elixir-format
 msgid "By"
 msgstr "De"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2506
+#: lib/sahajyog_web/live/event_show_live.ex:2616
 #, elixir-autogen, elixir-format
 msgid "Click the"
 msgstr "Apasă pe"
@@ -4099,11 +4096,11 @@ msgstr ""
 
 #: lib/sahajyog_web/live/demo3_live.ex:617
 #: lib/sahajyog_web/live/welcome_live.ex:429
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Community"
-msgstr "Țară"
+msgstr "Comunitate"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2529
+#: lib/sahajyog_web/live/event_show_live.ex:2639
 #, elixir-autogen, elixir-format
 msgid "Confirm Upload (%{count})"
 msgstr ""
@@ -4118,7 +4115,7 @@ msgstr ""
 msgid "Contact Form"
 msgstr "Contactați-ne"
 
-#: lib/sahajyog_web/live/event_show_live.ex:670
+#: lib/sahajyog_web/live/event_show_live.ex:673
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not post review."
 msgstr "Nu s-a putut posta recenzia."
@@ -4128,8 +4125,8 @@ msgstr "Nu s-a putut posta recenzia."
 msgid "Created By"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2565
-#: lib/sahajyog_web/live/event_show_live.ex:2634
+#: lib/sahajyog_web/live/event_show_live.ex:2675
+#: lib/sahajyog_web/live/event_show_live.ex:2744
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Delete photo?"
 msgstr "Șterge"
@@ -4139,7 +4136,7 @@ msgstr "Șterge"
 msgid "Enter an event upgrade code to unlock Level 2 access."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2374
+#: lib/sahajyog_web/live/event_show_live.ex:2484
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Event Gallery"
 msgstr "Galerie Eveniment"
@@ -4150,7 +4147,7 @@ msgstr "Galerie Eveniment"
 msgid "Explore (Login Required)"
 msgstr "Explorează (Autentificare necesară)"
 
-#: lib/sahajyog_web/live/event_show_live.ex:878
+#: lib/sahajyog_web/live/event_show_live.ex:905
 #, elixir-autogen, elixir-format
 msgid "Failed to upload photos. Please try again."
 msgstr "Încărcarea fotografiilor a eșuat. Încercați din nou."
@@ -4172,12 +4169,12 @@ msgstr "Subiect recomandat"
 msgid "Featured Topics"
 msgstr "Subiecte recomandate"
 
-#: lib/sahajyog_web/live/event_show_live.ex:888
+#: lib/sahajyog_web/live/event_show_live.ex:915
 #, elixir-autogen, elixir-format
 msgid "File is too large (max 10MB)"
 msgstr "Fișierul este prea mare (max 10MB)"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1520
+#: lib/sahajyog_web/live/event_show_live.ex:1629
 #, elixir-autogen, elixir-format
 msgid "Gallery"
 msgstr "Galerie"
@@ -4192,7 +4189,7 @@ msgstr ""
 msgid "Generate New Code"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:890
+#: lib/sahajyog_web/live/event_show_live.ex:917
 #, elixir-autogen, elixir-format
 msgid "Invalid file type"
 msgstr "Tip de fișier invalid"
@@ -4203,7 +4200,7 @@ msgid "Invalid upgrade code. Please check and try again."
 msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:1008
-#: lib/sahajyog_web/live/event_show_live.ex:1386
+#: lib/sahajyog_web/live/event_show_live.ex:1495
 #: lib/sahajyog_web/live/public_event_show_live.ex:94
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Languages"
@@ -4225,7 +4222,7 @@ msgstr ""
 msgid "Max Uses (Optional)"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2682
+#: lib/sahajyog_web/live/event_show_live.ex:2792
 #, elixir-autogen, elixir-format
 msgid "Next photo"
 msgstr "Fotografia următoare"
@@ -4235,22 +4232,22 @@ msgstr "Fotografia următoare"
 msgid "No description provided."
 msgstr "Nicio descriere furnizată."
 
-#: lib/sahajyog_web/live/event_show_live.ex:2543
+#: lib/sahajyog_web/live/event_show_live.ex:2653
 #, elixir-autogen, elixir-format
 msgid "No photos shared yet."
 msgstr "Nu există fotografii încă."
 
-#: lib/sahajyog_web/live/event_show_live.ex:2334
+#: lib/sahajyog_web/live/event_show_live.ex:2444
 #, elixir-autogen, elixir-format
 msgid "No reviews yet."
 msgstr "Nu există recenzii încă."
 
-#: lib/sahajyog_web/live/event_show_live.ex:2503
+#: lib/sahajyog_web/live/event_show_live.ex:2613
 #, elixir-autogen, elixir-format
 msgid "One or more files exceed the 10MB size limit."
 msgstr "Unul sau mai multe fișiere depășesc limita de 10MB."
 
-#: lib/sahajyog_web/live/event_show_live.ex:2467
+#: lib/sahajyog_web/live/event_show_live.ex:2577
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Overall Progress"
 msgstr "Urmărește progresul"
@@ -4260,32 +4257,32 @@ msgstr "Urmărește progresul"
 msgid "Past Events"
 msgstr "Evenimente Trecute"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2407
+#: lib/sahajyog_web/live/event_show_live.ex:2517
 #, elixir-autogen, elixir-format
 msgid "Pending Uploads"
 msgstr "Încărcări în așteptare"
 
-#: lib/sahajyog_web/live/event_show_live.ex:737
+#: lib/sahajyog_web/live/event_show_live.ex:740
 #, elixir-autogen, elixir-format
 msgid "Photo deleted."
 msgstr "Fotografia a fost ștearsă."
 
-#: lib/sahajyog_web/live/event_show_live.ex:874
+#: lib/sahajyog_web/live/event_show_live.ex:901
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Photos uploaded successfully!"
 msgstr "Fotografiile au fost încărcate cu succes!"
 
-#: lib/sahajyog_web/live/event_show_live.ex:688
+#: lib/sahajyog_web/live/event_show_live.ex:691
 #, elixir-autogen, elixir-format
 msgid "Please wait for uploads to complete."
 msgstr "Vă rugăm așteptați finalizarea încărcării."
 
-#: lib/sahajyog_web/live/event_show_live.ex:2327
+#: lib/sahajyog_web/live/event_show_live.ex:2437
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Post Review"
 msgstr "Postează Recenzie"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2608
+#: lib/sahajyog_web/live/event_show_live.ex:2718
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Previous photo"
 msgstr "Anterior"
@@ -4301,28 +4298,28 @@ msgstr "Eveniment public"
 msgid "Read"
 msgstr "Citește"
 
-#: lib/sahajyog_web/live/public_event_show_live.ex:111
+#: lib/sahajyog_web/live/public_event_show_live.ex:114
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Register to Join"
 msgstr "Înregistrează-te"
 
-#: lib/sahajyog_web/live/event_show_live.ex:706
+#: lib/sahajyog_web/live/event_show_live.ex:709
 #, elixir-autogen, elixir-format
 msgid "Review deleted."
 msgstr "Recenzie ștearsă."
 
-#: lib/sahajyog_web/live/event_show_live.ex:667
+#: lib/sahajyog_web/live/event_show_live.ex:670
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Review posted!"
 msgstr "Recenzie postată!"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1512
-#: lib/sahajyog_web/live/event_show_live.ex:2316
+#: lib/sahajyog_web/live/event_show_live.ex:1621
+#: lib/sahajyog_web/live/event_show_live.ex:2426
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Reviews"
 msgstr "Recenzii"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2322
+#: lib/sahajyog_web/live/event_show_live.ex:2432
 #, elixir-autogen, elixir-format
 msgid "Share your experience (max 3 allowed)..."
 msgstr ""
@@ -4349,7 +4346,7 @@ msgstr "Aceste subiecte sunt în general disponibile pentru toată lumea."
 msgid "To obtain an upgrade code, please get in touch with the admin using the"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:889
+#: lib/sahajyog_web/live/event_show_live.ex:916
 #, elixir-autogen, elixir-format
 msgid "Too many files (max 5)"
 msgstr "Prea multe fișiere (max 5)"
@@ -4386,27 +4383,27 @@ msgstr ""
 msgid "Upgrade Code"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2500
+#: lib/sahajyog_web/live/event_show_live.ex:2610
 #, elixir-autogen, elixir-format
 msgid "Upload Error"
 msgstr "Eroare la încărcare"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2390
+#: lib/sahajyog_web/live/event_show_live.ex:2500
 #, elixir-autogen, elixir-format
 msgid "Upload Photos"
 msgstr "Încarcă Fotografii"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2397
+#: lib/sahajyog_web/live/event_show_live.ex:2507
 #, elixir-autogen, elixir-format
 msgid "Upload limit reached"
 msgstr "Limita de încărcare atinsă"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2622
+#: lib/sahajyog_web/live/event_show_live.ex:2732
 #, elixir-autogen, elixir-format
 msgid "Uploaded by"
 msgstr "Încărcat de"
 
-#: lib/sahajyog_web/live/event_show_live.ex:2532
+#: lib/sahajyog_web/live/event_show_live.ex:2642
 #, elixir-autogen, elixir-format
 msgid "Uploading... %{progress}%"
 msgstr ""
@@ -4422,7 +4419,7 @@ msgstr ""
 msgid "View all events"
 msgstr "Vezi tot"
 
-#: lib/sahajyog_web/controllers/user_session_controller.ex:95
+#: lib/sahajyog_web/controllers/user_session_controller.ex:103
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Welcome back %{name}!"
 msgstr "Bine ai revenit"
@@ -4432,19 +4429,19 @@ msgstr "Bine ai revenit"
 msgid "You are already at Level 2 or higher."
 msgstr ""
 
-#: lib/sahajyog_web/controllers/user_session_controller.ex:79
+#: lib/sahajyog_web/controllers/user_session_controller.ex:87
 #: lib/sahajyog_web/live/user_live/settings.ex:283
 #: lib/sahajyog_web/live/user_live/settings.ex:318
 #, elixir-autogen, elixir-format
 msgid "Your session has expired. Please log in again to make changes."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2377
+#: lib/sahajyog_web/live/event_show_live.ex:2487
 #, elixir-autogen, elixir-format
 msgid "Your uploads: %{count}/%{max}"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:2510
+#: lib/sahajyog_web/live/event_show_live.ex:2620
 #, elixir-autogen, elixir-format
 msgid "button on the file to remove it."
 msgstr "butonul de pe fișier pentru a-l elimina."
@@ -4487,7 +4484,7 @@ msgstr "Fișierul este prea mare (max 10MB)"
 msgid "Invalid file type. Please upload MP4, WebM, or MOV."
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1442
+#: lib/sahajyog_web/live/event_show_live.ex:1551
 #, elixir-autogen, elixir-format
 msgid "Join Meeting"
 msgstr "Intră în Întâlnire"
@@ -4546,8 +4543,8 @@ msgstr ""
 #: lib/sahajyog_web/live/admin/event_proposals_live.ex:274
 #: lib/sahajyog_web/live/event_edit_live.ex:742
 #: lib/sahajyog_web/live/event_propose_live.ex:314
-#: lib/sahajyog_web/live/event_show_live.ex:1545
-#: lib/sahajyog_web/live/event_show_live.ex:1554
+#: lib/sahajyog_web/live/event_show_live.ex:1654
+#: lib/sahajyog_web/live/event_show_live.ex:1663
 #, elixir-autogen, elixir-format
 msgid "Presentation Video"
 msgstr ""
@@ -4600,9 +4597,9 @@ msgstr ""
 msgid "Video deleted successfully"
 msgstr "Subiect șters cu succes"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1568
-#: lib/sahajyog_web/live/event_show_live.ex:1592
-#: lib/sahajyog_web/live/event_show_live.ex:1600
+#: lib/sahajyog_web/live/event_show_live.ex:1677
+#: lib/sahajyog_web/live/event_show_live.ex:1701
+#: lib/sahajyog_web/live/event_show_live.ex:1709
 #, elixir-autogen, elixir-format
 msgid "Video unavailable"
 msgstr ""
@@ -4629,7 +4626,7 @@ msgstr ""
 msgid "YouTube Video URL"
 msgstr ""
 
-#: lib/sahajyog_web/live/event_show_live.ex:1583
+#: lib/sahajyog_web/live/event_show_live.ex:1692
 #, elixir-autogen, elixir-format
 msgid "Your browser does not support the video tag."
 msgstr ""
@@ -4669,7 +4666,7 @@ msgstr ""
 
 #: lib/sahajyog_web/live/event_edit_live.ex:865
 #: lib/sahajyog_web/live/event_propose_live.ex:422
-#: lib/sahajyog_web/live/event_show_live.ex:1613
+#: lib/sahajyog_web/live/event_show_live.ex:1722
 #, elixir-autogen, elixir-format
 msgid "Invitation Materials"
 msgstr "Materiale de Invitație"
@@ -4707,7 +4704,12 @@ msgstr "Încărcați fotografii sau fișiere PDF pentru a prezenta invitația la
 msgid "Uploaded Materials"
 msgstr "Materiale Încărcate"
 
-#: lib/sahajyog_web/live/event_show_live.ex:1633
+#: lib/sahajyog_web/live/event_show_live.ex:768
 #, elixir-autogen, elixir-format
-msgid "View Full Size"
-msgstr "Vezi Dimensiunea Completă"
+msgid "Material not found"
+msgstr "Material negăsit"
+
+#: lib/sahajyog_web/live/public_topic_show_live.ex:80
+#, elixir-autogen, elixir-format
+msgid "Register to Access More"
+msgstr "Înregistrează-te pentru mai mult"

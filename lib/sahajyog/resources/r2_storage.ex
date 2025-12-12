@@ -109,6 +109,73 @@ defmodule Sahajyog.Resources.R2Storage do
     "#{level}/#{resource_type}/#{uuid}-#{sanitized_filename}"
   end
 
+  @doc """
+  Generates a key for storing store item media in R2.
+  Format: sahajaonline/sahajstore/{item_id}/{media_type}/{uuid}-{filename}
+
+  ## Parameters
+    - item_id: The store item ID
+    - filename: Original filename
+    - media_type: Either "photo" or "video"
+
+  ## Examples
+      iex> generate_store_item_key(123, "product.jpg", "photo")
+      "sahajaonline/sahajstore/123/photo/a1b2c3d4-product.jpg"
+  """
+  def generate_store_item_key(item_id, filename, media_type)
+      when media_type in ["photo", "video"] do
+    uuid = Ecto.UUID.generate() |> String.slice(0, 8)
+    sanitized_filename = sanitize_filename(filename)
+    "sahajaonline/sahajstore/#{item_id}/#{media_type}/#{uuid}-#{sanitized_filename}"
+  end
+
+  @doc """
+  Extracts the original filename from a store item R2 key.
+  Removes the UUID prefix from the filename.
+  """
+  def extract_store_item_filename(key) do
+    key
+    |> String.split("/")
+    |> List.last()
+    |> String.replace(~r/^[a-f0-9]{8}-/, "")
+  end
+
+  @doc """
+  Generates a presigned URL for store item media preview.
+  Creates time-limited URLs that expire after a configurable duration.
+
+  ## Options
+    - `:expires_in` - URL expiration time in seconds (default: 3600 = 1 hour)
+    - `:force_download` - If true, sets Content-Disposition to attachment (default: false)
+
+  ## Examples
+      iex> generate_store_media_url("sahajaonline/sahajstore/123/photo/abc-image.jpg")
+      "https://..."
+
+      iex> generate_store_media_url("sahajaonline/sahajstore/123/video/abc-video.mp4", expires_in: 7200)
+      "https://..."
+  """
+  def generate_store_media_url(r2_key, opts \\ []) do
+    generate_download_url(r2_key, opts)
+  end
+
+  @doc """
+  Generates presigned URLs for multiple store item media files.
+  Useful for generating URLs for all photos/videos of a store item at once.
+
+  ## Options
+    - `:expires_in` - URL expiration time in seconds (default: 3600 = 1 hour)
+
+  ## Examples
+      iex> generate_store_media_urls(["key1", "key2"])
+      %{"key1" => "https://...", "key2" => "https://..."}
+  """
+  def generate_store_media_urls(r2_keys, opts \\ []) when is_list(r2_keys) do
+    r2_keys
+    |> Enum.map(fn key -> {key, generate_store_media_url(key, opts)} end)
+    |> Map.new()
+  end
+
   defp sanitize_filename(filename) do
     filename
     |> String.replace(~r/[^a-zA-Z0-9._-]/, "_")

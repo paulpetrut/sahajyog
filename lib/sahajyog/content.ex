@@ -11,11 +11,12 @@ defmodule Sahajyog.Content do
 
   # Category access rules - maps each category to the levels that can access it
   # :public means accessible to unauthenticated users
+  # Level hierarchy: Level1 < Level2 < Level3 (higher levels have more access)
   @category_access %{
     "Welcome" => [:public, "Level1", "Level2", "Level3"],
     "Getting Started" => [:public, "Level1", "Level2", "Level3"],
-    "Advanced Topics" => ["Level1", "Level2"],
-    "Excerpts" => ["Level1", "Level2"]
+    "Advanced Topics" => ["Level2", "Level3"],
+    "Excerpts" => ["Level2", "Level3"]
   }
 
   @doc """
@@ -23,15 +24,23 @@ defmodule Sahajyog.Content do
 
   Note: The order of returned categories is not guaranteed due to map enumeration.
 
+  Level hierarchy: Level1 < Level2 < Level3 (higher levels have more access)
+  - Level1: Welcome, Getting Started only
+  - Level2: Welcome, Getting Started, Advanced Topics, Excerpts
+  - Level3: Welcome, Getting Started, Advanced Topics, Excerpts
+
   ## Examples
 
       iex> accessible_categories(nil)
       ["Welcome", "Getting Started"]  # Categories marked with :public
 
-      iex> accessible_categories(%User{level: "Level3"})
+      iex> accessible_categories(%User{level: "Level1"})
       ["Welcome", "Getting Started"]
 
-      iex> accessible_categories(%User{level: "Level1"})
+      iex> accessible_categories(%User{level: "Level2"})
+      ["Welcome", "Getting Started", "Advanced Topics", "Excerpts"]
+
+      iex> accessible_categories(%User{level: "Level3"})
       ["Welcome", "Getting Started", "Advanced Topics", "Excerpts"]
   """
   def accessible_categories(nil) do
@@ -64,6 +73,9 @@ defmodule Sahajyog.Content do
       false
 
       iex> can_access_category?(%User{level: "Level1"}, "Advanced Topics")
+      false
+
+      iex> can_access_category?(%User{level: "Level2"}, "Advanced Topics")
       true
   """
   def can_access_category?(user, category) do
@@ -91,9 +103,10 @@ defmodule Sahajyog.Content do
   @doc """
   Returns videos filtered by the user's access level.
 
-  For unauthenticated users (nil), returns only Welcome videos.
-  For Level3 users, returns Welcome and Getting Started videos.
-  For Level1/Level2 users, returns all categories.
+  Level hierarchy: Level1 < Level2 < Level3 (higher levels have more access)
+  - Unauthenticated (nil): Welcome, Getting Started only
+  - Level1: Welcome, Getting Started only
+  - Level2/Level3: All categories (Welcome, Getting Started, Advanced Topics, Excerpts)
 
   ## Examples
 
@@ -101,6 +114,9 @@ defmodule Sahajyog.Content do
       [%Video{category: "Welcome", ...}]
 
       iex> list_videos_for_user(%User{level: "Level1"})
+      [%Video{category: "Welcome", ...}, %Video{category: "Getting Started", ...}]
+
+      iex> list_videos_for_user(%User{level: "Level2"})
       [%Video{}, ...]  # All categories
   """
   def list_videos_for_user(user) do

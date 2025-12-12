@@ -1,6 +1,8 @@
 defmodule SahajyogWeb.Admin.AccessCodesLive do
   use SahajyogWeb, :live_view
 
+  import SahajyogWeb.AdminNav
+
   alias Sahajyog.Admin
   alias Sahajyog.Admin.AccessCode
 
@@ -73,92 +75,86 @@ defmodule SahajyogWeb.Admin.AccessCodesLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.admin_page_container title={gettext("Access Codes")}>
-      <div class="grid lg:grid-cols-3 gap-8">
-        <!-- Create Form -->
-        <div class="lg:col-span-1">
-          <.card title={gettext("Generate New Code")}>
-            <.form for={@form} phx-change="validate" phx-submit="save" class="space-y-4">
-              <.input
-                field={@form[:code]}
-                type="text"
-                label={gettext("Code")}
-                placeholder="e.g. SUMMER-2025"
-                required
-              />
+    <.page_container>
+      <.admin_nav current_page={:access_codes} />
 
-              <.input
-                field={@form[:max_uses]}
-                type="number"
-                label={gettext("Max Uses (Optional)")}
-                min="1"
-                placeholder={gettext("Unlimited if empty")}
-              />
-              
-    <!-- Optional: Event Selection could go here if needed -->
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <.page_header title={gettext("Access Codes")} />
 
-              <div class="pt-2">
-                <.primary_button type="submit" class="w-full">
-                  {gettext("Generate Code")}
-                </.primary_button>
+        <div class="grid lg:grid-cols-3 gap-8">
+          <%!-- Create Form --%>
+          <div class="lg:col-span-1">
+            <.card title={gettext("Generate New Code")}>
+              <.form for={@form} phx-change="validate" phx-submit="save" class="space-y-4">
+                <.input
+                  field={@form[:code]}
+                  type="text"
+                  label={gettext("Code")}
+                  placeholder="e.g. SUMMER-2025"
+                  required
+                />
+
+                <.input
+                  field={@form[:max_uses]}
+                  type="number"
+                  label={gettext("Max Uses (Optional)")}
+                  min="1"
+                  placeholder={gettext("Unlimited if empty")}
+                />
+
+                <div class="pt-2">
+                  <.primary_button type="submit" class="w-full">
+                    {gettext("Generate Code")}
+                  </.primary_button>
+                </div>
+              </.form>
+            </.card>
+          </div>
+
+          <%!-- List --%>
+          <div class="lg:col-span-2">
+            <.card title={gettext("Active Access Codes")}>
+              <div class="overflow-x-auto">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>{gettext("Code")}</th>
+                      <th>{gettext("Usage")}</th>
+                      <th>{gettext("Created By")}</th>
+                      <th>{gettext("Actions")}</th>
+                    </tr>
+                  </thead>
+                  <tbody id="access_codes" phx-update="stream">
+                    <tr :for={{id, code} <- @streams.access_codes} id={id}>
+                      <td class="font-mono font-bold">{code.code}</td>
+                      <td>
+                        {code.usage_count}
+                        <span :if={code.max_uses} class="text-base-content/50">
+                          / {code.max_uses}
+                        </span>
+                      </td>
+                      <td class="text-sm">
+                        {if code.created_by, do: code.created_by.email, else: "-"}
+                      </td>
+                      <td>
+                        <button
+                          phx-click="delete"
+                          phx-value-id={code.id}
+                          data-confirm={gettext("Are you sure?")}
+                          class="btn btn-ghost btn-xs text-error"
+                        >
+                          {gettext("Delete")}
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-            </.form>
-          </.card>
-        </div>
-        
-    <!-- List -->
-        <div class="lg:col-span-2">
-          <.card title={gettext("Active Access Codes")}>
-            <div class="overflow-x-auto">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>{gettext("Code")}</th>
-                    <th>{gettext("Usage")}</th>
-                    <th>{gettext("Created By")}</th>
-                    <th>{gettext("Actions")}</th>
-                  </tr>
-                </thead>
-                <tbody id="access_codes" phx-update="stream">
-                  <tr :for={{id, code} <- @streams.access_codes} id={id}>
-                    <td class="font-mono font-bold">{code.code}</td>
-                    <td>
-                      {code.usage_count}
-                      <span :if={code.max_uses} class="text-base-content/50">/ {code.max_uses}</span>
-                    </td>
-                    <td class="text-sm">
-                      {if code.created_by, do: code.created_by.email, else: "-"}
-                    </td>
-                    <td>
-                      <button
-                        phx-click="delete"
-                        phx-value-id={code.id}
-                        data-confirm={gettext("Are you sure?")}
-                        class="btn btn-ghost btn-xs text-error"
-                      >
-                        {gettext("Delete")}
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </.card>
+            </.card>
+          </div>
         </div>
       </div>
-    </.admin_page_container>
-    """
-  end
-
-  # Admin page wrapper helper
-  def admin_page_container(assigns) do
-    ~H"""
-    <div class="p-4 sm:p-6 lg:p-8">
-      <div class="mb-8">
-        <h1 class="text-2xl font-bold text-base-content">{@title}</h1>
-      </div>
-      {render_slot(@inner_block)}
-    </div>
+    </.page_container>
     """
   end
 end

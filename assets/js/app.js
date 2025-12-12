@@ -171,6 +171,27 @@ Hooks.AppleAnimations = {
       })
     })
 
+    // Fade Christmas tree on scroll
+    const christmasTree = this.el.querySelector(".christmas-tree")
+    if (christmasTree) {
+      this.scrollHandler = () => {
+        const scrollY = window.scrollY
+        const fadeStart = 100
+        const fadeEnd = 400
+
+        if (scrollY <= fadeStart) {
+          christmasTree.style.opacity = "0.15"
+        } else if (scrollY >= fadeEnd) {
+          christmasTree.style.opacity = "0"
+        } else {
+          const fadeProgress = (scrollY - fadeStart) / (fadeEnd - fadeStart)
+          christmasTree.style.opacity = (0.15 * (1 - fadeProgress)).toString()
+        }
+      }
+
+      window.addEventListener("scroll", this.scrollHandler, { passive: true })
+    }
+
     // Hide scroll indicator when video section is 50% visible
     const scrollIndicator = this.el.querySelector("#scroll-indicator")
     const videoSection = this.el.querySelector("#video")

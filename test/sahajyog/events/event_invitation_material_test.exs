@@ -346,7 +346,7 @@ defmodule Sahajyog.Events.EventInvitationMaterialTest do
     end
   end
 
-  defp valid_material_attrs(overrides \\ %{}) do
+  defp valid_material_attrs(overrides) do
     Map.merge(
       %{
         filename: "test-#{System.unique_integer([:positive])}.jpg",

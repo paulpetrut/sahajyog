@@ -70,8 +70,9 @@ defmodule Sahajyog.ContentAccessControlTest do
       refute "Excerpts" in categories
     end
 
-    test "Level3 users can access Welcome and Getting Started" do
-      user = %User{level: "Level3"}
+    # Level hierarchy: Level1 < Level2 < Level3 (higher levels have more access)
+    test "Level1 users can access Welcome and Getting Started only" do
+      user = %User{level: "Level1"}
       categories = Content.accessible_categories(user)
       assert "Welcome" in categories
       assert "Getting Started" in categories
@@ -88,8 +89,8 @@ defmodule Sahajyog.ContentAccessControlTest do
       assert "Excerpts" in categories
     end
 
-    test "Level1 users can access all categories" do
-      user = %User{level: "Level1"}
+    test "Level3 users can access all categories" do
+      user = %User{level: "Level3"}
       categories = Content.accessible_categories(user)
       assert "Welcome" in categories
       assert "Getting Started" in categories
@@ -107,14 +108,104 @@ defmodule Sahajyog.ContentAccessControlTest do
       refute Content.can_access_category?(nil, "Advanced Topics")
     end
 
-    test "Level3 users cannot access Advanced Topics" do
-      user = %User{level: "Level3"}
+    # Level hierarchy: Level1 < Level2 < Level3 (higher levels have more access)
+    test "Level1 users cannot access Advanced Topics" do
+      user = %User{level: "Level1"}
       refute Content.can_access_category?(user, "Advanced Topics")
     end
 
-    test "Level1 users can access Advanced Topics" do
-      user = %User{level: "Level1"}
+    test "Level2 users can access Advanced Topics" do
+      user = %User{level: "Level2"}
       assert Content.can_access_category?(user, "Advanced Topics")
+    end
+
+    test "Level3 users can access Advanced Topics" do
+      user = %User{level: "Level3"}
+      assert Content.can_access_category?(user, "Advanced Topics")
+    end
+  end
+
+  describe "video category access property tests" do
+    # **Feature: role-level-simplification, Property 6: Video category access**
+    # **Validates: Requirements 3.6, 5.1, 5.2, 5.3**
+    property "higher levels include all lower-level category access" do
+      check all(
+              level <- Generators.user_level(),
+              max_runs: 100
+            ) do
+        user = %User{level: level}
+        accessible = Content.accessible_categories(user)
+
+        # Define the expected category access based on level hierarchy
+        # Level1 < Level2 < Level3 (higher levels have more access)
+        base_categories = ["Welcome", "Getting Started"]
+        advanced_categories = ["Advanced Topics", "Excerpts"]
+
+        case level do
+          "Level1" ->
+            # Level1 users should only have access to base categories
+            Enum.each(base_categories, fn cat ->
+              assert cat in accessible,
+                     "Level1 user should have access to #{cat}"
+            end)
+
+            Enum.each(advanced_categories, fn cat ->
+              refute cat in accessible,
+                     "Level1 user should NOT have access to #{cat}"
+            end)
+
+          "Level2" ->
+            # Level2 users should have access to all categories
+            Enum.each(base_categories ++ advanced_categories, fn cat ->
+              assert cat in accessible,
+                     "Level2 user should have access to #{cat}"
+            end)
+
+          "Level3" ->
+            # Level3 users should have access to all categories (includes all lower levels)
+            Enum.each(base_categories ++ advanced_categories, fn cat ->
+              assert cat in accessible,
+                     "Level3 user should have access to #{cat}"
+            end)
+        end
+      end
+    end
+
+    # **Feature: role-level-simplification, Property 6: Video category access**
+    # **Validates: Requirements 3.6, 5.1, 5.2, 5.3**
+    property "level hierarchy is monotonic - higher levels have at least as much access" do
+      check all(
+              # Generate a random category to verify the hierarchy holds for any category
+              category <- Generators.video_category(),
+              max_runs: 100
+            ) do
+        level1_cats = Content.accessible_categories(%User{level: "Level1"}) |> MapSet.new()
+        level2_cats = Content.accessible_categories(%User{level: "Level2"}) |> MapSet.new()
+        level3_cats = Content.accessible_categories(%User{level: "Level3"}) |> MapSet.new()
+
+        # Level2 should have at least all categories that Level1 has
+        assert MapSet.subset?(level1_cats, level2_cats),
+               "Level2 should have access to all categories Level1 has"
+
+        # Level3 should have at least all categories that Level2 has
+        assert MapSet.subset?(level2_cats, level3_cats),
+               "Level3 should have access to all categories Level2 has"
+
+        # If Level1 can access a category, Level2 and Level3 must also be able to
+        if category in level1_cats do
+          assert category in level2_cats,
+                 "If Level1 can access #{category}, Level2 must also be able to"
+
+          assert category in level3_cats,
+                 "If Level1 can access #{category}, Level3 must also be able to"
+        end
+
+        # If Level2 can access a category, Level3 must also be able to
+        if category in level2_cats do
+          assert category in level3_cats,
+                 "If Level2 can access #{category}, Level3 must also be able to"
+        end
+      end
     end
   end
 end

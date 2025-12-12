@@ -71,6 +71,24 @@ defmodule SahajyogWeb.PublicTopicShowLive do
               </ul>
             </div>
           <% end %>
+
+          <div class="mt-12 pt-8 border-t border-base-content/10 flex flex-col items-center gap-4">
+            <.link
+              navigate={~p"/users/register?return_to=#{~p"/topics/#{@topic.slug}"}"}
+              class="btn btn-primary btn-lg rounded-full px-8"
+            >
+              {gettext("Register to Access More")}
+            </.link>
+            <p class="text-sm text-base-content/60">
+              {gettext("Already have an account?")}
+              <.link
+                navigate={~p"/users/log-in?return_to=#{~p"/topics/#{@topic.slug}"}"}
+                class="link link-primary font-semibold"
+              >
+                {gettext("Log in")}
+              </.link>
+            </p>
+          </div>
         </article>
       </div>
     </Layouts.app>

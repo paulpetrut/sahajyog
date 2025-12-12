@@ -201,6 +201,14 @@ defmodule SahajyogWeb.Layouts do
               </.link>
 
               <.link
+                :if={@current_scope}
+                navigate={~p"/store"}
+                data-footer-path="/store"
+                class="footer-nav-link text-base-content/70 hover:text-primary transition-colors text-sm"
+              >
+                {gettext("Store")}
+              </.link>
+              <.link
                 :if={
                   @current_scope && Sahajyog.Accounts.User.eligible_for_upgrade?(@current_scope.user)
                 }

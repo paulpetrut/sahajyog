@@ -85,6 +85,12 @@ defmodule SahajyogWeb.Router do
       live "/events/:slug", EventShowLive
       live "/events/:slug/edit", EventEditLive
       live "/level-upgrade", LevelUpgradeLive
+      # SahajStore routes
+      live "/store", SahajStoreLive
+      live "/store/new", StoreItemCreateLive
+      live "/store/my-items", MyStoreItemsLive
+      live "/store/:id", StoreItemShowLive
+      live "/store/:id/edit", StoreItemCreateLive
     end
 
     get "/resources/:id/download", ResourceController, :download
@@ -110,6 +116,7 @@ defmodule SahajyogWeb.Router do
       live "/events", EventsLive
       live "/event-proposals", EventProposalsLive
       live "/access-codes", AccessCodesLive
+      live "/store-items", StoreItemsLive
     end
   end
 

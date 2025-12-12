@@ -41,12 +41,20 @@ defmodule SahajyogWeb.UserSessionController do
   end
 
   # email + password login
-  defp create(conn, %{"user" => user_params}, info) do
+  defp create(conn, %{"user" => user_params} = params, info) do
     %{"email" => email, "password" => password} = user_params
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
       # Use provided info message, or default to personalized "Welcome back!" for returning users
       flash_message = info || welcome_back_message(user)
+
+      # Store return_to in session if provided
+      conn =
+        case params["return_to"] do
+          nil -> conn
+          "" -> conn
+          return_to -> put_session(conn, :user_return_to, return_to)
+        end
 
       conn
       |> put_flash(:info, flash_message)

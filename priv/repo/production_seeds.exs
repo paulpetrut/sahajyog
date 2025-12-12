@@ -24,7 +24,7 @@ users_data = [
   },
   %{
     id: 4,
-    role: "regular",
+    role: "user",
     email: "user@test.com",
     hashed_password: "$2b$12$Gdqp/4FL679PKN8IPube1eUM79O5tu7jmzZV/Wc.zH.WX96cReVt2",
     confirmed_at: ~U[2025-11-15 16:38:58Z],
@@ -42,7 +42,7 @@ users_data = [
   },
   %{
     id: 3,
-    role: "manager",
+    role: "user",
     email: "manager@test.com",
     hashed_password: "$2b$12$4wdN2b.JKffgxbLyXHcSS.5QrBLrTO0ptJJUQy9nY0c5UnBtEKgu.",
     confirmed_at: ~U[2025-11-15 16:38:58Z],
@@ -51,7 +51,7 @@ users_data = [
   },
   %{
     id: 6,
-    role: "regular",
+    role: "user",
     email: "mipanet@yahoo.com",
     hashed_password: nil,
     confirmed_at: ~U[2025-11-15 18:50:11Z],

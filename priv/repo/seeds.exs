@@ -38,33 +38,33 @@ case Repo.get_by(User, email: admin_attrs.email) do
     IO.puts("✓ Admin user already exists: #{admin_attrs.email}")
 end
 
-# Create test manager user
-manager_attrs = %{
+# Create test user (formerly "manager" - now simplified to "user" role)
+test_user1_attrs = %{
   email: "manager@test.com",
   password: "manager123456",
-  role: "manager"
+  role: "user"
 }
 
-case Repo.get_by(User, email: manager_attrs.email) do
+case Repo.get_by(User, email: test_user1_attrs.email) do
   nil ->
     %User{}
-    |> User.email_changeset(manager_attrs, validate_unique: false)
-    |> User.password_changeset(manager_attrs, hash_password: true)
-    |> Ecto.Changeset.put_change(:role, "manager")
+    |> User.email_changeset(test_user1_attrs, validate_unique: false)
+    |> User.password_changeset(test_user1_attrs, hash_password: true)
+    |> Ecto.Changeset.put_change(:role, "user")
     |> Ecto.Changeset.put_change(:confirmed_at, DateTime.utc_now(:second))
     |> Repo.insert!()
 
-    IO.puts("✓ Created manager user: #{manager_attrs.email}")
+    IO.puts("✓ Created test user: #{test_user1_attrs.email}")
 
   _user ->
-    IO.puts("✓ Manager user already exists: #{manager_attrs.email}")
+    IO.puts("✓ Test user already exists: #{test_user1_attrs.email}")
 end
 
-# Create test regular user
+# Create test user (formerly "regular" - now simplified to "user" role)
 user_attrs = %{
   email: "user@test.com",
   password: "user123456789",
-  role: "regular"
+  role: "user"
 }
 
 case Repo.get_by(User, email: user_attrs.email) do
@@ -72,14 +72,14 @@ case Repo.get_by(User, email: user_attrs.email) do
     %User{}
     |> User.email_changeset(user_attrs, validate_unique: false)
     |> User.password_changeset(user_attrs, hash_password: true)
-    |> Ecto.Changeset.put_change(:role, "regular")
+    |> Ecto.Changeset.put_change(:role, "user")
     |> Ecto.Changeset.put_change(:confirmed_at, DateTime.utc_now(:second))
     |> Repo.insert!()
 
-    IO.puts("✓ Created regular user: #{user_attrs.email}")
+    IO.puts("✓ Created test user: #{user_attrs.email}")
 
   _user ->
-    IO.puts("✓ Regular user already exists: #{user_attrs.email}")
+    IO.puts("✓ Test user already exists: #{user_attrs.email}")
 end
 
 # Create test admin user

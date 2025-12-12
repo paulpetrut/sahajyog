@@ -12,13 +12,24 @@ defmodule SahajyogWeb.UserLive.Registration do
         <div class="w-full max-w-md">
           <div class="text-center mb-8">
             <h1 class="text-4xl font-bold mb-3">{gettext("Register for an account")}</h1>
-            <p class="text-base-content/70">
-              {gettext("Already registered?")}
-              <.link navigate={~p"/users/log-in"} class="font-semibold text-brand hover:underline">
+          </div>
+
+          <%!-- Prominent login option --%>
+          <div class="card bg-base-300/50 border border-base-content/10 mb-6">
+            <div class="card-body py-4 flex-row items-center justify-between">
+              <span class="text-base-content/80">{gettext("Already have an account?")}</span>
+              <.link
+                navigate={
+                  if @return_to,
+                    do: ~p"/users/log-in?return_to=#{@return_to}",
+                    else: ~p"/users/log-in"
+                }
+                class="btn btn-primary btn-sm"
+              >
+                <.icon name="hero-arrow-right-on-rectangle" class="w-4 h-4" />
                 {gettext("Log in")}
               </.link>
-              {gettext("to your account now.")}
-            </p>
+            </div>
           </div>
 
           <div class="card bg-base-100 shadow-xl">
@@ -65,15 +76,20 @@ defmodule SahajyogWeb.UserLive.Registration do
   end
 
   @impl true
-  def mount(_params, _session, %{assigns: %{current_scope: %{user: user}}} = socket)
+  def mount(params, _session, %{assigns: %{current_scope: %{user: user}}} = socket)
       when not is_nil(user) do
-    {:ok, redirect(socket, to: SahajyogWeb.UserAuth.signed_in_path(socket))}
+    return_to = params["return_to"]
+    {:ok, redirect(socket, to: return_to || SahajyogWeb.UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     changeset = Accounts.change_user_email(%User{}, %{})
+    return_to = params["return_to"]
 
-    socket = assign(socket, :page_title, gettext("Register"))
+    socket =
+      socket
+      |> assign(:page_title, gettext("Register"))
+      |> assign(:return_to, return_to)
 
     {:ok, assign_form(socket, changeset), temporary_assigns: [form: nil]}
   end

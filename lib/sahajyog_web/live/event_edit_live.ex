@@ -696,12 +696,6 @@ defmodule SahajyogWeb.EventEditLive do
                       label={gettext("Estimated Participants")}
                       min="1"
                     />
-                    <.input
-                      field={@form[:online_url]}
-                      type="text"
-                      label={gettext("Online Link (YouTube)")}
-                      placeholder="https://youtube.com/..."
-                    />
 
                     <%!-- Online Event Settings --%>
                     <div class="border-t border-base-content/10 pt-4 mt-4">
@@ -720,18 +714,31 @@ defmodule SahajyogWeb.EventEditLive do
                       <% is_online = Ecto.Changeset.get_field(@form.source, :is_online) || false %>
 
                       <%= if is_online do %>
-                        <div class="mt-3 p-4 bg-info/5 rounded-lg border border-info/20">
-                          <.input
-                            field={@form[:meeting_platform_link]}
-                            type="text"
-                            label={gettext("Meeting Platform Link")}
-                            placeholder="https://teams.microsoft.com/... or https://meet.google.com/..."
-                          />
-                          <p class="text-xs text-base-content/60 mt-1">
-                            {gettext(
-                              "Link to Microsoft Teams, Google Meet, Zoom, or other meeting platform"
-                            )}
-                          </p>
+                        <div class="mt-3 p-4 bg-info/5 rounded-lg border border-info/20 space-y-4">
+                          <div>
+                            <.input
+                              field={@form[:online_url]}
+                              type="text"
+                              label={gettext("Online Link (YouTube)")}
+                              placeholder="https://youtube.com/..."
+                            />
+                            <p class="text-xs text-base-content/60 mt-1">
+                              {gettext("YouTube link for live streaming the event")}
+                            </p>
+                          </div>
+                          <div>
+                            <.input
+                              field={@form[:meeting_platform_link]}
+                              type="text"
+                              label={gettext("Meeting Platform Link")}
+                              placeholder="https://teams.microsoft.com/... or https://meet.google.com/..."
+                            />
+                            <p class="text-xs text-base-content/60 mt-1">
+                              {gettext(
+                                "Link to Microsoft Teams, Google Meet, Zoom, or other meeting platform"
+                              )}
+                            </p>
+                          </div>
                         </div>
                       <% end %>
                     </div>

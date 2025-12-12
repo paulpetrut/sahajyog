@@ -118,6 +118,50 @@ defmodule SahajyogWeb.WelcomeLive do
           width: 0;
           transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
+        /* Ornate video border - detailed gold bead frame */
+        .ornate-video-border {
+          position: relative;
+          padding: 10px; /* Reduced padding for a narrower frame */
+          background: linear-gradient(to bottom, #d4af37, #a67c00); /* Base gold background */
+          border-radius: 4px; /* Slight rounding for the outer edge */
+          box-shadow:
+            0 10px 30px -10px rgba(0,0,0,0.5), /* Drop shadow */
+            inset 0 0 0 1px rgba(255,255,255,0.4), /* Outer highlight */
+            inset 0 0 0 1px #5e4b1f, /* Outer dark rim */
+            0 0 0 1px #5e4b1f; /* Outer dark border */
+        }
+
+        /* The bead pattern */
+        .ornate-video-border::after {
+          content: '';
+          position: absolute;
+          inset: 3px; /* Position inside the outer rim */
+          border: 1px solid #7a5f25; /* Border around beads */
+          /* Create the bead look using radial gradients */
+          background-image:
+            /* Bead highlight (shine) */
+            radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 20%),
+            /* Bead body (gold sphere) */
+            radial-gradient(circle at 50% 50%, #fadd70 0%, #e0aa3e 40%, #b8860b 80%, #5e4b1f 100%);
+          background-size: 10px 10px; /* Smaller beads */
+          background-repeat: round; /* Repeat to fill, adjusting size slightly if needed */
+          box-shadow: inset 0 0 3px rgba(0,0,0,0.5); /* Inner shadow for depth */
+        }
+
+        /* Inner glossy rim (between beads and video) */
+        .ornate-video-border::before {
+          content: '';
+          position: absolute;
+          inset: 8px; /* Inside the beads */
+          z-index: 2; /* Sit on top of beads at the edges if overlap */
+          border: 1px solid #5e4b1f; /* Dark inner rim */
+          box-shadow:
+            0 0 0 1px #d4af37, /* Gold rim */
+            0 0 6px rgba(0,0,0,0.5); /* Shadow casting onto the video */
+          pointer-events: none;
+        }
+
         .line-grow.visible {
           width: 100%;
         }
@@ -261,9 +305,9 @@ defmodule SahajyogWeb.WelcomeLive do
         >
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="apple-reveal">
-              <!-- Video container with subtle border -->
-              <div class="relative rounded-2xl lg:rounded-3xl overflow-hidden bg-base-200/50 p-1.5">
-                <div class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black">
+              <!-- Video container with ornate golden border -->
+              <div class="ornate-video-border">
+                <div class="rounded-lg overflow-hidden aspect-video bg-black shadow-inner">
                   <.video_player
                     video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
                     provider={:youtube}

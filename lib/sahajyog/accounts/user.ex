@@ -8,7 +8,7 @@ defmodule Sahajyog.Accounts.User do
     field :hashed_password, :string, redact: true
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
-    field :role, :string, default: "regular"
+    field :role, :string, default: "user"
     field :level, :string, default: "Level1"
     alias Sahajyog.Events.{EventAttendance, EventRideRequest}
 
@@ -24,7 +24,7 @@ defmodule Sahajyog.Accounts.User do
     timestamps(type: :utc_datetime)
   end
 
-  @roles ~w(admin manager regular)
+  @roles ~w(admin user)
   @levels ~w(Level1 Level2 Level3)
 
   def roles, do: @roles
@@ -33,11 +33,8 @@ defmodule Sahajyog.Accounts.User do
   def admin?(%__MODULE__{role: "admin"}), do: true
   def admin?(_), do: false
 
-  def manager?(%__MODULE__{role: "manager"}), do: true
-  def manager?(_), do: false
-
-  def regular?(%__MODULE__{role: "regular"}), do: true
-  def regular?(_), do: false
+  def user?(%__MODULE__{role: "user"}), do: true
+  def user?(_), do: false
 
   @doc """
   Checks if a user can access events.

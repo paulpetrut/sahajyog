@@ -116,6 +116,16 @@
               </.link>
             </li>
           <% end %>
+          <%!-- SahajStore link --%>
+          <li>
+            <.link
+              href={~p"/store"}
+              data-nav-path="/store"
+              class="nav-link font-medium hover:text-base-content focus:outline-none"
+            >
+              {gettext("Store")}
+            </.link>
+          </li>
           <%!-- Admin link - only for admins --%>
           <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
             <li>

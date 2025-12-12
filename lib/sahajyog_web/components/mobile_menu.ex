@@ -54,6 +54,9 @@ defmodule SahajyogWeb.MobileMenu do
                   <.link navigate={~p"/events"}>{gettext("Events")}</.link>
                 </li>
               <% end %>
+              <li>
+                <.link navigate={~p"/store"}>{gettext("Store")}</.link>
+              </li>
               <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
                 <li>
                   <.link navigate={~p"/admin/videos"}>{gettext("Admin")}</.link>

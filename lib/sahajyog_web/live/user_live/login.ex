@@ -70,6 +70,7 @@ defmodule SahajyogWeb.UserLive.Login do
                   phx-submit="submit_password"
                   phx-trigger-action={@trigger_submit}
                 >
+                  <input :if={@return_to} type="hidden" name="return_to" value={@return_to} />
                   <.input
                     readonly={!!@current_scope}
                     field={@form[:email]}
@@ -162,7 +163,14 @@ defmodule SahajyogWeb.UserLive.Login do
           <%!-- Sign up link --%>
           <p :if={!@current_scope} class="mt-6 text-center text-sm">
             {gettext("Don't have an account?")}
-            <.link navigate={~p"/users/register"} class="link link-primary font-semibold">
+            <.link
+              navigate={
+                if @return_to,
+                  do: ~p"/users/register?return_to=#{@return_to}",
+                  else: ~p"/users/register"
+              }
+              class="link link-primary font-semibold"
+            >
               {gettext("Sign up")}
             </.link>
           </p>
@@ -173,12 +181,15 @@ defmodule SahajyogWeb.UserLive.Login do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, session, socket) do
     email =
       Phoenix.Flash.get(socket.assigns.flash, :email) ||
         get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)])
 
     form = to_form(%{"email" => email}, as: "user")
+
+    # Get return_to from params or session
+    return_to = params["return_to"] || session["user_return_to"]
 
     {:ok,
      assign(socket,
@@ -186,7 +197,8 @@ defmodule SahajyogWeb.UserLive.Login do
        form: form,
        trigger_submit: false,
        remember_me: true,
-       show_magic_form: false
+       show_magic_form: false,
+       return_to: return_to
      )}
   end
 

@@ -133,26 +133,36 @@ defmodule Sahajyog.Events do
     user_level = Keyword.get(opts, :user_level, "Level1")
 
     # Construct level-specific public access condition
+    # Events with nil level are treated as Level1 (most restricted, fail-safe)
     public_access =
       case user_level do
         "Level1" ->
-          dynamic([e], e.status == "public" and e.event_date >= ^today and e.level == "Level1")
+          dynamic(
+            [e],
+            e.status == "public" and e.event_date >= ^today and
+              (e.level == "Level1" or is_nil(e.level))
+          )
 
         "Level2" ->
           dynamic(
             [e],
-            e.status == "public" and e.event_date >= ^today and e.level in ["Level1", "Level2"]
+            e.status == "public" and e.event_date >= ^today and
+              (e.level in ["Level1", "Level2"] or is_nil(e.level))
           )
 
         "Level3" ->
           dynamic(
             [e],
             e.status == "public" and e.event_date >= ^today and
-              e.level in ["Level1", "Level2", "Level3"]
+              (e.level in ["Level1", "Level2", "Level3"] or is_nil(e.level))
           )
 
         _ ->
-          dynamic([e], e.status == "public" and e.event_date >= ^today and e.level == "Level1")
+          dynamic(
+            [e],
+            e.status == "public" and e.event_date >= ^today and
+              (e.level == "Level1" or is_nil(e.level))
+          )
       end
 
     # Condition for personal involvement (owner or team member)
@@ -1022,10 +1032,10 @@ defmodule Sahajyog.Events do
 
   defp filter_by_level(query, level) do
     case level do
-      "Level1" -> where(query, [e], e.level == "Level1" or is_nil(e.level))
-      "Level2" -> where(query, [e], e.level in ["Level1", "Level2"] or is_nil(e.level))
-      "Level3" -> where(query, [e], e.level in ["Level1", "Level2", "Level3"] or is_nil(e.level))
-      _ -> where(query, [e], e.level == "Level1" or is_nil(e.level))
+      "Level1" -> where(query, [e], e.level == "Level1")
+      "Level2" -> where(query, [e], e.level in ["Level1", "Level2"])
+      "Level3" -> where(query, [e], e.level in ["Level1", "Level2", "Level3"])
+      _ -> where(query, [e], e.level == "Level1")
     end
   end
 
