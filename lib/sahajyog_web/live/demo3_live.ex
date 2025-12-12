@@ -551,9 +551,61 @@ defmodule SahajyogWeb.Demo3Live do
                   ⭐
                 </span>
               </div>
+            </div>
+          </div>
+        </section>
+        
+    <!-- VIDEO SECTION -->
+        <section
+          :if={@current_video}
+          id="video"
+          class="pt-6 md:pt-10 lg:pt-12 pb-12 md:pb-20 lg:pb-24 relative"
+        >
+          <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="apple-reveal">
+              <!-- Video container with Christmas border -->
+              <div class="relative rounded-2xl lg:rounded-3xl overflow-hidden candy-cane-border p-4 bg-white/10 backdrop-blur-sm">
+                <div class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black">
+                  <.video_player
+                    video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
+                    provider={:youtube}
+                    locale={@locale}
+                  />
+                </div>
+                <!-- Corner decorations -->
+                <span class="absolute -top-3 -left-3 text-3xl ornament-swing">🎄</span>
+                <span
+                  class="absolute -top-3 -right-3 text-3xl ornament-swing"
+                  style="animation-delay: -1s;"
+                >
+                  🎄
+                </span>
+              </div>
               
+    <!-- Video info -->
+              <div class="mt-6 md:mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
+                <div>
+                  <p class="text-xs tracking-[0.2em] uppercase text-yellow-400 font-semibold mb-1 flex items-center gap-2">
+                    <span>🎁</span> {gettext("Today's Talk")}
+                  </p>
+                  <h3 class="text-lg font-medium text-white">{@current_video.title}</h3>
+                </div>
+                <.link
+                  navigate={~p"/talks"}
+                  class="text-sm text-white/50 hover:text-white transition-colors self-start md:self-auto"
+                >
+                  {gettext("View all")} →
+                </.link>
+              </div>
+            </div>
+          </div>
+        </section>
+        
     <!-- How It Works - Christmas themed steps -->
-              <div class="grid grid-cols-3 gap-1 md:gap-4 lg:gap-8 mt-6 md:mt-16 lg:mt-20">
+        <section class="py-8 md:py-16 lg:py-20">
+          <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="apple-reveal">
+              <div class="grid grid-cols-3 gap-1 md:gap-4 lg:gap-8">
                 <!-- Step 1 -->
                 <.link href="#video" class="step-card group cursor-pointer">
                   <div class="text-center p-2 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
@@ -614,52 +666,6 @@ defmodule SahajyogWeb.Demo3Live do
                       {gettext("Feel the peace within and grow through regular practice")}
                     </p>
                   </div>
-                </.link>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-    <!-- VIDEO SECTION -->
-        <section
-          :if={@current_video}
-          id="video"
-          class="pt-6 md:pt-10 lg:pt-12 pb-12 md:pb-20 lg:pb-24 relative"
-        >
-          <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="apple-reveal">
-              <!-- Video container with Christmas border -->
-              <div class="relative rounded-2xl lg:rounded-3xl overflow-hidden candy-cane-border p-4 bg-white/10 backdrop-blur-sm">
-                <div class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black">
-                  <.video_player
-                    video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
-                    provider={:youtube}
-                    locale={@locale}
-                  />
-                </div>
-                <!-- Corner decorations -->
-                <span class="absolute -top-3 -left-3 text-3xl ornament-swing">🎄</span>
-                <span
-                  class="absolute -top-3 -right-3 text-3xl ornament-swing"
-                  style="animation-delay: -1s;"
-                >
-                  🎄
-                </span>
-              </div>
-              
-    <!-- Video info -->
-              <div class="mt-6 md:mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
-                <div>
-                  <p class="text-xs tracking-[0.2em] uppercase text-yellow-400 font-semibold mb-1 flex items-center gap-2">
-                    <span>🎁</span> {gettext("Today's Talk")}
-                  </p>
-                  <h3 class="text-lg font-medium text-white">{@current_video.title}</h3>
-                </div>
-                <.link
-                  navigate={~p"/talks"}
-                  class="text-sm text-white/50 hover:text-white transition-colors self-start md:self-auto"
-                >
-                  {gettext("View all")} →
                 </.link>
               </div>
             </div>
