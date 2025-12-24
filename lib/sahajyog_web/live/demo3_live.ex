@@ -174,8 +174,8 @@ defmodule SahajyogWeb.Demo3Live do
           animation: twinkle 1.5s ease-in-out infinite alternate;
         }
         @keyframes twinkle {
-          0% { opacity: 0.4; transform: scale(0.9); }
-          100% { opacity: 1; transform: scale(1.1); }
+          0% { opacity: 0.4; }
+          100% { opacity: 1; }
         }
 
         /* Smooth hover */
