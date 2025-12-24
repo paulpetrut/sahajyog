@@ -115,46 +115,7 @@ defmodule SahajyogWeb.Demo3Live do
         .snowflake:nth-child(19) { left: 95%; animation-duration: 11s; animation-delay: 0.6s; font-size: 0.9rem; }
         .snowflake:nth-child(20) { left: 3%; animation-duration: 14s; animation-delay: 2.6s; font-size: 1.2rem; }
 
-        /* Scroll-triggered animations */
-        .apple-reveal {
-          opacity: 0;
-          transform: translateY(60px);
-          transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .apple-reveal.revealed {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .apple-scale {
-          opacity: 0;
-          transform: scale(0.95);
-          transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .apple-scale.revealed {
-          opacity: 1;
-          transform: scale(1);
-        }
-
-        /* Stagger delays for children */
-        .apple-reveal:nth-child(2) { transition-delay: 0.1s; }
-        .apple-reveal:nth-child(3) { transition-delay: 0.2s; }
-        .apple-reveal:nth-child(4) { transition-delay: 0.3s; }
-
-        /* Hero animation */
-        .hero-reveal {
-          opacity: 0;
-          transform: translateY(30px);
-          animation: heroReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-        }
-        @keyframes heroReveal {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+        /* Legacy animations replaced by GSAP */
 
         /* Christmas gradient text */
         .christmas-gradient-text {
@@ -196,14 +157,7 @@ defmodule SahajyogWeb.Demo3Live do
           100% { background-position: 0% 50%; }
         }
 
-        /* Floating animation */
-        .float {
-          animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
+        /* Float animation replaced by GSAP */
 
         /* Ornament swing animation */
         .ornament-swing {
@@ -409,7 +363,7 @@ defmodule SahajyogWeb.Demo3Live do
 
       <div
         id="christmas-demo-page"
-        phx-hook="AppleAnimations"
+        phx-hook="GSAPScrollReveal"
         class="min-h-screen christmas-gradient text-white font-display"
       >
         <!-- Christmas Lights Banner (CSS Implementation) -->
@@ -432,7 +386,11 @@ defmodule SahajyogWeb.Demo3Live do
         </div>
         
     <!-- HERO: Christmas themed -->
-        <section class="relative overflow-hidden pt-16 md:pt-24 lg:pt-36 pb-6 md:pb-10 lg:pb-12 flex flex-col justify-center">
+        <section
+          id="hero-section"
+          phx-hook="GSAPHero"
+          class="relative overflow-hidden pt-16 md:pt-24 lg:pt-36 pb-6 md:pb-10 lg:pb-12 flex flex-col justify-center"
+        >
           <!-- Christmas Tree Background -->
           <svg
             class="christmas-tree"
@@ -508,36 +466,43 @@ defmodule SahajyogWeb.Demo3Live do
           </svg>
           
     <!-- Animated Christmas orbs -->
-          <div class="absolute top-1/4 -left-32 w-96 h-96 bg-red-500/20 rounded-full blur-[100px] float">
+          <div class="hero-orb absolute top-1/4 -left-32 w-96 h-96 bg-red-500/20 rounded-full blur-[100px]">
           </div>
           <div
-            class="absolute bottom-1/4 -right-32 w-80 h-80 bg-green-500/20 rounded-full blur-[100px] float"
+            class="hero-orb absolute bottom-1/4 -right-32 w-80 h-80 bg-green-500/20 rounded-full blur-[100px]"
             style="animation-delay: -3s;"
           >
           </div>
           <div
-            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-500/10 rounded-full blur-[80px] float"
+            class="hero-orb absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-500/10 rounded-full blur-[80px]"
             style="animation-delay: -1.5s;"
           >
           </div>
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="hero-reveal">
+            <div>
               <!-- Christmas Eyebrow -->
-              <p class="text-xs md:text-sm tracking-[0.3em] uppercase text-yellow-400/80 mb-2 md:mb-6 font-medium flex items-center gap-2">
+              <p class="hero-element text-xs md:text-sm tracking-[0.3em] uppercase text-yellow-400/80 mb-2 md:mb-6 font-medium flex items-center gap-2">
                 <span class="ornament-swing inline-block">🎄</span>
                 {gettext("Free Meditation")}
                 <span class="ornament-swing inline-block" style="animation-delay: -1.5s;">🎄</span>
               </p>
               
     <!-- Main headline with Christmas styling -->
-              <h1 class="text-[clamp(2rem,8vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-3 md:mb-8 font-christmas">
+              <h1 class="hero-element text-[clamp(2rem,8vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-3 md:mb-8 font-christmas">
                 <span class="block text-white drop-shadow-lg">{gettext("Realize your Self")}</span>
-                <span class="block christmas-gradient-text">{gettext("inner silence")}</span>
+                <span
+                  class="block christmas-gradient-text"
+                  phx-hook="GSAPTextReveal"
+                  id="hero-text-title-3"
+                  phx-update="ignore"
+                >
+                  {gettext("inner silence")}
+                </span>
               </h1>
               
     <!-- Christmas decorations around subhead -->
-              <div class="relative">
+              <div class="hero-element relative">
                 <span class="absolute -left-8 top-0 text-3xl ornament-swing hidden md:inline">🎁</span>
                 <p class="text-base md:text-xl lg:text-2xl text-white/70 max-w-xl leading-relaxed font-light mb-4 md:mb-12">
                   {gettext(
@@ -562,7 +527,7 @@ defmodule SahajyogWeb.Demo3Live do
           class="pt-6 md:pt-10 lg:pt-12 pb-12 md:pb-20 lg:pb-24 relative"
         >
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="apple-reveal">
+            <div class="gsap-reveal" data-toggle-actions="play none none reverse">
               <!-- Video container with Christmas border -->
               <div class="relative rounded-2xl lg:rounded-3xl overflow-hidden candy-cane-border p-4 bg-white/10 backdrop-blur-sm">
                 <div class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black">
@@ -604,7 +569,7 @@ defmodule SahajyogWeb.Demo3Live do
     <!-- How It Works - Christmas themed steps -->
         <section class="py-8 md:py-16 lg:py-20">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="apple-reveal">
+            <div class="gsap-reveal" data-toggle-actions="play none none reverse">
               <div class="grid grid-cols-3 gap-1 md:gap-4 lg:gap-8">
                 <!-- Step 1 -->
                 <.link href="#video" class="step-card group cursor-pointer">
@@ -690,7 +655,10 @@ defmodule SahajyogWeb.Demo3Live do
 
           <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-20">
             <!-- Section header -->
-            <div class="max-w-2xl mb-6 md:mb-16 lg:mb-20 apple-reveal">
+            <div
+              class="max-w-2xl mb-6 md:mb-16 lg:mb-20 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <p class="text-sm tracking-[0.2em] uppercase text-red-400 font-semibold mb-4 flex items-center gap-2">
                 <span class="twinkle">
                   <!-- SVG Holly Icon -->
@@ -723,9 +691,14 @@ defmodule SahajyogWeb.Demo3Live do
             </div>
             
     <!-- Feature cards -->
-            <div class="grid md:grid-cols-3 gap-4 apple-reveal">
+            <div
+              id="features-grid"
+              phx-hook="GSAPCard3D"
+              class="grid md:grid-cols-3 gap-4 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <!-- Card 1 -->
-              <div class="christmas-card bg-gradient-to-br from-red-900/50 to-red-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-red-500/20 group hover:border-red-500/40 transition-all hover:-translate-y-1">
+              <div class="christmas-card gsap-3d-card bg-gradient-to-br from-red-900/50 to-red-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-red-500/20 group hover:border-red-500/40 transition-all hover:-translate-y-1">
                 <div class="relative z-10">
                   <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                     <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-red-500/20 text-red-400 md:mb-8 shrink-0">
@@ -748,7 +721,7 @@ defmodule SahajyogWeb.Demo3Live do
               </div>
               
     <!-- Card 2 -->
-              <div class="christmas-card bg-gradient-to-br from-green-900/50 to-green-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-green-500/20 group hover:border-green-500/40 transition-all hover:-translate-y-1">
+              <div class="christmas-card gsap-3d-card bg-gradient-to-br from-green-900/50 to-green-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-green-500/20 group hover:border-green-500/40 transition-all hover:-translate-y-1">
                 <div class="relative z-10">
                   <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                     <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-green-500/20 text-green-400 md:mb-8 shrink-0">
@@ -771,7 +744,7 @@ defmodule SahajyogWeb.Demo3Live do
               </div>
               
     <!-- Card 3 -->
-              <div class="christmas-card bg-gradient-to-br from-yellow-900/50 to-yellow-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-yellow-500/20 group hover:border-yellow-500/40 transition-all hover:-translate-y-1">
+              <div class="christmas-card gsap-3d-card bg-gradient-to-br from-yellow-900/50 to-yellow-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-yellow-500/20 group hover:border-yellow-500/40 transition-all hover:-translate-y-1">
                 <div class="relative z-10">
                   <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                     <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-yellow-500/20 text-yellow-400 md:mb-8 shrink-0">
@@ -820,7 +793,7 @@ defmodule SahajyogWeb.Demo3Live do
           </div>
 
           <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-20 pt-10">
-            <div class="mb-12 md:mb-16 apple-reveal">
+            <div class="mb-12 md:mb-16 gsap-reveal" data-toggle-actions="play none none reverse">
               <p class="text-sm tracking-[0.2em] uppercase text-green-400 font-semibold mb-4 flex items-center gap-2">
                 <span>
                   <!-- SVG Tree Icon -->
@@ -852,11 +825,16 @@ defmodule SahajyogWeb.Demo3Live do
               </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-6 apple-reveal">
+            <div
+              id="topics-grid"
+              phx-hook="GSAPCard3D"
+              class="grid md:grid-cols-3 gap-6 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <%= for topic <- @featured_topics do %>
                 <.link
                   navigate={~p"/public/topics/#{topic.slug}"}
-                  class="group relative bg-gradient-to-br from-green-900/30 to-green-950/30 backdrop-blur-sm rounded-2xl p-6 lg:p-8 hover:from-green-900/50 hover:to-green-950/50 transition-all border border-green-500/20 hover:border-green-500/40 hover:-translate-y-1"
+                  class="gsap-3d-card group relative bg-gradient-to-br from-green-900/30 to-green-950/30 backdrop-blur-sm rounded-2xl p-6 lg:p-8 hover:from-green-900/50 hover:to-green-950/50 transition-all border border-green-500/20 hover:border-green-500/40 hover:-translate-y-1"
                 >
                   <div class="min-h-[120px]">
                     <h3 class="text-xl font-bold mb-3 group-hover:text-green-400 transition-colors font-serif text-white">
@@ -897,7 +875,10 @@ defmodule SahajyogWeb.Demo3Live do
           </div>
 
           <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-20 pt-10">
-            <div class="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 apple-reveal">
+            <div
+              class="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <div class="max-w-2xl">
                 <p class="text-sm tracking-[0.2em] uppercase text-yellow-400 font-semibold mb-4 flex items-center gap-2">
                   <span>
@@ -938,11 +919,16 @@ defmodule SahajyogWeb.Demo3Live do
               </.link>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-6 apple-reveal">
+            <div
+              id="events-grid"
+              phx-hook="GSAPCard3D"
+              class="grid md:grid-cols-3 gap-6 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <%= for event <- @featured_events do %>
                 <.link
                   navigate={~p"/public/events/#{event.slug}"}
-                  class="group relative bg-gradient-to-br from-yellow-900/30 to-yellow-950/30 backdrop-blur-sm rounded-2xl p-6 lg:p-8 hover:from-yellow-900/50 hover:to-yellow-950/50 transition-all border border-yellow-500/20 hover:border-yellow-500/40 hover:-translate-y-1"
+                  class="gsap-3d-card group relative bg-gradient-to-br from-yellow-900/30 to-yellow-950/30 backdrop-blur-sm rounded-2xl p-6 lg:p-8 hover:from-yellow-900/50 hover:to-yellow-950/50 transition-all border border-yellow-500/20 hover:border-yellow-500/40 hover:-translate-y-1"
                 >
                   <div class="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400">
                     <%= if event.event_date do %>
@@ -1002,7 +988,10 @@ defmodule SahajyogWeb.Demo3Live do
             🎁
           </div>
 
-          <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center relative z-10 apple-scale">
+          <div
+            class="max-w-5xl mx-auto px-6 lg:px-8 text-center relative z-10 gsap-reveal"
+            data-toggle-actions="play none none reverse"
+          >
             <div class="mb-6">
               <span class="text-5xl">⭐</span>
             </div>
@@ -1019,7 +1008,10 @@ defmodule SahajyogWeb.Demo3Live do
         
     <!-- CTA: Christmas themed -->
         <section class="py-12 md:py-32 lg:py-40 border-t border-white/10">
-          <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center apple-reveal">
+          <div
+            class="max-w-5xl mx-auto px-6 lg:px-8 text-center gsap-reveal"
+            data-toggle-actions="play none none reverse"
+          >
             <div class="mb-6 flex justify-center gap-4">
               <span class="text-4xl ornament-swing">🎁</span>
               <span class="text-4xl ornament-swing" style="animation-delay: -0.5s;">🎄</span>
@@ -1054,7 +1046,9 @@ defmodule SahajyogWeb.Demo3Live do
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <.link
                 navigate={~p"/users/register"}
-                class="group inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-medium hover-lift shadow-lg shadow-red-500/30"
+                phx-hook="GSAPMagnetic"
+                id="demo3-register-btn"
+                class="magnetic-btn group inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-medium hover-lift shadow-lg shadow-red-500/30"
               >
                 🎁 {gettext("Register for Free")}
                 <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
@@ -1063,7 +1057,9 @@ defmodule SahajyogWeb.Demo3Live do
               </.link>
               <.link
                 navigate={~p"/steps"}
-                class="text-white/60 hover:text-white transition-colors font-medium"
+                phx-hook="GSAPMagnetic"
+                id="demo3-try-btn"
+                class="magnetic-btn text-white/60 hover:text-white transition-colors font-medium px-4 py-2"
               >
                 {gettext("Try without account")}
               </.link>

@@ -26,8 +26,9 @@ defmodule SahajyogWeb.Router do
         {SahajyogWeb.UserAuth, :mount_current_scope},
         {SahajyogWeb.LocaleLive, :default}
       ] do
-      live "/", WelcomeLive
+      live "/", Demo3Live
       live "/demo", DemoLive
+      live "/demo1", WelcomeLive
       live "/demo2", DemoLive2
       live "/demo3", Demo3Live
       live "/steps", StepsLive

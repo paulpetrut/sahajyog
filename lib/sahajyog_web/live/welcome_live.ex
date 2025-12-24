@@ -38,47 +38,6 @@ defmodule SahajyogWeb.WelcomeLive do
         .font-display { font-family: 'Inter', system-ui, sans-serif; }
         .font-serif { font-family: 'Playfair Display', Georgia, serif; }
 
-        /* Scroll-triggered animations (hook adds .revealed class) */
-        .apple-reveal {
-          opacity: 0;
-          transform: translateY(60px);
-          transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .apple-reveal.revealed {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .apple-scale {
-          opacity: 0;
-          transform: scale(0.95);
-          transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
-                      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .apple-scale.revealed {
-          opacity: 1;
-          transform: scale(1);
-        }
-
-        /* Stagger delays for children */
-        .apple-reveal:nth-child(2) { transition-delay: 0.1s; }
-        .apple-reveal:nth-child(3) { transition-delay: 0.2s; }
-        .apple-reveal:nth-child(4) { transition-delay: 0.3s; }
-
-        /* Hero animation - triggers on page load */
-        .hero-reveal {
-          opacity: 0;
-          transform: translateY(30px);
-          animation: heroReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-        }
-        @keyframes heroReveal {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
         /* Gradient text */
         .gradient-text {
           background: linear-gradient(135deg, oklch(var(--p)) 0%, oklch(var(--s)) 100%);
@@ -104,66 +63,45 @@ defmodule SahajyogWeb.WelcomeLive do
           100% { background-position: 0% 50%; }
         }
 
-        /* Floating animation */
-        .float {
-          animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-
-        /* Line animation */
-        .line-grow {
-          width: 0;
-          transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Ornate video border - detailed gold bead frame */
+        /* Ornate video border - refined gold frame */
         .ornate-video-border {
           position: relative;
-          padding: 10px; /* Reduced padding for a narrower frame */
-          background: linear-gradient(to bottom, #d4af37, #a67c00); /* Base gold background */
-          border-radius: 4px; /* Slight rounding for the outer edge */
-          box-shadow:
-            0 10px 30px -10px rgba(0,0,0,0.5), /* Drop shadow */
-            inset 0 0 0 1px rgba(255,255,255,0.4), /* Outer highlight */
-            inset 0 0 0 1px #5e4b1f, /* Outer dark rim */
-            0 0 0 1px #5e4b1f; /* Outer dark border */
+          border: 10px solid transparent; /* Frame width */
+          border-image: linear-gradient(to bottom, #d4af37, #a67c00) 1;
+          background: transparent; /* No center fill */
+          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
 
-        /* The bead pattern */
-        .ornate-video-border::after {
-          content: '';
-          position: absolute;
-          inset: 3px; /* Position inside the outer rim */
-          border: 1px solid #7a5f25; /* Border around beads */
-          /* Create the bead look using radial gradients */
-          background-image:
-            /* Bead highlight (shine) */
-            radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 20%),
-            /* Bead body (gold sphere) */
-            radial-gradient(circle at 50% 50%, #fadd70 0%, #e0aa3e 40%, #b8860b 80%, #5e4b1f 100%);
-          background-size: 10px 10px; /* Smaller beads */
-          background-repeat: round; /* Repeat to fill, adjusting size slightly if needed */
-          box-shadow: inset 0 0 3px rgba(0,0,0,0.5); /* Inner shadow for depth */
-        }
-
-        /* Inner glossy rim (between beads and video) */
+        /* Inner glossy rim overlay */
         .ornate-video-border::before {
           content: '';
           position: absolute;
-          inset: 8px; /* Inside the beads */
-          z-index: 2; /* Sit on top of beads at the edges if overlap */
-          border: 1px solid #5e4b1f; /* Dark inner rim */
-          box-shadow:
-            0 0 0 1px #d4af37, /* Gold rim */
-            0 0 6px rgba(0,0,0,0.5); /* Shadow casting onto the video */
+          inset: -10px; /* Cover the border */
+          z-index: 2;
+          border: 1px solid rgba(255, 255, 255, 0.4); /* Outer highlight */
+          box-shadow: inset 0 0 0 1px #5e4b1f; /* Inner dark rim */
           pointer-events: none;
         }
 
-        .line-grow.visible {
-          width: 100%;
+        /* Beads on the frame - using mask to keep center clear */
+        .ornate-video-border::after {
+          content: '';
+          position: absolute;
+          inset: -7px; /* Position within the 10px border */
+          z-index: 1;
+          background-image:
+            radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 20%),
+            radial-gradient(circle at 50% 50%, #fadd70 0%, #e0aa3e 40%, #b8860b 80%, #5e4b1f 100%);
+          background-size: 6px 6px;
+          background-repeat: round;
+          /* Mask out the center: show only on the border area */
+          -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+                  mask-composite: exclude;
+          padding: 7px; /* Defines the thickness of the bead frame */
+          pointer-events: none;
         }
 
         /* Smooth hover */
@@ -199,100 +137,85 @@ defmodule SahajyogWeb.WelcomeLive do
           opacity: 0;
           pointer-events: none;
         }
+
+        /* Spotlight Effect CSS */
+        .spotlight-card {
+           position: relative;
+           overflow: hidden;
+        }
+        .spotlight-card::before {
+          content: "";
+          position: absolute;
+          inset: 0px;
+          background: radial-gradient(
+            800px circle at var(--mouse-x) var(--mouse-y),
+            rgba(255, 255, 255, 0.4),
+            transparent 40%
+          );
+          opacity: 0;
+          transition: opacity 0.5s;
+          pointer-events: none;
+          z-index: 2;
+        }
+        /* Reveal the spotlight on hover */
+        .spotlight-card:hover::before {
+          opacity: 1;
+        }
+        /* Border mask trick: use the glow to reveal the border */
+        .spotlight-wrapper {
+          position: relative;
+          background: #1a1a1a; /* Dark background */
+          border-radius: inherit;
+        }
       </style>
 
       <div
         id="welcome-page"
-        phx-hook="AppleAnimations"
+        phx-hook="GSAPScrollReveal"
         class="min-h-screen bg-base-300 text-base-content font-display"
       >
         
     <!-- HERO: Full viewport, minimal, typographic, content-based height -->
-        <section class="relative overflow-hidden pt-12 md:pt-20 lg:pt-32 pb-6 md:pb-10 lg:pb-12 flex flex-col justify-center">
+        <section
+          id="hero-section"
+          phx-hook="GSAPHero"
+          class="relative overflow-hidden pt-12 md:pt-20 lg:pt-32 pb-6 md:pb-10 lg:pb-12 flex flex-col justify-center"
+        >
           <!-- Animated gradient orbs -->
-          <div class="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[100px] float">
+          <div class="hero-orb absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[100px]">
           </div>
           <div
-            class="absolute bottom-1/4 -right-32 w-80 h-80 bg-secondary/10 rounded-full blur-[100px] float"
+            class="hero-orb absolute bottom-1/4 -right-32 w-80 h-80 bg-secondary/10 rounded-full blur-[100px]"
             style="animation-delay: -3s;"
           >
           </div>
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="hero-reveal">
+            <div>
               <!-- Eyebrow -->
-              <p class="text-xs md:text-sm tracking-[0.3em] uppercase text-base-content/40 mb-2 md:mb-6 font-medium">
+              <p class="hero-element text-xs md:text-sm tracking-[0.3em] uppercase text-base-content/40 mb-2 md:mb-6 font-medium">
                 {gettext("Free Meditation")}
               </p>
               
     <!-- Main headline -->
-              <h1 class="text-[clamp(2rem,8vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-3 md:mb-8">
+              <h1 class="hero-element text-[clamp(2rem,8vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-3 md:mb-8">
                 <span class="block">{gettext("Realize your Self")}</span>
-                <span class="block gradient-text">{gettext("inner silence")}</span>
+                <span
+                  class="block gradient-text"
+                  phx-hook="GSAPTextReveal"
+                  id="welcome-text-reveal"
+                  phx-update="ignore"
+                >
+                  {gettext("inner silence")}
+                </span>
               </h1>
               
     <!-- Subhead -->
-              <p class="text-base md:text-xl lg:text-2xl text-base-content/50 max-w-xl leading-relaxed font-light mb-4 md:mb-12">
+              <p class="hero-element text-base md:text-xl lg:text-2xl text-base-content/50 max-w-xl leading-relaxed font-light mb-4 md:mb-12">
                 {gettext(
                   "Sahaja Yoga is a unique method of meditation that brings mental, physical and emotional balance."
                 )}
               </p>
-              
-    <!-- How It Works -->
-              <div class="grid grid-cols-3 gap-1 md:gap-4 lg:gap-8 mt-6 md:mt-16 lg:mt-20">
-                <!-- Step 1 -->
-                <.link href="#video" class="step-card group cursor-pointer">
-                  <div class="text-center p-2 md:p-6 rounded-xl hover:bg-base-200/30 transition-colors">
-                    <div class="step-circle step-circle-1 w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
-                      <span class="text-lg md:text-3xl font-bold text-primary-content">1</span>
-                    </div>
-                    <h3 class="text-xs md:text-lg font-bold text-base-content mb-0.5 md:mb-2">
-                      {gettext("Learn")}
-                    </h3>
-                    <p class="text-xs md:text-sm text-base-content/60 leading-relaxed hidden sm:block">
-                      {gettext("Watch introductory videos and understand the basics of meditation")}
-                    </p>
-                  </div>
-                </.link>
-                
-    <!-- Step 2 -->
-                <.link navigate={~p"/steps"} class="step-card group cursor-pointer">
-                  <div class="text-center p-2 md:p-6 rounded-xl hover:bg-base-200/30 transition-colors">
-                    <div class="step-circle step-circle-2 w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
-                      <span class="text-lg md:text-3xl font-bold text-primary-content">2</span>
-                    </div>
-                    <h3 class="text-xs md:text-lg font-bold text-base-content mb-0.5 md:mb-2">
-                      {gettext("Practice")}
-                    </h3>
-                    <p class="text-xs md:text-sm text-base-content/60 leading-relaxed hidden sm:block">
-                      {gettext("Follow guided meditations and experience Self Realization")}
-                    </p>
-                  </div>
-                </.link>
-                
-    <!-- Step 3 -->
-                <.link
-                  navigate={if assigns[:current_scope], do: ~p"/steps", else: ~p"/users/register"}
-                  class="step-card group cursor-pointer"
-                >
-                  <div class="text-center p-2 md:p-6 rounded-xl hover:bg-base-200/30 transition-colors">
-                    <div class="step-circle step-circle-3 w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30">
-                      <span class="text-lg md:text-3xl font-bold text-primary-content">3</span>
-                    </div>
-                    <h3 class="text-xs md:text-lg font-bold text-base-content mb-0.5 md:mb-2">
-                      {gettext("Experience")}
-                      <%= if !assigns[:current_scope] do %>
-                        <span class="text-[0.6em] md:text-[0.65em] text-base-content/50 font-normal">
-                          ({gettext("Login Required")})
-                        </span>
-                      <% end %>
-                    </h3>
-                    <p class="text-xs md:text-sm text-base-content/60 leading-relaxed hidden sm:block">
-                      {gettext("Feel the peace within and grow through regular practice")}
-                    </p>
-                  </div>
-                </.link>
-              </div>
             </div>
           </div>
         </section>
@@ -304,7 +227,7 @@ defmodule SahajyogWeb.WelcomeLive do
           class="pt-6 md:pt-10 lg:pt-12 pb-12 md:pb-20 lg:pb-24 relative"
         >
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="apple-reveal">
+            <div class="gsap-reveal" data-toggle-actions="play none none reverse">
               <!-- Video container with ornate golden border -->
               <div class="ornate-video-border">
                 <div class="rounded-lg overflow-hidden aspect-video bg-black shadow-inner">
@@ -335,11 +258,100 @@ defmodule SahajyogWeb.WelcomeLive do
           </div>
         </section>
         
+    <!-- PROCESS STRIP: Simple 1-2-3 -->
+        <section class="py-12 md:py-20 border-t border-base-content/5 bg-base-200/30">
+          <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div
+              class="text-center mb-10 md:mb-16 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
+              <p class="text-sm tracking-[0.2em] uppercase text-primary font-semibold mb-3">
+                {gettext("The Journey")}
+              </p>
+              <h2 class="text-3xl md:text-4xl font-bold tracking-tight">
+                {gettext("How it works")}
+              </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 relative">
+              <!-- Connecting Line (Desktop) -->
+              <div class="hidden md:block absolute top-8 left-[16%] right-[16%] h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent z-0">
+              </div>
+              <!-- Step 1 -->
+              <.link
+                href="#video"
+                class="relative z-10 text-center group gsap-reveal block cursor-pointer"
+                data-toggle-actions="play none none reverse"
+              >
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-base-100 border border-base-content/10 flex items-center justify-center shadow-lg shadow-base-200/50 group-hover:scale-110 group-hover:border-primary/30 transition-all duration-300">
+                  <span class="text-2xl font-bold text-primary font-serif">1</span>
+                </div>
+                <h3 class="text-lg font-bold mb-3">{gettext("Learn")}</h3>
+                <p class="text-base text-base-content/60 max-w-xs mx-auto leading-relaxed">
+                  {gettext("Watch introductory videos to understand the basics.")}
+                </p>
+              </.link>
+              
+    <!-- Step 2 -->
+              <.link
+                navigate={~p"/steps"}
+                class="relative z-10 text-center group gsap-reveal block cursor-pointer"
+                data-toggle-actions="play none none reverse"
+                data-delay="0.2"
+              >
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-base-100 border border-base-content/10 flex items-center justify-center shadow-lg shadow-base-200/50 group-hover:scale-110 group-hover:border-primary/30">
+                  <span class="text-2xl font-bold text-primary font-serif">2</span>
+                </div>
+                <h3 class="text-lg font-bold mb-3">{gettext("Practice")}</h3>
+                <p class="text-base text-base-content/60 max-w-xs mx-auto leading-relaxed">
+                  {gettext("Follow guided meditations to experience inner silence.")}
+                </p>
+              </.link>
+              
+    <!-- Step 3 -->
+              <.link
+                navigate={if assigns[:current_scope], do: ~p"/steps", else: ~p"/users/register"}
+                class="relative z-10 text-center group gsap-reveal block cursor-pointer"
+                data-toggle-actions="play none none reverse"
+                data-delay="0.4"
+              >
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-base-100 border border-base-content/10 flex items-center justify-center shadow-lg shadow-base-200/50 group-hover:scale-110 group-hover:border-primary/30">
+                  <span class="text-2xl font-bold text-primary font-serif">3</span>
+                </div>
+                <h3 class="text-lg font-bold mb-3">
+                  {gettext("Experience")}
+                  <%= if !assigns[:current_scope] do %>
+                    <span class="text-[0.6em] md:text-[0.65em] text-base-content/50 font-normal block">
+                      ({gettext("Login Required")})
+                    </span>
+                  <% end %>
+                </h3>
+                <p class="text-base text-base-content/60 max-w-xs mx-auto leading-relaxed">
+                  {gettext("Feel the peace within and grow through regular practice.")}
+                </p>
+              </.link>
+            </div>
+
+            <div class="mt-12 text-center gsap-reveal" data-toggle-actions="play none none reverse">
+              <.link
+                navigate={~p"/steps"}
+                class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-primary hover:text-primary-focus transition-colors"
+                id="journey-start-link"
+              >
+                {gettext("Start your journey")} <.icon name="hero-arrow-right" class="w-4 h-4" />
+              </.link>
+            </div>
+          </div>
+        </section>
+        
     <!-- FEATURES: Horizontal scroll or grid -->
-        <section class="py-8 md:py-24 lg:py-32 border-t border-base-content/5">
+        <section class="py-12 md:py-24 lg:py-32 border-t border-base-content/5">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <!-- Section header -->
-            <div class="max-w-2xl mb-6 md:mb-16 lg:mb-20 apple-reveal">
+            <div
+              class="max-w-2xl mb-6 md:mb-16 lg:mb-20 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <p class="text-sm tracking-[0.2em] uppercase text-primary font-semibold mb-4">
                 {gettext("The Practice")}
               </p>
@@ -352,9 +364,14 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
             
     <!-- Feature cards - minimal, text-focused -->
-            <div class="grid md:grid-cols-3 gap-px bg-base-content/5 rounded-2xl overflow-hidden apple-reveal">
+            <div
+              id="features-grid"
+              phx-hook="GSAPSpotlight"
+              class="grid md:grid-cols-3 gap-px bg-base-content/5 rounded-2xl overflow-hidden gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <!-- Card 1 -->
-              <div class="bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
+              <div class="spotlight-card gsap-3d-card bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
                 <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                   <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 text-primary md:mb-8 shrink-0">
                     <.icon name="hero-sparkles" class="w-5 h-5 md:w-6 md:h-6" />
@@ -375,7 +392,7 @@ defmodule SahajyogWeb.WelcomeLive do
               </div>
               
     <!-- Card 2 -->
-              <div class="bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
+              <div class="gsap-3d-card bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
                 <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                   <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary/10 text-secondary md:mb-8 shrink-0">
                     <.icon name="hero-microphone" class="w-5 h-5 md:w-6 md:h-6" />
@@ -396,7 +413,7 @@ defmodule SahajyogWeb.WelcomeLive do
               </div>
               
     <!-- Card 3 -->
-              <div class="bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
+              <div class="gsap-3d-card bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
                 <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                   <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent/10 text-accent md:mb-8 shrink-0">
                     <.icon name="hero-book-open" class="w-5 h-5 md:w-6 md:h-6" />
@@ -424,7 +441,7 @@ defmodule SahajyogWeb.WelcomeLive do
           class="py-12 md:py-24 border-t border-base-content/5 bg-base-200/30"
         >
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="mb-12 md:mb-16 apple-reveal">
+            <div class="mb-12 md:mb-16 gsap-reveal" data-toggle-actions="play none none reverse">
               <p class="text-sm tracking-[0.2em] uppercase text-secondary font-semibold mb-4">
                 {gettext("Knowledge")}
               </p>
@@ -436,11 +453,16 @@ defmodule SahajyogWeb.WelcomeLive do
               </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-6 apple-reveal">
+            <div
+              id="topics-grid"
+              phx-hook="GSAPCard3D"
+              class="grid md:grid-cols-3 gap-6 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <%= for topic <- @featured_topics do %>
                 <.link
                   navigate={~p"/public/topics/#{topic.slug}"}
-                  class="group relative bg-base-100 rounded-2xl p-6 lg:p-8 hover:bg-base-200/30 transition-all border border-base-content/5 hover:border-base-content/10 hover:-translate-y-1"
+                  class="gsap-3d-card group relative bg-base-100 rounded-2xl p-6 lg:p-8 hover:bg-base-200/30 transition-all border border-base-content/5 hover:border-base-content/10 hover:-translate-y-1"
                 >
                   <div class="min-h-[120px]">
                     <h3 class="text-xl font-bold mb-3 group-hover:text-secondary transition-colors font-serif">
@@ -467,7 +489,10 @@ defmodule SahajyogWeb.WelcomeLive do
     <!-- EVENTS SECTION -->
         <section :if={@featured_events != []} class="py-12 md:py-24 border-t border-base-content/5">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 apple-reveal">
+            <div
+              class="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <div class="max-w-2xl">
                 <p class="text-sm tracking-[0.2em] uppercase text-accent font-semibold mb-4">
                   {gettext("Community")}
@@ -488,11 +513,16 @@ defmodule SahajyogWeb.WelcomeLive do
               </.link>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-6 apple-reveal">
+            <div
+              id="events-grid"
+              phx-hook="GSAPCard3D"
+              class="grid md:grid-cols-3 gap-6 gsap-reveal"
+              data-toggle-actions="play none none reverse"
+            >
               <%= for event <- @featured_events do %>
                 <.link
                   navigate={~p"/public/events/#{event.slug}"}
-                  class="group relative bg-base-100 rounded-2xl p-6 lg:p-8 hover:bg-base-200/30 transition-all border border-base-content/5 hover:border-base-content/10 hover:-translate-y-1"
+                  class="gsap-3d-card group relative bg-base-100 rounded-2xl p-6 lg:p-8 hover:bg-base-200/30 transition-all border border-base-content/5 hover:border-base-content/10 hover:-translate-y-1"
                 >
                   <div class="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-medium bg-base-content/5 text-base-content/60">
                     <%= if event.event_date do %>
@@ -536,7 +566,10 @@ defmodule SahajyogWeb.WelcomeLive do
         
     <!-- QUOTE: Full-width, dramatic -->
         <section class="py-12 md:py-32 lg:py-40 relative animated-gradient noise">
-          <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center relative z-10 apple-scale">
+          <div
+            class="max-w-5xl mx-auto px-6 lg:px-8 text-center relative z-10 gsap-reveal"
+            data-toggle-actions="play none none reverse"
+          >
             <blockquote class="font-serif text-2xl md:text-4xl lg:text-5xl xl:text-6xl italic leading-[1.2] text-base-content/90 mb-6 md:mb-10">
               "{gettext(
                 "You cannot know the meaning of your life until you are connected to the power that created you."
@@ -550,7 +583,10 @@ defmodule SahajyogWeb.WelcomeLive do
         
     <!-- CTA: Unlock Your Full Journey -->
         <section class="py-12 md:py-32 lg:py-40 border-t border-base-content/5">
-          <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center apple-reveal">
+          <div
+            class="max-w-5xl mx-auto px-6 lg:px-8 text-center gsap-reveal"
+            data-toggle-actions="play none none reverse"
+          >
             <h2 class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-4 md:mb-6 text-base-content">
               {gettext("Unlock Your Full Journey")}
             </h2>
@@ -580,7 +616,9 @@ defmodule SahajyogWeb.WelcomeLive do
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <.link
                 navigate={~p"/users/register"}
-                class="group inline-flex items-center gap-3 bg-base-content text-base-100 px-8 py-4 rounded-full font-medium hover-lift"
+                phx-hook="GSAPMagnetic"
+                id="cta-register-btn"
+                class="magnetic-btn group inline-flex items-center gap-3 bg-base-content text-base-100 px-8 py-4 rounded-full font-medium hover-lift"
               >
                 {gettext("Register for Free")}
                 <span class="w-8 h-8 rounded-full bg-base-100/20 flex items-center justify-center group-hover:bg-base-100/30 transition-colors">
@@ -589,7 +627,9 @@ defmodule SahajyogWeb.WelcomeLive do
               </.link>
               <.link
                 navigate={~p"/steps"}
-                class="text-base-content/60 hover:text-base-content transition-colors font-medium"
+                phx-hook="GSAPMagnetic"
+                id="cta-try-btn"
+                class="magnetic-btn text-base-content/60 hover:text-base-content transition-colors font-medium px-4 py-2"
               >
                 {gettext("Try without account")}
               </.link>

@@ -27,7 +27,18 @@ import QuillEditor from "./quill_editor"
 import Sortable from "sortablejs"
 import LocalTime from "./hooks/local_time"
 
+import { GSAPHero, GSAPScrollReveal, GSAPCard3D, GSAPMagnetic, GSAPSpotlight, GSAPTextReveal, GSAPCounter } from "./hooks/gsap_animations"
+
 const Hooks = {}
+
+Hooks.GSAPHero = GSAPHero
+Hooks.GSAPScrollReveal = GSAPScrollReveal
+Hooks.GSAPCard3D = GSAPCard3D
+Hooks.GSAPMagnetic = GSAPMagnetic
+Hooks.GSAPSpotlight = GSAPSpotlight
+Hooks.GSAPTextReveal = GSAPTextReveal
+Hooks.GSAPCounter = GSAPCounter
+
 
 Hooks.LocalTime = LocalTime
 Hooks.QuillEditor = QuillEditor
