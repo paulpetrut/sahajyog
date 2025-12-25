@@ -27,7 +27,15 @@ import QuillEditor from "./quill_editor"
 import Sortable from "sortablejs"
 import LocalTime from "./hooks/local_time"
 
-import { GSAPHero, GSAPScrollReveal, GSAPCard3D, GSAPMagnetic, GSAPSpotlight, GSAPTextReveal, GSAPCounter } from "./hooks/gsap_animations"
+import {
+  GSAPHero,
+  GSAPScrollReveal,
+  GSAPCard3D,
+  GSAPMagnetic,
+  GSAPSpotlight,
+  GSAPTextReveal,
+  GSAPCounter,
+} from "./hooks/gsap_animations"
 
 const Hooks = {}
 
@@ -39,6 +47,23 @@ Hooks.GSAPSpotlight = GSAPSpotlight
 Hooks.GSAPTextReveal = GSAPTextReveal
 Hooks.GSAPCounter = GSAPCounter
 
+// Snowfall auto-stop hook - fades out snowfall after animation completes
+Hooks.SnowfallStop = {
+  mounted() {
+    // The CSS animation handles the fadeout after 30s
+    // This hook can be used for additional cleanup if needed
+    this.timeout = setTimeout(() => {
+      if (this.el) {
+        this.el.style.display = "none"
+      }
+    }, 31000) // 30s animation + 1s buffer
+  },
+  destroyed() {
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+    }
+  },
+}
 
 Hooks.LocalTime = LocalTime
 Hooks.QuillEditor = QuillEditor
