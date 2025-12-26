@@ -29,7 +29,13 @@ defmodule SahajyogWeb.StepsLive do
     # Transform database videos to match the expected format
     videos =
       Enum.map(db_videos, fn video ->
-        provider = String.to_atom(video.provider || "youtube")
+        provider =
+          case video.provider do
+            "youtube" -> :youtube
+            "vimeo" -> :vimeo
+            _ -> :youtube
+          end
+
         video_id = Sahajyog.VideoProvider.extract_video_id(video.url, provider) || ""
 
         %{

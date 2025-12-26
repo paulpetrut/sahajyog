@@ -1277,7 +1277,7 @@ defmodule SahajyogWeb.EventShowLive do
 
                   <%!-- Online Users List --%>
                   <%= if @connected_users != [] do %>
-                    <div class="absolute top-full right-0 mt-2 w-48 flex flex-col gap-1 p-2 bg-base-100/90 backdrop-blur rounded-lg border border-base-content/10 shadow-xl max-h-64 overflow-y-auto hidden group-hover:flex transition-all z-20">
+                    <div class="absolute top-full right-0 mt-2 w-48 flex-col gap-1 p-2 bg-base-100/90 backdrop-blur rounded-lg border border-base-content/10 shadow-xl max-h-64 overflow-y-auto hidden group-hover:flex transition-all z-20">
                       <p class="text-[10px] uppercase tracking-wider text-base-content/50 font-bold mb-1 px-1">
                         {gettext("Who is here")}
                       </p>
@@ -1641,7 +1641,7 @@ defmodule SahajyogWeb.EventShowLive do
                       {gettext("About this Event")}
                     </h2>
                     <div class="prose prose-invert max-w-none text-base-content/80">
-                      {Phoenix.HTML.raw(@event.description)}
+                      {Phoenix.HTML.raw(HtmlSanitizeEx.basic_html(@event.description))}
                     </div>
                   </.card>
                 <% end %>

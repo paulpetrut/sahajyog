@@ -46,7 +46,7 @@ defmodule SahajyogWeb.PublicTopicShowLive do
           <h1 class="text-4xl md:text-5xl font-bold mb-8 font-serif">{@topic.title}</h1>
 
           <div class="prose prose-lg max-w-none prose-headings:font-serif prose-headings:font-bold">
-            {raw(@topic.content)}
+            {raw(HtmlSanitizeEx.basic_html(@topic.content))}
           </div>
 
           <%= if @topic.references != [] do %>

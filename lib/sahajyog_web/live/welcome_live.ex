@@ -31,157 +31,18 @@ defmodule SahajyogWeb.WelcomeLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
-      <style>
-        /* 2025 Modern Typography & Animations */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
-
-        .font-display { font-family: 'Inter', system-ui, sans-serif; }
-        .font-serif { font-family: 'Playfair Display', Georgia, serif; }
-
-        /* Gradient text */
-        .gradient-text {
-          background: linear-gradient(135deg, oklch(var(--p)) 0%, oklch(var(--s)) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        /* Animated gradient background */
-        .animated-gradient {
-          background: linear-gradient(-45deg,
-            oklch(var(--b2)) 0%,
-            oklch(var(--b1)) 25%,
-            oklch(var(--b2)) 50%,
-            oklch(var(--b1)) 75%,
-            oklch(var(--b2)) 100%);
-          background-size: 400% 400%;
-          animation: gradientShift 15s ease infinite;
-        }
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        /* Ornate video border - refined gold frame */
-        .ornate-video-border {
-          position: relative;
-          border: 10px solid transparent; /* Frame width */
-          border-image: linear-gradient(to bottom, #d4af37, #a67c00) 1;
-          background: transparent; /* No center fill */
-          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-        }
-
-        /* Inner glossy rim overlay */
-        .ornate-video-border::before {
-          content: '';
-          position: absolute;
-          inset: -10px; /* Cover the border */
-          z-index: 2;
-          border: 1px solid rgba(255, 255, 255, 0.4); /* Outer highlight */
-          box-shadow: inset 0 0 0 1px #5e4b1f; /* Inner dark rim */
-          pointer-events: none;
-        }
-
-        /* Beads on the frame - using mask to keep center clear */
-        .ornate-video-border::after {
-          content: '';
-          position: absolute;
-          inset: -7px; /* Position within the 10px border */
-          z-index: 1;
-          background-image:
-            radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 20%),
-            radial-gradient(circle at 50% 50%, #fadd70 0%, #e0aa3e 40%, #b8860b 80%, #5e4b1f 100%);
-          background-size: 6px 6px;
-          background-repeat: round;
-          /* Mask out the center: show only on the border area */
-          -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-                  mask-composite: exclude;
-          padding: 7px; /* Defines the thickness of the bead frame */
-          pointer-events: none;
-        }
-
-        /* Smooth hover */
-        .hover-lift {
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .hover-lift:hover {
-          transform: translateY(-4px);
-        }
-
-        /* Noise texture overlay */
-        .noise::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-          opacity: 0.03;
-          pointer-events: none;
-        }
-
-        /* Scroll indicator fade out */
-        .scroll-indicator {
-          opacity: 1;
-          transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-          display: none;
-        }
-        @media (min-width: 1024px) {
-          .scroll-indicator {
-            display: flex;
-          }
-        }
-        .scroll-indicator.hidden {
-          opacity: 0;
-          pointer-events: none;
-        }
-
-        /* Spotlight Effect CSS */
-        .spotlight-card {
-           position: relative;
-           overflow: hidden;
-        }
-        .spotlight-card::before {
-          content: "";
-          position: absolute;
-          inset: 0px;
-          background: radial-gradient(
-            800px circle at var(--mouse-x) var(--mouse-y),
-            rgba(255, 255, 255, 0.4),
-            transparent 40%
-          );
-          opacity: 0;
-          transition: opacity 0.5s;
-          pointer-events: none;
-          z-index: 2;
-        }
-        /* Reveal the spotlight on hover */
-        .spotlight-card:hover::before {
-          opacity: 1;
-        }
-        /* Border mask trick: use the glow to reveal the border */
-        .spotlight-wrapper {
-          position: relative;
-          background: #1a1a1a; /* Dark background */
-          border-radius: inherit;
-        }
-      </style>
-
       <div
         id="welcome-page"
         phx-hook="GSAPScrollReveal"
-        class="min-h-screen bg-base-300 text-base-content font-display"
+        class="min-h-screen bg-base-300 text-base-content welcome-page-font"
       >
-        
-    <!-- HERO: Full viewport, minimal, typographic, content-based height -->
+        <%!-- HERO: Full viewport, minimal, typographic, content-based height --%>
         <section
           id="hero-section"
           phx-hook="GSAPHero"
           class="relative overflow-hidden pt-12 md:pt-20 lg:pt-32 pb-6 md:pb-10 lg:pb-12 flex flex-col justify-center"
         >
-          <!-- Animated gradient orbs -->
+          <%!-- Animated gradient orbs --%>
           <div class="hero-orb absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[100px]">
           </div>
           <div
@@ -192,25 +53,25 @@ defmodule SahajyogWeb.WelcomeLive do
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8">
             <div>
-              <!-- Eyebrow -->
+              <%!-- Eyebrow --%>
               <p class="hero-element text-xs md:text-sm tracking-[0.3em] uppercase text-base-content/40 mb-2 md:mb-6 font-medium">
                 {gettext("Free Meditation")}
               </p>
-              
-    <!-- Main headline -->
+
+              <%!-- Main headline --%>
               <h1 class="hero-element text-[clamp(2rem,8vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-3 md:mb-8">
                 <span class="block">{gettext("Realize your Self")}</span>
                 <span
                   class="block gradient-text"
                   phx-hook="GSAPTextReveal"
-                  id="welcome-text-reveal"
+                  id="hero-text-title"
                   phx-update="ignore"
                 >
                   {gettext("inner silence")}
                 </span>
               </h1>
-              
-    <!-- Subhead -->
+
+              <%!-- Subhead --%>
               <p class="hero-element text-base md:text-xl lg:text-2xl text-base-content/50 max-w-xl leading-relaxed font-light mb-4 md:mb-12">
                 {gettext(
                   "Sahaja Yoga is a unique method of meditation that brings mental, physical and emotional balance."
@@ -219,8 +80,8 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </div>
         </section>
-        
-    <!-- VIDEO SECTION: Clean, wide -->
+
+        <%!-- VIDEO SECTION: Clean, wide --%>
         <section
           :if={@current_video}
           id="video"
@@ -228,7 +89,7 @@ defmodule SahajyogWeb.WelcomeLive do
         >
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="gsap-reveal" data-toggle-actions="play none none reverse">
-              <!-- Video container with ornate golden border -->
+              <%!-- Video container with ornate golden border --%>
               <div class="ornate-video-border">
                 <div class="rounded-lg overflow-hidden aspect-video bg-black shadow-inner">
                   <.video_player
@@ -238,8 +99,8 @@ defmodule SahajyogWeb.WelcomeLive do
                   />
                 </div>
               </div>
-              
-    <!-- Video info -->
+
+              <%!-- Video info --%>
               <div class="mt-6 md:mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
                 <div>
                   <p class="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-1">
@@ -257,8 +118,8 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </div>
         </section>
-        
-    <!-- PROCESS STRIP: Simple 1-2-3 -->
+
+        <%!-- PROCESS STRIP: Simple 1-2-3 --%>
         <section class="py-12 md:py-20 border-t border-base-content/5 bg-base-200/30">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div
@@ -274,10 +135,10 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
 
             <div class="grid md:grid-cols-3 gap-8 relative">
-              <!-- Connecting Line (Desktop) -->
+              <%!-- Connecting Line (Desktop) --%>
               <div class="hidden md:block absolute top-8 left-[16%] right-[16%] h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent z-0">
               </div>
-              <!-- Step 1 -->
+              <%!-- Step 1 --%>
               <.link
                 href="#video"
                 class="relative z-10 text-center group gsap-reveal block cursor-pointer"
@@ -291,8 +152,8 @@ defmodule SahajyogWeb.WelcomeLive do
                   {gettext("Watch introductory videos to understand the basics.")}
                 </p>
               </.link>
-              
-    <!-- Step 2 -->
+
+              <%!-- Step 2 --%>
               <.link
                 navigate={~p"/steps"}
                 class="relative z-10 text-center group gsap-reveal block cursor-pointer"
@@ -307,8 +168,8 @@ defmodule SahajyogWeb.WelcomeLive do
                   {gettext("Follow guided meditations to experience inner silence.")}
                 </p>
               </.link>
-              
-    <!-- Step 3 -->
+
+              <%!-- Step 3 --%>
               <.link
                 navigate={if assigns[:current_scope], do: ~p"/steps", else: ~p"/users/register"}
                 class="relative z-10 text-center group gsap-reveal block cursor-pointer"
@@ -343,11 +204,11 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </div>
         </section>
-        
-    <!-- FEATURES: Horizontal scroll or grid -->
+
+        <%!-- FEATURES: Horizontal scroll or grid --%>
         <section class="py-12 md:py-24 lg:py-32 border-t border-base-content/5">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <!-- Section header -->
+            <%!-- Section header --%>
             <div
               class="max-w-2xl mb-6 md:mb-16 lg:mb-20 gsap-reveal"
               data-toggle-actions="play none none reverse"
@@ -362,15 +223,15 @@ defmodule SahajyogWeb.WelcomeLive do
                 {gettext("Simple techniques that anyone can practice. No experience needed.")}
               </p>
             </div>
-            
-    <!-- Feature cards - minimal, text-focused -->
+
+            <%!-- Feature cards - minimal, text-focused --%>
             <div
               id="features-grid"
               phx-hook="GSAPSpotlight"
               class="grid md:grid-cols-3 gap-px bg-base-content/5 rounded-2xl overflow-hidden gsap-reveal"
               data-toggle-actions="play none none reverse"
             >
-              <!-- Card 1 -->
+              <%!-- Card 1 --%>
               <div class="spotlight-card gsap-3d-card bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
                 <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                   <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 text-primary md:mb-8 shrink-0">
@@ -390,8 +251,8 @@ defmodule SahajyogWeb.WelcomeLive do
                   {gettext("Try now")} <.icon name="hero-arrow-right" class="w-4 h-4" />
                 </.link>
               </div>
-              
-    <!-- Card 2 -->
+
+              <%!-- Card 2 --%>
               <div class="gsap-3d-card bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
                 <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                   <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary/10 text-secondary md:mb-8 shrink-0">
@@ -411,8 +272,8 @@ defmodule SahajyogWeb.WelcomeLive do
                   {gettext("Browse")} <.icon name="hero-arrow-right" class="w-4 h-4" />
                 </.link>
               </div>
-              
-    <!-- Card 3 -->
+
+              <%!-- Card 3 --%>
               <div class="gsap-3d-card bg-base-100 p-6 md:p-10 lg:p-12 group hover:bg-base-200/30 transition-colors">
                 <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
                   <span class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-accent/10 text-accent md:mb-8 shrink-0">
@@ -434,8 +295,8 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </div>
         </section>
-        
-    <!-- TOPICS SECTION -->
+
+        <%!-- TOPICS SECTION --%>
         <section
           :if={@featured_topics != []}
           class="py-12 md:py-24 border-t border-base-content/5 bg-base-200/30"
@@ -485,8 +346,8 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </div>
         </section>
-        
-    <!-- EVENTS SECTION -->
+
+        <%!-- EVENTS SECTION --%>
         <section :if={@featured_events != []} class="py-12 md:py-24 border-t border-base-content/5">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div
@@ -563,8 +424,8 @@ defmodule SahajyogWeb.WelcomeLive do
             </div>
           </div>
         </section>
-        
-    <!-- QUOTE: Full-width, dramatic -->
+
+        <%!-- QUOTE: Full-width, dramatic --%>
         <section class="py-12 md:py-32 lg:py-40 relative animated-gradient noise">
           <div
             class="max-w-5xl mx-auto px-6 lg:px-8 text-center relative z-10 gsap-reveal"
@@ -580,8 +441,8 @@ defmodule SahajyogWeb.WelcomeLive do
             </cite>
           </div>
         </section>
-        
-    <!-- CTA: Unlock Your Full Journey -->
+
+        <%!-- CTA: Unlock Your Full Journey --%>
         <section class="py-12 md:py-32 lg:py-40 border-t border-base-content/5">
           <div
             class="max-w-5xl mx-auto px-6 lg:px-8 text-center gsap-reveal"
@@ -595,8 +456,8 @@ defmodule SahajyogWeb.WelcomeLive do
                 "Register for free to access structured learning, resources, and progress tracking"
               )}
             </p>
-            
-    <!-- Minimal benefits list -->
+
+            <%!-- Minimal benefits list --%>
             <div class="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8 mb-8 md:mb-12 text-sm md:text-base text-base-content/60">
               <div class="flex items-center gap-2">
                 <.icon name="hero-academic-cap" class="w-5 h-5 text-primary" />
@@ -611,8 +472,8 @@ defmodule SahajyogWeb.WelcomeLive do
                 <span>{gettext("Track Progress")}</span>
               </div>
             </div>
-            
-    <!-- CTA buttons -->
+
+            <%!-- CTA buttons --%>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <.link
                 navigate={~p"/users/register"}
@@ -640,8 +501,8 @@ defmodule SahajyogWeb.WelcomeLive do
             </p>
           </div>
         </section>
-        
-    <!-- Spacer for footer -->
+
+        <%!-- Spacer for footer --%>
         <div class="h-20"></div>
       </div>
     </Layouts.app>

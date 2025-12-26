@@ -7,6 +7,8 @@ defmodule SahajyogWeb.SahajStoreLive do
   alias Sahajyog.Store
   alias Sahajyog.Resources.R2Storage
 
+  import SahajyogWeb.FormatHelpers, only: [truncate_text: 2]
+
   @per_page 12
 
   @impl true
@@ -172,7 +174,10 @@ defmodule SahajyogWeb.SahajStoreLive do
   defp filter_by_delivery(items, "all"), do: items
 
   defp filter_by_delivery(items, delivery_method) do
-    Enum.filter(items, fn item -> delivery_method in item.delivery_methods end)
+    Enum.filter(items, fn item ->
+      methods = item.delivery_methods || []
+      delivery_method in methods
+    end)
   end
 
   defp page_numbers(current_page, total_pages) do
@@ -430,7 +435,7 @@ defmodule SahajyogWeb.SahajStoreLive do
                 class="group relative bg-transparent hover:bg-base-100/50 rounded-2xl transition-all duration-300 animate-fade-in"
                 style={"animation-delay: #{rem(index, 4) * 100}ms; animation-fill-mode: backwards;"}
               >
-                <.link navigate={~p"/store/#{item.id}"} class="block flex flex-col h-full p-2">
+                <.link navigate={~p"/store/#{item.id}"} class="flex flex-col h-full p-2">
                   <%!-- Image Container --%>
                   <div class="aspect-[4/3] overflow-hidden relative bg-base-200 rounded-xl shadow-sm group-hover:shadow-md transition-all">
                     <%= if thumbnail_url = get_thumbnail_url(item) do %>

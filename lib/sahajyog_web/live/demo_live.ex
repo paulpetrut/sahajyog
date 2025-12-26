@@ -22,35 +22,9 @@ defmodule SahajyogWeb.DemoLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
       <div id="demo-page-container" class="min-h-screen bg-base-100" phx-hook="GSAPScrollReveal">
-        <style>
-           /* 2025 Modern Typography & Animations */
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
-
-          .font-display { font-family: 'Inter', system-ui, sans-serif; }
-          .font-serif { font-family: 'Playfair Display', Georgia, serif; }
-
-          /* Smooth hover */
-          .hover-lift {
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          }
-          .hover-lift:hover {
-            transform: translateY(-4px);
-          }
-
-          /* Hover lift effect for cards */
-          .card-hover {
-            transition: transform 0.4s cubic-bezier(0.5, 0, 0, 1),
-                        box-shadow 0.4s cubic-bezier(0.5, 0, 0, 1);
-          }
-          .card-hover:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-          }
-        </style>
-
         <%!-- Hero Section - Full Viewport with Video (subtract navbar) --%>
         <section
-          id="demo-hero"
+          id="hero-section"
           phx-hook="GSAPHero"
           class="flex flex-col px-4 md:px-8 lg:px-16 pt-2 pb-4 h-[calc(100vh-80px)]"
         >
@@ -98,7 +72,6 @@ defmodule SahajyogWeb.DemoLive do
         </section>
 
         <%!-- Featured Card - Full Width Gradient (like iPad Air) --%>
-        <%!-- Featured Card - Full Width Gradient (like iPad Air) --%>
         <section class="mx-4 md:mx-8 lg:mx-16 mb-8 gsap-reveal">
           <div
             id="feat-card-1"
@@ -127,7 +100,6 @@ defmodule SahajyogWeb.DemoLive do
           </div>
         </section>
 
-        <%!-- Two Column Cards (like AirPods + Watch) --%>
         <%!-- Two Column Cards (like AirPods + Watch) --%>
         <section class="mx-4 md:mx-8 lg:mx-16 mb-8 grid md:grid-cols-2 gap-6">
           <%!-- Talks Card --%>
@@ -198,7 +170,6 @@ defmodule SahajyogWeb.DemoLive do
         </section>
 
         <%!-- Quote Section - Full Width --%>
-        <%!-- Quote Section - Full Width --%>
         <section class="mx-4 md:mx-8 lg:mx-16 mb-8 gsap-reveal">
           <div class="bg-gradient-to-br from-base-200 to-base-300 rounded-3xl p-10 md:p-16 text-center">
             <blockquote class="text-xl md:text-2xl lg:text-3xl text-base-content italic leading-relaxed max-w-4xl mx-auto mb-8">
@@ -212,7 +183,6 @@ defmodule SahajyogWeb.DemoLive do
           </div>
         </section>
 
-        <%!-- Steps Card - Full Width --%>
         <%!-- Steps Card - Full Width --%>
         <section class="mx-4 md:mx-8 lg:mx-16 mb-8 gsap-reveal">
           <div

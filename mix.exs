@@ -79,7 +79,8 @@ defmodule Sahajyog.MixProject do
       {:sweet_xml, "~> 0.7"},
       {:hackney, "~> 1.20"},
       {:thumbnex, "~> 0.5.1"},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:html_sanitize_ex, "~> 1.4"}
     ]
   end
 

@@ -93,7 +93,12 @@ defmodule SahajyogWeb.Admin.VideosLive do
 
     socket =
       if new_url && new_url != "" && new_url != current_url do
-        provider = String.to_atom(video_params["provider"])
+        provider =
+          case video_params["provider"] do
+            "youtube" -> :youtube
+            "vimeo" -> :vimeo
+            _ -> nil
+          end
 
         if provider in [:youtube, :vimeo] do
           fetch_video_metadata(socket, video_params, provider)

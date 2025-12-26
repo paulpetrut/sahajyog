@@ -5,12 +5,12 @@ import ScrollTrigger from "gsap/ScrollTrigger"
 gsap.registerPlugin(ScrollTrigger)
 
 // Debug: Verify GSAP is loaded
-console.log("[GSAP] Version:", gsap.version)
-console.log("[GSAP] ScrollTrigger registered:", !!ScrollTrigger)
+// console.log("[GSAP] Version:", gsap.version)
+// console.log("[GSAP] ScrollTrigger registered:", !!ScrollTrigger)
 
 const GSAPHero = {
   mounted() {
-    console.log("[GSAPHero] mounted, el:", this.el?.id)
+    // console.log("[GSAPHero] mounted, el:", this.el?.id)
     this.animatedElements = []
     this.mouseMoveHandler = null
     this.initAnimations()
@@ -26,7 +26,7 @@ const GSAPHero = {
     const heroElements = this.el.querySelectorAll(".hero-element")
     const orbs = this.el.querySelectorAll(".hero-orb")
 
-    console.log("[GSAPHero] Found hero-elements:", heroElements.length, "orbs:", orbs.length)
+    // console.log("[GSAPHero] Found hero-elements:", heroElements.length, "orbs:", orbs.length)
 
     if (heroElements.length === 0) {
       console.warn("[GSAPHero] No .hero-element found, skipping animation")
@@ -37,7 +37,6 @@ const GSAPHero = {
     this.animatedElements = [...heroElements, ...orbs]
 
     // Use fromTo for more reliable animation - sets initial AND animates to final
-    // Use fromTo for more reliable animation - sets initial AND animates to final
     this.heroTween = gsap.fromTo(
       heroElements,
       { autoAlpha: 0, y: 50 },
@@ -47,8 +46,8 @@ const GSAPHero = {
         duration: 1,
         stagger: 0.2,
         ease: "power3.out",
-        onStart: () => console.log("[GSAPHero] Animation started"),
-        onComplete: () => console.log("[GSAPHero] Animation complete"),
+        // onStart: () => console.log("[GSAPHero] Animation started"),
+        // onComplete: () => console.log("[GSAPHero] Animation complete"),
       }
     )
 
@@ -99,7 +98,7 @@ const GSAPHero = {
 
 const GSAPScrollReveal = {
   mounted() {
-    console.log("[GSAPScrollReveal] mounted, el:", this.el?.id)
+    // console.log("[GSAPScrollReveal] mounted, el:", this.el?.id)
     this.scrollTriggers = []
     this.tweens = []
     this.revealElements = []
@@ -110,7 +109,7 @@ const GSAPScrollReveal = {
   },
   initAnimations() {
     const elements = this.el.querySelectorAll(".gsap-reveal")
-    console.log("[GSAPScrollReveal] Found .gsap-reveal elements:", elements.length)
+    // console.log("[GSAPScrollReveal] Found .gsap-reveal elements:", elements.length)
 
     elements.forEach((el, index) => {
       // Avoid double initialization
@@ -126,7 +125,7 @@ const GSAPScrollReveal = {
       // Parse toggleActions from data attribute, default to stable "play none none none"
       let toggleActions = el.dataset.toggleActions || "play none none none"
 
-      console.log(`[GSAPScrollReveal] Setting up element ${index}`)
+      // console.log(`[GSAPScrollReveal] Setting up element ${index}`)
 
       const tween = gsap.fromTo(
         el,
@@ -141,7 +140,7 @@ const GSAPScrollReveal = {
             trigger: el,
             start: "top 85%",
             toggleActions: toggleActions,
-            onEnter: () => console.log(`[GSAPScrollReveal] Element ${index} entered viewport`),
+            // onEnter: () => console.log(`[GSAPScrollReveal] Element ${index} entered viewport`),
           },
         }
       )
@@ -177,7 +176,7 @@ const GSAPScrollReveal = {
 
 const GSAPCard3D = {
   mounted() {
-    console.log("[GSAPCard3D] mounted, el:", this.el?.id)
+    // console.log("[GSAPCard3D] mounted, el:", this.el?.id)
     this.cardHandlers = []
     this.initAnimations()
   },
@@ -186,7 +185,7 @@ const GSAPCard3D = {
   },
   initAnimations() {
     const cards = this.el.querySelectorAll(".gsap-3d-card")
-    console.log("[GSAPCard3D] Found .gsap-3d-card elements:", cards.length)
+    // console.log("[GSAPCard3D] Found .gsap-3d-card elements:", cards.length)
 
     cards.forEach((card) => {
       if (card.dataset.gsapInit) return
@@ -253,7 +252,7 @@ const GSAPCard3D = {
 
 const GSAPMagnetic = {
   mounted() {
-    console.log("[GSAPMagnetic] mounted, el:", this.el?.id)
+    // console.log("[GSAPMagnetic] mounted, el:", this.el?.id)
     this.buttonHandlers = []
     this.initAnimations()
   },
@@ -263,7 +262,7 @@ const GSAPMagnetic = {
   initAnimations() {
     // Apply to children with class .magnetic-btn, or the element itself if it has the class
     const buttons = this.el.classList.contains("magnetic-btn") ? [this.el] : this.el.querySelectorAll(".magnetic-btn")
-    console.log("[GSAPMagnetic] Found magnetic buttons:", buttons.length)
+    // console.log("[GSAPMagnetic] Found magnetic buttons:", buttons.length)
 
     buttons.forEach((btn) => {
       if (btn.dataset.gsapInit) return
@@ -354,7 +353,7 @@ const GSAPSpotlight = {
 
 const GSAPTextReveal = {
   mounted() {
-    console.log("[GSAPTextReveal] mounted, el:", this.el?.id)
+    // console.log("[GSAPTextReveal] mounted, el:", this.el?.id)
     this.originalText = this.el.innerText
     // Split text into characters manually since specific plugin is paid
     const element = this.el
@@ -365,7 +364,7 @@ const GSAPTextReveal = {
       return
     }
 
-    console.log("[GSAPTextReveal] Splitting text:", text.substring(0, 30))
+    // console.log("[GSAPTextReveal] Splitting text:", text.substring(0, 30))
 
     const chars = text
       .split("")
@@ -384,8 +383,8 @@ const GSAPTextReveal = {
       duration: 1,
       stagger: 0.03,
       ease: "back.out(1.7)",
-      onStart: () => console.log("[GSAPTextReveal] Animation started"),
-      onComplete: () => console.log("[GSAPTextReveal] Animation complete"),
+      // onStart: () => console.log("[GSAPTextReveal] Animation started"),
+      // onComplete: () => console.log("[GSAPTextReveal] Animation complete"),
     })
   },
   destroyed() {

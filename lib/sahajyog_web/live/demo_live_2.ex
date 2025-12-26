@@ -52,6 +52,7 @@ defmodule SahajyogWeb.DemoLive2 do
       |> assign(:show_todays_talk, true)
       |> assign(:shri_mataji_image, shri_mataji_image)
       |> assign(:testimonials, @testimonials)
+      |> assign(:stats, %{countries: 90, years: 55, talks: 1000})
 
     {:ok, socket}
   end
@@ -81,10 +82,6 @@ defmodule SahajyogWeb.DemoLive2 do
 
   def render(assigns) do
     ~H"""
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-      .font-outfit { font-family: 'Outfit', sans-serif; }
-    </style>
     <div id="demo2-page" phx-hook="GSAPScrollReveal" class="overflow-x-hidden font-outfit text-lg">
       <%!-- Scroll Progress Bar --%>
       <div id="scroll-progress" class="scroll-progress" style="width: 0%"></div>
@@ -108,7 +105,7 @@ defmodule SahajyogWeb.DemoLive2 do
             class="text-center mb-3 sm:mb-4 lg:mb-3 2xl:mb-[3vh]"
           >
             <h1 class="hero-element text-2xl sm:text-3xl lg:text-4xl 2xl:text-[3.5rem] font-bold text-base-content mb-2 sm:mb-2 2xl:mb-4 title-elegant tracking-tight">
-              <span class="block" phx-hook="GSAPTextReveal" id="hero-text-title-2" phx-update="ignore">
+              <span class="block" phx-hook="GSAPTextReveal" id="hero-text-title" phx-update="ignore">
                 {gettext("Welcome to Sahaja Yoga")}
               </span>
             </h1>
@@ -172,10 +169,10 @@ defmodule SahajyogWeb.DemoLive2 do
                     video_id={
                       VideoProvider.extract_video_id(
                         @current_video.url,
-                        String.to_atom(@current_video.provider)
+                        provider_to_atom(@current_video.provider)
                       )
                     }
-                    provider={String.to_atom(@current_video.provider)}
+                    provider={provider_to_atom(@current_video.provider)}
                     locale={@locale}
                   />
                 </div>
@@ -474,7 +471,7 @@ defmodule SahajyogWeb.DemoLive2 do
               <div class="text-center p-6 sm:p-8 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border border-primary/20">
                 <div class="text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-3">
                   <span
-                    data-counter="90"
+                    data-counter={@stats.countries}
                     phx-hook="GSAPCounter"
                     id="cnt-countries"
                     phx-update="ignore"
@@ -486,7 +483,12 @@ defmodule SahajyogWeb.DemoLive2 do
               </div>
               <div class="text-center p-6 sm:p-8 bg-gradient-to-br from-secondary/10 to-secondary/5 rounded-2xl border border-secondary/20">
                 <div class="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-3">
-                  <span data-counter="55" phx-hook="GSAPCounter" id="cnt-years" phx-update="ignore">0</span>+
+                  <span
+                    data-counter={@stats.years}
+                    phx-hook="GSAPCounter"
+                    id="cnt-years"
+                    phx-update="ignore"
+                  >0</span>+
                 </div>
                 <p class="text-base-content/80 font-medium text-sm sm:text-base">
                   {gettext("Years")}
@@ -502,7 +504,12 @@ defmodule SahajyogWeb.DemoLive2 do
               </div>
               <div class="text-center p-6 sm:p-8 bg-gradient-to-br from-info/10 to-info/5 rounded-2xl border border-info/20">
                 <div class="text-4xl md:text-5xl lg:text-6xl font-bold text-info mb-3">
-                  <span data-counter="1000" phx-hook="GSAPCounter" id="cnt-talks" phx-update="ignore">0</span>+
+                  <span
+                    data-counter={@stats.talks}
+                    phx-hook="GSAPCounter"
+                    id="cnt-talks"
+                    phx-update="ignore"
+                  >0</span>+
                 </div>
                 <p class="text-base-content/80 font-medium text-sm sm:text-base">
                   {gettext("Talks Available")}
@@ -726,5 +733,13 @@ defmodule SahajyogWeb.DemoLive2 do
       </div>
     </div>
     """
+  end
+
+  defp provider_to_atom(provider) do
+    case provider do
+      "youtube" -> :youtube
+      "vimeo" -> :vimeo
+      _ -> :youtube
+    end
   end
 end
