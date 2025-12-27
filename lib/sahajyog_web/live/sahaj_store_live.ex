@@ -9,7 +9,7 @@ defmodule SahajyogWeb.SahajStoreLive do
 
   import SahajyogWeb.FormatHelpers, only: [truncate_text: 2]
 
-  @per_page 12
+  @default_per_page 24
 
   @impl true
   def mount(_params, _session, socket) do
@@ -20,18 +20,32 @@ defmodule SahajyogWeb.SahajStoreLive do
       |> assign(:pricing_filter, "all")
       |> assign(:delivery_filter, "all")
       |> assign(:current_page, 1)
-      |> assign(:per_page, @per_page)
+      |> assign(:per_page, @default_per_page)
       |> assign(:total_results, 0)
+      |> assign(:user_has_items, false)
 
     socket =
       if connected?(socket) do
+        # Subscribe to real-time updates for approved items
+        Store.subscribe_to_approved_items()
+
         items = Store.list_approved_items()
+
+        # Check if current user has any items
+        user_has_items =
+          if socket.assigns.current_scope && socket.assigns.current_scope.user do
+            user_id = socket.assigns.current_scope.user.id
+            Store.list_user_items(user_id) != []
+          else
+            false
+          end
 
         socket
         |> assign(:all_items, items)
         |> assign(:total_results, length(items))
-        |> assign(:items, paginate_items(items, 1, @per_page))
+        |> assign(:items, paginate_items(items, 1, @default_per_page))
         |> assign(:loading, false)
+        |> assign(:user_has_items, user_has_items)
       else
         socket
         |> assign(:items, nil)
@@ -93,6 +107,18 @@ defmodule SahajyogWeb.SahajStoreLive do
   end
 
   @impl true
+  def handle_event("change_per_page", %{"per_page" => per_page}, socket) do
+    per_page_num = String.to_integer(per_page)
+    filtered_items = get_filtered_items(socket)
+
+    {:noreply,
+     socket
+     |> assign(:per_page, per_page_num)
+     |> assign(:current_page, 1)
+     |> assign(:items, paginate_items(filtered_items, 1, per_page_num))}
+  end
+
+  @impl true
   def handle_event("goto_page", %{"page" => page}, socket) do
     page_num = String.to_integer(page)
     filtered_items = get_filtered_items(socket)
@@ -136,6 +162,26 @@ defmodule SahajyogWeb.SahajStoreLive do
     else
       {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_info({:store_item_approved, approved_item}, socket) do
+    # Fetch the full item with preloaded associations
+    full_item = Store.get_item_with_media!(approved_item.id)
+
+    # Add the new item to all_items
+    all_items = [full_item | socket.assigns.all_items]
+
+    # Recalculate filtered items and pagination
+    filtered_items = filter_items(all_items, socket.assigns.search_query, socket.assigns)
+    current_page = socket.assigns.current_page
+    per_page = socket.assigns.per_page
+
+    {:noreply,
+     socket
+     |> assign(:all_items, all_items)
+     |> assign(:total_results, length(filtered_items))
+     |> assign(:items, paginate_items(filtered_items, current_page, per_page))}
   end
 
   defp get_filtered_items(socket) do
@@ -379,8 +425,48 @@ defmodule SahajyogWeb.SahajStoreLive do
               </div>
             </div>
 
-            <%!-- List Button --%>
-            <div class="flex-shrink-0 ml-auto sm:ml-2">
+            <%!-- Action Buttons --%>
+            <div class="flex-shrink-0 ml-auto sm:ml-2 flex gap-2">
+              <%!-- Per Page Selector --%>
+              <div class="dropdown dropdown-end">
+                <div
+                  tabindex="0"
+                  role="button"
+                  class="btn btn-ghost btn-sm h-9 px-3 rounded-xl gap-2 hover:bg-base-content/5 transition-all"
+                >
+                  <.icon name="hero-view-columns" class="w-4 h-4" />
+                  <span class="hidden sm:inline">{@per_page}</span>
+                  <.icon name="hero-chevron-down" class="w-3 h-3 opacity-40" />
+                </div>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content z-[1] menu p-1 shadow-xl bg-base-100 rounded-xl border border-base-content/10 w-32 mt-2"
+                >
+                  <%= for count <- [12, 24, 48] do %>
+                    <li>
+                      <button
+                        class={if @per_page == count, do: "active font-medium", else: ""}
+                        phx-click="change_per_page"
+                        phx-value-per_page={count}
+                      >
+                        {count} {gettext("items")}
+                      </button>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+
+              <%!-- My Items Button (only show if user is logged in and has items) --%>
+              <%= if @current_scope && @current_scope.user && @user_has_items do %>
+                <.link navigate="/store/my-items">
+                  <button class="btn btn-ghost btn-sm h-9 px-4 rounded-xl gap-2 hover:bg-base-content/5 transition-all">
+                    <.icon name="hero-shopping-bag" class="w-4 h-4" />
+                    <span class="hidden sm:inline">{gettext("My Items")}</span>
+                  </button>
+                </.link>
+              <% end %>
+
+              <%!-- List Item Button --%>
               <.link navigate="/store/new">
                 <button class="btn btn-primary btn-sm h-9 px-5 rounded-xl gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
                   <.icon name="hero-plus" class="w-4 h-4" />
@@ -502,38 +588,78 @@ defmodule SahajyogWeb.SahajStoreLive do
 
             <%!-- Modern Pagination --%>
             <%= if @total_results > @per_page do %>
-              <div class="mt-12 flex justify-center">
-                <div class="inline-flex items-center gap-1 p-1 rounded-2xl bg-base-100 border border-base-content/10 shadow-sm">
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+                <%!-- Stats --%>
+                <p class="text-base-content/60 text-xs sm:text-sm">
+                  {gettext("Showing")}
+                  <span class="text-base-content font-semibold">
+                    {(@current_page - 1) * @per_page + 1}
+                  </span>
+                  {gettext("to")}
+                  <span class="text-base-content font-semibold">
+                    {min(@current_page * @per_page, @total_results)}
+                  </span>
+                  {gettext("of")}
+                  <span class="text-base-content font-semibold">{@total_results}</span>
+                  {ngettext("item", "items", @total_results)}
+                </p>
+
+                <%!-- Pagination controls --%>
+                <div class="flex items-center gap-1 sm:gap-2">
+                  <%!-- Previous button --%>
                   <button
-                    class="btn btn-sm btn-ghost w-9 h-9 p-0 rounded-xl disabled:bg-transparent"
                     phx-click="prev_page"
                     disabled={@current_page == 1}
+                    class={[
+                      "px-2 sm:px-4 py-2 rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-xs sm:text-sm",
+                      @current_page == 1 &&
+                        "opacity-50 cursor-not-allowed bg-base-100 text-base-content/40",
+                      @current_page > 1 && "bg-base-100 hover:bg-base-200 text-base-content"
+                    ]}
                   >
-                    <.icon name="hero-chevron-left" class="w-4 h-4" />
+                    <.icon name="hero-chevron-left" class="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span class="hidden sm:inline">{gettext("Previous")}</span>
                   </button>
 
-                  <%= for page_num <- page_numbers(@current_page, ceil(@total_results / @per_page)) do %>
-                    <%= if page_num == "..." do %>
-                      <span class="w-9 h-9 flex items-center justify-center text-base-content/30 text-xs">
-                        ...
-                      </span>
-                    <% else %>
-                      <button
-                        class={"btn btn-sm w-9 h-9 p-0 rounded-xl transition-all #{if @current_page == page_num, do: "btn-primary shadow-md", else: "btn-ghost text-base-content/70"}"}
-                        phx-click="goto_page"
-                        phx-value-page={page_num}
-                      >
-                        {page_num}
-                      </button>
+                  <%!-- Page numbers --%>
+                  <div class="flex items-center gap-1">
+                    <%= for page_num <- page_numbers(@current_page, ceil(@total_results / @per_page)) do %>
+                      <%= if page_num == "..." do %>
+                        <span class="px-2 sm:px-3 py-2 text-base-content/40 text-xs sm:text-sm">
+                          ...
+                        </span>
+                      <% else %>
+                        <button
+                          phx-click="goto_page"
+                          phx-value-page={page_num}
+                          class={[
+                            "px-2 sm:px-3 py-2 rounded-lg transition-colors text-xs sm:text-sm",
+                            @current_page == page_num &&
+                              "bg-primary text-primary-content font-semibold",
+                            @current_page != page_num &&
+                              "bg-base-100 hover:bg-base-200 text-base-content/80"
+                          ]}
+                        >
+                          {page_num}
+                        </button>
+                      <% end %>
                     <% end %>
-                  <% end %>
+                  </div>
 
+                  <%!-- Next button --%>
                   <button
-                    class="btn btn-sm btn-ghost w-9 h-9 p-0 rounded-xl disabled:bg-transparent"
                     phx-click="next_page"
                     disabled={@current_page >= ceil(@total_results / @per_page)}
+                    class={[
+                      "px-2 sm:px-4 py-2 rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-xs sm:text-sm",
+                      @current_page >= ceil(@total_results / @per_page) &&
+                        "opacity-50 cursor-not-allowed bg-base-100 text-base-content/40",
+                      @current_page < ceil(@total_results / @per_page) &&
+                        "bg-base-100 hover:bg-base-200 text-base-content"
+                    ]}
                   >
-                    <.icon name="hero-chevron-right" class="w-4 h-4" />
+                    <span class="hidden sm:inline">{gettext("Next")}</span>
+                    <.icon name="hero-chevron-right" class="w-3 h-3 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>

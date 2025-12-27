@@ -23,6 +23,9 @@ defmodule SahajyogWeb.MyStoreItemsLive do
 
     socket =
       if connected?(socket) do
+        # Subscribe to real-time updates for this user's items
+        Store.subscribe_to_user_items(user.id)
+
         items = Store.list_user_items(user.id)
         inquiries = Store.list_inquiries_for_seller(user.id)
 
@@ -129,6 +132,21 @@ defmodule SahajyogWeb.MyStoreItemsLive do
     end
   end
 
+  @impl true
+  def handle_info({:store_item_updated, updated_item}, socket) do
+    items =
+      Enum.map(socket.assigns.items, fn item ->
+        if item.id == updated_item.id do
+          # Merge the updated fields while preserving preloaded associations
+          %{item | status: updated_item.status, review_notes: updated_item.review_notes}
+        else
+          item
+        end
+      end)
+
+    {:noreply, assign(socket, :items, items)}
+  end
+
   defp filtered_items(items, "all"), do: items
   defp filtered_items(items, status), do: Enum.filter(items, &(&1.status == status))
 
@@ -191,6 +209,15 @@ defmodule SahajyogWeb.MyStoreItemsLive do
     ~H"""
     <.page_container>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <%!-- Back Link --%>
+        <.link
+          navigate={~p"/store"}
+          class="inline-flex items-center gap-2 text-sm text-base-content/60 hover:text-primary mb-6 transition-colors"
+        >
+          <.icon name="hero-arrow-left" class="w-4 h-4" />
+          {gettext("Back to Store")}
+        </.link>
+
         <%!-- Header --%>
         <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -358,18 +385,10 @@ defmodule SahajyogWeb.MyStoreItemsLive do
               }
               description={
                 if @status_filter == "all",
-                  do: gettext("Start by listing your first item"),
+                  do: gettext("Start by listing your first item or browse the store"),
                   else: gettext("Try selecting a different filter")
               }
-            >
-              <:actions>
-                <%= if @status_filter == "all" do %>
-                  <.primary_button navigate="/store/new" icon="hero-plus">
-                    {gettext("List New Item")}
-                  </.primary_button>
-                <% end %>
-              </:actions>
-            </.empty_state>
+            />
           <% end %>
         <% end %>
       </div>

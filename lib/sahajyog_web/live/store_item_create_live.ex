@@ -205,10 +205,13 @@ defmodule SahajyogWeb.StoreItemCreateLive do
          |> push_navigate(to: ~p"/store/my-items")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
+        # Determine which step has errors
+        step = determine_error_step(changeset)
+
         {:noreply,
          socket
          |> assign(:form, to_form(changeset))
-         |> assign(:current_step, 1)}
+         |> assign(:current_step, step)}
     end
   end
 
@@ -242,10 +245,25 @@ defmodule SahajyogWeb.StoreItemCreateLive do
          |> push_navigate(to: ~p"/store/my-items")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
+        # Determine which step has errors
+        step = determine_error_step(changeset)
+
         {:noreply,
          socket
          |> assign(:form, to_form(changeset))
-         |> assign(:current_step, 1)}
+         |> assign(:current_step, step)}
+    end
+  end
+
+  # Determine which step contains validation errors
+  defp determine_error_step(changeset) do
+    errors = changeset.errors |> Keyword.keys()
+
+    cond do
+      # Step 3 fields: delivery_methods, shipping_cost, shipping_time
+      Enum.any?(errors, &(&1 in [:delivery_methods, :shipping_cost, :shipping_time])) -> 3
+      # Step 1 fields: everything else
+      true -> 1
     end
   end
 
@@ -333,7 +351,7 @@ defmodule SahajyogWeb.StoreItemCreateLive do
     has_uploading =
       case Map.get(socket.assigns, :uploads) do
         nil -> false
-        uploads -> length(uploads.video.entries) > 0
+        uploads -> uploads.video.entries != []
       end
 
     has_existing or has_uploading
@@ -771,6 +789,14 @@ defmodule SahajyogWeb.StoreItemCreateLive do
                   </div>
                   <%!-- Hidden input to ensure empty array is sent when nothing selected --%>
                   <input type="hidden" name="store_item[delivery_methods][]" value="" />
+
+                  <%!-- Show validation error --%>
+                  <%= if @form[:delivery_methods].errors != [] do %>
+                    <p class="mt-2 text-sm text-error flex items-center gap-2">
+                      <.icon name="hero-exclamation-circle" class="w-4 h-4" />
+                      {gettext("Please select at least one delivery method")}
+                    </p>
+                  <% end %>
                 </div>
 
                 <% selected_methods = Ecto.Changeset.get_field(@form.source, :delivery_methods) || [] %>
@@ -784,10 +810,12 @@ defmodule SahajyogWeb.StoreItemCreateLive do
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
+                        <% currency = Ecto.Changeset.get_field(@form.source, :currency) || "EUR" %>
+                        <% currency_symbol = Sahajyog.Store.StoreItem.currency_symbol(currency) %>
                         <.input
                           field={@form[:shipping_cost]}
                           type="number"
-                          label={gettext("Shipping Cost (₹)")}
+                          label={gettext("Shipping Cost (%{symbol})", symbol: currency_symbol)}
                           min="0"
                           step="0.01"
                           placeholder="0.00"

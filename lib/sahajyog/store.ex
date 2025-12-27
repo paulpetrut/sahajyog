@@ -121,27 +121,88 @@ defmodule Sahajyog.Store do
   Approves a store item, setting status to "approved" and recording the reviewer.
   """
   def approve_item(%StoreItem{} = item, admin, _opts \\ []) do
-    item
-    |> StoreItem.approve_changeset(admin)
-    |> Repo.update()
+    case item
+         |> StoreItem.approve_changeset(admin)
+         |> Repo.update() do
+      {:ok, updated_item} = result ->
+        # Preload associations before broadcasting
+        updated_item = Repo.preload(updated_item, [:user, :media])
+        broadcast_item_update(updated_item)
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """
   Rejects a store item, requiring review notes.
   """
   def reject_item(%StoreItem{} = item, admin, review_notes) do
-    item
-    |> StoreItem.reject_changeset(admin, review_notes)
-    |> Repo.update()
+    case item
+         |> StoreItem.reject_changeset(admin, review_notes)
+         |> Repo.update() do
+      {:ok, updated_item} = result ->
+        # Preload associations before broadcasting
+        updated_item = Repo.preload(updated_item, [:user, :media])
+        broadcast_item_update(updated_item)
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """
   Marks a store item as sold.
   """
   def mark_item_sold(%StoreItem{} = item) do
-    item
-    |> StoreItem.sold_changeset()
-    |> Repo.update()
+    case item
+         |> StoreItem.sold_changeset()
+         |> Repo.update() do
+      {:ok, updated_item} = result ->
+        # Preload associations before broadcasting
+        updated_item = Repo.preload(updated_item, [:user, :media])
+        broadcast_item_update(updated_item)
+        result
+
+      error ->
+        error
+    end
+  end
+
+  @doc """
+  Subscribes to updates for a specific user's store items.
+  """
+  def subscribe_to_user_items(user_id) do
+    Phoenix.PubSub.subscribe(Sahajyog.PubSub, "store_items:user:#{user_id}")
+  end
+
+  @doc """
+  Subscribes to updates for all approved store items (for the marketplace).
+  """
+  def subscribe_to_approved_items do
+    Phoenix.PubSub.subscribe(Sahajyog.PubSub, "store_items:approved")
+  end
+
+  ## Private Broadcast Helpers
+
+  defp broadcast_item_update(%StoreItem{} = item) do
+    # Broadcast to the user's personal channel
+    Phoenix.PubSub.broadcast(
+      Sahajyog.PubSub,
+      "store_items:user:#{item.user_id}",
+      {:store_item_updated, item}
+    )
+
+    # If the item is approved, broadcast to the marketplace channel
+    if item.status == "approved" do
+      Phoenix.PubSub.broadcast(
+        Sahajyog.PubSub,
+        "store_items:approved",
+        {:store_item_approved, item}
+      )
+    end
   end
 
   ## Media Management Functions
