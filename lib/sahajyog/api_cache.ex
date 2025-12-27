@@ -10,7 +10,6 @@ defmodule Sahajyog.ApiCache do
   require Logger
 
   @table_name :api_cache
-  @default_ttl :timer.hours(1)
 
   # Cache keys
   @countries_key :countries
@@ -18,6 +17,10 @@ defmodule Sahajyog.ApiCache do
   @categories_key :categories
   @spoken_languages_key :spoken_languages
   @translation_languages_key :translation_languages
+
+  # TTL configurations
+  @filter_ttl :timer.hours(1)
+  @talks_ttl :timer.hours(6)
 
   # Client API
 
@@ -65,6 +68,22 @@ defmodule Sahajyog.ApiCache do
   end
 
   @doc """
+  Get cached talks or fetch from API.
+  Uses a shorter TTL (10 minutes) since talks data changes more frequently.
+  Cache key is based on filter hash to cache different filter combinations.
+  """
+  def get_talks(filters) do
+    # Create a cache key based on the filter parameters
+    cache_key = {:talks, :erlang.phash2(filters)}
+
+    get_or_fetch(
+      cache_key,
+      fn -> Sahajyog.ExternalApi.fetch_talks(filters) end,
+      @talks_ttl
+    )
+  end
+
+  @doc """
   Invalidate all cached data.
   """
   def invalidate_all do
@@ -85,18 +104,60 @@ defmodule Sahajyog.ApiCache do
     GenServer.call(__MODULE__, :stats)
   end
 
+  @doc """
+  Pre-warm the cache with all filter options on application startup.
+  This ensures the first user doesn't experience slow load times.
+  """
+  def warm_cache do
+    Logger.info("Warming API cache...")
+
+    # Fetch all filter options in parallel
+    tasks = [
+      Task.async(fn -> get_countries() end),
+      Task.async(fn -> get_years() end),
+      Task.async(fn -> get_categories() end),
+      Task.async(fn -> get_spoken_languages() end),
+      Task.async(fn -> get_translation_languages() end)
+    ]
+
+    # Wait for all tasks to complete
+    results = Task.await_many(tasks, 30_000)
+
+    # Count successful fetches
+    success_count =
+      Enum.count(results, fn
+        {:ok, _} -> true
+        _ -> false
+      end)
+
+    Logger.info("API cache warmed: #{success_count}/5 filter options cached")
+  end
+
   # Private helpers
 
-  defp get_or_fetch(key, fetch_fn) do
+  defp get_or_fetch(key, fetch_fn, ttl \\ @filter_ttl) do
     case get_cached(key) do
       {:ok, value} ->
-        {:ok, value}
+        # Check if this is a talks cache entry (tuple with results and total)
+        case value do
+          {results, total} when is_list(results) and is_integer(total) ->
+            {:ok, results, total}
+
+          _ ->
+            {:ok, value}
+        end
 
       :miss ->
         case fetch_fn.() do
           {:ok, value} ->
-            put_cached(key, value)
+            put_cached(key, value, ttl)
             {:ok, value}
+
+          # Handle talks API response format with total
+          {:ok, results, total} ->
+            value = {results, total}
+            put_cached(key, value, ttl)
+            {:ok, results, total}
 
           {:error, reason} ->
             {:error, reason}
@@ -118,7 +179,7 @@ defmodule Sahajyog.ApiCache do
     end
   end
 
-  defp put_cached(key, value, ttl \\ @default_ttl) do
+  defp put_cached(key, value, ttl) do
     expires_at = System.monotonic_time(:millisecond) + ttl
     :ets.insert(@table_name, {key, value, expires_at})
     :ok
