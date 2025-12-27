@@ -122,6 +122,11 @@ Hooks.WatchedVideos = {
       }
     })
   },
+
+  destroyed() {
+    // handleEvent is cleaned up automatically by LiveView
+    // but including destroyed() for consistency and future-proofing
+  },
 }
 
 Hooks.LocaleSelector = {
@@ -150,6 +155,11 @@ Hooks.PreviewHandler = {
     this.handleEvent("open_preview", ({ url }) => {
       window.open(url, "_blank")
     })
+  },
+
+  destroyed() {
+    // handleEvent is cleaned up automatically by LiveView
+    // but including destroyed() for consistency and future-proofing
   },
 }
 
@@ -274,14 +284,17 @@ Hooks.UnsavedChanges = {
     this.formSubmitting = false
 
     // Track form changes
-    this.el.addEventListener("input", () => {
+    this.inputHandler = () => {
       this.hasChanges = true
-    })
+    }
 
     // Track form submission
-    this.el.addEventListener("submit", () => {
+    this.submitHandler = () => {
       this.formSubmitting = true
-    })
+    }
+
+    this.el.addEventListener("input", this.inputHandler)
+    this.el.addEventListener("submit", this.submitHandler)
 
     // Warn before leaving page
     this.beforeUnloadHandler = (e) => {
@@ -314,6 +327,14 @@ Hooks.UnsavedChanges = {
   },
 
   destroyed() {
+    // Remove form event listeners
+    if (this.inputHandler) {
+      this.el.removeEventListener("input", this.inputHandler)
+    }
+    if (this.submitHandler) {
+      this.el.removeEventListener("submit", this.submitHandler)
+    }
+    // Remove window event listeners
     window.removeEventListener("beforeunload", this.beforeUnloadHandler)
     window.removeEventListener("phx:page-loading-start", this.pageLoadingHandler)
   },
@@ -376,7 +397,7 @@ Hooks.ScheduleNotification = {
 // Interactive scroll indicator - smooth scroll to next section and hide on scroll
 Hooks.ScrollIndicator = {
   mounted() {
-    this.el.addEventListener("click", () => {
+    this.clickHandler = () => {
       // Find the next section after the hero
       const heroSection = document.getElementById("hero-section")
       if (heroSection) {
@@ -385,7 +406,9 @@ Hooks.ScrollIndicator = {
           nextSection.scrollIntoView({ behavior: "smooth", block: "start" })
         }
       }
-    })
+    }
+
+    this.el.addEventListener("click", this.clickHandler)
 
     // Hide on scroll
     this.ticking = false
@@ -408,6 +431,9 @@ Hooks.ScrollIndicator = {
   },
 
   destroyed() {
+    if (this.clickHandler) {
+      this.el.removeEventListener("click", this.clickHandler)
+    }
     if (this.scrollHandler) {
       window.removeEventListener("scroll", this.scrollHandler)
     }
@@ -541,6 +567,9 @@ Hooks.WelcomeAnimations = {
   },
 
   animateCounters() {
+    // Track animation frames for cleanup
+    this.animationFrames = this.animationFrames || []
+
     this.counterElements.forEach((el) => {
       const target = parseInt(el.dataset.counter, 10)
       const duration = 2000
@@ -551,7 +580,8 @@ Hooks.WelcomeAnimations = {
         current += step
         if (current < target) {
           el.textContent = Math.floor(current)
-          requestAnimationFrame(updateCounter)
+          const frameId = requestAnimationFrame(updateCounter)
+          this.animationFrames.push(frameId)
         } else {
           el.textContent = target
         }
@@ -562,10 +592,15 @@ Hooks.WelcomeAnimations = {
   },
 
   destroyed() {
-    window.removeEventListener("scroll", this.handleScroll)
-    if (this.observer) {
-      this.observer.disconnect()
+    // Cancel any running counter animations
+    if (this.animationFrames) {
+      this.animationFrames.forEach((id) => cancelAnimationFrame(id))
+      this.animationFrames = []
     }
+
+    window.removeEventListener("scroll", this.handleScroll)
+
+    // Fixed: was this.observer, should be this.revealObserver
     if (this.revealObserver) {
       this.revealObserver.disconnect()
     }
@@ -789,13 +824,151 @@ const liveSocket = new LiveSocket("/live", Socket, {
 
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
-window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300))
+window.addEventListener("phx:page-loading-start", (_info) => topbar.show(500))
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 
-// expose liveSocket on window for web console debug logs and latency simulation:
+// ===== Theme Management =====
+// Moved from inline script in root.html.heex for AGENTS.md compliance
+const setTheme = (theme) => {
+  if (theme === "system") {
+    localStorage.removeItem("phx:theme")
+    document.documentElement.removeAttribute("data-theme")
+  } else {
+    localStorage.setItem("phx:theme", theme)
+    document.documentElement.setAttribute("data-theme", theme)
+  }
+}
+
+// Initialize theme on page load
+if (!document.documentElement.hasAttribute("data-theme")) {
+  setTheme(localStorage.getItem("phx:theme") || "dark")
+}
+
+// Listen for theme changes from other tabs
+window.addEventListener("storage", (e) => {
+  if (e.key === "phx:theme") setTheme(e.newValue || "dark")
+})
+
+// Listen for theme changes from LiveView
+window.addEventListener("phx:set-theme", (e) => {
+  setTheme(e.target.dataset.phxTheme)
+})
+
+// ===== Navigation Utilities =====
+// Moved from inline script in root.html.heex for AGENTS.md compliance
+
+// Ensure page always loads at the top
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual"
+}
+window.scrollTo(0, 0)
+
+// Update home icon visibility based on current path
+const updateHomeIconVisibility = () => {
+  const homeIcon = document.querySelector(".home-icon")
+  if (homeIcon) {
+    homeIcon.style.visibility = window.location.pathname !== "/" ? "visible" : "hidden"
+  }
+}
+
+// Update active nav link styling
+const updateActiveNavLink = () => {
+  const currentPath = window.location.pathname
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    const navPath = link.dataset.navPath
+    if (navPath && currentPath.startsWith(navPath)) {
+      link.classList.add("text-base-content", "border-b-2", "border-primary")
+      link.classList.remove("text-base-content/70")
+    } else {
+      link.classList.remove("text-base-content", "border-b-2", "border-primary")
+    }
+  })
+}
+
+// Update footer nav links - hide current page link
+const updateFooterNavLinks = () => {
+  const currentPath = window.location.pathname
+  document.querySelectorAll(".footer-nav-link").forEach((link) => {
+    const footerPath = link.dataset.footerPath
+    if (footerPath === "/" && currentPath === "/") {
+      link.style.display = "none"
+    } else if (footerPath !== "/" && currentPath.startsWith(footerPath)) {
+      link.style.display = "none"
+    } else {
+      link.style.display = ""
+    }
+  })
+}
+
+// Mobile menu toggle functionality
+const initMobileMenu = () => {
+  const button = document.getElementById("mobile-menu-button")
+  const menu = document.getElementById("mobile-menu")
+  const overlay = document.getElementById("mobile-menu-overlay")
+  const iconPath = document.getElementById("menu-icon-path")
+
+  if (!button || !menu || !overlay || !iconPath) return
+
+  let isOpen = false
+  const hamburgerPath = "M4 6h16M4 12h16M4 18h16"
+  const closePath = "M6 18L18 6M6 6l12 12"
+
+  const toggleMenu = () => {
+    isOpen = !isOpen
+    if (isOpen) {
+      menu.classList.remove("translate-x-full")
+      overlay.classList.remove("hidden")
+      iconPath.setAttribute("d", closePath)
+      document.body.style.overflow = "hidden"
+    } else {
+      menu.classList.add("translate-x-full")
+      overlay.classList.add("hidden")
+      iconPath.setAttribute("d", hamburgerPath)
+      document.body.style.overflow = ""
+    }
+  }
+
+  // Remove old listeners before adding new ones (prevents duplicates on navigation)
+  // Store handlers on the elements themselves for proper cleanup
+  if (button._toggleHandler) {
+    button.removeEventListener("click", button._toggleHandler)
+    button.removeEventListener("touchstart", button._touchHandler)
+  }
+  if (overlay._clickHandler) {
+    overlay.removeEventListener("click", overlay._clickHandler)
+  }
+
+  button._toggleHandler = toggleMenu
+  button._touchHandler = (e) => {
+    e.preventDefault()
+    toggleMenu()
+  }
+  overlay._clickHandler = () => {
+    if (isOpen) toggleMenu()
+  }
+
+  button.addEventListener("click", button._toggleHandler)
+  button.addEventListener("touchstart", button._touchHandler)
+  overlay.addEventListener("click", overlay._clickHandler)
+}
+
+// Run on initial load
+updateHomeIconVisibility()
+updateActiveNavLink()
+updateFooterNavLinks()
+initMobileMenu()
+
+// Run on LiveView navigation
+window.addEventListener("phx:page-loading-stop", () => {
+  window.scrollTo(0, 0)
+  updateHomeIconVisibility()
+  updateActiveNavLink()
+  updateFooterNavLinks()
+  initMobileMenu()
+})
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
