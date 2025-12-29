@@ -17,28 +17,9 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
-    <script>
-      (() => {
-        const setTheme = (theme) => {
-          if (theme === "system") {
-            localStorage.removeItem("phx:theme");
-            document.documentElement.removeAttribute("data-theme");
-          } else {
-            localStorage.setItem("phx:theme", theme);
-            document.documentElement.setAttribute("data-theme", theme);
-          }
-        };
-        if (!document.documentElement.hasAttribute("data-theme")) {
-          setTheme(localStorage.getItem("phx:theme") || "dark");
-        }
-        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "dark"));
-        
-        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
-      })();
-    </script>
   </head>
   <body class="overflow-x-hidden bg-base-300">
-    <div class="sticky top-0 w-full max-w-full relative z-[9999] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 2xl:py-6 bg-base-100/95 backdrop-blur-sm border-b border-base-content/10 shadow-sm">
+    <div class="sticky top-0 w-full max-w-full z-[9999] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 2xl:py-6 bg-base-100/95 backdrop-blur-sm border-b border-base-content/10 shadow-sm">
       <%!-- Left Section - Home Icon --%>
       <div class="flex items-center shrink-0">
         <%!-- Home Icon --%>
@@ -242,119 +223,6 @@
       </div>
     </div>
     <.mobile_menu current_scope={assigns[:current_scope]} locale={assigns[:locale] || "en"} />
-    <script>
-      // Ensure page always loads at the top
-      if ('scrollRestoration' in history) {
-        history.scrollRestoration = 'manual';
-      }
-      window.scrollTo(0, 0);
-
-      // Function to update home icon visibility based on current path
-      const updateHomeIconVisibility = () => {
-        const homeIcon = document.querySelector('.home-icon');
-        if (homeIcon) {
-          homeIcon.style.visibility = window.location.pathname !== '/' ? 'visible' : 'hidden';
-        }
-      };
-
-      // Update on initial load
-      updateHomeIconVisibility();
-
-      // Update on LiveView navigation
-      window.addEventListener('phx:page-loading-stop', updateHomeIconVisibility);
-
-      // Reset scroll position on LiveView navigation
-      window.addEventListener('phx:page-loading-stop', () => {
-        window.scrollTo(0, 0);
-      });
-
-      // Function to update active nav link
-      const updateActiveNavLink = () => {
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.nav-link').forEach(link => {
-          const navPath = link.dataset.navPath;
-          if (navPath && currentPath.startsWith(navPath)) {
-            link.classList.add('text-base-content', 'border-b-2', 'border-primary');
-            link.classList.remove('text-base-content/70');
-          } else {
-            link.classList.remove('text-base-content', 'border-b-2', 'border-primary');
-          }
-        });
-      };
-
-      // Function to update footer nav links - hide current page link
-      const updateFooterNavLinks = () => {
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.footer-nav-link').forEach(link => {
-          const footerPath = link.dataset.footerPath;
-          if (footerPath === '/' && currentPath === '/') {
-            link.style.display = 'none';
-          } else if (footerPath !== '/' && currentPath.startsWith(footerPath)) {
-            link.style.display = 'none';
-          } else {
-            link.style.display = '';
-          }
-        });
-      };
-
-      // Update on initial load
-      updateActiveNavLink();
-      updateFooterNavLinks();
-
-      // Update on LiveView navigation
-      window.addEventListener('phx:page-loading-stop', updateActiveNavLink);
-      window.addEventListener('phx:page-loading-stop', updateFooterNavLinks);
-
-      // Mobile menu toggle functionality
-      const initMobileMenu = () => {
-        const button = document.getElementById('mobile-menu-button');
-        const menu = document.getElementById('mobile-menu');
-        const overlay = document.getElementById('mobile-menu-overlay');
-        const iconPath = document.getElementById('menu-icon-path');
-
-        if (!button || !menu || !overlay || !iconPath) {
-          return;
-        }
-
-        let isOpen = false;
-        const hamburgerPath = 'M4 6h16M4 12h16M4 18h16';
-        const closePath = 'M6 18L18 6M6 6l12 12';
-
-        const toggleMenu = () => {
-          isOpen = !isOpen;
-          
-          if (isOpen) {
-            menu.classList.remove('translate-x-full');
-            overlay.classList.remove('hidden');
-            iconPath.setAttribute('d', closePath);
-            document.body.style.overflow = 'hidden';
-          } else {
-            menu.classList.add('translate-x-full');
-            overlay.classList.add('hidden');
-            iconPath.setAttribute('d', hamburgerPath);
-            document.body.style.overflow = '';
-          }
-        };
-
-        button.addEventListener('click', toggleMenu);
-        button.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          toggleMenu();
-        });
-        
-        overlay.addEventListener('click', () => {
-          if (isOpen) {
-            toggleMenu();
-          }
-        });
-      };
-
-      // Initialize on load
-      initMobileMenu();
-
-      // Re-initialize after LiveView navigation
-      window.addEventListener('phx:page-loading-stop', initMobileMenu);
-    </script>
     {@inner_content}
     <Layouts.footer current_scope={assigns[:current_scope]} />
   </body>

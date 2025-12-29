@@ -207,7 +207,7 @@ defmodule SahajyogWeb.Admin.WeeklyScheduleLive do
     Calendar.strftime(date, "%b %d")
   end
 
-  defp is_current_week?(year, week, current_year, current_week) do
+  defp current_week?(year, week, current_year, current_week) do
     year == current_year and week == current_week
   end
 
@@ -260,7 +260,7 @@ defmodule SahajyogWeb.Admin.WeeklyScheduleLive do
                   {gettext("Week %{week}, %{year}", week: @selected_week, year: @selected_year)}
                 </h2>
                 <span
-                  :if={is_current_week?(@selected_year, @selected_week, @current_year, @current_week)}
+                  :if={current_week?(@selected_year, @selected_week, @current_year, @current_week)}
                   class="px-2 py-1 bg-success/20 text-success text-xs font-semibold rounded"
                 >
                   {gettext("Current Week")}

@@ -4417,7 +4417,7 @@ msgstr "Visualizza tutti gli eventi"
 #: lib/sahajyog_web/controllers/user_session_controller.ex:103
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Welcome back %{name}!"
-msgstr ""
+msgstr "Bentornato %{name}!"
 
 #: lib/sahajyog_web/live/level_upgrade_live.ex:48
 #, elixir-autogen, elixir-format

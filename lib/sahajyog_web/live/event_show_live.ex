@@ -41,7 +41,7 @@ defmodule SahajyogWeb.EventShowLive do
 
     # Online Event Logic
     {time_remaining, is_live} = calculate_time_remaining(event)
-    is_ended = is_event_ended?(event)
+    is_ended = event_ended?(event)
 
     if connected?(socket) && event.online_url && !is_live && !is_ended do
       Process.send_after(self(), :tick, 1000)
@@ -226,7 +226,7 @@ defmodule SahajyogWeb.EventShowLive do
 
       # Recalculate live status on update
       {time_remaining, is_live} = calculate_time_remaining(event)
-      is_ended = is_event_ended?(event)
+      is_ended = event_ended?(event)
 
       # Re-check pending invitation
       pending_invitation =
@@ -366,7 +366,7 @@ defmodule SahajyogWeb.EventShowLive do
   def handle_event("accept_request", %{"request_id" => request_id}, socket) do
     request = Events.get_carpool_request!(request_id)
     # Verify user is driver
-    if Events.is_carpool_driver?(socket.assigns.current_scope.user, request.carpool_id) do
+    if Events.carpool_driver?(socket.assigns.current_scope.user, request.carpool_id) do
       {:ok, _} = Events.accept_carpool_request(request)
       event = Events.get_event_by_slug!(socket.assigns.event.slug)
 
@@ -891,7 +891,7 @@ defmodule SahajyogWeb.EventShowLive do
       })
     end
 
-    if length(successful_keys) > 0 do
+    if successful_keys != [] do
       # Update user photo count
       new_count = socket.assigns.user_photo_count + length(successful_keys)
 
@@ -1031,8 +1031,8 @@ defmodule SahajyogWeb.EventShowLive do
           # Event started
           {%{days: 0, hours: 0, minutes: 0, seconds: 0}, true}
         else
-          days = div(diff_seconds, 86400)
-          rem_seconds = rem(diff_seconds, 86400)
+          days = div(diff_seconds, 86_400)
+          rem_seconds = rem(diff_seconds, 86_400)
           hours = div(rem_seconds, 3600)
           rem_seconds = rem(rem_seconds, 3600)
           minutes = div(rem_seconds, 60)
@@ -1056,7 +1056,7 @@ defmodule SahajyogWeb.EventShowLive do
     end
   end
 
-  defp is_event_ended?(%{end_date: end_date, end_time: end_time, timezone: timezone})
+  defp event_ended?(%{end_date: end_date, end_time: end_time, timezone: timezone})
        when not is_nil(end_date) and not is_nil(end_time) do
     tz = timezone || "Etc/UTC"
     naive = NaiveDateTime.new!(end_date, end_time)
@@ -1071,7 +1071,7 @@ defmodule SahajyogWeb.EventShowLive do
     end
   end
 
-  defp is_event_ended?(_), do: false
+  defp event_ended?(_), do: false
 
   @impl true
   def render(assigns) do

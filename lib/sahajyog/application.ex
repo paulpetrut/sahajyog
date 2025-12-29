@@ -23,7 +23,15 @@ defmodule Sahajyog.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Sahajyog.Supervisor]
-    Supervisor.start_link(children, opts)
+    result = Supervisor.start_link(children, opts)
+
+    # Pre-warm API cache in background after app starts
+    Task.start(fn ->
+      Process.sleep(2000)
+      Sahajyog.ApiCache.warm_cache()
+    end)
+
+    result
   end
 
   # Tell Phoenix to update the endpoint configuration

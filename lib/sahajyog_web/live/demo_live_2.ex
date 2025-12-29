@@ -66,7 +66,7 @@ defmodule SahajyogWeb.DemoLive2 do
   end
 
   def handle_event("show_notification", _params, socket) do
-    Process.send_after(self(), :clear_schedule_info, 12000)
+    Process.send_after(self(), :clear_schedule_info, 12_000)
     {:noreply, assign(socket, :show_schedule_info, true)}
   end
 

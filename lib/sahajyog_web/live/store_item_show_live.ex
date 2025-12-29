@@ -20,6 +20,11 @@ defmodule SahajyogWeb.StoreItemShowLive do
        |> put_flash(:error, gettext("This item is not available."))
        |> push_navigate(to: ~p"/store")}
     else
+      # Subscribe to updates for this specific item
+      if connected?(socket) do
+        Store.subscribe_to_user_items(item.user_id)
+      end
+
       photos = Enum.filter(item.media, &(&1.media_type == "photo"))
       video = Enum.find(item.media, &(&1.media_type == "video"))
 
@@ -109,6 +114,19 @@ defmodule SahajyogWeb.StoreItemShowLive do
 
       {:error, changeset} ->
         {:noreply, assign(socket, :inquiry_form, to_form(changeset))}
+    end
+  end
+
+  @impl true
+  def handle_info({:store_item_updated, updated_item}, socket) do
+    # If this is the item being viewed and it's no longer approved, redirect
+    if socket.assigns.item.id == updated_item.id && updated_item.status != "approved" do
+      {:noreply,
+       socket
+       |> put_flash(:info, gettext("This item is no longer available."))
+       |> push_navigate(to: ~p"/store")}
+    else
+      {:noreply, socket}
     end
   end
 

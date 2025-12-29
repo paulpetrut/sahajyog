@@ -18,8 +18,8 @@ defmodule SahajyogWeb.UserSessionController do
       {:ok, {user, tokens_to_disconnect}} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
 
-        # Use provided info message, or default to personalized "Welcome back!" for returning users
-        flash_message = info || welcome_back_message(user)
+        # Check if first login BEFORE creating the new session
+        flash_message = info || welcome_message(user)
 
         conn
         |> put_flash(:info, flash_message)
@@ -45,8 +45,8 @@ defmodule SahajyogWeb.UserSessionController do
     %{"email" => email, "password" => password} = user_params
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
-      # Use provided info message, or default to personalized "Welcome back!" for returning users
-      flash_message = info || welcome_back_message(user)
+      # Check if first login BEFORE creating the new session
+      flash_message = info || welcome_message(user)
 
       # Store return_to in session if provided
       conn =
@@ -96,11 +96,26 @@ defmodule SahajyogWeb.UserSessionController do
     |> UserAuth.log_out_user()
   end
 
-  # Generates a personalized welcome back message using the user's first name
-  # or email prefix if no first name is set
-  defp welcome_back_message(user) do
+  # Generates a personalized welcome message using the user's first name
+  # or email prefix if no first name is set. Shows "Welcome" for first-time
+  # logins and "Welcome back" for returning users.
+  defp welcome_message(user) do
     name = get_display_name(user) |> capitalize_name()
-    gettext("Welcome back %{name}!", name: name)
+
+    # Check if this is the user's first login by checking if they confirmed recently (within 5 minutes)
+    # This indicates they just registered and confirmed their account
+    is_first_login =
+      if user.confirmed_at do
+        DateTime.diff(DateTime.utc_now(), user.confirmed_at, :minute) < 5
+      else
+        false
+      end
+
+    if is_first_login do
+      gettext("Welcome %{name}!", name: name)
+    else
+      gettext("Welcome back %{name}!", name: name)
+    end
   end
 
   defp get_display_name(%{first_name: first_name})

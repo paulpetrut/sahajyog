@@ -39,6 +39,11 @@ defmodule SahajyogWeb.TalksLive do
       |> stream_configure(:talks, dom_id: fn talk -> "talk-#{talk["id"]}" end)
       |> stream(:talks, [])
 
+    # Preload filter options in background if connected
+    if connected?(socket) do
+      send(self(), :load_filter_options)
+    end
+
     {:ok, socket}
   rescue
     error ->
@@ -59,14 +64,6 @@ defmodule SahajyogWeb.TalksLive do
     if not connected?(socket) do
       {:noreply, socket}
     else
-      # Load filter options on first connection
-      socket =
-        if not socket.assigns.params_applied do
-          load_filter_options(socket)
-        else
-          socket
-        end
-
       # Parse URL params with defaults
       socket =
         socket
@@ -237,14 +234,9 @@ defmodule SahajyogWeb.TalksLive do
     if socket.assigns[:last_fetch_params] == fetch_params and socket.assigns[:cached_results] do
       {:ok, socket.assigns.cached_results, socket}
     else
-      # If we are fetching new data, we should probably clear the old cache first to free memory
-      # but in LiveView it's just replacing the assign.
-      case Sahajyog.ExternalApi.fetch_talks(filters) do
+      # Use ApiCache for talks data with 10-minute TTL
+      case Sahajyog.ApiCache.get_talks(filters) do
         {:ok, results, _total} ->
-          # If searching, results are prioritized by relevance, but we don't have "date" sort guaranteed from API in search mode
-          # If not searching, API returns sorted by date ASC.
-          # We store the raw results.
-
           socket =
             socket
             |> assign(:cached_results, results)
@@ -514,6 +506,12 @@ defmodule SahajyogWeb.TalksLive do
     end
   end
 
+  def handle_info(:load_filter_options, socket) do
+    # Load filter options asynchronously without blocking the main talks load
+    socket = load_filter_options(socket)
+    {:noreply, socket}
+  end
+
   def handle_info(:retry_load, socket) do
     retry_count = socket.assigns.retry_count
 
@@ -521,21 +519,6 @@ defmodule SahajyogWeb.TalksLive do
       require Logger
       Logger.info("Retrying talks load (attempt #{retry_count + 1}/3)")
 
-      socket = load_filter_options(socket)
-
-      socket = load_filter_options(socket)
-
-      # We pass empty filters, but actually we should probably respect current filters?
-      # The original code called fetch_talks(%{}), which essentially reset filters.
-      # To keep behavior consistent, we'll try to use current assigns if available, or empty.
-      # However, fetch_talks(%{}) implies we want ALL talks.
-      # Let's stick to %{} as per original code for safety, or better:
-      # If we are retrying, we probably want to load what was intended.
-      # But since original was %{}, let's keep it safe.
-
-      # Wait, original was fetch_talks(%{}). This loads defaults (en language, no filters).
-      # This might have been a bug or a safe fallback.
-      # Let's use build_filters_from_assigns(socket) to retry the ACTUAL request.
       filters = build_filters_from_assigns(socket)
 
       case get_paginated_talks(socket, filters) do
@@ -744,11 +727,11 @@ defmodule SahajyogWeb.TalksLive do
 
           <%!-- Search and Filters --%>
           <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-base-content/10 shadow-xl">
-            <form phx-change="apply_all_filters" phx-debounce="300">
+            <form phx-change="apply_all_filters" phx-submit="apply_all_filters" phx-debounce="1000">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <%!-- Search --%>
                 <div class="sm:col-span-2 lg:col-span-2">
-                  <label class="block text-xs sm:text-sm font-semibold text-base-content/80 mb-2 flex items-center gap-2">
+                  <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2">
                     <.icon name="hero-magnifying-glass" class="w-4 h-4 text-primary" />
                     {gettext("Search")}
                   </label>
@@ -758,7 +741,7 @@ defmodule SahajyogWeb.TalksLive do
                       name="search"
                       value={@search_query}
                       placeholder={gettext("Search talks...")}
-                      phx-debounce="500"
+                      phx-debounce="1000"
                       class="w-full px-4 py-3 pl-11 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content placeholder-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all"
                     />
                     <.icon
@@ -770,7 +753,7 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Sort By --%>
                 <div>
-                  <label class="block text-xs sm:text-sm font-semibold text-base-content/80 mb-2 flex items-center gap-2">
+                  <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2">
                     <.icon name="hero-arrows-up-down" class="w-4 h-4 text-accent" />
                     {gettext("Sort By")}
                   </label>
@@ -787,7 +770,7 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Translation Language Filter --%>
                 <div class="min-w-0">
-                  <label class="block text-xs sm:text-sm font-semibold text-base-content/80 mb-2 flex items-center gap-2 whitespace-nowrap">
+                  <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2 whitespace-nowrap">
                     <.icon name="hero-language" class="w-4 h-4 text-success shrink-0" />
                     <span class="truncate">{gettext("Translation Language")}</span>
                   </label>
@@ -809,7 +792,7 @@ defmodule SahajyogWeb.TalksLive do
 
                 <%!-- Year Filter --%>
                 <div>
-                  <label class="block text-xs sm:text-sm font-semibold text-base-content/80 mb-2 flex items-center gap-2">
+                  <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2">
                     <.icon name="hero-calendar" class="w-4 h-4 text-warning" />
                     {gettext("Year")}
                   </label>

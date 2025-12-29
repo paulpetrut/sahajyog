@@ -100,12 +100,12 @@ defmodule Sahajyog.Topics do
     cond do
       user.role == "admin" -> true
       topic.user_id == user.id -> true
-      is_co_author?(user.id, topic.id) -> true
+      co_author?(user.id, topic.id) -> true
       true -> false
     end
   end
 
-  defp is_co_author?(user_id, topic_id) do
+  defp co_author?(user_id, topic_id) do
     TopicCoAuthor
     |> where(
       [ca],

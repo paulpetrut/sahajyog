@@ -31,7 +31,7 @@ defmodule Sahajyog.Store.StoreItemTest do
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <- StreamData.positive_integer(),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods()),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0)
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0)
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
 
@@ -74,7 +74,7 @@ defmodule Sahajyog.Store.StoreItemTest do
       check all(
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0)
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0)
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
 
@@ -96,7 +96,7 @@ defmodule Sahajyog.Store.StoreItemTest do
       check all(
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -121,7 +121,7 @@ defmodule Sahajyog.Store.StoreItemTest do
     property "name must be present" do
       check all(
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -143,7 +143,7 @@ defmodule Sahajyog.Store.StoreItemTest do
       check all(
               name <- StreamData.string(:alphanumeric, min_length: 201, max_length: 250),
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -166,7 +166,7 @@ defmodule Sahajyog.Store.StoreItemTest do
       check all(
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -193,7 +193,7 @@ defmodule Sahajyog.Store.StoreItemTest do
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               description <- StreamData.string(:alphanumeric, min_length: 2001, max_length: 2100),
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -218,7 +218,7 @@ defmodule Sahajyog.Store.StoreItemTest do
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               description <- StreamData.string(:alphanumeric, max_length: 2000),
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -246,7 +246,7 @@ defmodule Sahajyog.Store.StoreItemTest do
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <-
                 StreamData.one_of([StreamData.constant(0), StreamData.integer(-100..-1)]),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -269,7 +269,7 @@ defmodule Sahajyog.Store.StoreItemTest do
       check all(
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <- StreamData.positive_integer(),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         price = Decimal.from_float(price_float) |> Decimal.round(2)
@@ -295,8 +295,8 @@ defmodule Sahajyog.Store.StoreItemTest do
       check all(
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <- StreamData.positive_integer(),
-              production_cost_float <- StreamData.float(min: -10000.0, max: -0.01),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              production_cost_float <- StreamData.float(min: -10_000.0, max: -0.01),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         production_cost = Decimal.from_float(production_cost_float) |> Decimal.round(2)
@@ -321,8 +321,8 @@ defmodule Sahajyog.Store.StoreItemTest do
       check all(
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               quantity <- StreamData.positive_integer(),
-              production_cost_float <- StreamData.float(min: 0.0, max: 10000.0),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              production_cost_float <- StreamData.float(min: 0.0, max: 10_000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               delivery_method <- StreamData.member_of(StoreItem.delivery_methods())
             ) do
         production_cost = Decimal.from_float(production_cost_float) |> Decimal.round(2)
@@ -351,8 +351,8 @@ defmodule Sahajyog.Store.StoreItemTest do
               name <- StreamData.string(:alphanumeric, min_length: 1, max_length: 200),
               description <- StreamData.string(:alphanumeric, max_length: 500),
               quantity <- StreamData.positive_integer(),
-              production_cost_float <- StreamData.float(min: 0.0, max: 10000.0),
-              price_float <- StreamData.float(min: 0.01, max: 10000.0),
+              production_cost_float <- StreamData.float(min: 0.0, max: 10_000.0),
+              price_float <- StreamData.float(min: 0.01, max: 10_000.0),
               pricing_type <- StreamData.member_of(StoreItem.pricing_types()),
               status <- StreamData.member_of(StoreItem.statuses()),
               delivery_methods <-

@@ -272,12 +272,12 @@ defmodule Sahajyog.Events do
     cond do
       user.role == "admin" -> true
       event.user_id == user.id -> true
-      is_team_member?(user.id, event.id) -> true
+      team_member?(user.id, event.id) -> true
       true -> false
     end
   end
 
-  defp is_team_member?(user_id, event_id) do
+  defp team_member?(user_id, event_id) do
     EventTeamMember
     |> where(
       [tm],
@@ -1106,7 +1106,7 @@ defmodule Sahajyog.Events do
     |> Repo.one()
   end
 
-  def is_carpool_driver?(%User{} = user, carpool_id) do
+  def carpool_driver?(%User{} = user, carpool_id) do
     case Repo.get(EventCarpool, carpool_id) do
       nil -> false
       carpool -> carpool.driver_user_id == user.id

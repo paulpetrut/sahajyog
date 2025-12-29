@@ -4,16 +4,28 @@ import ScrollTrigger from "gsap/ScrollTrigger"
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger)
 
-// Debug: Verify GSAP is loaded
-// console.log("[GSAP] Version:", gsap.version)
-// console.log("[GSAP] ScrollTrigger registered:", !!ScrollTrigger)
+// Simple debounce utility for performance
+const debounce = (func, wait) => {
+  let timeout
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+  }
+}
 
 const GSAPHero = {
   mounted() {
-    // console.log("[GSAPHero] mounted, el:", this.el?.id)
     this.animatedElements = []
     this.mouseMoveHandler = null
-    this.initAnimations()
+
+    // Wait for LiveView to settle before initializing
+    requestAnimationFrame(() => {
+      this.initAnimations()
+    })
   },
   updated() {
     this.initAnimations()
@@ -25,8 +37,6 @@ const GSAPHero = {
 
     const heroElements = this.el.querySelectorAll(".hero-element")
     const orbs = this.el.querySelectorAll(".hero-orb")
-
-    // console.log("[GSAPHero] Found hero-elements:", heroElements.length, "orbs:", orbs.length)
 
     if (heroElements.length === 0) {
       console.warn("[GSAPHero] No .hero-element found, skipping animation")
@@ -46,8 +56,6 @@ const GSAPHero = {
         duration: 1,
         stagger: 0.2,
         ease: "power3.out",
-        // onStart: () => console.log("[GSAPHero] Animation started"),
-        // onComplete: () => console.log("[GSAPHero] Animation complete"),
       }
     )
 
@@ -82,34 +90,48 @@ const GSAPHero = {
     if (this.mouseMoveHandler) {
       this.el.removeEventListener("mousemove", this.mouseMoveHandler)
     }
-    
+
     // Kill main tweens
     if (this.heroTween) this.heroTween.kill()
     if (this.orbFloatTween) this.orbFloatTween.kill()
-    
+
     // Kill any potentially running mouse movement tweens
     if (this.animatedElements && this.animatedElements.length > 0) {
       gsap.killTweensOf(this.animatedElements)
     }
-    
+
     delete this.el.dataset.gsapInit
   },
 }
 
 const GSAPScrollReveal = {
   mounted() {
-    // console.log("[GSAPScrollReveal] mounted, el:", this.el?.id)
     this.scrollTriggers = []
     this.tweens = []
     this.revealElements = []
-    this.initAnimations()
+
+    // Debounced refresh for performance (prevents excessive refresh calls)
+    this.debouncedRefresh = debounce(() => ScrollTrigger.refresh(), 100)
+
+    // ResizeObserver for layout changes (better than window resize)
+    // Catches content changes, image loads, accordion opens, etc.
+    this.resizeObserver = new ResizeObserver(() => {
+      this.debouncedRefresh()
+    })
+    this.resizeObserver.observe(this.el)
+
+    // Wait for LiveView to settle before initializing
+    requestAnimationFrame(() => {
+      this.initAnimations()
+    })
   },
   updated() {
+    // Refresh existing triggers before creating new ones
+    this.debouncedRefresh()
     this.initAnimations()
   },
   initAnimations() {
     const elements = this.el.querySelectorAll(".gsap-reveal")
-    // console.log("[GSAPScrollReveal] Found .gsap-reveal elements:", elements.length)
 
     elements.forEach((el, index) => {
       // Avoid double initialization
@@ -122,10 +144,9 @@ const GSAPScrollReveal = {
       // Parse delay from data attribute if present (e.g., data-delay="0.1")
       let delay = parseFloat(el.dataset.delay || 0)
 
-      // Parse toggleActions from data attribute, default to stable "play none none none"
-      let toggleActions = el.dataset.toggleActions || "play none none none"
-
-      // console.log(`[GSAPScrollReveal] Setting up element ${index}`)
+      // Parse toggleActions from data attribute
+      // Default: "play none none reverse" (plays on enter, reverses on leave)
+      let toggleActions = el.dataset.toggleActions || "play none none reverse"
 
       const tween = gsap.fromTo(
         el,
@@ -137,13 +158,15 @@ const GSAPScrollReveal = {
           delay: delay,
           ease: "power2.out",
           scrollTrigger: {
+            id: `reveal-${this.el.id || "unknown"}-${index}`, // Better debugging
             trigger: el,
             start: "top 85%",
             toggleActions: toggleActions,
-            // onEnter: () => console.log(`[GSAPScrollReveal] Element ${index} entered viewport`),
+            markers: false, // Set to true in development for visual debugging
           },
         }
       )
+
       // Track tween instance
       this.tweens.push(tween)
 
@@ -152,17 +175,20 @@ const GSAPScrollReveal = {
         this.scrollTriggers.push(tween.scrollTrigger)
       }
     })
-
-    // Refresh ScrollTrigger to ensure positions are correct immediately after updates
-    ScrollTrigger.refresh()
   },
   destroyed() {
+    // Disconnect ResizeObserver
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+      this.resizeObserver = null
+    }
+
     // Kill all ScrollTrigger instances created by this hook
     this.scrollTriggers.forEach((trigger) => trigger.kill())
     this.scrollTriggers = []
-    
+
     // Kill tracked Tweens
-    this.tweens.forEach(t => t.kill())
+    this.tweens.forEach((t) => t.kill())
     this.tweens = []
 
     // Kill tweens on reveal elements (cleanup dataset)
@@ -176,16 +202,18 @@ const GSAPScrollReveal = {
 
 const GSAPCard3D = {
   mounted() {
-    // console.log("[GSAPCard3D] mounted, el:", this.el?.id)
     this.cardHandlers = []
-    this.initAnimations()
+
+    // Wait for LiveView to settle
+    requestAnimationFrame(() => {
+      this.initAnimations()
+    })
   },
   updated() {
     this.initAnimations()
   },
   initAnimations() {
     const cards = this.el.querySelectorAll(".gsap-3d-card")
-    // console.log("[GSAPCard3D] Found .gsap-3d-card elements:", cards.length)
 
     cards.forEach((card) => {
       if (card.dataset.gsapInit) return
@@ -209,6 +237,7 @@ const GSAPCard3D = {
         const rotateX = ((y - centerY) / centerY) * -5 // Max 5 deg
         const rotateY = ((x - centerX) / centerX) * 5 // Max 5 deg
 
+        // Kill return tween if mouse moves back in
         if (returnTween) returnTween.kill()
         moveTween = gsap.to(card, {
           rotateX: rotateX,
@@ -221,6 +250,7 @@ const GSAPCard3D = {
       }
 
       const mouseLeaveHandler = () => {
+        // Kill move tween when mouse leaves
         if (moveTween) moveTween.kill()
         returnTween = gsap.to(card, {
           rotateX: 0,
@@ -239,11 +269,12 @@ const GSAPCard3D = {
   },
   destroyed() {
     // Remove all event listeners and kill tweens
-    this.cardHandlers.forEach(({ card, mouseMoveHandler, mouseLeaveHandler, returnTween }) => {
+    this.cardHandlers.forEach(({ card, mouseMoveHandler, mouseLeaveHandler, moveTween, returnTween }) => {
       card.removeEventListener("mousemove", mouseMoveHandler)
       card.removeEventListener("mouseleave", mouseLeaveHandler)
+      if (moveTween) moveTween.kill()
       if (returnTween) returnTween.kill()
-      gsap.killTweensOf(card) // Backup
+      gsap.killTweensOf(card) // Backup cleanup
       delete card.dataset.gsapInit
     })
     this.cardHandlers = []
@@ -252,9 +283,12 @@ const GSAPCard3D = {
 
 const GSAPMagnetic = {
   mounted() {
-    // console.log("[GSAPMagnetic] mounted, el:", this.el?.id)
     this.buttonHandlers = []
-    this.initAnimations()
+
+    // Wait for LiveView to settle
+    requestAnimationFrame(() => {
+      this.initAnimations()
+    })
   },
   updated() {
     this.initAnimations()
@@ -262,7 +296,6 @@ const GSAPMagnetic = {
   initAnimations() {
     // Apply to children with class .magnetic-btn, or the element itself if it has the class
     const buttons = this.el.classList.contains("magnetic-btn") ? [this.el] : this.el.querySelectorAll(".magnetic-btn")
-    // console.log("[GSAPMagnetic] Found magnetic buttons:", buttons.length)
 
     buttons.forEach((btn) => {
       if (btn.dataset.gsapInit) return
@@ -305,9 +338,10 @@ const GSAPMagnetic = {
   },
   destroyed() {
     // Remove all event listeners and kill tweens
-    this.buttonHandlers.forEach(({ btn, mouseMoveHandler, mouseLeaveHandler, returnTween }) => {
+    this.buttonHandlers.forEach(({ btn, mouseMoveHandler, mouseLeaveHandler, moveTween, returnTween }) => {
       btn.removeEventListener("mousemove", mouseMoveHandler)
       btn.removeEventListener("mouseleave", mouseLeaveHandler)
+      if (moveTween) moveTween.kill()
       if (returnTween) returnTween.kill()
       gsap.killTweensOf(btn)
       delete btn.dataset.gsapInit
@@ -353,9 +387,14 @@ const GSAPSpotlight = {
 
 const GSAPTextReveal = {
   mounted() {
-    // console.log("[GSAPTextReveal] mounted, el:", this.el?.id)
     this.originalText = this.el.innerText
-    // Split text into characters manually since specific plugin is paid
+
+    // Wait for LiveView to settle
+    requestAnimationFrame(() => {
+      this.initAnimation()
+    })
+  },
+  initAnimation() {
     const element = this.el
     const text = element.innerText
 
@@ -364,8 +403,7 @@ const GSAPTextReveal = {
       return
     }
 
-    // console.log("[GSAPTextReveal] Splitting text:", text.substring(0, 30))
-
+    // Split text into characters manually since SplitText plugin is paid
     const chars = text
       .split("")
       .map((char) => {
@@ -383,8 +421,6 @@ const GSAPTextReveal = {
       duration: 1,
       stagger: 0.03,
       ease: "back.out(1.7)",
-      // onStart: () => console.log("[GSAPTextReveal] Animation started"),
-      // onComplete: () => console.log("[GSAPTextReveal] Animation complete"),
     })
   },
   destroyed() {
@@ -402,17 +438,17 @@ const GSAPCounter = {
   mounted() {
     const target = parseInt(this.el.dataset.counter, 10)
     this.counterObj = { val: 0 }
-    this.scrollTrigger = null
 
     this.counterTween = gsap.to(this.counterObj, {
       val: target,
       duration: 2,
       ease: "power2.out",
       scrollTrigger: {
+        id: `counter-${this.el.id || "unknown"}`, // Better debugging
         trigger: this.el,
         start: "top 85%",
-        toggleActions: "play none none none",
-        once: true,
+        once: true, // Only animate once when entering viewport
+        // Note: toggleActions is redundant when once: true is set
       },
       onUpdate: () => {
         this.el.innerText = Math.floor(this.counterObj.val)

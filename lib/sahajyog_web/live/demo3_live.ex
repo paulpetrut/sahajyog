@@ -31,313 +31,7 @@ defmodule SahajyogWeb.Demo3Live do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={assigns[:current_scope]}>
-      <style>
-        /* Christmas Theme Typography & Animations */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Mountains+of+Christmas:wght@400;700&display=swap');
-
-        .font-display { font-family: 'Inter', system-ui, sans-serif; }
-        .font-serif { font-family: 'Playfair Display', Georgia, serif; }
-        .font-christmas { font-family: 'Mountains of Christmas', cursive; }
-
-        /* Christmas Colors */
-        :root {
-          --christmas-red: #c41e3a;
-          --christmas-green: #165b33;
-          --christmas-gold: #f5b041;
-          --christmas-snow: #f0f8ff;
-          --christmas-pine: #0b3d0b;
-        }
-
-        /* Snowfall Animation */
-        .snowfall {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 100;
-          overflow: hidden;
-          animation: fadeOutSnowfall 1s ease-out 30s forwards;
-        }
-
-        @keyframes fadeOutSnowfall {
-          0% {
-            opacity: 1;
-            pointer-events: none;
-          }
-          100% {
-            opacity: 0;
-            pointer-events: none;
-          }
-        }
-
-        .snowflake {
-          position: absolute;
-          top: -10px;
-          color: white;
-          font-size: 1rem;
-          text-shadow: 0 0 5px rgba(255,255,255,0.8);
-          animation: fall linear infinite;
-          opacity: 0.8;
-        }
-
-        @keyframes fall {
-          0% {
-            transform: translateY(-10px) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) rotate(360deg);
-            opacity: 0.3;
-          }
-        }
-
-        /* Generate snowflakes with different positions and speeds */
-        .snowflake:nth-child(1) { left: 5%; animation-duration: 10s; animation-delay: 0s; font-size: 0.8rem; }
-        .snowflake:nth-child(2) { left: 10%; animation-duration: 12s; animation-delay: 1s; font-size: 1.2rem; }
-        .snowflake:nth-child(3) { left: 15%; animation-duration: 8s; animation-delay: 2s; font-size: 0.6rem; }
-        .snowflake:nth-child(4) { left: 20%; animation-duration: 14s; animation-delay: 0.5s; font-size: 1rem; }
-        .snowflake:nth-child(5) { left: 25%; animation-duration: 9s; animation-delay: 3s; font-size: 0.9rem; }
-        .snowflake:nth-child(6) { left: 30%; animation-duration: 11s; animation-delay: 1.5s; font-size: 1.1rem; }
-        .snowflake:nth-child(7) { left: 35%; animation-duration: 13s; animation-delay: 2.5s; font-size: 0.7rem; }
-        .snowflake:nth-child(8) { left: 40%; animation-duration: 10s; animation-delay: 4s; font-size: 1.3rem; }
-        .snowflake:nth-child(9) { left: 45%; animation-duration: 15s; animation-delay: 0.8s; font-size: 0.8rem; }
-        .snowflake:nth-child(10) { left: 50%; animation-duration: 9s; animation-delay: 3.5s; font-size: 1rem; }
-        .snowflake:nth-child(11) { left: 55%; animation-duration: 12s; animation-delay: 1.2s; font-size: 1.2rem; }
-        .snowflake:nth-child(12) { left: 60%; animation-duration: 8s; animation-delay: 2.8s; font-size: 0.6rem; }
-        .snowflake:nth-child(13) { left: 65%; animation-duration: 14s; animation-delay: 4.5s; font-size: 0.9rem; }
-        .snowflake:nth-child(14) { left: 70%; animation-duration: 11s; animation-delay: 0.3s; font-size: 1.1rem; }
-        .snowflake:nth-child(15) { left: 75%; animation-duration: 10s; animation-delay: 2.2s; font-size: 0.7rem; }
-        .snowflake:nth-child(16) { left: 80%; animation-duration: 13s; animation-delay: 3.8s; font-size: 1.4rem; }
-        .snowflake:nth-child(17) { left: 85%; animation-duration: 9s; animation-delay: 1.8s; font-size: 0.8rem; }
-        .snowflake:nth-child(18) { left: 90%; animation-duration: 12s; animation-delay: 4.2s; font-size: 1rem; }
-        .snowflake:nth-child(19) { left: 95%; animation-duration: 11s; animation-delay: 0.6s; font-size: 0.9rem; }
-        .snowflake:nth-child(20) { left: 3%; animation-duration: 14s; animation-delay: 2.6s; font-size: 1.2rem; }
-
-        /* Legacy animations replaced by GSAP */
-
-        /* Christmas gradient text */
-        .christmas-gradient-text {
-          background: linear-gradient(135deg, var(--christmas-red) 0%, var(--christmas-gold) 50%, var(--christmas-green) 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        /* Gold shimmer text */
-        .gold-shimmer {
-          background: linear-gradient(90deg, var(--christmas-gold), #fff8dc, var(--christmas-gold));
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer 3s linear infinite;
-        }
-
-        @keyframes shimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-
-        /* Christmas animated gradient background */
-        .christmas-gradient {
-          background: linear-gradient(-45deg,
-            #0a1f0a 0%,
-            #1a3a1a 25%,
-            #0f2f0f 50%,
-            #1a3a1a 75%,
-            #0a1f0a 100%);
-          background-size: 400% 400%;
-          animation: gradientShift 15s ease infinite;
-        }
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        /* Float animation replaced by GSAP */
-
-        /* Ornament swing animation */
-        .ornament-swing {
-          animation: swing 3s ease-in-out infinite;
-          transform-origin: top center;
-        }
-        @keyframes swing {
-          0%, 100% { transform: rotate(-3deg); }
-          50% { transform: rotate(3deg); }
-        }
-
-        /* Twinkling lights */
-        .twinkle {
-          animation: twinkle 1.5s ease-in-out infinite alternate;
-        }
-        @keyframes twinkle {
-          0% { opacity: 0.4; }
-          100% { opacity: 1; }
-        }
-
-        /* Smooth hover */
-        .hover-lift {
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .hover-lift:hover {
-          transform: translateY(-4px);
-        }
-
-        /* Christmas card glow */
-        .christmas-card {
-          position: relative;
-          overflow: hidden;
-        }
-        .christmas-card::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle, rgba(245,176,65,0.1) 0%, transparent 50%);
-          animation: rotate 20s linear infinite;
-        }
-        @keyframes rotate {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        /* Candy cane border - 3D Tube Effect */
-        .candy-cane-border {
-          border: 4px solid #0b3d0b; /* Pine Green rim */
-          border-radius: 20px;
-          background:
-            /* Highlights for 3D tube effect */
-            linear-gradient(90deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.1) 80%, rgba(0,0,0,0.3) 100%) padding-box,
-            /* The stripes */
-            repeating-linear-gradient(
-              45deg,
-              var(--christmas-red) 0px,
-              var(--christmas-red) 15px,
-              #ffffff 15px,
-              #ffffff 30px
-            ) border-box;
-          box-shadow:
-            0 10px 20px -5px rgba(0,0,0,0.5), /* Drop shadow */
-            inset 0 0 10px rgba(0,0,0,0.5); /* Inner depth */
-        }
-
-        /* Realistic Christmas Light Bulbs */
-        .light-wire {
-          display: flex;
-          justify-content: center;
-          gap: 40px;
-          padding: 10px 0;
-          position: fixed;
-          top: -10px;
-          left: 0;
-          right: 0;
-          z-index: 50;
-          pointer-events: none;
-          /* The wire itself */
-          border-top: 2px solid #2f4f4f;
-          border-radius: 50%;
-        }
-
-        .christmas-bulb {
-          width: 24px;
-          height: 36px;
-          border-radius: 50% 50% 40% 40%;
-          position: relative;
-          z-index: 1;
-          margin-top: 5px; /* Hang from wire */
-          /* Socket */
-          border-top: 6px solid #222;
-        }
-
-        /* Bulb Glow Animation */
-        @keyframes bulb-glow {
-          0%, 100% { opacity: 1; box-shadow: 0 0 15px currentColor; }
-          50% { opacity: 0.5; box-shadow: 0 0 5px currentColor; }
-        }
-
-        .bulb-red {
-          background-color: var(--christmas-red);
-          color: var(--christmas-red);
-          animation: bulb-glow 2s infinite alternate;
-        }
-        .bulb-green {
-          background-color: var(--christmas-green);
-          color: var(--christmas-green);
-          background-image: radial-gradient(circle at 30% 30%, #8fbc8f, transparent); /* Shine */
-          animation: bulb-glow 2.5s infinite alternate 0.5s;
-        }
-        .bulb-gold {
-          background-color: var(--christmas-gold);
-          color: var(--christmas-gold);
-          background-image: radial-gradient(circle at 30% 30%, #fffacd, transparent);
-          animation: bulb-glow 3s infinite alternate 1s;
-        }
-        .bulb-blue {
-          background-color: #1e90ff;
-          color: #1e90ff;
-          background-image: radial-gradient(circle at 30% 30%, #e0ffff, transparent);
-          animation: bulb-glow 2.2s infinite alternate 0.8s;
-        }
-
-        /* Text enhancements */
-        .text-glow {
-          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Holly decoration */
-        .holly::after {
-          content: '🍃';
-          position: absolute;
-          top: -10px;
-          right: -10px;
-          font-size: 1.5rem;
-        }
-
-        /* Christmas Tree Background */
-        .christmas-tree {
-          position: absolute;
-          bottom: 0;
-          right: 5%;
-          width: 450px;
-          height: 600px;
-          opacity: 0.5; /* Increased visibility per expert advice */
-          pointer-events: none;
-          transition: opacity 0.8s ease-out;
-          filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4)); /* Golden glow */
-          z-index: 0;
-        }
-
-        @media (max-width: 768px) {
-          .christmas-tree {
-            width: 200px;
-            height: 300px;
-            right: 5%;
-          }
-        }
-
-        /* Scroll indicator */
-        .scroll-indicator {
-          opacity: 1;
-          transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-          display: none;
-        }
-        @media (min-width: 1024px) {
-          .scroll-indicator {
-            display: flex;
-          }
-        }
-        .scroll-indicator.hidden {
-          opacity: 0;
-          pointer-events: none;
-        }
-      </style>
-      
-    <!-- Snowfall Effect -->
+      <%!-- Snowfall Effect --%>
       <div class="snowfall" id="snowfall-container" phx-hook="SnowfallStop">
         <div class="snowflake">❄</div>
         <div class="snowflake">❅</div>
@@ -366,7 +60,7 @@ defmodule SahajyogWeb.Demo3Live do
         phx-hook="GSAPScrollReveal"
         class="min-h-screen christmas-gradient text-white font-display"
       >
-        <!-- Christmas Lights Banner (CSS Implementation) -->
+        <%!-- Christmas Lights Banner (CSS Implementation) --%>
         <div class="light-wire">
           <div class="christmas-bulb bulb-red"></div>
           <div class="christmas-bulb bulb-green"></div>
@@ -384,24 +78,24 @@ defmodule SahajyogWeb.Demo3Live do
           <div class="christmas-bulb bulb-green hidden lg:block"></div>
           <div class="christmas-bulb bulb-gold hidden xl:block"></div>
         </div>
-        
-    <!-- HERO: Christmas themed -->
+
+        <%!-- HERO: Christmas themed --%>
         <section
           id="hero-section"
           phx-hook="GSAPHero"
           class="relative overflow-hidden pt-16 md:pt-24 lg:pt-36 pb-6 md:pb-10 lg:pb-12 flex flex-col justify-center"
         >
-          <!-- Christmas Tree Background -->
+          <%!-- Christmas Tree Background --%>
           <svg
             class="christmas-tree"
             viewBox="0 0 200 300"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <!-- Tree trunk -->
+            <%!-- Tree trunk --%>
             <rect x="85" y="240" width="30" height="60" fill="#4a2511" />
-            
-    <!-- Unified Tree Silhouette (Single Object) -->
+
+            <%!-- Unified Tree Silhouette (Single Object) --%>
             <path
               d="M100 20
                  L130 80 L115 80
@@ -415,13 +109,13 @@ defmodule SahajyogWeb.Demo3Live do
               stroke-width="2"
               stroke-linejoin="round"
             />
-            
-    <!-- Star on top -->
+
+            <%!-- Star on top --%>
             <polygon
               points="100,5 105,18 118,18 108,26 112,39 100,31 88,39 92,26 82,18 95,18"
               fill="#f5b041"
             />
-            <!-- Ornaments -->
+            <%!-- Ornaments --%>
             <circle cx="70" cy="110" r="4" fill="#c41e3a" class="twinkle" />
             <circle
               cx="130"
@@ -464,8 +158,8 @@ defmodule SahajyogWeb.Demo3Live do
               style="animation-delay: 1.2s;"
             />
           </svg>
-          
-    <!-- Animated Christmas orbs -->
+
+          <%!-- Animated Christmas orbs --%>
           <div class="hero-orb absolute top-1/4 -left-32 w-96 h-96 bg-red-500/20 rounded-full blur-[100px]">
           </div>
           <div
@@ -481,27 +175,27 @@ defmodule SahajyogWeb.Demo3Live do
 
           <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8">
             <div>
-              <!-- Christmas Eyebrow -->
+              <%!-- Christmas Eyebrow --%>
               <p class="hero-element text-xs md:text-sm tracking-[0.3em] uppercase text-yellow-400/80 mb-2 md:mb-6 font-medium flex items-center gap-2">
                 <span class="ornament-swing inline-block">🎄</span>
                 {gettext("Free Meditation")}
                 <span class="ornament-swing inline-block" style="animation-delay: -1.5s;">🎄</span>
               </p>
-              
-    <!-- Main headline with Christmas styling -->
+
+              <%!-- Main headline with Christmas styling --%>
               <h1 class="hero-element text-[clamp(2rem,8vw,8rem)] font-bold leading-[0.95] tracking-[-0.03em] mb-3 md:mb-8 font-christmas">
                 <span class="block text-white drop-shadow-lg">{gettext("Realize your Self")}</span>
                 <span
                   class="block christmas-gradient-text"
                   phx-hook="GSAPTextReveal"
-                  id="hero-text-title-3"
+                  id="hero-text-title"
                   phx-update="ignore"
                 >
                   {gettext("inner silence")}
                 </span>
               </h1>
-              
-    <!-- Christmas decorations around subhead -->
+
+              <%!-- Christmas decorations around subhead --%>
               <div class="hero-element relative">
                 <span class="absolute -left-8 top-0 text-3xl ornament-swing hidden md:inline">🎁</span>
                 <p class="text-base md:text-xl lg:text-2xl text-white/70 max-w-xl leading-relaxed font-light mb-4 md:mb-12">
@@ -519,8 +213,8 @@ defmodule SahajyogWeb.Demo3Live do
             </div>
           </div>
         </section>
-        
-    <!-- VIDEO SECTION -->
+
+        <%!-- VIDEO SECTION --%>
         <section
           :if={@current_video}
           id="video"
@@ -528,7 +222,7 @@ defmodule SahajyogWeb.Demo3Live do
         >
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="gsap-reveal" data-toggle-actions="play none none reverse">
-              <!-- Video container with Christmas border -->
+              <%!-- Video container with Christmas border --%>
               <div class="relative rounded-2xl lg:rounded-3xl overflow-hidden candy-cane-border p-4 bg-white/10 backdrop-blur-sm">
                 <div class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black">
                   <.video_player
@@ -537,7 +231,7 @@ defmodule SahajyogWeb.Demo3Live do
                     locale={@locale}
                   />
                 </div>
-                <!-- Corner decorations -->
+                <%!-- Corner decorations --%>
                 <span class="absolute -top-3 -left-3 text-3xl ornament-swing">🎄</span>
                 <span
                   class="absolute -top-3 -right-3 text-3xl ornament-swing"
@@ -546,8 +240,8 @@ defmodule SahajyogWeb.Demo3Live do
                   🎄
                 </span>
               </div>
-              
-    <!-- Video info -->
+
+              <%!-- Video info --%>
               <div class="mt-6 md:mt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
                 <div>
                   <p class="text-xs tracking-[0.2em] uppercase text-yellow-400 font-semibold mb-1 flex items-center gap-2">
@@ -565,13 +259,13 @@ defmodule SahajyogWeb.Demo3Live do
             </div>
           </div>
         </section>
-        
-    <!-- How It Works - Christmas themed steps -->
+
+        <%!-- How It Works - Christmas themed steps --%>
         <section class="py-8 md:py-16 lg:py-20">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="gsap-reveal" data-toggle-actions="play none none reverse">
               <div class="grid grid-cols-3 gap-1 md:gap-4 lg:gap-8">
-                <!-- Step 1 -->
+                <%!-- Step 1 --%>
                 <.link href="#video" class="step-card group cursor-pointer">
                   <div class="text-center p-2 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
                     <div class="relative w-12 h-12 md:w-20 md:h-20 mx-auto mb-2 md:mb-4 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-lg shadow-red-500/30 ornament-swing">
@@ -586,8 +280,8 @@ defmodule SahajyogWeb.Demo3Live do
                     </p>
                   </div>
                 </.link>
-                
-    <!-- Step 2 -->
+
+                <%!-- Step 2 --%>
                 <.link navigate={~p"/steps"} class="step-card group cursor-pointer">
                   <div class="text-center p-2 md:p-6 rounded-xl hover:bg-white/5 transition-colors">
                     <div
@@ -605,8 +299,8 @@ defmodule SahajyogWeb.Demo3Live do
                     </p>
                   </div>
                 </.link>
-                
-    <!-- Step 3 -->
+
+                <%!-- Step 3 --%>
                 <.link
                   navigate={if assigns[:current_scope], do: ~p"/steps", else: ~p"/users/register"}
                   class="step-card group cursor-pointer"
@@ -636,10 +330,10 @@ defmodule SahajyogWeb.Demo3Live do
             </div>
           </div>
         </section>
-        
-    <!-- FEATURES: Christmas themed cards with Snowdrift Top -->
+
+        <%!-- FEATURES: Christmas themed cards with Snowdrift Top --%>
         <section class="relative py-8 md:py-24 lg:py-32 border-t border-white/10">
-          <!-- Snowdrift Divider -->
+          <%!-- Snowdrift Divider --%>
           <div class="absolute top-0 left-0 w-full overflow-hidden leading-none z-10 -translate-y-[1px]">
             <svg
               data-name="Layer 1"
@@ -654,14 +348,14 @@ defmodule SahajyogWeb.Demo3Live do
           </div>
 
           <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-20">
-            <!-- Section header -->
+            <%!-- Section header --%>
             <div
               class="max-w-2xl mb-6 md:mb-16 lg:mb-20 gsap-reveal"
               data-toggle-actions="play none none reverse"
             >
               <p class="text-sm tracking-[0.2em] uppercase text-red-400 font-semibold mb-4 flex items-center gap-2">
                 <span class="twinkle">
-                  <!-- SVG Holly Icon -->
+                  <%!-- SVG Holly Icon --%>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="w-5 h-5 fill-current"
@@ -672,7 +366,7 @@ defmodule SahajyogWeb.Demo3Live do
                 </span>
                 {gettext("The Practice")}
                 <span class="twinkle" style="animation-delay: 0.5s;">
-                  <!-- SVG Holly Icon -->
+                  <%!-- SVG Holly Icon --%>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="w-5 h-5 fill-current"
@@ -689,15 +383,15 @@ defmodule SahajyogWeb.Demo3Live do
                 {gettext("Simple techniques that anyone can practice. No experience needed.")}
               </p>
             </div>
-            
-    <!-- Feature cards -->
+
+            <%!-- Feature cards --%>
             <div
               id="features-grid"
               phx-hook="GSAPCard3D"
               class="grid md:grid-cols-3 gap-4 gsap-reveal"
               data-toggle-actions="play none none reverse"
             >
-              <!-- Card 1 -->
+              <%!-- Card 1 --%>
               <div class="christmas-card gsap-3d-card bg-gradient-to-br from-red-900/50 to-red-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-red-500/20 group hover:border-red-500/40 transition-all hover:-translate-y-1">
                 <div class="relative z-10">
                   <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
@@ -719,8 +413,8 @@ defmodule SahajyogWeb.Demo3Live do
                   </.link>
                 </div>
               </div>
-              
-    <!-- Card 2 -->
+
+              <%!-- Card 2 --%>
               <div class="christmas-card gsap-3d-card bg-gradient-to-br from-green-900/50 to-green-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-green-500/20 group hover:border-green-500/40 transition-all hover:-translate-y-1">
                 <div class="relative z-10">
                   <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
@@ -742,8 +436,8 @@ defmodule SahajyogWeb.Demo3Live do
                   </.link>
                 </div>
               </div>
-              
-    <!-- Card 3 -->
+
+              <%!-- Card 3 --%>
               <div class="christmas-card gsap-3d-card bg-gradient-to-br from-yellow-900/50 to-yellow-950/50 backdrop-blur-sm p-6 md:p-10 lg:p-12 rounded-2xl border border-yellow-500/20 group hover:border-yellow-500/40 transition-all hover:-translate-y-1">
                 <div class="relative z-10">
                   <div class="flex items-center gap-3 md:block mb-3 md:mb-0">
@@ -769,13 +463,13 @@ defmodule SahajyogWeb.Demo3Live do
             </div>
           </div>
         </section>
-        
-    <!-- TOPICS SECTION with Snowdrift -->
+
+        <%!-- TOPICS SECTION with Snowdrift --%>
         <section
           :if={@featured_topics != []}
           class="relative py-12 md:py-24 border-t border-white/10 bg-black/20"
         >
-          <!-- Snowdrift Divider -->
+          <%!-- Snowdrift Divider --%>
           <div class="absolute top-0 left-0 w-full overflow-hidden leading-none z-10 -translate-y-[1px]">
             <svg
               data-name="Layer 1"
@@ -796,7 +490,7 @@ defmodule SahajyogWeb.Demo3Live do
             <div class="mb-12 md:mb-16 gsap-reveal" data-toggle-actions="play none none reverse">
               <p class="text-sm tracking-[0.2em] uppercase text-green-400 font-semibold mb-4 flex items-center gap-2">
                 <span>
-                  <!-- SVG Tree Icon -->
+                  <%!-- SVG Tree Icon --%>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="w-5 h-5 fill-current"
@@ -807,7 +501,7 @@ defmodule SahajyogWeb.Demo3Live do
                 </span>
                 {gettext("Knowledge")}
                 <span>
-                  <!-- SVG Tree Icon -->
+                  <%!-- SVG Tree Icon --%>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="w-5 h-5 fill-current"
@@ -857,10 +551,10 @@ defmodule SahajyogWeb.Demo3Live do
             </div>
           </div>
         </section>
-        
-    <!-- EVENTS SECTION with Snowdrift -->
+
+        <%!-- EVENTS SECTION with Snowdrift --%>
         <section :if={@featured_events != []} class="relative py-12 md:py-24 border-t border-white/10">
-          <!-- Snowdrift Divider -->
+          <%!-- Snowdrift Divider --%>
           <div class="absolute top-0 left-0 w-full overflow-hidden leading-none z-10 -translate-y-[1px]">
             <svg
               data-name="Layer 1"
@@ -882,7 +576,7 @@ defmodule SahajyogWeb.Demo3Live do
               <div class="max-w-2xl">
                 <p class="text-sm tracking-[0.2em] uppercase text-yellow-400 font-semibold mb-4 flex items-center gap-2">
                   <span>
-                    <!-- SVG Bell Icon -->
+                    <%!-- SVG Bell Icon --%>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="w-5 h-5 fill-current"
@@ -893,7 +587,7 @@ defmodule SahajyogWeb.Demo3Live do
                   </span>
                   {gettext("Community")}
                   <span>
-                    <!-- SVG Bell Icon -->
+                    <%!-- SVG Bell Icon --%>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="w-5 h-5 fill-current"
@@ -969,10 +663,10 @@ defmodule SahajyogWeb.Demo3Live do
             </div>
           </div>
         </section>
-        
-    <!-- QUOTE: Christmas themed -->
+
+        <%!-- QUOTE: Christmas themed --%>
         <section class="py-12 md:py-32 lg:py-40 relative bg-gradient-to-br from-red-900/30 via-green-900/20 to-yellow-900/30">
-          <!-- Decorative elements -->
+          <%!-- Decorative elements --%>
           <div class="absolute top-10 left-10 text-4xl ornament-swing hidden lg:block">🎄</div>
           <div
             class="absolute top-10 right-10 text-4xl ornament-swing hidden lg:block"
@@ -1005,8 +699,8 @@ defmodule SahajyogWeb.Demo3Live do
             </cite>
           </div>
         </section>
-        
-    <!-- CTA: Christmas themed -->
+
+        <%!-- CTA: Christmas themed --%>
         <section class="py-12 md:py-32 lg:py-40 border-t border-white/10">
           <div
             class="max-w-5xl mx-auto px-6 lg:px-8 text-center gsap-reveal"
@@ -1025,8 +719,8 @@ defmodule SahajyogWeb.Demo3Live do
                 "Register for free to access structured learning, resources, and progress tracking"
               )}
             </p>
-            
-    <!-- Benefits list -->
+
+            <%!-- Benefits list --%>
             <div class="flex flex-wrap justify-center gap-4 md:gap-6 lg:gap-8 mb-8 md:mb-12 text-sm md:text-base text-white/60">
               <div class="flex items-center gap-2">
                 <.icon name="hero-academic-cap" class="w-5 h-5 text-red-400" />
@@ -1041,8 +735,8 @@ defmodule SahajyogWeb.Demo3Live do
                 <span>{gettext("Track Progress")}</span>
               </div>
             </div>
-            
-    <!-- CTA buttons -->
+
+            <%!-- CTA buttons --%>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <.link
                 navigate={~p"/users/register"}
@@ -1072,8 +766,8 @@ defmodule SahajyogWeb.Demo3Live do
             </p>
           </div>
         </section>
-        
-    <!-- Spacer for footer -->
+
+        <%!-- Spacer for footer --%>
         <div class="h-20"></div>
       </div>
     </Layouts.app>

@@ -612,7 +612,7 @@ defmodule Sahajyog.StoreTest do
         media_attrs = %{
           file_name: "video_1.mp4",
           content_type: "video/mp4",
-          file_size: 10240,
+          file_size: 10_240,
           r2_key: "sahajaonline/sahajstore/#{item.id}/video/#{Ecto.UUID.generate()}-video_1.mp4",
           media_type: "video"
         }
@@ -624,7 +624,7 @@ defmodule Sahajyog.StoreTest do
         media_attrs2 = %{
           file_name: "video_2.mp4",
           content_type: "video/mp4",
-          file_size: 10240,
+          file_size: 10_240,
           r2_key: "sahajaonline/sahajstore/#{item.id}/video/#{Ecto.UUID.generate()}-video_2.mp4",
           media_type: "video"
         }

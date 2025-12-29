@@ -47,13 +47,15 @@ const QuillEditor = {
     }
 
     // Update hidden input on text change
-    this.quill.on("text-change", () => {
+    // Store handler for cleanup
+    this.textChangeHandler = () => {
       const html = this.quill.root.innerHTML
       input.value = html
 
       // Trigger change event for LiveView
       input.dispatchEvent(new Event("input", { bubbles: true }))
-    })
+    }
+    this.quill.on("text-change", this.textChangeHandler)
 
     // Handle image uploads
     const toolbar = this.quill.getModule("toolbar")
@@ -66,9 +68,12 @@ const QuillEditor = {
     const input = document.createElement("input")
     input.setAttribute("type", "file")
     input.setAttribute("accept", "image/*")
-    input.click()
 
-    input.onchange = () => {
+    // Store reference for cleanup
+    this.fileInput = input
+
+    // Use named handler for proper cleanup
+    const changeHandler = () => {
       const file = input.files[0]
 
       if (/^image\//.test(file.type)) {
@@ -76,19 +81,40 @@ const QuillEditor = {
       } else {
         console.warn("You can only upload images.")
       }
+
+      // Clean up after use
+      input.removeEventListener("change", changeHandler)
+      this.fileInput = null
     }
+
+    input.addEventListener("change", changeHandler)
+    input.click()
   },
 
   saveImageToServer(file) {
     const reader = new FileReader()
 
+    // Store reference for cleanup
+    this.fileReader = reader
+
     reader.onload = (e) => {
+      // Check if component is still mounted
+      if (!this.quill) return
+
       const base64 = e.target.result
       const range = this.quill.getSelection()
 
       // Insert image as base64 (for now)
       // In production, you'd upload to a server and get a URL
       this.quill.insertEmbed(range.index, "image", base64)
+
+      // Clean up after use
+      this.fileReader = null
+    }
+
+    reader.onerror = () => {
+      console.error("Failed to read image file")
+      this.fileReader = null
     }
 
     reader.readAsDataURL(file)
@@ -234,7 +260,12 @@ const QuillEditor = {
   },
 
   destroyed() {
-    // Clean up event listeners
+    // Clean up Quill event listeners
+    if (this.quill && this.textChangeHandler) {
+      this.quill.off("text-change", this.textChangeHandler)
+    }
+
+    // Clean up document event listeners
     if (this.documentClickHandler) {
       document.removeEventListener("click", this.documentClickHandler)
     }
@@ -247,10 +278,33 @@ const QuillEditor = {
       })
     }
 
+    // Clean up image toolbar from DOM
+    if (this.imageToolbar && this.imageToolbar.parentNode) {
+      this.imageToolbar.parentNode.removeChild(this.imageToolbar)
+    }
+
+    // Abort any pending file reads
+    if (this.fileReader) {
+      this.fileReader.abort()
+      this.fileReader = null
+    }
+
+    // Clean up file input if still pending
+    if (this.fileInput) {
+      this.fileInput = null
+    }
+
+    // Deselect image and clean up Quill instance
+    this.deselectImage()
     if (this.quill) {
       this.quill = null
     }
-    this.deselectImage()
+
+    // Clear all references
+    this.editorContainer = null
+    this.imageToolbar = null
+    this.toolbarButtonHandlers = null
+    this.textChangeHandler = null
   },
 }
 

@@ -245,6 +245,18 @@ defmodule Sahajyog.Accounts do
   end
 
   @doc """
+  Counts the number of existing session tokens for a user.
+  Used to determine if this is a first-time login.
+  """
+  def count_user_sessions(user_id) do
+    Repo.one(
+      from t in UserToken,
+        where: t.user_id == ^user_id and t.context == "session",
+        select: count(t.id)
+    )
+  end
+
+  @doc """
   Gets the user with the given magic link token.
   """
   def get_user_by_magic_link_token(token) do

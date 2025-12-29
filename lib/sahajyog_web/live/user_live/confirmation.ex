@@ -73,7 +73,10 @@ defmodule SahajyogWeb.UserLive.Confirmation do
                 <% end %>
               </.form>
 
-              <p :if={!@user.confirmed_at} class="alert alert-outline mt-4">
+              <p
+                :if={!@user.confirmed_at && is_nil(@user.hashed_password)}
+                class="alert alert-outline mt-4"
+              >
                 {gettext("Tip: If you prefer passwords, you can enable them in the user settings.")}
               </p>
             </div>

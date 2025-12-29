@@ -168,7 +168,7 @@ defmodule Sahajyog.Generators do
   Generates a non-negative decimal for production cost.
   """
   def store_item_production_cost do
-    gen all(value <- float(min: 0.0, max: 10000.0)) do
+    gen all(value <- float(min: 0.0, max: 10_000.0)) do
       Decimal.from_float(value) |> Decimal.round(2)
     end
   end
@@ -177,7 +177,7 @@ defmodule Sahajyog.Generators do
   Generates a negative decimal for invalid production cost.
   """
   def store_item_invalid_production_cost do
-    gen all(value <- float(min: -10000.0, max: -0.01)) do
+    gen all(value <- float(min: -10_000.0, max: -0.01)) do
       Decimal.from_float(value) |> Decimal.round(2)
     end
   end
@@ -186,7 +186,7 @@ defmodule Sahajyog.Generators do
   Generates a positive decimal for price.
   """
   def store_item_price do
-    gen all(value <- float(min: 0.01, max: 10000.0)) do
+    gen all(value <- float(min: 0.01, max: 10_000.0)) do
       Decimal.from_float(value) |> Decimal.round(2)
     end
   end

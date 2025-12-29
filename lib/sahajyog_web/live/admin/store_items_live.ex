@@ -127,6 +127,17 @@ defmodule SahajyogWeb.Admin.StoreItemsLive do
      |> assign(:reject_notes, "")}
   end
 
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    item = Store.get_item!(String.to_integer(id))
+    {:ok, _} = Store.delete_item(item)
+
+    {:noreply,
+     socket
+     |> assign(:items, refresh_items(socket.assigns.filter))
+     |> put_flash(:info, gettext("Item deleted successfully"))}
+  end
+
   # Private helpers
 
   defp list_all_items do
@@ -370,25 +381,58 @@ defmodule SahajyogWeb.Admin.StoreItemsLive do
                 </div>
               </div>
 
+              <%!-- Previous Rejection Notes (if any) --%>
+              <%= if @reviewing_item.status == "rejected" && @reviewing_item.review_notes do %>
+                <div class="p-4 bg-error/10 rounded-lg border border-error/20">
+                  <p class="text-sm font-medium text-error mb-2 flex items-center gap-2">
+                    <.icon name="hero-exclamation-triangle" class="w-4 h-4" />
+                    {gettext("Previous Rejection Notes")}
+                  </p>
+                  <p class="text-sm text-base-content/80">{@reviewing_item.review_notes}</p>
+                </div>
+              <% end %>
+
               <%!-- Action Buttons --%>
               <div class="flex gap-3 pt-4 border-t border-base-content/10">
                 <button
                   type="button"
                   phx-click="approve"
                   phx-value-id={@reviewing_item.id}
-                  class="px-6 py-3 bg-success text-success-content rounded-lg hover:bg-success/90 transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-success focus:ring-offset-2 focus:ring-offset-base-300"
+                  disabled={@reviewing_item.status == "approved"}
+                  class={[
+                    "px-6 py-3 rounded-lg transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-success focus:ring-offset-2 focus:ring-offset-base-300",
+                    @reviewing_item.status == "approved" &&
+                      "bg-success/50 text-success-content/50 cursor-not-allowed",
+                    @reviewing_item.status != "approved" &&
+                      "bg-success text-success-content hover:bg-success/90"
+                  ]}
                 >
                   <.icon name="hero-check" class="w-4 h-4 inline mr-1" />
-                  {gettext("Approve")}
+                  <%= if @reviewing_item.status == "approved" do %>
+                    {gettext("Already Approved")}
+                  <% else %>
+                    {gettext("Approve")}
+                  <% end %>
                 </button>
                 <button
                   type="button"
                   phx-click="show_reject_modal"
                   phx-value-id={@reviewing_item.id}
-                  class="px-6 py-3 bg-error text-error-content rounded-lg hover:bg-error/90 transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 focus:ring-offset-base-300"
+                  disabled={@reviewing_item.status == "rejected"}
+                  class={[
+                    "px-6 py-3 rounded-lg transition-colors font-semibold focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-2 focus:ring-offset-base-300",
+                    @reviewing_item.status == "rejected" &&
+                      "bg-error/50 text-error-content/50 cursor-not-allowed",
+                    @reviewing_item.status != "rejected" &&
+                      "bg-error text-error-content hover:bg-error/90"
+                  ]}
                 >
                   <.icon name="hero-x-mark" class="w-4 h-4 inline mr-1" />
-                  {gettext("Reject")}
+                  <%= if @reviewing_item.status == "rejected" do %>
+                    {gettext("Already Rejected")}
+                  <% else %>
+                    {gettext("Reject")}
+                  <% end %>
                 </button>
                 <.secondary_button type="button" phx-click="cancel_review">
                   {gettext("Cancel")}
@@ -412,15 +456,16 @@ defmodule SahajyogWeb.Admin.StoreItemsLive do
                 <label class="block text-sm font-medium text-base-content/70 mb-2">
                   {gettext("Review Notes")} <span class="text-error">*</span>
                 </label>
-                <textarea
-                  id="reject-notes"
-                  name="notes"
-                  rows="4"
-                  phx-change="update_reject_notes"
-                  phx-value-notes={@reject_notes}
-                  class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base-content"
-                  placeholder={gettext("Explain why this item is being rejected...")}
-                >{@reject_notes}</textarea>
+                <form phx-change="update_reject_notes">
+                  <textarea
+                    id="reject-notes"
+                    name="notes"
+                    rows="4"
+                    class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base-content"
+                    placeholder={gettext("Explain why this item is being rejected...")}
+                    phx-debounce="300"
+                  ><%= @reject_notes %></textarea>
+                </form>
               </div>
 
               <div class="flex gap-3 pt-4">
@@ -531,9 +576,17 @@ defmodule SahajyogWeb.Admin.StoreItemsLive do
                         phx-value-id={item.id}
                         class="flex-1 sm:flex-none px-4 py-2 text-sm"
                       >
-                        {gettext("View")}
+                        {gettext("View Item")}
                       </.secondary_button>
                     <% end %>
+                    <.danger_button
+                      phx-click="delete"
+                      phx-value-id={item.id}
+                      data-confirm={gettext("Are you sure you want to delete this item?")}
+                      class="flex-1 sm:flex-none px-4 py-2 text-sm"
+                    >
+                      {gettext("Delete")}
+                    </.danger_button>
                   </div>
                 </div>
               </.card>

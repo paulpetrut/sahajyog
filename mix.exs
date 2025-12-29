@@ -80,7 +80,8 @@ defmodule Sahajyog.MixProject do
       {:hackney, "~> 1.20"},
       {:thumbnex, "~> 0.5.1"},
       {:timex, "~> 3.7"},
-      {:html_sanitize_ex, "~> 1.4"}
+      {:html_sanitize_ex, "~> 1.4"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -103,7 +104,13 @@ defmodule Sahajyog.MixProject do
         "esbuild sahajyog --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: [
+        "compile --warning-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "credo --strict",
+        "test"
+      ]
     ]
   end
 end
