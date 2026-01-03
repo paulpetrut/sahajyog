@@ -1,15 +1,25 @@
 {
   "name": "SahajYog",
   "short_name": "SahajYog",
+  "description": "Sahaja Yoga meditation resources and talks",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/images/logo-192.png",
+      "src": "/images/logo-192-actual.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

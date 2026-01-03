@@ -1,18 +1,22 @@
-// Basic Service Worker for PWA installability
-const CACHE_NAME = 'sahajyog-v1';
+// Service Worker for PWA installability
+const CACHE_NAME = "sahajyog-v1"
 
-// We don't necessarily need to cache everything for it to be installable,
-// but a fetch handler is required.
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
+self.addEventListener("install", (event) => {
+  console.log("Service Worker installing...")
+  self.skipWaiting()
+})
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
-});
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker activating...")
+  event.waitUntil(clients.claim())
+})
 
-self.addEventListener('fetch', (event) => {
-  // Pass-through for now. 
-  // You can add caching logic here later for offline support.
-  event.respondWith(fetch(event.request));
-});
+self.addEventListener("fetch", (event) => {
+  // Network-first strategy with fallback
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      // Could add offline fallback here
+      return new Response("Offline", { status: 503 })
+    })
+  )
+})
