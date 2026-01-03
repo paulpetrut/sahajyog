@@ -823,9 +823,25 @@ const liveSocket = new LiveSocket("/live", Socket, {
 })
 
 // Show progress bar on live navigation and form submits
+// Only show for actual page navigation, not for background events like infinite scroll
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
-window.addEventListener("phx:page-loading-start", (_info) => topbar.show(500))
-window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide())
+
+let topbarTimeout = null
+window.addEventListener("phx:page-loading-start", (info) => {
+  // Only show topbar for navigation events (kind: "initial" or "redirect")
+  // Don't show for patch events or background loading
+  if (info.detail && (info.detail.kind === "initial" || info.detail.kind === "redirect")) {
+    topbarTimeout = setTimeout(() => topbar.show(), 200)
+  }
+})
+
+window.addEventListener("phx:page-loading-stop", (_info) => {
+  if (topbarTimeout) {
+    clearTimeout(topbarTimeout)
+    topbarTimeout = null
+  }
+  topbar.hide()
+})
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
@@ -873,8 +889,6 @@ const updateHomeIconVisibility = () => {
     homeIcon.style.visibility = window.location.pathname !== "/" ? "visible" : "hidden"
   }
 }
-
-
 
 // Update active nav link styling
 const updateActiveNavLink = () => {
