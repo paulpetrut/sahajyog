@@ -60,25 +60,6 @@ defmodule SahajyogWeb.Demo3Live do
         phx-hook="GSAPScrollReveal"
         class="min-h-screen christmas-gradient text-white font-display"
       >
-        <%!-- Christmas Lights Banner (CSS Implementation) --%>
-        <div class="light-wire">
-          <div class="christmas-bulb bulb-red"></div>
-          <div class="christmas-bulb bulb-green"></div>
-          <div class="christmas-bulb bulb-gold"></div>
-          <div class="christmas-bulb bulb-blue"></div>
-          <div class="christmas-bulb bulb-red"></div>
-          <div class="christmas-bulb bulb-green"></div>
-          <div class="christmas-bulb bulb-gold"></div>
-          <div class="christmas-bulb bulb-blue hidden sm:block"></div>
-          <div class="christmas-bulb bulb-red hidden sm:block"></div>
-          <div class="christmas-bulb bulb-green hidden sm:block"></div>
-          <div class="christmas-bulb bulb-gold hidden md:block"></div>
-          <div class="christmas-bulb bulb-blue hidden md:block"></div>
-          <div class="christmas-bulb bulb-red hidden lg:block"></div>
-          <div class="christmas-bulb bulb-green hidden lg:block"></div>
-          <div class="christmas-bulb bulb-gold hidden xl:block"></div>
-        </div>
-
         <%!-- HERO: Christmas themed --%>
         <section
           id="hero-section"

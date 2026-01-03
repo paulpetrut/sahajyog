@@ -1489,60 +1489,6 @@ a:focus-visible,
     inset 0 0 10px rgba(0,0,0,0.5);
 }
 
-/* Realistic Christmas Light Bulbs */
-.light-wire {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  padding: 10px 0;
-  position: fixed;
-  top: -10px;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  pointer-events: none;
-  border-top: 2px solid #2f4f4f;
-  border-radius: 50%;
-}
-
-.christmas-bulb {
-  width: 24px;
-  height: 36px;
-  border-radius: 50% 50% 40% 40%;
-  position: relative;
-  z-index: 1;
-  margin-top: 5px;
-  border-top: 6px solid #222;
-}
-
-@keyframes bulb-glow {
-  0%, 100% { opacity: 1; box-shadow: 0 0 15px currentColor; }
-  50% { opacity: 0.5; box-shadow: 0 0 5px currentColor; }
-}
-
-.bulb-red {
-  background-color: var(--christmas-red);
-  color: var(--christmas-red);
-  animation: bulb-glow 2s infinite alternate;
-}
-.bulb-green {
-  background-color: var(--christmas-green);
-  color: var(--christmas-green);
-  background-image: radial-gradient(circle at 30% 30%, #8fbc8f, transparent);
-  animation: bulb-glow 2.5s infinite alternate 0.5s;
-}
-.bulb-gold {
-  background-color: var(--christmas-gold);
-  color: var(--christmas-gold);
-  background-image: radial-gradient(circle at 30% 30%, #fffacd, transparent);
-  animation: bulb-glow 3s infinite alternate 1s;
-}
-.bulb-blue {
-  background-color: #1e90ff;
-  color: #1e90ff;
-  background-image: radial-gradient(circle at 30% 30%, #e0ffff, transparent);
-  animation: bulb-glow 2.2s infinite alternate 0.8s;
-}
 
 /* Text enhancements */
 .text-glow {

@@ -2,8 +2,19 @@
 <html lang={assigns[:locale] || "en"}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
     <meta name="csrf-token" content={get_csrf_token()} />
+
+    <%!-- PWA Meta Tags --%>
+    <link rel="manifest" href={~p"/manifest.json"} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" href={~p"/images/logo-192.png"} />
+
     <.live_title suffix=" · SahajYog">
       {assigns[:page_title] || "SahajYog"}
     </.live_title>
@@ -19,205 +30,216 @@
     </script>
   </head>
   <body class="overflow-x-hidden bg-base-300">
-    <div class="sticky top-0 w-full max-w-full z-[9999] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 2xl:py-6 bg-base-100/95 backdrop-blur-sm border-b border-base-content/10 shadow-sm">
-      <%!-- Left Section - Home Icon --%>
-      <div class="flex items-center shrink-0">
-        <%!-- Brand Logo --%>
-        <a
-          href="/"
-          class="flex items-center transition-all hover:opacity-80 active:scale-95 home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded-full relative"
-          title="Home"
-        >
-          <div class="relative rounded-full ring-1 ring-base-content/20 shadow-lg overflow-hidden group-hover:ring-primary/50 transition-all">
-            <img
-              src={~p"/images/logo-192.png"}
-              alt="SahajYog"
-              class="w-10 h-10 2xl:w-12 2xl:h-12 object-cover"
-            />
+    <div class="drawer drawer-end">
+      <input id="mobile-drawer" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content flex flex-col min-h-screen">
+        <div class="sticky top-0 w-full max-w-full z-[40] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 2xl:py-6 bg-base-100/95 backdrop-blur-sm border-b border-base-content/10 shadow-sm">
+          <%!-- Left Section - Home Icon --%>
+          <div class="flex items-center shrink-0">
+            <%!-- Brand Logo --%>
+            <a
+              href="/"
+              class="flex items-center transition-all hover:opacity-80 active:scale-95 home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded-full relative"
+              title="Home"
+            >
+              <div class="relative rounded-full ring-1 ring-base-content/20 shadow-lg overflow-hidden group-hover:ring-primary/50 transition-all">
+                <img
+                  src={~p"/images/logo-192.png"}
+                  alt="SahajYog"
+                  class="w-10 h-10 2xl:w-12 2xl:h-12 object-cover"
+                />
+              </div>
+            </a>
           </div>
-        </a>
-      </div>
 
-      <%!-- Desktop Navigation --%>
-      <ul class="menu menu-horizontal hidden md:flex items-center gap-2 lg:gap-4 text-base-content shrink-0 2xl:text-lg">
-        <%!-- Public navigation links - visible to all users --%>
-        <li>
-          <.link
-            href={~p"/talks"}
-            data-nav-path="/talks"
-            class="nav-link font-medium hover:text-base-content focus:outline-none"
-          >
-            {gettext("Talks")}
-          </.link>
-        </li>
-        <%!-- Authenticated-only navigation links --%>
-        <%= if assigns[:current_scope] do %>
-          <li>
-            <.link
-              href={~p"/steps"}
-              data-nav-path="/steps"
-              class="nav-link font-medium hover:text-base-content focus:outline-none"
-            >
-              {gettext("Steps")}
-            </.link>
-          </li>
-          <li>
-            <.link
-              href={~p"/topics"}
-              data-nav-path="/topics"
-              class="nav-link font-medium hover:text-base-content focus:outline-none"
-            >
-              {gettext("Topics")}
-            </.link>
-          </li>
-          <li>
-            <.link
-              href={~p"/resources"}
-              data-nav-path="/resources"
-              class="nav-link font-medium hover:text-base-content focus:outline-none"
-            >
-              {gettext("Resources")}
-            </.link>
-          </li>
-          <%!-- Events link - only for L1, L2, L3, or admin --%>
-          <%= if Sahajyog.Accounts.User.can_access_events?(@current_scope.user) do %>
+          <%!-- Desktop Navigation --%>
+          <ul class="menu menu-horizontal hidden md:flex items-center gap-2 lg:gap-4 text-base-content shrink-0 2xl:text-lg">
+            <%!-- Public navigation links - visible to all users --%>
             <li>
               <.link
-                href={~p"/events"}
-                data-nav-path="/events"
+                href={~p"/talks"}
+                data-nav-path="/talks"
                 class="nav-link font-medium hover:text-base-content focus:outline-none"
               >
-                {gettext("Events")}
+                {gettext("Talks")}
               </.link>
             </li>
-          <% end %>
-          <%!-- SahajStore link --%>
-          <li>
-            <.link
-              href={~p"/store"}
-              data-nav-path="/store"
-              class="nav-link font-medium hover:text-base-content focus:outline-none"
-            >
-              {gettext("Store")}
-            </.link>
-          </li>
-          <%!-- Admin link - only for admins --%>
-          <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
-            <li>
-              <.link
-                href={~p"/admin/videos"}
-                data-nav-path="/admin"
-                class="nav-link font-medium hover:text-base-content focus:outline-none"
-              >
-                {gettext("Admin")}
-              </.link>
-            </li>
-          <% end %>
-        <% end %>
-        <li>
-          <.locale_switcher
-            id="locale-select-desktop"
-            current_locale={assigns[:locale] || "en"}
-          />
-        </li>
-        <li>
-          <.theme_toggle />
-        </li>
-        <%= if assigns[:current_scope] do %>
-          <%!-- User Avatar Dropdown --%>
-          <li class="dropdown dropdown-end">
-            <div
-              tabindex="0"
-              role="button"
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-base-100 text-base-content font-semibold cursor-pointer hover:bg-base-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-              title={@current_scope.user.email}
-            >
-              {String.upcase(String.first(@current_scope.user.email))}
-            </div>
-            <ul
-              tabindex="0"
-              class="dropdown-content menu bg-base-200 rounded-box z-[99999] w-64 p-2 shadow mt-2"
-            >
-              <li class="border-b border-base-300 mb-1">
+            <%!-- Authenticated-only navigation links --%>
+            <%= if assigns[:current_scope] do %>
+              <li>
                 <.link
-                  href="#"
-                  tabindex="-1"
-                  aria-disabled="true"
-                  class="flex items-center gap-2 px-0 pointer-events-none select-none"
+                  href={~p"/steps"}
+                  data-nav-path="/steps"
+                  class="nav-link font-medium hover:text-base-content focus:outline-none"
                 >
-                  <div class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold">
-                    {String.upcase(String.first(@current_scope.user.email))}
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium truncate">{@current_scope.user.email}</p>
-                  </div>
+                  {gettext("Steps")}
                 </.link>
               </li>
               <li>
-                <.link href={~p"/users/settings"} class="flex items-center gap-2">
-                  <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
-                  <span>{gettext("Account settings")}</span>
+                <.link
+                  href={~p"/topics"}
+                  data-nav-path="/topics"
+                  class="nav-link font-medium hover:text-base-content focus:outline-none"
+                >
+                  {gettext("Topics")}
                 </.link>
               </li>
-              <li :if={Sahajyog.Accounts.User.eligible_for_upgrade?(@current_scope.user)}>
-                <.link href={~p"/level-upgrade"} class="flex items-center gap-2">
-                  <.icon name="hero-arrow-up-circle" class="w-5 h-5" />
-                  <span>{gettext("Upgrade Access")}</span>
+              <li>
+                <.link
+                  href={~p"/resources"}
+                  data-nav-path="/resources"
+                  class="nav-link font-medium hover:text-base-content focus:outline-none"
+                >
+                  {gettext("Resources")}
                 </.link>
               </li>
-              <li class="border-t border-base-300 mt-1 pt-1">
-                <.link href={~p"/users/log-out"} method="delete" class="flex items-center gap-2">
-                  <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" />
-                  <span>{gettext("Sign out")}</span>
+              <%!-- Events link - only for L1, L2, L3, or admin --%>
+              <%= if Sahajyog.Accounts.User.can_access_events?(@current_scope.user) do %>
+                <li>
+                  <.link
+                    href={~p"/events"}
+                    data-nav-path="/events"
+                    class="nav-link font-medium hover:text-base-content focus:outline-none"
+                  >
+                    {gettext("Events")}
+                  </.link>
+                </li>
+              <% end %>
+              <%!-- SahajStore link --%>
+              <li>
+                <.link
+                  href={~p"/store"}
+                  data-nav-path="/store"
+                  class="nav-link font-medium hover:text-base-content focus:outline-none"
+                >
+                  {gettext("Store")}
                 </.link>
               </li>
-            </ul>
-          </li>
-        <% else %>
-          <li>
-            <.link
-              href={~p"/users/register"}
-              class="btn btn-primary font-medium text-sm"
+              <%!-- Admin link - only for admins --%>
+              <%= if Sahajyog.Accounts.User.admin?(@current_scope.user) do %>
+                <li>
+                  <.link
+                    href={~p"/admin/videos"}
+                    data-nav-path="/admin"
+                    class="nav-link font-medium hover:text-base-content focus:outline-none"
+                  >
+                    {gettext("Admin")}
+                  </.link>
+                </li>
+              <% end %>
+            <% end %>
+            <li>
+              <.locale_switcher
+                id="locale-select-desktop"
+                current_locale={assigns[:locale] || "en"}
+              />
+            </li>
+            <li>
+              <.theme_toggle />
+            </li>
+            <%= if assigns[:current_scope] do %>
+              <%!-- User Avatar Dropdown --%>
+              <li class="dropdown dropdown-end">
+                <div
+                  tabindex="0"
+                  role="button"
+                  class="flex items-center justify-center w-10 h-10 rounded-full bg-base-100 text-base-content font-semibold cursor-pointer hover:bg-base-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                  title={@current_scope.user.email}
+                >
+                  {String.upcase(String.first(@current_scope.user.email))}
+                </div>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content menu bg-base-200 rounded-box z-[99999] w-64 p-2 shadow mt-2"
+                >
+                  <li class="border-b border-base-300 mb-1">
+                    <.link
+                      href="#"
+                      tabindex="-1"
+                      aria-disabled="true"
+                      class="flex items-center gap-2 px-0 pointer-events-none select-none"
+                    >
+                      <div class="flex items-center justify-center w-10 h-10 rounded-full bg-base-300 text-base-content font-semibold">
+                        {String.upcase(String.first(@current_scope.user.email))}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{@current_scope.user.email}</p>
+                      </div>
+                    </.link>
+                  </li>
+                  <li>
+                    <.link href={~p"/users/settings"} class="flex items-center gap-2">
+                      <.icon name="hero-cog-6-tooth" class="w-5 h-5" />
+                      <span>{gettext("Account settings")}</span>
+                    </.link>
+                  </li>
+                  <li :if={Sahajyog.Accounts.User.eligible_for_upgrade?(@current_scope.user)}>
+                    <.link href={~p"/level-upgrade"} class="flex items-center gap-2">
+                      <.icon name="hero-arrow-up-circle" class="w-5 h-5" />
+                      <span>{gettext("Upgrade Access")}</span>
+                    </.link>
+                  </li>
+                  <li class="border-t border-base-300 mt-1 pt-1">
+                    <.link
+                      href={~p"/users/log-out"}
+                      method="delete"
+                      class="flex items-center gap-2"
+                    >
+                      <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5" />
+                      <span>{gettext("Sign out")}</span>
+                    </.link>
+                  </li>
+                </ul>
+              </li>
+            <% else %>
+              <li>
+                <.link
+                  href={~p"/users/register"}
+                  class="btn btn-primary font-medium text-sm"
+                >
+                  {gettext("Register")}
+                </.link>
+              </li>
+              <li>
+                <.link
+                  href={~p"/users/log-in"}
+                  class="hover:text-base-content focus:outline-none"
+                >
+                  {gettext("Log in")}
+                </.link>
+              </li>
+            <% end %>
+          </ul>
+          <%!-- Mobile Hamburger Button (Drawer Toggle) --%>
+          <label
+            for="mobile-drawer"
+            class="md:hidden btn btn-ghost btn-circle"
+            aria-label="Toggle menu"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              {gettext("Register")}
-            </.link>
-          </li>
-          <li>
-            <.link
-              href={~p"/users/log-in"}
-              class="hover:text-base-content focus:outline-none"
-            >
-              {gettext("Log in")}
-            </.link>
-          </li>
-        <% end %>
-      </ul>
-      <%!-- Mobile Hamburger Button --%>
-      <div
-        id="mobile-menu-button"
-        class="md:hidden p-2 text-base-content/70 hover:text-base-content transition-colors cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-primary rounded"
-        aria-label="Toggle menu"
-      >
-        <svg
-          id="menu-icon"
-          class="w-6 h-6 pointer-events-none"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            id="menu-icon-path"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </label>
+        </div>
+        {@inner_content}
+        <Layouts.footer current_scope={assigns[:current_scope]} />
+      </div>
+      <%!-- Mobile Drawer Side --%>
+      <div class="drawer-side z-[9999]">
+        <label for="mobile-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+        <.mobile_menu current_scope={assigns[:current_scope]} locale={assigns[:locale] || "en"} />
       </div>
     </div>
-    <.mobile_menu current_scope={assigns[:current_scope]} locale={assigns[:locale] || "en"} />
-    {@inner_content}
-    <Layouts.footer current_scope={assigns[:current_scope]} />
   </body>
 </html>

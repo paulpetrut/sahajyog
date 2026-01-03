@@ -906,55 +906,22 @@ const updateFooterNavLinks = () => {
 }
 
 // Mobile menu toggle functionality
+// Mobile menu toggle functionality (DaisyUI Drawer)
 const initMobileMenu = () => {
-  const button = document.getElementById("mobile-menu-button")
-  const menu = document.getElementById("mobile-menu")
-  const overlay = document.getElementById("mobile-menu-overlay")
-  const iconPath = document.getElementById("menu-icon-path")
+  const drawerCheckbox = document.getElementById("mobile-drawer")
+  if (!drawerCheckbox) return
 
-  if (!button || !menu || !overlay || !iconPath) return
-
-  let isOpen = false
-  const hamburgerPath = "M4 6h16M4 12h16M4 18h16"
-  const closePath = "M6 18L18 6M6 6l12 12"
-
-  const toggleMenu = () => {
-    isOpen = !isOpen
-    if (isOpen) {
-      menu.classList.remove("translate-x-full")
-      overlay.classList.remove("hidden")
-      iconPath.setAttribute("d", closePath)
-      document.body.style.overflow = "hidden"
-    } else {
-      menu.classList.add("translate-x-full")
-      overlay.classList.add("hidden")
-      iconPath.setAttribute("d", hamburgerPath)
-      document.body.style.overflow = ""
+  // Close drawer when a link inside the drawer is clicked
+  const closeDrawer = () => {
+    if (drawerCheckbox.checked) {
+      drawerCheckbox.checked = false
     }
   }
 
-  // Remove old listeners before adding new ones (prevents duplicates on navigation)
-  // Store handlers on the elements themselves for proper cleanup
-  if (button._toggleHandler) {
-    button.removeEventListener("click", button._toggleHandler)
-    button.removeEventListener("touchstart", button._touchHandler)
-  }
-  if (overlay._clickHandler) {
-    overlay.removeEventListener("click", overlay._clickHandler)
-  }
-
-  button._toggleHandler = toggleMenu
-  button._touchHandler = (e) => {
-    e.preventDefault()
-    toggleMenu()
-  }
-  overlay._clickHandler = () => {
-    if (isOpen) toggleMenu()
-  }
-
-  button.addEventListener("click", button._toggleHandler)
-  button.addEventListener("touchstart", button._touchHandler)
-  overlay.addEventListener("click", overlay._clickHandler)
+  const menuLinks = document.querySelectorAll(".drawer-side a")
+  menuLinks.forEach((link) => {
+    link.addEventListener("click", closeDrawer)
+  })
 }
 
 // Run on initial load
