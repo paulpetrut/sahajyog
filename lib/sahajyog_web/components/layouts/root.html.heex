@@ -22,25 +22,19 @@
     <div class="sticky top-0 w-full max-w-full z-[9999] flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 lg:px-8 py-3 sm:py-4 2xl:py-6 bg-base-100/95 backdrop-blur-sm border-b border-base-content/10 shadow-sm">
       <%!-- Left Section - Home Icon --%>
       <div class="flex items-center shrink-0">
-        <%!-- Home Icon --%>
+        <%!-- Brand Logo --%>
         <a
           href="/"
-          class="p-1.5 sm:p-2 text-base-content hover:text-base-content transition-colors home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded"
+          class="flex items-center transition-all hover:opacity-80 active:scale-95 home-icon focus:outline-none focus:ring-2 focus:ring-primary rounded-full relative"
           title="Home"
-          style="visibility: hidden;"
         >
-          <svg
-            class="w-5 h-5 2xl:w-6 2xl:h-6"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
-              clip-rule="evenodd"
+          <div class="relative rounded-full ring-1 ring-base-content/20 shadow-lg overflow-hidden group-hover:ring-primary/50 transition-all">
+            <img
+              src={~p"/images/logo-192.png"}
+              alt="SahajYog"
+              class="w-10 h-10 2xl:w-12 2xl:h-12 object-cover"
             />
-          </svg>
+          </div>
         </a>
       </div>
 

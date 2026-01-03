@@ -874,6 +874,8 @@ const updateHomeIconVisibility = () => {
   }
 }
 
+
+
 // Update active nav link styling
 const updateActiveNavLink = () => {
   const currentPath = window.location.pathname
