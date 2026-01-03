@@ -239,7 +239,7 @@
         <Layouts.footer current_scope={assigns[:current_scope]} />
       </div>
       <%!-- Mobile Drawer Side --%>
-      <div class="drawer-side z-[9999]">
+      <div class="drawer-side z-[9999] lg:hidden">
         <label for="mobile-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
         <.mobile_menu current_scope={assigns[:current_scope]} locale={assigns[:locale] || "en"} />
       </div>

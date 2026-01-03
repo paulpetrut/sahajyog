@@ -1,6 +1,12 @@
 /* See the Tailwind configuration guide for advanced usage
    https://tailwindcss.com/docs/configuration */
 
+/* Import Google Fonts and Quill editor styles at the top (CSS @import must be first) */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap');
+@import "quill/dist/quill.snow.css";
+@import "./quill_custom.css";
+
 @import "tailwindcss" source(none);
 @source "../css";
 @source "../js";
@@ -148,9 +154,6 @@ blockquote {
   opacity: 0.85;
 }
 
-/* Import Quill editor styles */
-@import "quill/dist/quill.snow.css";
-@import "./quill_custom.css";
 
 /* Animations */
 @keyframes fade-in {
@@ -1199,8 +1202,7 @@ a:focus-visible,
 
 /* Extracted from welcome_live.ex and demo_live_2.ex */
 
-/* Demo 2 Typography */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+/* Demo 2 Typography (font imported at top of file) */
 .font-outfit { font-family: 'Outfit', sans-serif; }
 
 /* Welcome Live Unique Styles */
@@ -1329,8 +1331,7 @@ a:focus-visible,
 /* ===== Demo3 Christmas Theme Styles ===== */
 /* Extracted from demo3_live.ex */
 
-/* Christmas Font */
-@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap');
+/* Christmas Font (imported at top of file) */
 .font-christmas { font-family: 'Mountains of Christmas', cursive; }
 
 /* Christmas Colors */

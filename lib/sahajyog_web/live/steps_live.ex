@@ -3,7 +3,6 @@ defmodule SahajyogWeb.StepsLive do
 
   alias Sahajyog.Progress
   alias Sahajyog.Content
-  import SahajyogWeb.VideoPlayer
 
   def mount(_params, _session, socket) do
     socket = assign(socket, :page_title, "Steps")
@@ -336,12 +335,39 @@ defmodule SahajyogWeb.StepsLive do
         <%= if @current_video do %>
           <%!-- Current video player --%>
           <div class="sticky top-0 z-10 bg-base-300">
-            <div class="aspect-video bg-black">
-              <.video_player
-                video_id={@current_video.video_id}
-                provider={@current_video.provider}
-                locale={@current_video.locale}
-              />
+            <div
+              id={"steps-mobile-video-#{@current_video.video_id}"}
+              phx-update="ignore"
+              class="aspect-video bg-black"
+            >
+              <div class="relative w-full h-full">
+                <div
+                  class="absolute inset-0 bg-base-300 flex items-center justify-center z-0"
+                  style="animation: fade-out 0.3s ease-out 1s forwards; pointer-events: none;"
+                >
+                  <div class="text-center">
+                    <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3">
+                    </div>
+                    <p class="text-base-content/60 text-sm">{gettext("Loading video...")}</p>
+                  </div>
+                </div>
+                <iframe
+                  src={
+                    Sahajyog.VideoProvider.embed_url(
+                      @current_video.video_id,
+                      @current_video.provider,
+                      @current_video.locale
+                    )
+                  }
+                  class="absolute inset-0 w-full h-full z-10"
+                  frameborder="0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                  allowfullscreen
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  title={gettext("Video player")}
+                >
+                </iframe>
+              </div>
             </div>
             <div class="p-4 border-b border-base-content/20">
               <h1 class="text-lg font-bold mb-2 text-base-content">{@current_video.title}</h1>
@@ -476,12 +502,39 @@ defmodule SahajyogWeb.StepsLive do
 
             <%!-- Video player --%>
             <div class="flex-1 flex items-start justify-center">
-              <div class="w-full max-w-5xl aspect-video bg-black rounded-lg overflow-hidden">
-                <.video_player
-                  video_id={@current_video.video_id}
-                  provider={@current_video.provider}
-                  locale={@current_video.locale}
-                />
+              <div
+                id={"steps-desktop-video-#{@current_video.video_id}"}
+                phx-update="ignore"
+                class="w-full max-w-5xl aspect-video bg-black rounded-lg overflow-hidden"
+              >
+                <div class="relative w-full h-full">
+                  <div
+                    class="absolute inset-0 bg-base-300 flex items-center justify-center z-0"
+                    style="animation: fade-out 0.3s ease-out 1s forwards; pointer-events: none;"
+                  >
+                    <div class="text-center">
+                      <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3">
+                      </div>
+                      <p class="text-base-content/60 text-sm">{gettext("Loading video...")}</p>
+                    </div>
+                  </div>
+                  <iframe
+                    src={
+                      Sahajyog.VideoProvider.embed_url(
+                        @current_video.video_id,
+                        @current_video.provider,
+                        @current_video.locale
+                      )
+                    }
+                    class="absolute inset-0 w-full h-full z-10"
+                    frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                    allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    title={gettext("Video player")}
+                  >
+                  </iframe>
+                </div>
               </div>
             </div>
 

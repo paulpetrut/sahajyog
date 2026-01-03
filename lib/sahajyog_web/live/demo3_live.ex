@@ -4,7 +4,6 @@ defmodule SahajyogWeb.Demo3Live do
   alias Sahajyog.Content
   alias Sahajyog.Events
   alias Sahajyog.Topics
-  import SahajyogWeb.VideoPlayer
 
   @impl true
   def mount(_params, _session, socket) do
@@ -202,15 +201,34 @@ defmodule SahajyogWeb.Demo3Live do
           class="pt-6 md:pt-10 lg:pt-12 pb-12 md:pb-20 lg:pb-24 relative"
         >
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="gsap-reveal" data-toggle-actions="play none none reverse">
+            <div>
               <%!-- Video container with Christmas border --%>
               <div class="relative rounded-2xl lg:rounded-3xl overflow-hidden candy-cane-border p-4 bg-white/10 backdrop-blur-sm">
-                <div class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black">
-                  <.video_player
-                    video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
-                    provider={:youtube}
-                    locale={@locale}
-                  />
+                <div
+                  id={"home-video-#{Sahajyog.YouTube.extract_video_id(@current_video.url)}"}
+                  phx-update="ignore"
+                  class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black"
+                  style="opacity: 1 !important; visibility: visible !important;"
+                >
+                  <iframe
+                    id="home-video-iframe"
+                    src={
+                      Sahajyog.VideoProvider.embed_url(
+                        Sahajyog.YouTube.extract_video_id(@current_video.url),
+                        :youtube,
+                        @locale
+                      )
+                    }
+                    class="w-full h-full"
+                    frameborder="0"
+                    loading="eager"
+                    importance="high"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                    allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    title={gettext("Video player")}
+                  >
+                  </iframe>
                 </div>
                 <%!-- Corner decorations --%>
                 <span class="absolute -top-3 -left-3 text-3xl ornament-swing">🎄</span>

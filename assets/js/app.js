@@ -815,6 +815,144 @@ Hooks.QuotesCarousel = {
   },
 }
 
+// Lazy YouTube video loading hook - improves page load performance
+// and prevents loading spinner on return visits
+Hooks.LazyYouTube = {
+  mounted() {
+    const container = this.el
+    const videoId = container.dataset.videoId
+    const locale = container.dataset.locale || "en"
+    let iframeLoaded = false
+
+    // Check if iframe was already loaded in this session
+    const sessionKey = `youtube_loaded_${videoId}`
+    if (sessionStorage.getItem(sessionKey) === "true") {
+      // Video was loaded before, hide placeholder immediately and reload iframe silently
+      const placeholder = container.querySelector('.absolute.inset-0')
+      if (placeholder) {
+        placeholder.style.display = 'none'
+      }
+      this.loadIframe(videoId, locale, false) // Pass false to skip spinner
+      iframeLoaded = true
+      return
+    }
+
+    // Load iframe on click (for immediate user interaction)
+    const clickHandler = () => {
+      if (!iframeLoaded) {
+        this.showLoadingSpinner()
+        this.loadIframe(videoId, locale, true) // Pass true to show spinner
+        sessionStorage.setItem(sessionKey, "true")
+        iframeLoaded = true
+      }
+    }
+    container.addEventListener("click", clickHandler, { once: true })
+    this.clickHandler = clickHandler
+
+    // Use Intersection Observer to auto-load when scrolled into view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !iframeLoaded) {
+            this.showLoadingSpinner()
+            this.loadIframe(videoId, locale, true) // Pass true to show spinner
+            sessionStorage.setItem(sessionKey, "true")
+            iframeLoaded = true
+            observer.disconnect()
+          }
+        })
+      },
+      { rootMargin: "100px" } // Start loading 100px before video is visible
+    )
+
+    observer.observe(container)
+    this.observer = observer
+  },
+
+  showLoadingSpinner() {
+    const container = this.el
+    
+    // Create loading spinner overlay
+    const spinner = document.createElement("div")
+    spinner.className = "absolute inset-0 flex items-center justify-center bg-black z-20"
+    spinner.id = "youtube-loading-spinner"
+    
+    // Spinner SVG (YouTube-style)
+    spinner.innerHTML = `
+      <div class="flex flex-col items-center gap-3">
+        <svg class="animate-spin h-12 w-12 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-white/60 text-sm">Loading video...</p>
+      </div>
+    `
+    
+    container.appendChild(spinner)
+    this.spinner = spinner
+  },
+
+  loadIframe(videoId, locale, showSpinner = true) {
+    const container = this.el
+    const embedUrl = `https://www.youtube.com/embed/${videoId}?hl=${locale}&cc_lang_pref=${locale}&cc_load_policy=1`
+
+    // Create iframe element
+    const iframe = document.createElement("iframe")
+    iframe.id = `welcome-video-iframe-${videoId}`
+    iframe.src = embedUrl
+    iframe.className = "absolute inset-0 w-full h-full z-10 opacity-0 transition-opacity duration-300"
+    iframe.frameBorder = "0"
+    iframe.allow = "autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+    iframe.allowFullscreen = true
+    iframe.referrerPolicy = "strict-origin-when-cross-origin"
+    iframe.title = "Video player"
+
+    // Store reference to placeholder for cleanup
+    const placeholder = container.querySelector('.absolute.inset-0')
+
+    // Handle iframe load event
+    iframe.addEventListener("load", () => {
+      // Fade in iframe
+      setTimeout(() => {
+        iframe.style.opacity = "1"
+      }, 100)
+      
+      // Remove placeholder/spinner after iframe is visible
+      setTimeout(() => {
+        // Remove placeholder if it exists
+        if (placeholder && placeholder.parentNode) {
+          placeholder.remove()
+        }
+        
+        // Remove spinner if it exists
+        if (showSpinner && this.spinner && this.spinner.parentNode) {
+          this.spinner.remove()
+          this.spinner = null
+        }
+      }, 400)
+    })
+
+    // Append iframe to container (alongside existing placeholder)
+    container.appendChild(iframe)
+    
+    // Store iframe reference for cleanup
+    this.iframe = iframe
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect()
+    }
+    if (this.clickHandler) {
+      this.el.removeEventListener("click", this.clickHandler)
+    }
+    if (this.spinner && this.spinner.parentNode) {
+      this.spinner.remove()
+    }
+  },
+}
+
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
@@ -827,24 +965,88 @@ const liveSocket = new LiveSocket("/live", Socket, {
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
 
 let topbarTimeout = null
+let topbarSafetyTimeout = null
+let pageLoadingStopped = false
+
 window.addEventListener("phx:page-loading-start", (info) => {
+  pageLoadingStopped = false
+
   // Only show topbar for navigation events (kind: "initial" or "redirect")
   // Don't show for patch events or background loading
   if (info.detail && (info.detail.kind === "initial" || info.detail.kind === "redirect")) {
-    topbarTimeout = setTimeout(() => topbar.show(), 200)
+    // Delay showing topbar by 500ms - only show if page takes longer to load
+    topbarTimeout = setTimeout(() => {
+      // Only show if page hasn't already stopped loading
+      if (!pageLoadingStopped) {
+        topbar.show()
+      }
+    }, 500)
+
+    // Safety timeout - force hide after 10 seconds if stop event never fires
+    topbarSafetyTimeout = setTimeout(() => {
+      topbar.hide()
+      pageLoadingStopped = true
+    }, 10000)
   }
 })
 
 window.addEventListener("phx:page-loading-stop", (_info) => {
+  pageLoadingStopped = true
+
   if (topbarTimeout) {
     clearTimeout(topbarTimeout)
     topbarTimeout = null
+  }
+  if (topbarSafetyTimeout) {
+    clearTimeout(topbarSafetyTimeout)
+    topbarSafetyTimeout = null
   }
   topbar.hide()
 })
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
+
+// Global handler for welcome video loaders
+window.welcomeVideoLoaded = window.welcomeVideoLoaded || {}
+
+function handleWelcomeVideoLoaders() {
+  const loaders = document.querySelectorAll(".welcome-video-loader")
+
+  loaders.forEach((loader) => {
+    const videoId = loader.dataset.videoId
+    if (!videoId) return
+
+    const iframe = document.querySelector(`.welcome-video-iframe[data-video-id="${videoId}"]`)
+    if (!iframe) return
+
+    // Check if already loaded in this session
+    if (window.welcomeVideoLoaded[videoId]) {
+      loader.style.display = "none"
+      return
+    }
+
+    const hideLoader = () => {
+      loader.style.opacity = "0"
+      setTimeout(() => {
+        loader.style.display = "none"
+      }, 300)
+      window.welcomeVideoLoaded[videoId] = true
+    }
+
+    // Listen for iframe load
+    iframe.addEventListener("load", hideLoader, { once: true })
+
+    // Fallback timeout
+    setTimeout(hideLoader, 2000)
+  })
+}
+
+// Run on initial page load
+document.addEventListener("DOMContentLoaded", handleWelcomeVideoLoaders)
+
+// Run on LiveView page transitions
+window.addEventListener("phx:page-loading-stop", handleWelcomeVideoLoaders)
 
 // ===== Theme Management =====
 // Moved from inline script in root.html.heex for AGENTS.md compliance

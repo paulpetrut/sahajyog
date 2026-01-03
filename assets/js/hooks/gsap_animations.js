@@ -387,21 +387,30 @@ const GSAPSpotlight = {
 
 const GSAPTextReveal = {
   mounted() {
-    this.originalText = this.el.innerText
-
-    // Wait for LiveView to settle
-    requestAnimationFrame(() => {
+    // Wait for LiveView to fully render content before initializing
+    // Use a small timeout to ensure DOM is fully populated
+    this.initTimeout = setTimeout(() => {
       this.initAnimation()
-    })
+    }, 50) // 50ms delay gives LiveView time to render
   },
   initAnimation() {
     const element = this.el
     const text = element.innerText
 
+    // If no text yet, retry once more after a brief delay
     if (!text || text.trim().length === 0) {
-      console.warn("[GSAPTextReveal] No text content found")
+      if (!this.retried) {
+        this.retried = true
+        this.retryTimeout = setTimeout(() => {
+          this.initAnimation()
+        }, 100)
+      }
+      // Silent return - no need to warn if we're retrying
       return
     }
+
+    // Store original text for potential restoration
+    this.originalText = text
 
     // Split text into characters manually since SplitText plugin is paid
     const chars = text
@@ -424,6 +433,14 @@ const GSAPTextReveal = {
     })
   },
   destroyed() {
+    // Clear any pending timeouts
+    if (this.initTimeout) {
+      clearTimeout(this.initTimeout)
+    }
+    if (this.retryTimeout) {
+      clearTimeout(this.retryTimeout)
+    }
+    
     if (this.revealTween) {
       this.revealTween.kill()
     }

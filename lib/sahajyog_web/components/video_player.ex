@@ -6,6 +6,7 @@ defmodule SahajyogWeb.VideoPlayer do
   attr :locale, :string, default: "en"
   attr :class, :string, default: "w-full h-full"
   attr :title, :string, default: nil
+  attr :dom_id, :string, default: nil
 
   def video_player(assigns) do
     ~H"""
@@ -19,6 +20,7 @@ defmodule SahajyogWeb.VideoPlayer do
         </div>
       </div>
       <iframe
+        id={@dom_id}
         src={Sahajyog.VideoProvider.embed_url(@video_id, @provider, @locale)}
         class="absolute inset-0 w-full h-full z-10"
         frameborder="0"

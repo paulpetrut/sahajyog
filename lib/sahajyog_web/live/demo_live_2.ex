@@ -3,7 +3,6 @@ defmodule SahajyogWeb.DemoLive2 do
 
   alias Sahajyog.Content
   alias Sahajyog.VideoProvider
-  import SahajyogWeb.VideoPlayer
 
   @shri_mataji_images [
     "/images/ShriMataji_585x500_1.jpg",
@@ -164,17 +163,44 @@ defmodule SahajyogWeb.DemoLive2 do
               </div>
 
               <div class="glass-card rounded-2xl 2xl:rounded-3xl overflow-hidden">
-                <div class="aspect-video bg-black 2xl:max-h-[48vh]">
-                  <.video_player
-                    video_id={
-                      VideoProvider.extract_video_id(
-                        @current_video.url,
-                        provider_to_atom(@current_video.provider)
-                      )
-                    }
-                    provider={provider_to_atom(@current_video.provider)}
-                    locale={@locale}
-                  />
+                <div
+                  id={
+                    "demo2-video-#{VideoProvider.extract_video_id(@current_video.url, provider_to_atom(@current_video.provider))}"
+                  }
+                  phx-update="ignore"
+                  class="aspect-video bg-black 2xl:max-h-[48vh]"
+                >
+                  <div class="relative w-full h-full">
+                    <div
+                      class="absolute inset-0 bg-base-300 flex items-center justify-center z-0"
+                      style="animation: fade-out 0.3s ease-out 1s forwards; pointer-events: none;"
+                    >
+                      <div class="text-center">
+                        <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3">
+                        </div>
+                        <p class="text-base-content/60 text-sm">{gettext("Loading video...")}</p>
+                      </div>
+                    </div>
+                    <iframe
+                      src={
+                        VideoProvider.embed_url(
+                          VideoProvider.extract_video_id(
+                            @current_video.url,
+                            provider_to_atom(@current_video.provider)
+                          ),
+                          provider_to_atom(@current_video.provider),
+                          @locale
+                        )
+                      }
+                      class="absolute inset-0 w-full h-full z-10"
+                      frameborder="0"
+                      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                      allowfullscreen
+                      referrerpolicy="strict-origin-when-cross-origin"
+                      title={gettext("Video player")}
+                    >
+                    </iframe>
+                  </div>
                 </div>
                 <div class="p-4 sm:p-5 2xl:p-6">
                   <h2 class="text-lg sm:text-xl 2xl:text-2xl font-bold text-base-content break-words tracking-tight">
