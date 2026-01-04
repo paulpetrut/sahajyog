@@ -89,40 +89,13 @@ defmodule SahajyogWeb.WelcomeLive do
             <div class="gsap-reveal" data-toggle-actions="play none none reverse">
               <%!-- Video container with ornate golden border --%>
               <div class="ornate-video-border">
-                <div
-                  id={"welcome-video-container-#{Sahajyog.YouTube.extract_video_id(@current_video.url)}"}
-                  phx-hook="LazyYouTube"
-                  data-video-id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
-                  data-locale={@locale}
-                  class="rounded-lg overflow-hidden aspect-video bg-black shadow-inner relative cursor-pointer group"
-                >
-                  <%!-- Initial placeholder with YouTube thumbnail and play button --%>
-                  <div class="absolute inset-0 flex items-center justify-center bg-black">
-                    <%!-- YouTube thumbnail (maxresdefault for best quality) --%>
-                    <img
-                      src={"https://img.youtube.com/vi/#{Sahajyog.YouTube.extract_video_id(@current_video.url)}/maxresdefault.jpg"}
-                      alt={@current_video.title}
-                      class="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                    <%!-- Dark overlay --%>
-                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300">
-                    </div>
-                    <%!-- YouTube-style play button --%>
-                    <div class="relative z-10">
-                      <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-2xl">
-                        <%!-- Play icon --%>
-                        <svg
-                          class="w-8 h-8 text-white ml-1"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <SahajyogWeb.VideoPlayer.optimized_video_player
+                  video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
+                  provider={:youtube}
+                  locale={@locale}
+                  container_class="rounded-lg overflow-hidden aspect-video bg-black"
+                  dom_id={"welcome-video-#{Sahajyog.YouTube.extract_video_id(@current_video.url)}"}
+                />
               </div>
 
               <%!-- Video info --%>

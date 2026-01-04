@@ -1,31 +1,41 @@
 defmodule SahajyogWeb.VideoPlayer do
   use SahajyogWeb, :html
 
+  @doc """
+  Optimized video player component with browser caching support.
+
+  Uses phx-update="ignore" to persist iframe across LiveView updates,
+  and browser loading hints for priority loading.
+  """
   attr :video_id, :string, required: true
-  attr :provider, :atom, required: true
+  attr :provider, :atom, default: :youtube
   attr :locale, :string, default: "en"
   attr :class, :string, default: "w-full h-full"
-  attr :title, :string, default: nil
+  attr :container_class, :string, default: "aspect-video bg-black"
   attr :dom_id, :string, default: nil
+  attr :title, :string, default: nil
 
-  def video_player(assigns) do
+  def optimized_video_player(assigns) do
+    # Generate unique ID if not provided
+    assigns =
+      assign_new(assigns, :dom_id, fn ->
+        "video-player-#{assigns.video_id}"
+      end)
+
     ~H"""
-    <div class="relative w-full h-full group">
-      <%!-- Loading placeholder shown while iframe loads --%>
-      <div class="absolute inset-0 bg-base-300 flex items-center justify-center z-0">
-        <div class="text-center">
-          <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3">
-          </div>
-          <p class="text-base-content/60 text-sm">{gettext("Loading video...")}</p>
-        </div>
-      </div>
+    <div
+      id={@dom_id}
+      phx-update="ignore"
+      class={@container_class}
+      style="opacity: 1 !important; visibility: visible !important;"
+    >
       <iframe
-        id={@dom_id}
         src={Sahajyog.VideoProvider.embed_url(@video_id, @provider, @locale)}
-        class="absolute inset-0 w-full h-full z-10"
+        class={@class}
         frameborder="0"
+        loading="eager"
+        importance="high"
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-        allowfullscreen
         referrerpolicy="strict-origin-when-cross-origin"
         title={@title || gettext("Video player")}
       >

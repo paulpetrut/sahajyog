@@ -204,32 +204,13 @@ defmodule SahajyogWeb.Demo3Live do
             <div>
               <%!-- Video container with Christmas border --%>
               <div class="relative rounded-2xl lg:rounded-3xl overflow-hidden candy-cane-border p-4 bg-white/10 backdrop-blur-sm">
-                <div
-                  id={"home-video-#{Sahajyog.YouTube.extract_video_id(@current_video.url)}"}
-                  phx-update="ignore"
-                  class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black"
-                  style="opacity: 1 !important; visibility: visible !important;"
-                >
-                  <iframe
-                    id="home-video-iframe"
-                    src={
-                      Sahajyog.VideoProvider.embed_url(
-                        Sahajyog.YouTube.extract_video_id(@current_video.url),
-                        :youtube,
-                        @locale
-                      )
-                    }
-                    class="w-full h-full"
-                    frameborder="0"
-                    loading="eager"
-                    importance="high"
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                    allowfullscreen
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    title={gettext("Video player")}
-                  >
-                  </iframe>
-                </div>
+                <SahajyogWeb.VideoPlayer.optimized_video_player
+                  video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
+                  provider={:youtube}
+                  locale={@locale}
+                  container_class="rounded-xl lg:rounded-2xl overflow-hidden aspect-video bg-black"
+                  dom_id={"home-video-#{Sahajyog.YouTube.extract_video_id(@current_video.url)}"}
+                />
                 <%!-- Corner decorations --%>
                 <span class="absolute -top-3 -left-3 text-3xl ornament-swing">🎄</span>
                 <span

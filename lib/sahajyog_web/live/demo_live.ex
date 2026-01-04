@@ -47,37 +47,16 @@ defmodule SahajyogWeb.DemoLive do
             <div class="bg-base-200 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl flex-1 flex flex-col">
               <div
                 id={"demo-video-#{Sahajyog.YouTube.extract_video_id(@current_video.url)}"}
-                phx-update="ignore"
                 class="flex-1 bg-black"
               >
-                <div class="relative w-full h-full">
-                  <div
-                    class="absolute inset-0 bg-base-300 flex items-center justify-center z-0"
-                    style="animation: fade-out 0.3s ease-out 1s forwards; pointer-events: none;"
-                  >
-                    <div class="text-center">
-                      <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-3">
-                      </div>
-                      <p class="text-base-content/60 text-sm">{gettext("Loading video...")}</p>
-                    </div>
-                  </div>
-                  <iframe
-                    src={
-                      Sahajyog.VideoProvider.embed_url(
-                        Sahajyog.YouTube.extract_video_id(@current_video.url),
-                        :youtube,
-                        @locale
-                      )
-                    }
-                    class="absolute inset-0 w-full h-full z-10"
-                    frameborder="0"
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                    allowfullscreen
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    title={gettext("Video player")}
-                  >
-                  </iframe>
-                </div>
+                <SahajyogWeb.VideoPlayer.optimized_video_player
+                  video_id={Sahajyog.YouTube.extract_video_id(@current_video.url)}
+                  provider={:youtube}
+                  locale={@locale}
+                  class="w-full h-full"
+                  container_class="w-full h-full bg-black"
+                  dom_id={"demo-video-iframe-#{Sahajyog.YouTube.extract_video_id(@current_video.url)}"}
+                />
               </div>
               <div class="p-3 md:p-4 text-center shrink-0">
                 <h2 class="text-base md:text-lg font-semibold text-base-content">
