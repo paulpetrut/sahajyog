@@ -6,8 +6,9 @@ defmodule SahajyogWeb.MyStoreItemsLive do
   """
   use SahajyogWeb, :live_view
 
-  alias Sahajyog.Store
   alias Sahajyog.Resources.R2Storage
+  alias Sahajyog.Store
+  alias Sahajyog.Store.StoreItem
 
   @impl true
   def mount(_params, _session, socket) do
@@ -112,24 +113,31 @@ defmodule SahajyogWeb.MyStoreItemsLive do
     item = Enum.find(socket.assigns.items, &(&1.id == item_id))
 
     if item && item.user_id == user.id do
-      case Store.mark_item_sold(item) do
-        {:ok, updated_item} ->
-          items =
-            Enum.map(socket.assigns.items, fn i ->
-              if i.id == item_id, do: %{i | status: updated_item.status}, else: i
-            end)
-
-          {:noreply,
-           socket
-           |> assign(:items, items)
-           |> put_flash(:info, gettext("Item marked as sold."))}
-
-        {:error, _} ->
-          {:noreply, put_flash(socket, :error, gettext("Failed to mark item as sold."))}
-      end
+      do_mark_sold(socket, item, item_id)
     else
       {:noreply, put_flash(socket, :error, gettext("Item not found."))}
     end
+  end
+
+  defp do_mark_sold(socket, item, item_id) do
+    case Store.mark_item_sold(item) do
+      {:ok, updated_item} ->
+        items = update_item_status(socket.assigns.items, item_id, updated_item.status)
+
+        {:noreply,
+         socket
+         |> assign(:items, items)
+         |> put_flash(:info, gettext("Item marked as sold."))}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to mark item as sold."))}
+    end
+  end
+
+  defp update_item_status(items, item_id, new_status) do
+    Enum.map(items, fn i ->
+      if i.id == item_id, do: %{i | status: new_status}, else: i
+    end)
   end
 
   @impl true
@@ -160,7 +168,7 @@ defmodule SahajyogWeb.MyStoreItemsLive do
   defp format_price(nil, _currency), do: nil
 
   defp format_price(price, currency) do
-    symbol = Sahajyog.Store.StoreItem.currency_symbol(currency)
+    symbol = StoreItem.currency_symbol(currency)
     "#{symbol}#{Decimal.round(price, 2)}"
   end
 

@@ -5,8 +5,8 @@ defmodule Sahajyog.Store do
 
   import Ecto.Query
   alias Sahajyog.Repo
-  alias Sahajyog.Store.{StoreItem, StoreItemMedia, StoreItemInquiry}
   alias Sahajyog.Resources.R2Storage
+  alias Sahajyog.Store.{StoreItem, StoreItemInquiry, StoreItemMedia}
 
   @max_photos 5
   @max_videos 1

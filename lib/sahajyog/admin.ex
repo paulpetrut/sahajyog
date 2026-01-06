@@ -4,8 +4,8 @@ defmodule Sahajyog.Admin do
   """
 
   import Ecto.Query, warn: false
-  alias Sahajyog.Repo
   alias Sahajyog.Admin.AccessCode
+  alias Sahajyog.Repo
 
   @doc """
   Lists all access codes.

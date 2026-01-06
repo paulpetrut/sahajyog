@@ -5,7 +5,7 @@ defmodule Sahajyog.Resources do
 
   import Ecto.Query
   alias Sahajyog.Repo
-  alias Sahajyog.Resources.Resource
+  alias Sahajyog.Resources.{R2Storage, Resource}
 
   @doc """
   Lists all resources, optionally filtered by level, type, or language.
@@ -78,7 +78,7 @@ defmodule Sahajyog.Resources do
   def thumbnail_url(%Resource{thumbnail_r2_key: nil}), do: nil
 
   def thumbnail_url(%Resource{thumbnail_r2_key: key}) when is_binary(key) do
-    Sahajyog.Resources.R2Storage.generate_download_url(key)
+    R2Storage.generate_download_url(key)
   end
 
   @levels ["Level1", "Level2", "Level3"]

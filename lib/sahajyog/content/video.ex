@@ -1,4 +1,8 @@
 defmodule Sahajyog.Content.Video do
+  @moduledoc """
+  Schema for video content with support for YouTube and Vimeo providers.
+  Videos can be organized by category and assigned to weekly schedules.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

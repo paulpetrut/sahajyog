@@ -1,4 +1,7 @@
 defmodule Sahajyog.Resources.Resource do
+  @moduledoc """
+  Schema for community resources like photos, books, and music.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

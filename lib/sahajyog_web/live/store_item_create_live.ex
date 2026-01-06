@@ -5,9 +5,10 @@ defmodule SahajyogWeb.StoreItemCreateLive do
   """
   use SahajyogWeb, :live_view
 
+  alias Sahajyog.Accounts.User
+  alias Sahajyog.Resources.R2Storage
   alias Sahajyog.Store
   alias Sahajyog.Store.StoreItem
-  alias Sahajyog.Resources.R2Storage
 
   # File size limits
   @max_photo_size 50_000_000
@@ -18,17 +19,7 @@ defmodule SahajyogWeb.StoreItemCreateLive do
     user = socket.assigns.current_scope.user
 
     # Check if user profile is complete
-    if !Sahajyog.Accounts.User.profile_complete?(user) do
-      encoded_return = URI.encode_www_form(~p"/store/new")
-
-      {:ok,
-       socket
-       |> put_flash(
-         :error,
-         gettext("Please complete your profile before listing an item.")
-       )
-       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
-    else
+    if User.profile_complete?(user) do
       socket = setup_uploads(socket)
 
       case params do
@@ -38,6 +29,16 @@ defmodule SahajyogWeb.StoreItemCreateLive do
         _ ->
           mount_new(socket)
       end
+    else
+      encoded_return = URI.encode_www_form(~p"/store/new")
+
+      {:ok,
+       socket
+       |> put_flash(
+         :error,
+         gettext("Please complete your profile before listing an item.")
+       )
+       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
     end
   end
 
@@ -259,11 +260,12 @@ defmodule SahajyogWeb.StoreItemCreateLive do
   defp determine_error_step(changeset) do
     errors = changeset.errors |> Keyword.keys()
 
-    cond do
-      # Step 3 fields: delivery_methods, shipping_cost, shipping_time
-      Enum.any?(errors, &(&1 in [:delivery_methods, :shipping_cost, :shipping_time])) -> 3
+    # Step 3 fields: delivery_methods, shipping_cost, shipping_time
+    if Enum.any?(errors, &(&1 in [:delivery_methods, :shipping_cost, :shipping_time])) do
+      3
+    else
       # Step 1 fields: everything else
-      true -> 1
+      1
     end
   end
 

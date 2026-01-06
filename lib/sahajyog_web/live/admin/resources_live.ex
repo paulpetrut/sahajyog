@@ -4,8 +4,8 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
   import SahajyogWeb.AdminNav
 
   alias Sahajyog.Resources
-  alias Sahajyog.Resources.Resource
   alias Sahajyog.Resources.R2Storage
+  alias Sahajyog.Resources.Resource
   alias Sahajyog.Resources.ThumbnailGenerator
 
   @impl true
@@ -294,45 +294,7 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
     socket =
       case socket.assigns.uploads.file.entries do
         [_entry | _] ->
-          # Consume the entry to get the file path
-          results =
-            consume_uploaded_entries(socket, :file, fn %{path: path}, _entry ->
-              # Generate thumbnail from uploaded file
-              case ThumbnailGenerator.generate(path, content_type) do
-                {:ok, thumbnail_path} ->
-                  case File.read(thumbnail_path) do
-                    {:ok, thumbnail_data} ->
-                      # Convert to base64 for preview
-                      base64_data = Base.encode64(thumbnail_data)
-                      preview_url = "data:image/jpeg;base64,#{base64_data}"
-
-                      File.rm(thumbnail_path)
-                      Logger.info("Thumbnail preview generated")
-
-                      {:postpone, {:ok, preview_url}}
-
-                    {:error, reason} ->
-                      Logger.error("Failed to read thumbnail: #{inspect(reason)}")
-                      File.rm(thumbnail_path)
-                      {:postpone, {:error, reason}}
-                  end
-
-                {:error, reason} ->
-                  Logger.info("Thumbnail generation skipped: #{inspect(reason)}")
-                  {:postpone, {:error, reason}}
-              end
-            end)
-
-          case results do
-            [{:ok, preview_url}] ->
-              socket
-              |> assign(:auto_thumbnail_preview, preview_url)
-              |> assign(:generating_thumbnail, false)
-
-            _ ->
-              socket
-              |> assign(:generating_thumbnail, false)
-          end
+          generate_thumbnail_preview(socket, content_type)
 
         _ ->
           socket
@@ -340,6 +302,59 @@ defmodule SahajyogWeb.Admin.ResourcesLive do
       end
 
     {:noreply, socket}
+  end
+
+  defp generate_thumbnail_preview(socket, content_type) do
+    require Logger
+
+    results =
+      consume_uploaded_entries(socket, :file, fn %{path: path}, _entry ->
+        generate_thumbnail_from_file(path, content_type)
+      end)
+
+    case results do
+      [{:ok, preview_url}] ->
+        socket
+        |> assign(:auto_thumbnail_preview, preview_url)
+        |> assign(:generating_thumbnail, false)
+
+      _ ->
+        socket
+        |> assign(:generating_thumbnail, false)
+    end
+  end
+
+  defp generate_thumbnail_from_file(path, content_type) do
+    require Logger
+
+    case ThumbnailGenerator.generate(path, content_type) do
+      {:ok, thumbnail_path} ->
+        read_and_encode_thumbnail(thumbnail_path)
+
+      {:error, reason} ->
+        Logger.info("Thumbnail generation skipped: #{inspect(reason)}")
+        {:postpone, {:error, reason}}
+    end
+  end
+
+  defp read_and_encode_thumbnail(thumbnail_path) do
+    require Logger
+
+    case File.read(thumbnail_path) do
+      {:ok, thumbnail_data} ->
+        base64_data = Base.encode64(thumbnail_data)
+        preview_url = "data:image/jpeg;base64,#{base64_data}"
+
+        File.rm(thumbnail_path)
+        Logger.info("Thumbnail preview generated")
+
+        {:postpone, {:ok, preview_url}}
+
+      {:error, reason} ->
+        Logger.error("Failed to read thumbnail: #{inspect(reason)}")
+        File.rm(thumbnail_path)
+        {:postpone, {:error, reason}}
+    end
   end
 
   defp generate_and_upload_thumbnail(file_path, content_type, level, resource_type) do

@@ -16,8 +16,8 @@ defmodule Mix.Tasks.SyncR2Resources do
   import Ecto.Query
   alias Sahajyog.Repo
   alias Sahajyog.Resources
-  alias Sahajyog.Resources.Resource
   alias Sahajyog.Resources.R2Storage
+  alias Sahajyog.Resources.Resource
 
   @shortdoc "Syncs existing R2 files to database"
 

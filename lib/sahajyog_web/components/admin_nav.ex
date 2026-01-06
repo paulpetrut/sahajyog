@@ -1,4 +1,8 @@
 defmodule SahajyogWeb.AdminNav do
+  @moduledoc """
+  Component for rendering the admin navigation bar.
+  Provides navigation links to admin sections with dropdown menus.
+  """
   use SahajyogWeb, :html
 
   attr :current_page, :atom, default: nil

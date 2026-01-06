@@ -1,4 +1,7 @@
 defmodule Sahajyog.Topics.TopicCoAuthor do
+  @moduledoc """
+  Schema for topic co-authors.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

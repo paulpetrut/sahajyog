@@ -3,8 +3,8 @@ defmodule Sahajyog.VideoProvider do
   Unified interface for working with different video providers.
   """
 
-  alias Sahajyog.YouTube
   alias Sahajyog.Vimeo
+  alias Sahajyog.YouTube
 
   def detect_provider(url) do
     cond do

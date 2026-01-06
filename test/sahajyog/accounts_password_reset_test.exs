@@ -3,8 +3,8 @@ defmodule Sahajyog.AccountsPasswordResetTest do
   use ExUnitProperties
 
   alias Sahajyog.Accounts
-  alias Sahajyog.Accounts.UserToken
   alias Sahajyog.Accounts.UserNotifier
+  alias Sahajyog.Accounts.UserToken
   alias Sahajyog.Repo
 
   import Sahajyog.AccountsFixtures

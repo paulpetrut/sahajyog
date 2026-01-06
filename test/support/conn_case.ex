@@ -17,6 +17,10 @@ defmodule SahajyogWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias Sahajyog.Accounts
+  alias Sahajyog.Accounts.Scope
+  alias Sahajyog.AccountsFixtures
+
   using do
     quote do
       # The default endpoint for testing
@@ -45,8 +49,8 @@ defmodule SahajyogWeb.ConnCase do
   test context.
   """
   def register_and_log_in_user(%{conn: conn} = context) do
-    user = Sahajyog.AccountsFixtures.user_fixture()
-    scope = Sahajyog.Accounts.Scope.for_user(user)
+    user = AccountsFixtures.user_fixture()
+    scope = Scope.for_user(user)
 
     opts =
       context
@@ -62,7 +66,7 @@ defmodule SahajyogWeb.ConnCase do
   It returns an updated `conn`.
   """
   def log_in_user(conn, user, opts \\ []) do
-    token = Sahajyog.Accounts.generate_user_session_token(user)
+    token = Accounts.generate_user_session_token(user)
 
     maybe_set_token_authenticated_at(token, opts[:token_authenticated_at])
 
@@ -74,6 +78,6 @@ defmodule SahajyogWeb.ConnCase do
   defp maybe_set_token_authenticated_at(_token, nil), do: nil
 
   defp maybe_set_token_authenticated_at(token, authenticated_at) do
-    Sahajyog.AccountsFixtures.override_token_authenticated_at(token, authenticated_at)
+    AccountsFixtures.override_token_authenticated_at(token, authenticated_at)
   end
 end

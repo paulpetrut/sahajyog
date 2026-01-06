@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventAttendance do
+  @moduledoc """
+  Schema for tracking event attendance.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

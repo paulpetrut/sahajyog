@@ -2,6 +2,7 @@ defmodule SahajyogWeb.UserLive.Settings do
   use SahajyogWeb, :live_view
 
   alias Sahajyog.Accounts
+  alias Sahajyog.Accounts.User
 
   @impl true
   def render(assigns) do
@@ -166,7 +167,7 @@ defmodule SahajyogWeb.UserLive.Settings do
     email_changeset = Accounts.change_user_email(user, %{}, validate_unique: false)
     password_changeset = Accounts.change_user_password(user, %{}, hash_password: false)
 
-    country_codes = Sahajyog.Accounts.User.country_codes()
+    country_codes = User.country_codes()
     country_options = Enum.map(country_codes, fn {name, _code} -> name end) |> Enum.sort()
 
     # Determine initial prefix based on user's country or default to +1

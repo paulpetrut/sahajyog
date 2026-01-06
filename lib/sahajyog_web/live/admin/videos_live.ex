@@ -72,53 +72,19 @@ defmodule SahajyogWeb.Admin.VideosLive do
     video = socket.assigns.editing_video || %Video{}
 
     video_params =
-      if video_params["category"] && video_params["category"] != "" &&
-           (video_params["step_number"] == nil || video_params["step_number"] == "") do
-        next_step = Content.next_step_number(video_params["category"])
-        Map.put(video_params, "step_number", to_string(next_step))
-      else
-        video_params
-      end
-
-    video_params =
-      if video_params["url"] && video_params["url"] != "" do
-        provider = VideoProvider.detect_provider(video_params["url"])
-        Map.put(video_params, "provider", to_string(provider))
-      else
-        video_params
-      end
+      video_params
+      |> maybe_auto_assign_step_number()
+      |> maybe_assign_provider()
 
     current_url = if socket.assigns.form, do: socket.assigns.form.params["url"], else: nil
     new_url = video_params["url"]
 
     socket =
       if new_url && new_url != "" && new_url != current_url do
-        provider =
-          case video_params["provider"] do
-            "youtube" -> :youtube
-            "vimeo" -> :vimeo
-            _ -> nil
-          end
-
-        if provider in [:youtube, :vimeo] do
-          fetch_video_metadata(socket, video_params, provider)
-        else
-          changeset =
-            video
-            |> Content.change_video(video_params)
-            |> Map.put(:action, :validate)
-
-          socket
-          |> assign(:form, to_form(changeset))
-          |> put_flash(:error, "Unsupported video provider. Please use YouTube or Vimeo.")
-        end
+        provider = parse_provider(video_params["provider"])
+        handle_url_change(socket, video, video_params, provider)
       else
-        changeset =
-          video
-          |> Content.change_video(video_params)
-          |> Map.put(:action, :validate)
-
-        assign(socket, :form, to_form(changeset))
+        assign_validation_changeset(socket, video, video_params)
       end
 
     {:noreply, socket}
@@ -136,12 +102,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
           |> Map.put("url", url)
           |> Map.put("provider", to_string(provider))
 
-        if provider in [:youtube, :vimeo] do
-          fetch_video_metadata(socket, video_params, provider)
-        else
-          socket
-          |> put_flash(:error, "Unsupported video provider. Please use YouTube or Vimeo.")
-        end
+        handle_metadata_fetch(socket, video_params, provider)
       else
         socket
       end
@@ -150,14 +111,7 @@ defmodule SahajyogWeb.Admin.VideosLive do
   end
 
   def handle_event("save", %{"video" => video_params}, socket) do
-    video_params =
-      if video_params["url"] && video_params["url"] != "" do
-        provider = VideoProvider.detect_provider(video_params["url"])
-        Map.put(video_params, "provider", to_string(provider))
-      else
-        video_params
-      end
-
+    video_params = maybe_assign_provider(video_params)
     save_video(socket, socket.assigns.editing_video, video_params)
   end
 
@@ -271,6 +225,56 @@ defmodule SahajyogWeb.Admin.VideosLive do
     else
       params
     end
+  end
+
+  defp maybe_auto_assign_step_number(video_params) do
+    if video_params["category"] && video_params["category"] != "" &&
+         (video_params["step_number"] == nil || video_params["step_number"] == "") do
+      next_step = Content.next_step_number(video_params["category"])
+      Map.put(video_params, "step_number", to_string(next_step))
+    else
+      video_params
+    end
+  end
+
+  defp maybe_assign_provider(video_params) do
+    if video_params["url"] && video_params["url"] != "" do
+      provider = VideoProvider.detect_provider(video_params["url"])
+      Map.put(video_params, "provider", to_string(provider))
+    else
+      video_params
+    end
+  end
+
+  defp parse_provider("youtube"), do: :youtube
+  defp parse_provider("vimeo"), do: :vimeo
+  defp parse_provider(_), do: nil
+
+  defp handle_url_change(socket, video, video_params, provider) do
+    if provider in [:youtube, :vimeo] do
+      fetch_video_metadata(socket, video_params, provider)
+    else
+      socket
+      |> assign_validation_changeset(video, video_params)
+      |> put_flash(:error, "Unsupported video provider. Please use YouTube or Vimeo.")
+    end
+  end
+
+  defp handle_metadata_fetch(socket, video_params, provider) do
+    if provider in [:youtube, :vimeo] do
+      fetch_video_metadata(socket, video_params, provider)
+    else
+      put_flash(socket, :error, "Unsupported video provider. Please use YouTube or Vimeo.")
+    end
+  end
+
+  defp assign_validation_changeset(socket, video, video_params) do
+    changeset =
+      video
+      |> Content.change_video(video_params)
+      |> Map.put(:action, :validate)
+
+    assign(socket, :form, to_form(changeset))
   end
 
   defp save_video(socket, nil, video_params) do

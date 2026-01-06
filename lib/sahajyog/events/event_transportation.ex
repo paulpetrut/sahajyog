@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventTransportation do
+  @moduledoc """
+  Schema for tracking transportation options for an event.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,7 @@
 defmodule Sahajyog.Topics.TopicProposal do
+  @moduledoc """
+  Schema for topic proposals.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventCarpool do
+  @moduledoc """
+  Schema for tracking event carpools.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventRideRequest do
+  @moduledoc """
+  Schema for tracking ride requests for an event.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

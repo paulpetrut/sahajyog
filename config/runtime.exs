@@ -39,6 +39,9 @@ if System.get_env("R2_ACCESS_KEY_ID") && System.get_env("R2_SECRET_ACCESS_KEY") 
     public_url: System.get_env("R2_PUBLIC_URL")
 end
 
+# Google Places API Configuration
+config :sahajyog, :google_places_api_key, System.get_env("GOOGLE_PLACES_API_KEY")
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

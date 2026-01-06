@@ -2,7 +2,7 @@ defmodule SahajyogWeb.ResourcesLive do
   use SahajyogWeb, :live_view
 
   alias Sahajyog.Resources
-  alias Sahajyog.Resources.Resource
+  alias Sahajyog.Resources.{R2Storage, Resource}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -37,7 +37,7 @@ defmodule SahajyogWeb.ResourcesLive do
         resource_id ->
           try do
             resource = Resources.get_resource!(String.to_integer(resource_id))
-            preview_url = Sahajyog.Resources.R2Storage.generate_download_url(resource.r2_key)
+            preview_url = R2Storage.generate_download_url(resource.r2_key)
 
             socket
             |> assign(preview_resource: resource, preview_url: preview_url)
@@ -61,7 +61,7 @@ defmodule SahajyogWeb.ResourcesLive do
     resource = Resources.get_resource!(id)
 
     try do
-      preview_url = Sahajyog.Resources.R2Storage.generate_download_url(resource.r2_key)
+      preview_url = R2Storage.generate_download_url(resource.r2_key)
 
       {:noreply,
        socket

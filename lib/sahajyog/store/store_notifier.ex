@@ -5,6 +5,7 @@ defmodule Sahajyog.Store.StoreNotifier do
   import Swoosh.Email
 
   alias Sahajyog.Mailer
+  alias Sahajyog.Store.StoreItem
   require Logger
 
   @doc """
@@ -137,7 +138,7 @@ defmodule Sahajyog.Store.StoreNotifier do
 
   # Format pricing for display
   defp format_pricing(%{pricing_type: "fixed_price", price: price, currency: currency}) do
-    symbol = Sahajyog.Store.StoreItem.currency_symbol(currency)
+    symbol = StoreItem.currency_symbol(currency)
     "Fixed Price - #{symbol}#{price}"
   end
 

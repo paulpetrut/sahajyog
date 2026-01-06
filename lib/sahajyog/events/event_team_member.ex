@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventTeamMember do
+  @moduledoc """
+  Schema for tracking event team members and their roles.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,9 +1,12 @@
 defmodule Sahajyog.Events.EventTaskParticipant do
+  @moduledoc """
+  Schema for tracking participants/volunteers for a specific task.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sahajyog.Events.EventTask
   alias Sahajyog.Accounts.User
+  alias Sahajyog.Events.EventTask
 
   schema "event_task_participants" do
     field :status, :string, default: "accepted"

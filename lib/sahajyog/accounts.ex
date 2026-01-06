@@ -6,7 +6,7 @@ defmodule Sahajyog.Accounts do
   import Ecto.Query, warn: false
   alias Sahajyog.Repo
 
-  alias Sahajyog.Accounts.{User, UserToken, UserNotifier}
+  alias Sahajyog.Accounts.{User, UserNotifier, UserToken}
 
   ## Database getters
 

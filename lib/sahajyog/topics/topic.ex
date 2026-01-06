@@ -1,4 +1,8 @@
 defmodule Sahajyog.Topics.Topic do
+  @moduledoc """
+  Schema for topics in the knowledge base.
+  Topics can be authored by users and have co-authors and references.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

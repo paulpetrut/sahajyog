@@ -282,9 +282,7 @@ defmodule Sahajyog.Events.ValidatorsTest do
               max_length: 3
             )
         ) do
-      parts
-      |> Enum.map(&String.downcase/1)
-      |> Enum.join("-")
+      Enum.map_join(parts, "-", &String.downcase/1)
     end
   end
 

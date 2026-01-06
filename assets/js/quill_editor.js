@@ -10,7 +10,6 @@ const QuillEditor = {
     const editorContainer = this.el.querySelector(".quill-editor")
 
     if (!input || !editorContainer) {
-      console.error("Quill editor: missing input or container")
       return
     }
 
@@ -79,7 +78,7 @@ const QuillEditor = {
       if (/^image\//.test(file.type)) {
         this.saveImageToServer(file)
       } else {
-        console.warn("You can only upload images.")
+        // Only images are allowed
       }
 
       // Clean up after use
@@ -113,7 +112,7 @@ const QuillEditor = {
     }
 
     reader.onerror = () => {
-      console.error("Failed to read image file")
+      // Failed to read image file
       this.fileReader = null
     }
 

@@ -1,4 +1,7 @@
 defmodule Sahajyog.Content.WeeklyVideoAssignment do
+  @moduledoc """
+  Schema for assigning videos to specific weeks.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

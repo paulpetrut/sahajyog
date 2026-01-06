@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventDonation do
+  @moduledoc """
+  Schema for tracking donations for an event.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

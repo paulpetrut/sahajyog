@@ -1,4 +1,8 @@
 defmodule Sahajyog.Topics.TopicReference do
+  @moduledoc """
+  Schema for topic references (books, talks, videos, articles, websites).
+  References are linked to topics and provide supporting materials.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

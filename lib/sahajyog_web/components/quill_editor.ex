@@ -1,4 +1,8 @@
 defmodule SahajyogWeb.QuillEditor do
+  @moduledoc """
+  Component for rendering a Quill rich text editor with Phoenix LiveView integration.
+  Uses a JavaScript hook for editor initialization and content synchronization.
+  """
   use Phoenix.Component
 
   attr :field, Phoenix.HTML.FormField, required: true

@@ -38,13 +38,11 @@ defmodule SahajyogWeb.HealthController do
   end
 
   defp check_database do
-    try do
-      Sahajyog.Repo.query!("SELECT 1")
-      %{status: "ok", message: "Database connection successful"}
-    rescue
-      e ->
-        %{status: "error", message: "Database connection failed: #{inspect(e)}"}
-    end
+    Sahajyog.Repo.query!("SELECT 1")
+    %{status: "ok", message: "Database connection successful"}
+  rescue
+    e ->
+      %{status: "error", message: "Database connection failed: #{inspect(e)}"}
   end
 
   defp check_external_api do
@@ -63,19 +61,17 @@ defmodule SahajyogWeb.HealthController do
   end
 
   defp check_r2_storage do
-    try do
-      # Simple check - just verify configuration exists
-      bucket = Application.get_env(:sahajyog, :r2)[:bucket]
+    # Simple check - just verify configuration exists
+    bucket = Application.get_env(:sahajyog, :r2)[:bucket]
 
-      if bucket do
-        %{status: "ok", message: "R2 configuration present", bucket: bucket}
-      else
-        %{status: "warning", message: "R2 configuration missing"}
-      end
-    rescue
-      e ->
-        %{status: "error", message: "R2 check failed: #{inspect(e)}"}
+    if bucket do
+      %{status: "ok", message: "R2 configuration present", bucket: bucket}
+    else
+      %{status: "warning", message: "R2 configuration missing"}
     end
+  rescue
+    e ->
+      %{status: "error", message: "R2 check failed: #{inspect(e)}"}
   end
 
   defp test_basic_talks do

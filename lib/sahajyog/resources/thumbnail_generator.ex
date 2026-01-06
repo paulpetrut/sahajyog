@@ -35,24 +35,16 @@ defmodule Sahajyog.Resources.ThumbnailGenerator do
   defp generate_image_thumbnail(file_path) do
     output_path = temp_thumbnail_path("jpg")
 
-    # Use convert command (ImageMagick 6) - available on most systems
-    case System.cmd("convert", [
-           file_path,
-           "-thumbnail",
-           "#{@thumbnail_width}x#{@thumbnail_height}>",
-           "-background",
-           "white",
-           "-gravity",
-           "center",
-           "-extent",
-           "#{@thumbnail_width}x#{@thumbnail_height}",
-           output_path
-         ]) do
-      {_, 0} ->
+    # Use Thumbnex for safer image processing - no shell commands
+    case Thumbnex.create_thumbnail(file_path, output_path,
+           max_width: @thumbnail_width,
+           max_height: @thumbnail_height
+         ) do
+      :ok ->
         {:ok, output_path}
 
-      {error, _} ->
-        Logger.error("Image thumbnail generation failed: #{inspect(error)}")
+      {:error, reason} ->
+        Logger.error("Image thumbnail generation failed: #{inspect(reason)}")
         {:error, :thumbnail_generation_failed}
     end
   rescue

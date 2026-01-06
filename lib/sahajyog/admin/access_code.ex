@@ -1,4 +1,8 @@
 defmodule Sahajyog.Admin.AccessCode do
+  @moduledoc """
+  Schema for access codes used to grant special permissions or event access.
+  Codes can have usage limits and are tracked for audit purposes.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,4 +1,7 @@
 defmodule Sahajyog.Progress.WatchedVideo do
+  @moduledoc """
+  Schema for tracking videos watched by users.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

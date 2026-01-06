@@ -44,6 +44,7 @@ defmodule Sahajyog.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:tidewave, "~> 0.5", only: [:dev]},
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.8.1"},
       {:phoenix_ecto, "~> 4.5"},
@@ -77,7 +78,6 @@ defmodule Sahajyog.MixProject do
       {:ex_aws, "~> 2.5"},
       {:ex_aws_s3, "~> 2.5"},
       {:sweet_xml, "~> 0.7"},
-      {:hackney, "~> 1.20"},
       {:thumbnex, "~> 0.5.1"},
       {:timex, "~> 3.7"},
       {:html_sanitize_ex, "~> 1.4"},

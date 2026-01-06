@@ -4,10 +4,10 @@ defmodule Sahajyog.Content do
   """
 
   import Ecto.Query, warn: false
-  alias Sahajyog.Repo
+  alias Sahajyog.Accounts.User
   alias Sahajyog.Content.Video
   alias Sahajyog.Content.WeeklyVideoAssignment
-  alias Sahajyog.Accounts.User
+  alias Sahajyog.Repo
 
   # Category access rules - maps each category to the levels that can access it
   # :public means accessible to unauthenticated users
@@ -583,42 +583,50 @@ defmodule Sahajyog.Content do
         {:ok, []}
 
       true ->
-        # Verify all videos exist
-        existing_videos =
-          Repo.all(from v in Video, where: v.id in ^video_ids, select: v.id)
-
-        missing_ids = MapSet.difference(MapSet.new(video_ids), MapSet.new(existing_videos))
-
-        if MapSet.size(missing_ids) > 0 do
-          {:error, :video_not_found}
-        else
-          Repo.transaction(fn ->
-            now = DateTime.utc_now() |> DateTime.truncate(:second)
-
-            assignments =
-              Enum.map(video_ids, fn video_id ->
-                %{
-                  video_id: video_id,
-                  year: year,
-                  week_number: week_number,
-                  inserted_at: now,
-                  updated_at: now
-                }
-              end)
-
-            # Use insert_all with on_conflict to handle upserts
-            Repo.insert_all(
-              WeeklyVideoAssignment,
-              assignments,
-              on_conflict: {:replace, [:updated_at]},
-              conflict_target: [:video_id, :year, :week_number]
-            )
-
-            # Return the created/updated assignments
-            list_weekly_assignments(year, week_number)
-          end)
-        end
+        do_assign_videos_to_week(video_ids, year, week_number)
     end
+  end
+
+  defp do_assign_videos_to_week(video_ids, year, week_number) do
+    # Verify all videos exist
+    existing_videos =
+      Repo.all(from v in Video, where: v.id in ^video_ids, select: v.id)
+
+    missing_ids = MapSet.difference(MapSet.new(video_ids), MapSet.new(existing_videos))
+
+    if MapSet.size(missing_ids) > 0 do
+      {:error, :video_not_found}
+    else
+      insert_video_assignments(video_ids, year, week_number)
+    end
+  end
+
+  defp insert_video_assignments(video_ids, year, week_number) do
+    Repo.transaction(fn ->
+      now = DateTime.utc_now() |> DateTime.truncate(:second)
+
+      assignments =
+        Enum.map(video_ids, fn video_id ->
+          %{
+            video_id: video_id,
+            year: year,
+            week_number: week_number,
+            inserted_at: now,
+            updated_at: now
+          }
+        end)
+
+      # Use insert_all with on_conflict to handle upserts
+      Repo.insert_all(
+        WeeklyVideoAssignment,
+        assignments,
+        on_conflict: {:replace, [:updated_at]},
+        conflict_target: [:video_id, :year, :week_number]
+      )
+
+      # Return the created/updated assignments
+      list_weekly_assignments(year, week_number)
+    end)
   end
 
   @doc """

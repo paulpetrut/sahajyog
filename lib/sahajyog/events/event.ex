@@ -1,19 +1,22 @@
 defmodule Sahajyog.Events.Event do
+  @moduledoc """
+  Schema for Events.
+  """
   use Ecto.Schema
   import Ecto.Changeset
+  @type t :: %__MODULE__{}
 
   alias Sahajyog.Accounts.User
 
   alias Sahajyog.Events.{
-    EventTeamMember,
-    EventLocationPhoto,
-    EventTask,
-    EventTransportation,
-    EventCarpool,
+    EventAttendance,
     EventCarpool,
     EventDonation,
-    EventAttendance,
-    EventRideRequest
+    EventLocationPhoto,
+    EventRideRequest,
+    EventTask,
+    EventTeamMember,
+    EventTransportation
   }
 
   @statuses ~w(draft public archived cancelled)
@@ -113,7 +116,6 @@ defmodule Sahajyog.Events.Event do
       :published_at,
       :user_id,
       :budget_type,
-      :timezone,
       :timezone,
       :level,
       :languages,

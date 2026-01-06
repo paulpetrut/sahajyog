@@ -1,9 +1,9 @@
 defmodule Sahajyog.Store.StoreNotifierTest do
   use Sahajyog.DataCase, async: true
 
-  alias Sahajyog.Store.StoreNotifier
-  alias Sahajyog.Store.{StoreItem, StoreItemInquiry}
   alias Sahajyog.Repo
+  alias Sahajyog.Store.{StoreItem, StoreItemInquiry}
+  alias Sahajyog.Store.StoreNotifier
 
   import Sahajyog.AccountsFixtures
 

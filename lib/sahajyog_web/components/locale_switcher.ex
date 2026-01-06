@@ -1,4 +1,8 @@
 defmodule SahajyogWeb.LocaleSwitcher do
+  @moduledoc """
+  Component for rendering a locale/language switcher dropdown.
+  Supports multiple languages and integrates with Phoenix LiveView via hooks.
+  """
   use Phoenix.Component
   import SahajyogWeb.CoreComponents
 

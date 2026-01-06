@@ -4,8 +4,8 @@ defmodule Sahajyog.Progress do
   """
 
   import Ecto.Query, warn: false
-  alias Sahajyog.Repo
   alias Sahajyog.Progress.WatchedVideo
+  alias Sahajyog.Repo
 
   @doc """
   Returns the list of watched video IDs for a user.

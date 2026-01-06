@@ -1,8 +1,8 @@
 defmodule SahajyogWeb.StepsLive do
   use SahajyogWeb, :live_view
 
-  alias Sahajyog.Progress
   alias Sahajyog.Content
+  alias Sahajyog.Progress
 
   def mount(_params, _session, socket) do
     socket = assign(socket, :page_title, "Steps")

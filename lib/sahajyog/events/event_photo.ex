@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventPhoto do
+  @moduledoc """
+  Schema for event gallery photos.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

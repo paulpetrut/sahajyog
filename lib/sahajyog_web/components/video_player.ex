@@ -1,4 +1,8 @@
 defmodule SahajyogWeb.VideoPlayer do
+  @moduledoc """
+  Component for rendering optimized video players with browser caching support.
+  Supports YouTube and Vimeo providers with locale-aware subtitle configuration.
+  """
   use SahajyogWeb, :html
 
   @doc """

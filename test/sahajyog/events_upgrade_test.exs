@@ -1,8 +1,8 @@
 defmodule Sahajyog.EventsUpgradeTest do
   use Sahajyog.DataCase
 
-  alias Sahajyog.Events
   alias Sahajyog.Admin
+  alias Sahajyog.Events
   import Sahajyog.AccountsFixtures
 
   describe "level upgrade via AccessCode" do

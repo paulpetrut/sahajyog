@@ -1,4 +1,8 @@
 defmodule SahajyogWeb.UserAuth do
+  @moduledoc """
+  Handles user authentication for both Plug pipelines and LiveView.
+  Provides session management, remember-me functionality, and access control.
+  """
   use SahajyogWeb, :verified_routes
 
   import Plug.Conn

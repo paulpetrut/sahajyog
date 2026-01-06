@@ -75,7 +75,7 @@ config :phoenix, :json_library, Jason
 
 config :ex_aws,
   json_codec: Jason,
-  http_client: ExAws.Request.Hackney,
+  http_client: Sahajyog.ExAwsReq,
   retries: [
     max_attempts: 10,
     base_backoff_in_ms: 10,

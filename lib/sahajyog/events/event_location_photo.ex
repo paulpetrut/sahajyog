@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventLocationPhoto do
+  @moduledoc """
+  Schema for tracking photos of an event location.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

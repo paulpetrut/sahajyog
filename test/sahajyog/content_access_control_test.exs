@@ -2,8 +2,8 @@ defmodule Sahajyog.ContentAccessControlTest do
   use Sahajyog.DataCase
   use ExUnitProperties
 
-  alias Sahajyog.Content
   alias Sahajyog.Accounts.User
+  alias Sahajyog.Content
   alias Sahajyog.Generators
 
   describe "access control" do

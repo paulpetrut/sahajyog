@@ -8,10 +8,10 @@ defmodule Mix.Tasks.ExportData do
   use Mix.Task
 
   import Ecto.Query
-  alias Sahajyog.Repo
   alias Sahajyog.Accounts.User
   alias Sahajyog.Content.Video
   alias Sahajyog.Progress.WatchedVideo
+  alias Sahajyog.Repo
 
   @shortdoc "Export database data to priv/repo/production_seeds.exs"
 

@@ -1,4 +1,8 @@
 defmodule SahajyogWeb.DemoLive2 do
+  @moduledoc """
+  LiveView for the welcome/demo page with daily video rotation.
+  Features animated sections, testimonials, and information about Sahaja Yoga.
+  """
   use SahajyogWeb, :live_view
 
   alias Sahajyog.Content

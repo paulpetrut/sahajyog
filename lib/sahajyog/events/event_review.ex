@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventReview do
+  @moduledoc """
+  Schema for event reviews.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

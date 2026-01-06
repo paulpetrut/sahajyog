@@ -39,7 +39,6 @@ const GSAPHero = {
     const orbs = this.el.querySelectorAll(".hero-orb")
 
     if (heroElements.length === 0) {
-      console.warn("[GSAPHero] No .hero-element found, skipping animation")
       return
     }
 
@@ -440,7 +439,7 @@ const GSAPTextReveal = {
     if (this.retryTimeout) {
       clearTimeout(this.retryTimeout)
     }
-    
+
     if (this.revealTween) {
       this.revealTween.kill()
     }

@@ -2,8 +2,8 @@ defmodule Sahajyog.ResourcesLevelTest do
   use Sahajyog.DataCase
   use ExUnitProperties
 
-  alias Sahajyog.Resources
   alias Sahajyog.Generators
+  alias Sahajyog.Resources
 
   import Sahajyog.AccountsFixtures
 

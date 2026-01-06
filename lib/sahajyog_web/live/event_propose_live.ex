@@ -1,7 +1,12 @@
 defmodule SahajyogWeb.EventProposeLive do
+  @moduledoc """
+  LiveView for proposing a new event.
+  """
   use SahajyogWeb, :live_view
 
+  alias Sahajyog.Accounts.User
   alias Sahajyog.Events
+  alias Sahajyog.Events.EventProposal
   alias Sahajyog.Resources.R2Storage
 
   # 500MB max file size for video uploads
@@ -13,20 +18,8 @@ defmodule SahajyogWeb.EventProposeLive do
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
 
-    if !Sahajyog.Accounts.User.profile_complete?(user) do
-      encoded_return = URI.encode_www_form(~p"/events/propose")
-
-      {:ok,
-       socket
-       |> put_flash(
-         :error,
-         gettext(
-           "Please complete your profile (First Name, Last Name, Phone Number) before proposing an event."
-         )
-       )
-       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
-    else
-      proposal = %Sahajyog.Events.EventProposal{}
+    if User.profile_complete?(user) do
+      proposal = %EventProposal{}
       changeset = Events.change_proposal(proposal)
 
       {:ok,
@@ -47,6 +40,18 @@ defmodule SahajyogWeb.EventProposeLive do
          max_file_size: @max_invitation_size,
          auto_upload: true
        )}
+    else
+      encoded_return = URI.encode_www_form(~p"/events/propose")
+
+      {:ok,
+       socket
+       |> put_flash(
+         :error,
+         gettext(
+           "Please complete your profile (First Name, Last Name, Phone Number) before proposing an event."
+         )
+       )
+       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
     end
   end
 

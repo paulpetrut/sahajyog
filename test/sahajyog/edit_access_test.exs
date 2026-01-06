@@ -2,9 +2,9 @@ defmodule Sahajyog.EditAccessTest do
   use Sahajyog.DataCase
   use ExUnitProperties
 
+  alias Sahajyog.Accounts.Scope
   alias Sahajyog.Events
   alias Sahajyog.Topics
-  alias Sahajyog.Accounts.Scope
 
   import Sahajyog.AccountsFixtures
 

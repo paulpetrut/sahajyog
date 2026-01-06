@@ -1,10 +1,13 @@
 defmodule SahajyogWeb.EventEditLive do
+  @moduledoc """
+  LiveView for editing an event.
+  """
   use SahajyogWeb, :live_view
 
-  alias Sahajyog.Repo
-  alias Sahajyog.Accounts
+  alias Sahajyog.Accounts.User
   alias Sahajyog.Events
-  alias Sahajyog.Events.{Event, EventTask, EventTransportation, EventTeamMember, EventNotifier}
+  alias Sahajyog.Events.{Event, EventNotifier, EventTask, EventTeamMember, EventTransportation}
+  alias Sahajyog.Repo
   alias Sahajyog.Resources.R2Storage
 
   @tabs ~w(basic location transportation tasks team finances)
@@ -14,20 +17,7 @@ defmodule SahajyogWeb.EventEditLive do
     user = socket.assigns.current_scope.user
     timezones = Timex.timezones()
 
-    if !Sahajyog.Accounts.User.profile_complete?(user) do
-      return_path = ~p"/events/#{slug}/edit"
-      encoded_return = URI.encode_www_form(return_path)
-
-      {:ok,
-       socket
-       |> put_flash(
-         :error,
-         gettext(
-           "Please complete your profile (First Name, Last Name, Phone Number) before managing an event."
-         )
-       )
-       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
-    else
+    if User.profile_complete?(user) do
       event = Events.get_event_by_slug!(slug)
 
       if connected?(socket) do
@@ -65,9 +55,15 @@ defmodule SahajyogWeb.EventEditLive do
          |> assign(:invite_form, to_form(%{}, as: :invite))
          |> assign(:current_scope, socket.assigns.current_scope)
          # For finances
-         # Placeholder logic?
          |> assign(:transactions, Events.list_donations(event.id))
+         |> assign(:show_donation_form, false)
+         |> assign(
+           :donation_form,
+           to_form(Events.change_donation(%Sahajyog.Events.EventDonation{}))
+         )
          |> assign(:timezones, timezones)
+         |> assign(:form_changed, false)
+         |> assign(:google_places_api_key, Application.get_env(:sahajyog, :google_places_api_key))
          # Video upload support (500MB max)
          |> allow_upload(:video,
            accept: ~w(.mp4 .webm .mov),
@@ -88,6 +84,19 @@ defmodule SahajyogWeb.EventEditLive do
          |> put_flash(:error, gettext("You cannot edit this event"))
          |> push_navigate(to: ~p"/events/#{event.slug}")}
       end
+    else
+      return_path = ~p"/events/#{slug}/edit"
+      encoded_return = URI.encode_www_form(return_path)
+
+      {:ok,
+       socket
+       |> put_flash(
+         :error,
+         gettext(
+           "Please complete your profile (First Name, Last Name, Phone Number) before managing an event."
+         )
+       )
+       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
     end
   end
 
@@ -113,18 +122,73 @@ defmodule SahajyogWeb.EventEditLive do
   end
 
   @impl true
-  def handle_event("change_tab", %{"tab" => tab}, socket) do
+  def handle_params(params, _uri, socket) do
+    # Handle tab parameter from URL
+    tab = Map.get(params, "tab", socket.assigns.current_tab)
+
+    # Validate tab is in allowed list
+    tab =
+      if tab in @tabs do
+        tab
+      else
+        socket.assigns.current_tab
+      end
+
     {:noreply, assign(socket, :current_tab, tab)}
   end
 
   @impl true
+  def handle_event("change_tab", %{"tab" => tab}, socket) do
+    # Use push_patch to update URL with tab parameter
+    {:noreply, push_patch(socket, to: ~p"/events/#{socket.assigns.event.slug}/edit?tab=#{tab}")}
+  end
+
+  @impl true
   def handle_event("validate", %{"event" => event_params}, socket) do
+    current_country = socket.assigns.event.country
+    new_country = Map.get(event_params, "country", "")
+
+    # If country is empty OR country changed, clear the city
+    event_params =
+      if new_country == "" || (current_country && new_country != current_country) do
+        Map.put(event_params, "city", "")
+      else
+        event_params
+      end
+
     changeset =
       socket.assigns.event
       |> Events.change_event(event_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :form, to_form(changeset))}
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))
+     |> assign(:form_changed, true)}
+  end
+
+  @impl true
+  def handle_event("place_selected", %{"city" => city, "country" => country}, socket) do
+    # Update the form with the selected city and/or country
+    # If city is empty, only update country (country search) - also clear city
+    # If both present, update both (city search)
+    updates =
+      if city == "" do
+        # Country was selected, clear the city field
+        %{"country" => country, "city" => ""}
+      else
+        %{"city" => city, "country" => country}
+      end
+
+    changeset =
+      socket.assigns.event
+      |> Events.change_event(updates)
+      |> Map.put(:action, :validate)
+
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))
+     |> assign(:form_changed, true)}
   end
 
   @impl true
@@ -146,6 +210,7 @@ defmodule SahajyogWeb.EventEditLive do
          socket
          |> assign(:event, event)
          |> assign(:form, to_form(Events.change_event(event)))
+         |> assign(:form_changed, false)
          |> put_flash(:info, msg)}
 
       {:error, changeset} ->
@@ -179,7 +244,7 @@ defmodule SahajyogWeb.EventEditLive do
 
     # Delete from R2 if it's an R2 video
     if event.presentation_video_type == "r2" && event.presentation_video_url do
-      Sahajyog.Resources.R2Storage.delete(event.presentation_video_url)
+      R2Storage.delete(event.presentation_video_url)
     end
 
     # Clear video fields from the event
@@ -412,69 +477,87 @@ defmodule SahajyogWeb.EventEditLive do
     {:noreply, assign(socket, :show_task_modal, false)}
   end
 
-  # Team Management
   @impl true
   def handle_event("invite_collaborator", %{"email" => email}, socket) do
     email = String.trim(email)
+    event = socket.assigns.event
+    current_user = socket.assigns.current_scope.user
 
-    cond do
-      email == "" ->
-        {:noreply, put_flash(socket, :error, gettext("Please enter an email address."))}
+    with :ok <- validate_invite_email(email, current_user),
+         {:ok, user} <- fetch_invite_user(email),
+         :ok <- validate_not_member(user, event),
+         {:ok, _member} <- invite_user(socket.assigns.current_scope, event, user) do
+      # Send invitation email
+      send_invitation_email(event, user, current_user)
 
-      email == socket.assigns.current_scope.user.email ->
-        {:noreply, put_flash(socket, :error, gettext("You cannot invite yourself."))}
-
-      true ->
-        case Accounts.get_user_by_email(email) do
-          nil ->
-            {:noreply, put_flash(socket, :error, gettext("User not found with that email."))}
-
-          user ->
-            # Check if already a member
-            if Enum.any?(socket.assigns.event.team_members, &(&1.user_id == user.id)) do
-              {:noreply, put_flash(socket, :error, gettext("User is already a team member."))}
-            else
-              case Events.invite_team_member(
-                     socket.assigns.current_scope,
-                     socket.assigns.event.id,
-                     user.id,
-                     "co_author"
-                   ) do
-                {:ok, _member} ->
-                  event = Events.get_event!(socket.assigns.event.id)
-
-                  # Send invitation email
-                  # We use the event show page as the destination for both accept/reject
-                  # as the UI there handles the invitation logic.
-                  # Note: We need a full URL, but here we only have path helpers.
-                  # Ideally we should use url/1 but we might not have Endpoint alias here.
-                  # We can assume relative path is fine if email client opens browser?
-                  # No, email needs absolute URL.
-                  # Let's try to get full URL using SahajyogWeb.Endpoint.url() + path.
-                  base_url = SahajyogWeb.Endpoint.url()
-                  event_path = ~p"/events/#{event.slug}"
-                  full_url = "#{base_url}#{event_path}"
-
-                  EventNotifier.deliver_invitation_email(
-                    user.email,
-                    event.title,
-                    "#{socket.assigns.current_scope.user.first_name} #{socket.assigns.current_scope.user.last_name}",
-                    full_url,
-                    full_url
-                  )
-
-                  {:noreply,
-                   socket
-                   |> assign(:event, event)
-                   |> assign(:invite_email, "")
-                   |> put_flash(:info, gettext("Invitation sent to %{email}", email: email))}
-
-                {:error, _} ->
-                  {:noreply, put_flash(socket, :error, gettext("Could not send invitation."))}
-              end
-            end
-        end
+      {:noreply,
+       socket
+       |> assign(:event, Events.get_event!(event.id))
+       |> assign(:invite_email, "")
+       |> put_flash(:info, gettext("Invitation sent to %{email}", email: email))}
+    else
+      {:error, msg} ->
+        {:noreply, put_flash(socket, :error, msg)}
     end
+  end
+
+  @impl true
+  def handle_event("show_donation_form", _, socket) do
+    donation = %Sahajyog.Events.EventDonation{}
+    changeset = Events.change_donation(donation)
+
+    {:noreply,
+     socket
+     |> assign(:show_donation_form, true)
+     |> assign(:donation_form, to_form(changeset))}
+  end
+
+  @impl true
+  def handle_event("cancel_donation_form", _, socket) do
+    {:noreply, assign(socket, :show_donation_form, false)}
+  end
+
+  @impl true
+  def handle_event("validate_donation", %{"event_donation" => params}, socket) do
+    changeset =
+      %Sahajyog.Events.EventDonation{}
+      |> Events.change_donation(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :donation_form, to_form(changeset))}
+  end
+
+  @impl true
+  def handle_event("save_donation", %{"event_donation" => params}, socket) do
+    case Events.create_donation(
+           socket.assigns.current_scope,
+           socket.assigns.event.id,
+           params
+         ) do
+      {:ok, _donation} ->
+        event = Events.get_event!(socket.assigns.event.id)
+
+        {:noreply,
+         socket
+         |> assign(:event, event)
+         |> assign(:show_donation_form, false)
+         |> put_flash(:info, gettext("Donation recorded successfully"))}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :donation_form, to_form(changeset))}
+    end
+  end
+
+  @impl true
+  def handle_event("delete_donation", %{"id" => id}, socket) do
+    donation = Repo.get!(Sahajyog.Events.EventDonation, id)
+    {:ok, _} = Events.delete_donation(donation)
+    event = Events.get_event!(socket.assigns.event.id)
+
+    {:noreply,
+     socket
+     |> assign(:event, event)
+     |> put_flash(:info, gettext("Donation deleted"))}
   end
 
   @impl true
@@ -496,6 +579,50 @@ defmodule SahajyogWeb.EventEditLive do
      socket
      |> assign(:event, event)
      |> put_flash(:info, gettext("Team member removed."))}
+  end
+
+  defp validate_invite_email("", _current_user),
+    do: {:error, gettext("Please enter an email address.")}
+
+  defp validate_invite_email(email, %{email: email}),
+    do: {:error, gettext("You cannot invite yourself.")}
+
+  defp validate_invite_email(_email, _current_user), do: :ok
+
+  defp fetch_invite_user(email) do
+    case Sahajyog.Accounts.get_user_by_email(email) do
+      nil -> {:error, gettext("User not found with that email.")}
+      user -> {:ok, user}
+    end
+  end
+
+  defp validate_not_member(user, event) do
+    if Enum.any?(event.team_members, &(&1.user_id == user.id)) do
+      {:error, gettext("User is already a team member.")}
+    else
+      :ok
+    end
+  end
+
+  defp invite_user(current_scope, event, user) do
+    case Events.invite_team_member(current_scope, event.id, user.id, "co_author") do
+      {:ok, member} -> {:ok, member}
+      {:error, _} -> {:error, gettext("Could not send invitation.")}
+    end
+  end
+
+  defp send_invitation_email(event, user, current_user) do
+    base_url = SahajyogWeb.Endpoint.url()
+    event_path = ~p"/events/#{event.slug}"
+    full_url = "#{base_url}#{event_path}"
+
+    EventNotifier.deliver_invitation_email(
+      user.email,
+      event.title,
+      "#{current_user.first_name} #{current_user.last_name}",
+      full_url,
+      full_url
+    )
   end
 
   defp handle_video_upload(socket, event_params) do
@@ -574,10 +701,12 @@ defmodule SahajyogWeb.EventEditLive do
   defp invitation_error_to_string(err), do: inspect(err)
 
   defp tab_class(current_tab, tab) do
+    base_classes = "px-4 py-2 border-b-2 whitespace-nowrap flex-shrink-0"
+
     if current_tab == tab do
-      "px-4 py-2 border-b-2 border-primary text-primary font-medium"
+      "#{base_classes} border-primary text-primary font-medium"
     else
-      "px-4 py-2 border-b-2 border-transparent text-base-content/60 hover:text-base-content"
+      "#{base_classes} border-transparent text-base-content/60 hover:text-base-content"
     end
   end
 
@@ -606,6 +735,10 @@ defmodule SahajyogWeb.EventEditLive do
 
         <%= if @show_transport_modal do %>
           <.transport_modal form={@transport_form} />
+        <% end %>
+
+        <%= if @show_donation_form do %>
+          <.donation_modal form={@donation_form} />
         <% end %>
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -638,8 +771,8 @@ defmodule SahajyogWeb.EventEditLive do
           </div>
 
           <%!-- Tabs --%>
-          <div class="border-b border-base-content/10 mb-6">
-            <nav class="flex gap-1 overflow-x-auto">
+          <div class="border-b border-base-content/10 mb-6 -mx-4 sm:mx-0">
+            <nav class="flex gap-1 overflow-x-auto px-4 sm:px-0 scrollbar-hide">
               <button
                 :for={tab <- @tabs}
                 phx-click="change_tab"
@@ -1027,7 +1160,13 @@ defmodule SahajyogWeb.EventEditLive do
                   </div>
 
                   <div class="pt-4">
-                    <.primary_button type="submit">{gettext("Save Changes")}</.primary_button>
+                    <.primary_button
+                      type="submit"
+                      disabled={!@form_changed}
+                      phx-disable-with="Saving..."
+                    >
+                      {gettext("Save Changes")}
+                    </.primary_button>
                   </div>
                 </div>
 
@@ -1036,8 +1175,51 @@ defmodule SahajyogWeb.EventEditLive do
                   <.input field={@form[:venue_name]} type="text" label={gettext("Venue Name")} />
 
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <.input field={@form[:city]} type="text" label={gettext("City")} />
-                    <.input field={@form[:country]} type="text" label={gettext("Country")} />
+                    <div>
+                      <label class="block text-sm font-medium text-base-content/80 mb-2">
+                        {gettext("Country")}
+                      </label>
+                      <input
+                        type="text"
+                        id={@form[:country].id}
+                        name={@form[:country].name}
+                        value={Phoenix.HTML.Form.normalize_value("text", @form[:country].value)}
+                        phx-hook="GooglePlaces"
+                        data-api-key={@google_places_api_key}
+                        data-search-type="country"
+                        placeholder={gettext("Start typing country name...")}
+                        class="w-full px-3 py-2 border border-base-content/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-base-100 text-base-content"
+                      />
+                      <p class="text-xs text-base-content/60 mt-1">
+                        {gettext("Note: England, Scotland, Wales → use United Kingdom")}
+                      </p>
+                      <%= if @form[:country].errors != [] do %>
+                        <p class="mt-1 text-sm text-error">
+                          {translate_error(Enum.at(@form[:country].errors, 0))}
+                        </p>
+                      <% end %>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-base-content/80 mb-2">
+                        {gettext("City")}
+                      </label>
+                      <input
+                        type="text"
+                        id={@form[:city].id}
+                        name={@form[:city].name}
+                        value={Phoenix.HTML.Form.normalize_value("text", @form[:city].value)}
+                        phx-hook="GooglePlaces"
+                        data-api-key={@google_places_api_key}
+                        data-search-type="city"
+                        placeholder={gettext("Start typing city name...")}
+                        class="w-full px-3 py-2 border border-base-content/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-base-100 text-base-content"
+                      />
+                      <%= if @form[:city].errors != [] do %>
+                        <p class="mt-1 text-sm text-error">
+                          {translate_error(Enum.at(@form[:city].errors, 0))}
+                        </p>
+                      <% end %>
+                    </div>
                   </div>
 
                   <.input
@@ -1074,7 +1256,13 @@ defmodule SahajyogWeb.EventEditLive do
                   />
 
                   <div class="pt-4">
-                    <.primary_button type="submit">{gettext("Save Changes")}</.primary_button>
+                    <.primary_button
+                      type="submit"
+                      disabled={!@form_changed}
+                      phx-disable-with="Saving..."
+                    >
+                      {gettext("Save Changes")}
+                    </.primary_button>
                   </div>
                 </div>
 
@@ -1141,7 +1329,124 @@ defmodule SahajyogWeb.EventEditLive do
                   </div>
 
                   <div class="pt-4">
-                    <.primary_button type="submit">{gettext("Save Changes")}</.primary_button>
+                    <.primary_button
+                      type="submit"
+                      disabled={!@form_changed}
+                      phx-disable-with="Saving..."
+                    >
+                      {gettext("Save Changes")}
+                    </.primary_button>
+                  </div>
+
+                  <%!-- Donations & Expenses Tracking --%>
+                  <div class="border-t border-base-content/10 pt-6 mt-6">
+                    <h3 class="font-medium text-base-content mb-4">
+                      {gettext("Income & Expenses Tracking")}
+                    </h3>
+
+                    <%!-- Donations (Income) --%>
+                    <div class="mb-6">
+                      <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-sm font-medium text-base-content">
+                          {gettext("Donations Received")}
+                        </h4>
+                        <.primary_button
+                          type="button"
+                          phx-click="show_donation_form"
+                          icon="hero-plus"
+                          class="text-sm py-1.5 px-3"
+                        >
+                          {gettext("Record Donation")}
+                        </.primary_button>
+                      </div>
+
+                      <%= if @event.donations != [] do %>
+                        <div class="space-y-2">
+                          <div
+                            :for={donation <- @event.donations}
+                            class="p-3 bg-success/5 rounded-lg border border-success/20 flex justify-between items-start"
+                          >
+                            <div class="flex-1">
+                              <div class="flex items-center gap-2">
+                                <span class="font-medium text-success">
+                                  €{Decimal.to_string(donation.amount)}
+                                </span>
+                                <span class="text-xs text-base-content/60">
+                                  {donation.payment_method}
+                                </span>
+                              </div>
+                              <%= if donation.donor_name do %>
+                                <p class="text-sm text-base-content/70">{donation.donor_name}</p>
+                              <% end %>
+                              <%= if donation.payment_date do %>
+                                <p class="text-xs text-base-content/50">
+                                  {Calendar.strftime(donation.payment_date, "%B %d, %Y")}
+                                </p>
+                              <% end %>
+                              <%= if donation.notes do %>
+                                <p class="text-xs text-base-content/60 mt-1">{donation.notes}</p>
+                              <% end %>
+                            </div>
+                            <button
+                              type="button"
+                              phx-click="delete_donation"
+                              phx-value-id={donation.id}
+                              class="text-error hover:text-error/80 text-sm"
+                              data-confirm={gettext("Delete this donation record?")}
+                            >
+                              <.icon name="hero-trash" class="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      <% else %>
+                        <p class="text-sm text-base-content/50 py-3">
+                          {gettext("No donations recorded yet.")}
+                        </p>
+                      <% end %>
+                    </div>
+
+                    <%!-- Expenses (from Tasks) --%>
+                    <div>
+                      <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-sm font-medium text-base-content">
+                          {gettext("Expenses (from Tasks)")}
+                        </h4>
+                        <.link
+                          navigate={~p"/events/#{@event.slug}/edit?tab=tasks"}
+                          class="text-sm text-primary hover:text-primary/80"
+                        >
+                          {gettext("Manage Tasks")} →
+                        </.link>
+                      </div>
+
+                      <% tasks_with_expenses =
+                        Enum.filter(@event.tasks, fn t ->
+                          t.actual_expense && Decimal.compare(t.actual_expense, 0) == :gt
+                        end) %>
+
+                      <%= if tasks_with_expenses != [] do %>
+                        <div class="space-y-2">
+                          <div
+                            :for={task <- tasks_with_expenses}
+                            class="p-3 bg-error/5 rounded-lg border border-error/20 flex justify-between items-center"
+                          >
+                            <div>
+                              <span class="font-medium text-base-content">{task.title}</span>
+                              <%= if task.description do %>
+                                <p class="text-xs text-base-content/60">{task.description}</p>
+                              <% end %>
+                            </div>
+                            <span class="font-medium text-error">
+                              €{Decimal.to_string(task.actual_expense)}
+                            </span>
+                          </div>
+                        </div>
+                      <% else %>
+                        <p class="text-sm text-base-content/50 py-3">
+                          {gettext("No expenses recorded yet. Add expenses in the Tasks tab.")}
+                        </p>
+                      <% end %>
+                    </div>
                   </div>
                 </div>
               </.form>
@@ -1334,7 +1639,7 @@ defmodule SahajyogWeb.EventEditLive do
                     class="input input-bordered w-full max-w-sm"
                     required
                   />
-                  <.primary_button type="submit" icon="hero-user-plus">
+                  <.primary_button type="submit" icon="hero-user-plus" phx-disable-with="Inviting...">
                     {gettext("Invite")}
                   </.primary_button>
                 </form>
@@ -1444,7 +1749,9 @@ defmodule SahajyogWeb.EventEditLive do
             <.secondary_button type="button" phx-click="cancel_task_modal">
               {gettext("Cancel")}
             </.secondary_button>
-            <.primary_button type="submit">{gettext("Save Task")}</.primary_button>
+            <.primary_button type="submit" phx-disable-with="Saving...">
+              {gettext("Save Task")}
+            </.primary_button>
           </div>
         </.form>
       </div>
@@ -1505,7 +1812,68 @@ defmodule SahajyogWeb.EventEditLive do
             <.secondary_button type="button" phx-click="cancel_transport_modal">
               {gettext("Cancel")}
             </.secondary_button>
-            <.primary_button type="submit">{gettext("Save Option")}</.primary_button>
+            <.primary_button type="submit" phx-disable-with="Saving...">
+              {gettext("Save Option")}
+            </.primary_button>
+          </div>
+        </.form>
+      </div>
+    </div>
+    """
+  end
+
+  defp donation_modal(assigns) do
+    ~H"""
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div class="bg-base-100 rounded-xl shadow-xl w-full max-w-lg p-6 animate-in fade-in zoom-in duration-200">
+        <h3 class="text-lg font-bold mb-4">{gettext("Record Donation")}</h3>
+
+        <.form for={@form} phx-change="validate_donation" phx-submit="save_donation">
+          <div class="space-y-4">
+            <.input
+              field={@form[:amount]}
+              type="number"
+              step="0.01"
+              min="0"
+              label={gettext("Amount (€)")}
+              required
+            />
+
+            <.input
+              field={@form[:donor_name]}
+              type="text"
+              label={gettext("Donor Name (optional)")}
+              placeholder={gettext("Anonymous if left blank")}
+            />
+
+            <.input
+              field={@form[:payment_method]}
+              type="select"
+              label={gettext("Payment Method")}
+              options={[
+                {gettext("Bank Transfer"), "bank_transfer"},
+                {gettext("Cash"), "cash"},
+                {gettext("Other"), "other"}
+              ]}
+            />
+
+            <.input field={@form[:payment_date]} type="date" label={gettext("Payment Date")} />
+
+            <.input
+              field={@form[:notes]}
+              type="textarea"
+              label={gettext("Notes (optional)")}
+              rows="3"
+            />
+          </div>
+
+          <div class="flex justify-end gap-2 mt-6">
+            <.secondary_button type="button" phx-click="cancel_donation_form">
+              {gettext("Cancel")}
+            </.secondary_button>
+            <.primary_button type="submit" phx-disable-with="Saving...">
+              {gettext("Save Donation")}
+            </.primary_button>
           </div>
         </.form>
       </div>

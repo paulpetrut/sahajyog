@@ -6,7 +6,7 @@ defmodule Sahajyog.Store.StoreItem do
   import Ecto.Changeset
 
   alias Sahajyog.Accounts.User
-  alias Sahajyog.Store.{StoreItemMedia, StoreItemInquiry}
+  alias Sahajyog.Store.{StoreItemInquiry, StoreItemMedia}
 
   @statuses ~w(pending approved rejected sold)
   @pricing_types ~w(fixed_price accepts_donation)

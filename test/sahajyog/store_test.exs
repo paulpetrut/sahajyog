@@ -2,9 +2,9 @@ defmodule Sahajyog.StoreTest do
   use Sahajyog.DataCase, async: true
   use ExUnitProperties
 
+  alias Sahajyog.AccountsFixtures
   alias Sahajyog.Store
   alias Sahajyog.Store.{StoreItem, StoreItemMedia}
-  alias Sahajyog.AccountsFixtures
 
   defp create_user do
     AccountsFixtures.user_fixture()

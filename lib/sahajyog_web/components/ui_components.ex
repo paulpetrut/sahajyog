@@ -367,7 +367,10 @@ defmodule SahajyogWeb.UIComponents do
   """
   attr :class, :string, default: nil
   attr :icon, :string, default: nil
-  attr :rest, :global, include: ~w(href navigate patch method phx-click disabled type)
+
+  attr :rest, :global,
+    include: ~w(href navigate patch method phx-click disabled type phx-disable-with)
+
   slot :inner_block, required: true
 
   def primary_button(assigns) do

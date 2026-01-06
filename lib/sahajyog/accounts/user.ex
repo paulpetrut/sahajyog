@@ -1,6 +1,11 @@
 defmodule Sahajyog.Accounts.User do
+  @moduledoc """
+  Schema for user accounts with authentication, profile, and access level management.
+  Supports passwordless (magic link) and password-based authentication.
+  """
   use Ecto.Schema
   import Ecto.Changeset
+  @type t :: %__MODULE__{}
 
   schema "users" do
     field :email, :string

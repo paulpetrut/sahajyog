@@ -1,5 +1,5 @@
 {
-  "kiroAgent.configureMCP": "Disabled",
+  "kiroAgent.configureMCP": "Enabled",
   "css.validate": false,
   "elixirLS.dialyzerEnabled": true,
   "elixirLS.dialyzerFormat": "dialyzer",

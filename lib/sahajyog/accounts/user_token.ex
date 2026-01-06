@@ -1,4 +1,8 @@
 defmodule Sahajyog.Accounts.UserToken do
+  @moduledoc """
+  Schema and functions for managing user authentication tokens.
+  Handles session tokens, magic link tokens, password reset tokens, and email change tokens.
+  """
   use Ecto.Schema
   import Ecto.Query
   alias Sahajyog.Accounts.UserToken

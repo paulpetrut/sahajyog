@@ -36,6 +36,7 @@ import {
   GSAPTextReveal,
   GSAPCounter,
 } from "./hooks/gsap_animations"
+import GooglePlaces from "./hooks/google_places"
 
 const Hooks = {}
 
@@ -46,6 +47,7 @@ Hooks.GSAPMagnetic = GSAPMagnetic
 Hooks.GSAPSpotlight = GSAPSpotlight
 Hooks.GSAPTextReveal = GSAPTextReveal
 Hooks.GSAPCounter = GSAPCounter
+Hooks.GooglePlaces = GooglePlaces
 
 // Snowfall auto-stop hook - fades out snowfall after animation completes
 Hooks.SnowfallStop = {
@@ -107,7 +109,7 @@ Hooks.WatchedVideos = {
           const watchedIds = JSON.parse(stored)
           this.pushEvent("load_watched", { ids: watchedIds })
         } catch (e) {
-          console.error("Failed to parse watched videos:", e)
+          // Failed to parse watched videos from localStorage
         }
       }
     } else {
@@ -815,8 +817,6 @@ Hooks.QuotesCarousel = {
   },
 }
 
-
-
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
@@ -1069,7 +1069,7 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker
       .register("/sw.js")
       .then((registration) => {
-        console.log("Service Worker registered with scope:", registration.scope)
+        // Service Worker registered successfully
       })
       .catch((error) => {
         console.error("Service Worker registration failed:", error)

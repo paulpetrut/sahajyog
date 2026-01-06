@@ -60,62 +60,67 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   def handle_params(params, _uri, socket) do
-    # Skip if not connected yet (initial static render)
-    if not connected?(socket) do
-      {:noreply, socket}
-    else
-      # Parse URL params with defaults
+    if connected?(socket) do
       socket =
         socket
-        |> assign(:search_query, params["q"] || "")
-        |> assign(:selected_country, params["country"] || "")
-        |> assign(:selected_year, params["year"] || "")
-        |> assign(:selected_category, params["category"] || "")
-        |> assign(:selected_spoken_language, params["spoken_lang"] || "")
-        |> assign(
-          :selected_translation_language,
-          params["trans_lang"] || socket.assigns.default_translation_lang
-        )
-        |> assign(:sort_by, params["sort"] || "date_asc")
-        |> assign(:current_page, parse_page(params["page"]))
-        |> assign(:params_applied, true)
-
-      # Show advanced filters if any advanced filter is set
-      socket =
-        if params["country"] || params["category"] || params["spoken_lang"] do
-          assign(socket, :show_advanced_filters, true)
-        else
-          socket
-        end
-
-      # Fetch talks with the URL params
-      filters = build_filters_from_assigns(socket)
-
-      socket =
-        case get_paginated_talks(socket, filters) do
-          {:ok, talks, total, socket} ->
-            socket
-            |> stream(:talks, talks, reset: true)
-            |> assign(:total_results, total)
-            |> assign(:talks_empty?, talks == [])
-            |> assign(:loading, false)
-            |> assign(:error, nil)
-
-          {:error, reason, socket} ->
-            Logger.error("Failed to load talks in handle_params: #{inspect(reason)}")
-
-            # Schedule a retry after 5 seconds for deployment scenarios
-            Process.send_after(self(), :retry_load, 5000)
-
-            socket
-            |> stream(:talks, [], reset: true)
-            |> assign(:talks_empty?, false)
-            |> assign(:loading, true)
-            |> assign(:error, nil)
-            |> assign(:retry_count, 1)
-        end
+        |> assign_params(params)
+        |> assign_advanced_filters_visibility(params)
+        |> fetch_talks_results()
 
       {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp assign_params(socket, params) do
+    socket
+    |> assign(:search_query, params["q"] || "")
+    |> assign(:selected_country, params["country"] || "")
+    |> assign(:selected_year, params["year"] || "")
+    |> assign(:selected_category, params["category"] || "")
+    |> assign(:selected_spoken_language, params["spoken_lang"] || "")
+    |> assign(
+      :selected_translation_language,
+      params["trans_lang"] || socket.assigns.default_translation_lang
+    )
+    |> assign(:sort_by, params["sort"] || "date_asc")
+    |> assign(:current_page, parse_page(params["page"]))
+    |> assign(:params_applied, true)
+  end
+
+  defp assign_advanced_filters_visibility(socket, params) do
+    if params["country"] || params["category"] || params["spoken_lang"] do
+      assign(socket, :show_advanced_filters, true)
+    else
+      socket
+    end
+  end
+
+  defp fetch_talks_results(socket) do
+    filters = build_filters_from_assigns(socket)
+
+    case get_paginated_talks(socket, filters) do
+      {:ok, talks, total, socket} ->
+        socket
+        |> stream(:talks, talks, reset: true)
+        |> assign(:total_results, total)
+        |> assign(:talks_empty?, talks == [])
+        |> assign(:loading, false)
+        |> assign(:error, nil)
+
+      {:error, reason, socket} ->
+        Logger.error("Failed to load talks in handle_params: #{inspect(reason)}")
+
+        # Schedule a retry after 5 seconds for deployment scenarios
+        Process.send_after(self(), :retry_load, 5000)
+
+        socket
+        |> stream(:talks, [], reset: true)
+        |> assign(:talks_empty?, false)
+        |> assign(:loading, true)
+        |> assign(:error, nil)
+        |> assign(:retry_count, 1)
     end
   end
 

@@ -1,10 +1,15 @@
 defmodule SahajyogWeb.EventShowLive do
+  @moduledoc """
+  LiveView for displaying event details.
+  """
   use SahajyogWeb, :live_view
 
-  alias Sahajyog.Events
-  alias Sahajyog.Events.{EventCarpool, EventNotifier, Validators}
-  alias Sahajyog.Resources.R2Storage
   alias Phoenix.LiveView.JS
+  alias Sahajyog.Accounts.User
+  alias Sahajyog.Events
+  alias Sahajyog.Events.{EventCarpool, EventNotifier, EventRideRequest, Validators}
+  alias Sahajyog.Resources.R2Storage
+  alias SahajyogWeb.{Endpoint, Presence}
   alias Timex
 
   require Logger
@@ -17,29 +22,64 @@ defmodule SahajyogWeb.EventShowLive do
       Events.subscribe(event.id)
     end
 
+    socket =
+      socket
+      |> assign_event_basic_info(event)
+      |> assign_user_event_state(event)
+      |> assign_online_event_logic(event)
+      |> assign_contact_and_invitation_logic(event)
+      |> assign_social_content(event)
+      |> assign_uploads()
+      |> track_online_presence(event)
+      |> handle_presence_state(event)
+
+    {:ok, socket}
+  end
+
+  defp assign_event_basic_info(socket, event) do
     can_edit = Events.can_edit_event?(socket.assigns.current_scope, event)
     financial = Events.financial_summary(event.id)
+    participant_count = Events.count_attendees(event.id)
+
+    socket
+    |> assign(:page_title, event.title)
+    |> assign(:event, event)
+    |> assign(:can_edit, can_edit)
+    |> assign(:financial, financial)
+    |> assign(:participant_count, participant_count)
+    |> assign(:active_tab, "details")
+  end
+
+  defp assign_user_event_state(socket, event) do
+    user_id = socket.assigns.current_scope.user.id
 
     attendance =
-      case Events.get_attendance(event.id, socket.assigns.current_scope.user.id) do
+      case Events.get_attendance(event.id, user_id) do
         %{status: "attending"} = attendance -> attendance
         _ -> nil
       end
 
-    # Check if user has a confirmed ride
-    confirmed_ride =
-      Events.get_user_confirmed_carpool(event.id, socket.assigns.current_scope.user.id)
+    confirmed_ride = Events.get_user_confirmed_carpool(event.id, user_id)
 
-    # Check if user is a driver
     my_carpool =
       Enum.find(event.carpools, fn c ->
-        c.driver_user_id == socket.assigns.current_scope.user.id
+        c.driver_user_id == user_id
       end)
 
-    # Show requests logic: default list all, but we might filter later
     requests = Events.list_ride_requests(event.id)
 
-    # Online Event Logic
+    socket
+    |> assign(:attendance, attendance)
+    |> assign(:confirmed_ride, confirmed_ride)
+    |> assign(:my_carpool, my_carpool)
+    |> assign(:ride_requests, requests)
+    |> assign(:show_carpool_form, false)
+    |> assign(:carpool_form, nil)
+    |> assign(:show_request_form, false)
+    |> assign(:request_form, nil)
+  end
+
+  defp assign_online_event_logic(socket, event) do
     {time_remaining, is_live} = calculate_time_remaining(event)
     is_ended = event_ended?(event)
 
@@ -47,120 +87,101 @@ defmodule SahajyogWeb.EventShowLive do
       Process.send_after(self(), :tick, 1000)
     end
 
-    # Check profile completeness for editors
-    profile_incomplete =
-      can_edit && !Sahajyog.Accounts.User.profile_complete?(socket.assigns.current_scope.user)
+    socket
+    |> assign(:time_remaining, time_remaining)
+    |> assign(:is_live, is_live)
+    |> assign(:is_ended, is_ended)
+    |> assign(:focus_mode, false)
+  end
 
-    # Determine if contact button should be shown
-    # Hide if the current user is the ONLY recipient (Owner + Team)
+  defp track_online_presence(socket, event) do
+    if connected?(socket) && event.is_online do
+      topic = "event_presence:#{event.id}"
+      Endpoint.subscribe(topic)
+
+      presence_meta = %{
+        online_at: inspect(System.system_time(:second)),
+        user_id: socket.assigns.current_scope.user.id,
+        email: socket.assigns.current_scope.user.email,
+        first_name: socket.assigns.current_scope.user.first_name,
+        last_name: socket.assigns.current_scope.user.last_name,
+        avatar: nil
+      }
+
+      {:ok, _} =
+        Presence.track(
+          self(),
+          topic,
+          socket.assigns.current_scope.user.id,
+          presence_meta
+        )
+
+      socket
+    else
+      socket
+    end
+  end
+
+  defp assign_contact_and_invitation_logic(socket, event) do
+    user = socket.assigns.current_scope.user
+
+    profile_incomplete =
+      socket.assigns.can_edit && !User.profile_complete?(user)
+
     show_contact_button =
-      if current_user = socket.assigns.current_scope.user do
+      if user do
         team_emails =
           event.team_members
           |> Enum.filter(&(&1.status == "accepted"))
           |> Enum.map(& &1.user.email)
 
         recipients = [event.user.email | team_emails] |> Enum.uniq()
-        recipients != [current_user.email]
+        recipients != [user.email]
       else
         true
       end
 
-    # Check for pending invitation
     pending_invitation =
-      if socket.assigns.current_scope.user do
+      if user do
         Enum.find(event.team_members, fn m ->
-          m.user_id == socket.assigns.current_scope.user.id and m.status == "pending"
+          m.user_id == user.id and m.status == "pending"
         end)
       else
         nil
       end
 
-    # Fetch participant count
-    participant_count = Events.count_attendees(event.id)
+    socket
+    |> assign(:profile_incomplete, profile_incomplete)
+    |> assign(:show_contact_button, show_contact_button)
+    |> assign(:show_contact_modal, false)
+    |> assign(:pending_invitation, pending_invitation)
+  end
 
-    # Presence Logic for Online Events
-    if connected?(socket) do
-      if event.is_online do
-        topic = "event_presence:#{event.id}"
-        SahajyogWeb.Endpoint.subscribe(topic)
-
-        presence_meta = %{
-          online_at: inspect(System.system_time(:second)),
-          user_id: socket.assigns.current_scope.user.id,
-          email: socket.assigns.current_scope.user.email,
-          first_name: socket.assigns.current_scope.user.first_name,
-          last_name: socket.assigns.current_scope.user.last_name,
-          # Use avatar URL if available, else derive initials
-          avatar: nil
-        }
-
-        {:ok, _} =
-          SahajyogWeb.Presence.track(
-            self(),
-            topic,
-            socket.assigns.current_scope.user.id,
-            presence_meta
-          )
-      end
-
-      # Subscribe to event updates (reviews, photos)
-      Events.subscribe(event.id)
-    end
-
-    # Fetch reviews and photos
+  defp assign_social_content(socket, event) do
+    user = socket.assigns.current_scope.user
     reviews = Events.list_event_reviews(event.id)
     photos = Events.list_event_photos(event.id)
-    can_review = Events.can_review?(socket.assigns.current_scope.user, event)
+    can_review = Events.can_review?(user, event)
+    user_photo_count = Events.count_user_event_photos(event.id, user.id)
 
-    # Count user's photos for this event (limit: 25 per user)
-    user_photo_count =
-      Events.count_user_event_photos(event.id, socket.assigns.current_scope.user.id)
+    socket
+    |> assign(:reviews, reviews)
+    |> assign(:photos, photos)
+    |> assign(:can_review, can_review)
+    |> assign(:user_photo_count, user_photo_count)
+    |> assign(:selected_photo, nil)
+    |> assign(:preview_material, nil)
+    |> assign(:preview_material_url, nil)
+    |> assign(:connected_users, [])
+  end
 
-    socket =
-      socket
-      |> allow_upload(:photos,
-        accept: ~w(.jpg .jpeg .png .webp),
-        max_entries: min(5, 25 - user_photo_count),
-        max_file_size: 10_000_000,
-        auto_upload: true
-      )
-
-    {:ok,
-     socket
-     |> assign(:page_title, event.title)
-     |> assign(:event, event)
-     |> assign(:reviews, reviews)
-     |> assign(:photos, photos)
-     |> assign(:user_photo_count, user_photo_count)
-     |> assign(:can_review, can_review)
-     |> assign(:can_edit, can_edit)
-     |> assign(:profile_incomplete, profile_incomplete)
-     |> assign(:pending_invitation, pending_invitation)
-     |> assign(:financial, financial)
-     |> assign(:attendance, attendance)
-     |> assign(:ride_requests, requests)
-     |> assign(:participant_count, participant_count)
-     |> assign(:confirmed_ride, confirmed_ride)
-     |> assign(:my_carpool, my_carpool)
-     |> assign(:show_carpool_form, false)
-     |> assign(:carpool_form, nil)
-     |> assign(:show_request_form, false)
-     |> assign(:request_form, nil)
-     |> assign(:time_remaining, time_remaining)
-     |> assign(:is_live, is_live)
-     |> assign(:is_ended, is_ended)
-     |> assign(:show_contact_modal, false)
-     |> assign(:show_contact_button, show_contact_button)
-     |> assign(:focus_mode, false)
-     |> assign(:selected_photo, nil)
-     |> assign(:active_tab, "details")
-     # Will be populated by handle_info
-     |> assign(:connected_users, [])
-     # Invitation material preview
-     |> assign(:preview_material, nil)
-     |> assign(:preview_material_url, nil)
-     |> handle_presence_state(event)}
+  defp assign_uploads(socket) do
+    allow_upload(socket, :photos,
+      accept: ~w(.jpg .jpeg .png .webp),
+      max_entries: min(5, 25 - socket.assigns.user_photo_count),
+      max_file_size: 10_000_000,
+      auto_upload: true
+    )
   end
 
   defp handle_presence_state(socket, event) do
@@ -293,19 +314,7 @@ defmodule SahajyogWeb.EventShowLive do
   def handle_event("accept_invitation", _, socket) do
     user = socket.assigns.current_scope.user
 
-    if !Sahajyog.Accounts.User.profile_complete?(user) do
-      encoded_return = URI.encode_www_form(~p"/events/#{socket.assigns.event.slug}")
-
-      {:noreply,
-       socket
-       |> put_flash(
-         :error,
-         gettext(
-           "Please complete your profile details (First Name, Last Name, Phone Number) before accepting this invitation."
-         )
-       )
-       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
-    else
+    if User.profile_complete?(user) do
       case socket.assigns.pending_invitation do
         nil ->
           {:noreply, socket}
@@ -319,6 +328,18 @@ defmodule SahajyogWeb.EventShowLive do
            |> push_navigate(to: ~p"/events/#{socket.assigns.event.slug}")
            |> put_flash(:info, gettext("Invitation accepted! You are now a co-owner."))}
       end
+    else
+      encoded_return = URI.encode_www_form(~p"/events/#{socket.assigns.event.slug}")
+
+      {:noreply,
+       socket
+       |> put_flash(
+         :error,
+         gettext(
+           "Please complete your profile details (First Name, Last Name, Phone Number) before accepting this invitation."
+         )
+       )
+       |> push_navigate(to: ~p"/users/settings?return_to=#{encoded_return}")}
     end
   end
 
@@ -382,7 +403,13 @@ defmodule SahajyogWeb.EventShowLive do
   def handle_event("volunteer_task", %{"task_id" => task_id}, socket) do
     case Events.join_task(socket.assigns.current_scope.user, task_id) do
       {:ok, _} ->
-        {:noreply, put_flash(socket, :info, gettext("You have joined the task!"))}
+        # Reload event to show updated volunteer list
+        event = Events.get_event_by_slug!(socket.assigns.event.slug)
+
+        {:noreply,
+         socket
+         |> assign(:event, event)
+         |> put_flash(:info, gettext("You have joined the task!"))}
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Could not join task"))}
@@ -391,7 +418,14 @@ defmodule SahajyogWeb.EventShowLive do
 
   def handle_event("leave_task", %{"task_id" => task_id}, socket) do
     Events.leave_task(socket.assigns.current_scope.user, task_id)
-    {:noreply, put_flash(socket, :info, gettext("You have left the task."))}
+
+    # Reload event to show updated volunteer list
+    event = Events.get_event_by_slug!(socket.assigns.event.slug)
+
+    {:noreply,
+     socket
+     |> assign(:event, event)
+     |> put_flash(:info, gettext("You have left the task."))}
   end
 
   @impl true
@@ -417,7 +451,7 @@ defmodule SahajyogWeb.EventShowLive do
 
   @impl true
   def handle_event("show_carpool_form", _, socket) do
-    carpool = %Sahajyog.Events.EventCarpool{}
+    carpool = %EventCarpool{}
     changeset = Events.change_carpool(carpool)
 
     {:noreply,
@@ -437,7 +471,7 @@ defmodule SahajyogWeb.EventShowLive do
   @impl true
   def handle_event("validate_carpool", %{"event_carpool" => carpool_params}, socket) do
     changeset =
-      %Sahajyog.Events.EventCarpool{}
+      %EventCarpool{}
       |> Events.change_carpool(carpool_params)
       |> Map.put(:action, :validate)
 
@@ -446,20 +480,32 @@ defmodule SahajyogWeb.EventShowLive do
 
   @impl true
   def handle_event("create_carpool", %{"event_carpool" => carpool_params}, socket) do
+    # Check if user has a pending ride request before creating carpool
+    user_id = socket.assigns.current_scope.user.id
+    event_id = socket.assigns.event.id
+    had_ride_request = Events.get_user_ride_request(event_id, user_id) != nil
+
     case Events.create_carpool(
            socket.assigns.current_scope,
-           socket.assigns.event.id,
+           event_id,
            carpool_params
          ) do
       {:ok, _carpool} ->
         event = Events.get_event_by_slug!(socket.assigns.event.slug)
+
+        flash_message =
+          if had_ride_request do
+            gettext("Carpool offer created successfully! Your ride request has been cancelled.")
+          else
+            gettext("Carpool offer created successfully!")
+          end
 
         {:noreply,
          socket
          |> assign(:event, event)
          |> assign(:show_carpool_form, false)
          |> assign(:carpool_form, nil)
-         |> put_flash(:info, gettext("Carpool offer created successfully!"))}
+         |> put_flash(:info, flash_message)}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :carpool_form, to_form(changeset))}
@@ -482,7 +528,7 @@ defmodule SahajyogWeb.EventShowLive do
 
   @impl true
   def handle_event("show_request_form", _, socket) do
-    request = %Sahajyog.Events.EventRideRequest{}
+    request = %EventRideRequest{}
     changeset = Events.change_ride_request(request)
 
     {:noreply,
@@ -502,7 +548,7 @@ defmodule SahajyogWeb.EventShowLive do
   @impl true
   def handle_event("validate_request", %{"event_ride_request" => request_params}, socket) do
     changeset =
-      %Sahajyog.Events.EventRideRequest{}
+      %EventRideRequest{}
       |> Events.change_ride_request(request_params)
       |> Map.put(:action, :validate)
 
@@ -553,6 +599,18 @@ defmodule SahajyogWeb.EventShowLive do
          |> assign(:show_request_form, false)
          |> assign(:request_form, nil)
          |> put_flash(:info, gettext("Ride request posted successfully!"))}
+
+      {:error, :has_carpool} ->
+        {:noreply,
+         socket
+         |> assign(:show_request_form, false)
+         |> assign(:request_form, nil)
+         |> put_flash(
+           :error,
+           gettext(
+             "You cannot request a ride while offering a carpool. Please delete your carpool first."
+           )
+         )}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :request_form, to_form(changeset))}
@@ -609,11 +667,10 @@ defmodule SahajyogWeb.EventShowLive do
 
   @impl true
   def handle_event("cancel_carpool_request", %{"carpool_id" => carpool_id}, socket) do
-    # We need to find the specific pending request for this user on this carpool
+    # We need to find the specific pending request for this user on this carpool.
     # Since we don't have the request ID easily in the loop without fetching,
-    # let's assume valid user interaction and find it backend side or use `leave_carpool` logic which handles "requests" inherently differently?
-    # Actually `leave_carpool` handles accepted ones.
-    # For pending requests, we can reuse `leave_carpool` logic IF we modify it or just implement a specific helper.
+    # let's assume valid user interaction and find it backend side.
+    # We can reuse `leave_carpool` logic IF we modify it or just implement a specific helper.
     # Let's just find the request here for simplicity or add a helper in Events.
 
     # Re-using logic: finding the request by user_id and carpool_id
@@ -2949,52 +3006,6 @@ defmodule SahajyogWeb.EventShowLive do
             </div>
           </div>
 
-          <%!-- Financial Summary (for organizers only) --%>
-          <%= if !@event.is_online and @can_edit do %>
-            <.card size="lg" class="mb-6">
-              <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
-                <.icon name="hero-chart-bar" class="w-5 h-5" />
-                {gettext("Financial Summary")}
-              </h2>
-
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="p-4 bg-success/10 rounded-lg text-center">
-                  <p class="text-xs text-success mb-1">{gettext("Income")}</p>
-                  <p class="text-xl font-bold text-success">
-                    €{Decimal.to_string(@financial.total_income)}
-                  </p>
-                </div>
-                <div class="p-4 bg-error/10 rounded-lg text-center">
-                  <p class="text-xs text-error mb-1">{gettext("Expenses")}</p>
-                  <p class="text-xl font-bold text-error">
-                    €{Decimal.to_string(@financial.total_expenses)}
-                  </p>
-                </div>
-                <div class={[
-                  "p-4 rounded-lg text-center",
-                  if(@financial.is_profit, do: "bg-success/10", else: "bg-error/10")
-                ]}>
-                  <p class={[
-                    "text-xs mb-1",
-                    if(@financial.is_profit, do: "text-success", else: "text-error")
-                  ]}>
-                    {gettext("Balance")}
-                  </p>
-                  <p class={[
-                    "text-xl font-bold",
-                    if(@financial.is_profit, do: "text-success", else: "text-error")
-                  ]}>
-                    €{Decimal.to_string(@financial.balance)}
-                  </p>
-                </div>
-                <div class="p-4 bg-base-100/50 rounded-lg text-center">
-                  <p class="text-xs text-base-content/60 mb-1">{gettext("Donations")}</p>
-                  <p class="text-xl font-bold text-base-content">{length(@event.donations)}</p>
-                </div>
-              </div>
-            </.card>
-          <% end %>
-
           <%!-- Donation Section --%>
           <%= if @event.banking_iban do %>
             <.card size="lg" class="mb-6">
@@ -3033,6 +3044,88 @@ defmodule SahajyogWeb.EventShowLive do
                     <p class="text-sm text-base-content/70">{@event.banking_notes}</p>
                   </div>
                 <% end %>
+              </div>
+            </.card>
+          <% end %>
+
+          <%!-- Financial Summary (visible to all attendees) --%>
+          <%= if !@event.is_online and @attendance do %>
+            <.card size="lg" class="mb-6">
+              <h2 class="text-xl font-bold text-base-content mb-4 flex items-center gap-2">
+                <.icon name="hero-chart-bar" class="w-5 h-5" />
+                {gettext("Financial Summary")}
+              </h2>
+
+              <%!-- Budget Target (if set) --%>
+              <%= if @financial.budget_total && Decimal.compare(@financial.budget_total, 0) == :gt do %>
+                <div class="mb-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-base-content">
+                      {if @financial.budget_type == "open_for_donations",
+                        do: gettext("Fundraising Target"),
+                        else: gettext("Fixed Budget")}
+                    </span>
+                    <span class="text-lg font-bold text-primary">
+                      €{Decimal.to_string(@financial.budget_total)}
+                    </span>
+                  </div>
+                  <%= if @financial.budget_progress do %>
+                    <div class="space-y-1">
+                      <div class="flex justify-between text-xs text-base-content/60">
+                        <span>{gettext("Progress")}</span>
+                        <span>{Decimal.to_string(@financial.budget_progress)}%</span>
+                      </div>
+                      <div class="w-full bg-base-200 rounded-full h-2">
+                        <div
+                          class="bg-primary h-2 rounded-full transition-all"
+                          style={"width: #{min(Decimal.to_float(@financial.budget_progress), 100)}%"}
+                        >
+                        </div>
+                      </div>
+                      <%= if Decimal.compare(@financial.budget_remaining, 0) == :gt do %>
+                        <p class="text-xs text-base-content/60 mt-1">
+                          {gettext("Remaining")}: €{Decimal.to_string(@financial.budget_remaining)}
+                        </p>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="p-4 bg-success/10 rounded-lg text-center">
+                  <p class="text-xs text-success mb-1">{gettext("Income")}</p>
+                  <p class="text-xl font-bold text-success">
+                    €{Decimal.to_string(@financial.total_income)}
+                  </p>
+                </div>
+                <div class="p-4 bg-error/10 rounded-lg text-center">
+                  <p class="text-xs text-error mb-1">{gettext("Expenses")}</p>
+                  <p class="text-xl font-bold text-error">
+                    €{Decimal.to_string(@financial.total_expenses)}
+                  </p>
+                </div>
+                <div class={[
+                  "p-4 rounded-lg text-center",
+                  if(@financial.is_profit, do: "bg-success/10", else: "bg-error/10")
+                ]}>
+                  <p class={[
+                    "text-xs mb-1",
+                    if(@financial.is_profit, do: "text-success", else: "text-error")
+                  ]}>
+                    {gettext("Balance")}
+                  </p>
+                  <p class={[
+                    "text-xl font-bold",
+                    if(@financial.is_profit, do: "text-success", else: "text-error")
+                  ]}>
+                    €{Decimal.to_string(@financial.balance)}
+                  </p>
+                </div>
+                <div class="p-4 bg-base-100/50 rounded-lg text-center">
+                  <p class="text-xs text-base-content/60 mb-1">{gettext("Donations")}</p>
+                  <p class="text-xl font-bold text-base-content">{length(@event.donations)}</p>
+                </div>
               </div>
             </.card>
           <% end %>

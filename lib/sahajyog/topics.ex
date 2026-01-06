@@ -5,7 +5,7 @@ defmodule Sahajyog.Topics do
 
   import Ecto.Query
   alias Sahajyog.Repo
-  alias Sahajyog.Topics.{Topic, TopicProposal, TopicCoAuthor, TopicReference}
+  alias Sahajyog.Topics.{Topic, TopicCoAuthor, TopicProposal, TopicReference}
 
   ## Topics
 

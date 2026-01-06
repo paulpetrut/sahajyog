@@ -5,9 +5,9 @@ defmodule SahajyogWeb.StoreItemShowLive do
   """
   use SahajyogWeb, :live_view
 
-  alias Sahajyog.Store
-  alias Sahajyog.Store.StoreItemInquiry
   alias Sahajyog.Resources.R2Storage
+  alias Sahajyog.Store
+  alias Sahajyog.Store.{StoreItem, StoreItemInquiry, StoreNotifier}
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -100,7 +100,7 @@ defmodule SahajyogWeb.StoreItemShowLive do
     case Store.create_inquiry(item, buyer, params) do
       {:ok, inquiry} ->
         # Send notification email to seller
-        Sahajyog.Store.StoreNotifier.deliver_inquiry_to_seller(
+        StoreNotifier.deliver_inquiry_to_seller(
           inquiry,
           item,
           item.user,
@@ -133,7 +133,7 @@ defmodule SahajyogWeb.StoreItemShowLive do
   defp format_price(nil, _currency), do: nil
 
   defp format_price(price, currency) do
-    symbol = Sahajyog.Store.StoreItem.currency_symbol(currency)
+    symbol = StoreItem.currency_symbol(currency)
     "#{symbol}#{Decimal.round(price, 2)}"
   end
 

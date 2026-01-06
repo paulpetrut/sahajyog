@@ -4,17 +4,15 @@ defmodule Sahajyog.Vimeo do
   """
 
   def extract_video_id(url) do
-    cond do
-      String.contains?(url, "vimeo.com/") ->
-        # Extract everything after vimeo.com/ including privacy hash
-        url
-        |> String.split("vimeo.com/")
-        |> List.last()
-        |> String.split("?")
-        |> List.first()
-
-      true ->
-        nil
+    if String.contains?(url, "vimeo.com/") do
+      # Extract everything after vimeo.com/ including privacy hash
+      url
+      |> String.split("vimeo.com/")
+      |> List.last()
+      |> String.split("?")
+      |> List.first()
+    else
+      nil
     end
   end
 

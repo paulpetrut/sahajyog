@@ -4,8 +4,9 @@ defmodule SahajyogWeb.SahajStoreLive do
   """
   use SahajyogWeb, :live_view
 
-  alias Sahajyog.Store
   alias Sahajyog.Resources.R2Storage
+  alias Sahajyog.Store
+  alias Sahajyog.Store.StoreItem
 
   import SahajyogWeb.FormatHelpers, only: [truncate_text: 2]
 
@@ -260,7 +261,7 @@ defmodule SahajyogWeb.SahajStoreLive do
   defp format_price(nil, _currency), do: nil
 
   defp format_price(price, currency) do
-    symbol = Sahajyog.Store.StoreItem.currency_symbol(currency)
+    symbol = StoreItem.currency_symbol(currency)
     "#{symbol}#{Decimal.round(price, 2)}"
   end
 

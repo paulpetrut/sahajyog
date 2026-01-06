@@ -1,6 +1,10 @@
 defmodule Sahajyog.Events.EventProposal do
+  @moduledoc """
+  Schema for event proposals.
+  """
   use Ecto.Schema
   import Ecto.Changeset
+  @type t :: %__MODULE__{}
 
   alias Sahajyog.Accounts.User
   alias Sahajyog.Events.Event
@@ -116,32 +120,38 @@ defmodule Sahajyog.Events.EventProposal do
     video_type = get_field(changeset, :presentation_video_type)
     video_url = get_field(changeset, :presentation_video_url)
 
-    cond do
-      is_nil(video_type) && is_nil(video_url) ->
-        # No video - valid
+    case {video_type, video_url} do
+      {nil, nil} ->
         changeset
 
-      is_nil(video_type) && !is_nil(video_url) ->
+      {nil, _} ->
         add_error(
           changeset,
           :presentation_video_type,
           "must be specified when video URL is provided"
         )
 
-      !is_nil(video_type) && is_nil(video_url) ->
+      {_, nil} ->
         add_error(
           changeset,
           :presentation_video_url,
           "must be provided when video type is specified"
         )
 
-      video_type not in @video_types ->
+      {type, url} ->
+        validate_video_by_type(changeset, type, url)
+    end
+  end
+
+  defp validate_video_by_type(changeset, type, url) do
+    cond do
+      type not in @video_types ->
         add_error(changeset, :presentation_video_type, "must be youtube or r2")
 
-      video_type == "youtube" && !Validators.valid_youtube_url?(video_url) ->
+      type == "youtube" && !Validators.valid_youtube_url?(url) ->
         add_error(changeset, :presentation_video_url, "must be a valid YouTube video URL")
 
-      video_type == "r2" && !is_binary(video_url) ->
+      type == "r2" && !is_binary(url) ->
         add_error(changeset, :presentation_video_url, "must be a valid R2 storage path")
 
       true ->
@@ -150,11 +160,10 @@ defmodule Sahajyog.Events.EventProposal do
   end
 
   defp validate_in_person_fields(changeset) do
-    if !get_field(changeset, :is_online) do
+    if get_field(changeset, :is_online) do
       changeset
-      |> validate_required([:city, :country, :budget_type])
     else
-      changeset
+      validate_required(changeset, [:city, :country, :budget_type])
     end
   end
 end

@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventTask do
+  @moduledoc """
+  Schema for tracking event-related tasks.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

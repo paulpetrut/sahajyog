@@ -3,20 +3,16 @@ const CACHE_NAME = "sahajyog-v1"
 const YOUTUBE_CACHE = "youtube-resources-v1"
 
 self.addEventListener("install", (event) => {
-  console.log("Service Worker installing...")
   self.skipWaiting()
 })
 
 self.addEventListener("activate", (event) => {
-  console.log("Service Worker activating...")
   event.waitUntil(
     clients.claim().then(() => {
       // Clean up old caches
       return caches.keys().then((cacheNames) => {
         return Promise.all(
-          cacheNames
-            .filter((name) => name !== CACHE_NAME && name !== YOUTUBE_CACHE)
-            .map((name) => caches.delete(name))
+          cacheNames.filter((name) => name !== CACHE_NAME && name !== YOUTUBE_CACHE).map((name) => caches.delete(name))
         )
       })
     })
@@ -37,7 +33,6 @@ self.addEventListener("fetch", (event) => {
         return cache.match(event.request).then((cachedResponse) => {
           // Return cached response if available
           if (cachedResponse) {
-            console.log("Serving from cache:", url.pathname)
             return cachedResponse
           }
 
@@ -51,7 +46,6 @@ self.addEventListener("fetch", (event) => {
               return networkResponse
             })
             .catch((error) => {
-              console.error("Fetch failed for:", url.pathname, error)
               // Return cached response if network fails, even if expired
               return cachedResponse || new Response("Offline", { status: 503 })
             })

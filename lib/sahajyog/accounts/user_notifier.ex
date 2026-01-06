@@ -1,8 +1,12 @@
 defmodule Sahajyog.Accounts.UserNotifier do
+  @moduledoc """
+  Handles sending email notifications to users.
+  Includes login instructions, email confirmation, and password reset emails.
+  """
   import Swoosh.Email
 
-  alias Sahajyog.Mailer
   alias Sahajyog.Accounts.User
+  alias Sahajyog.Mailer
 
   # Helper to translate strings with the given locale
   defp t(msgid, locale) do

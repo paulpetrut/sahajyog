@@ -1,4 +1,7 @@
 defmodule Sahajyog.Events.EventNotifier do
+  @moduledoc """
+  Notifies users about event-related actions via email.
+  """
   import Swoosh.Email
   alias Sahajyog.Mailer
   require Logger

@@ -6,9 +6,9 @@ defmodule SahajyogWeb.Admin.StoreItemsLive do
 
   import SahajyogWeb.AdminNav
 
+  alias Sahajyog.Resources.R2Storage
   alias Sahajyog.Store
   alias Sahajyog.Store.StoreNotifier
-  alias Sahajyog.Resources.R2Storage
 
   @impl true
   def mount(_params, _session, socket) do
@@ -180,9 +180,7 @@ defmodule SahajyogWeb.Admin.StoreItemsLive do
   defp format_pricing(_), do: "-"
 
   defp format_delivery_methods(methods) when is_list(methods) do
-    methods
-    |> Enum.map(&format_delivery_method/1)
-    |> Enum.join(", ")
+    Enum.map_join(methods, ", ", &format_delivery_method/1)
   end
 
   defp format_delivery_methods(_), do: "-"

@@ -1,9 +1,12 @@
 defmodule SahajyogWeb.EventsLive do
+  @moduledoc """
+  LiveView for listing events.
+  """
   use SahajyogWeb, :live_view
 
   alias Sahajyog.Events
 
-  @per_page 12
+  @per_page 21
   @time_ranges [
     {"1 month", "1_month"},
     {"3 months", "3_months"},
@@ -26,6 +29,7 @@ defmodule SahajyogWeb.EventsLive do
       |> assign(:per_page, @per_page)
       # Default filter
       |> assign(:filter, "all")
+      |> stream(:events, [])
 
     {:ok, socket}
   end
@@ -42,22 +46,38 @@ defmodule SahajyogWeb.EventsLive do
     if connected?(socket) do
       user_id = socket.assigns.current_scope.user.id
       user_level = socket.assigns.current_scope.user.level
+      page = socket.assigns.current_page
+      per_page = socket.assigns.per_page
 
-      events =
+      # Build filters map
+      filters = %{
+        user_level: user_level,
+        time_range: socket.assigns.selected_time_range,
+        month: socket.assigns.selected_month,
+        country: socket.assigns.selected_country,
+        city: socket.assigns.selected_city,
+        search: socket.assigns.search_query
+      }
+
+      {events, total_results} =
         case socket.assigns.filter do
-          "my_events" -> Events.list_my_events(user_id)
-          "past" -> Events.list_past_public_events(user_level: user_level)
-          _ -> Events.list_events_for_user(user_id, user_level: user_level)
+          "my_events" ->
+            Events.list_my_events_paginated(user_id, page, per_page)
+
+          "past" ->
+            Events.list_past_public_events_paginated(filters, page, per_page)
+
+          _ ->
+            Events.list_events_for_user_paginated(user_id, filters, page, per_page)
         end
 
-      countries = extract_countries(events)
-      cities = extract_cities(events)
-      months = if socket.assigns.filter == "past", do: extract_months(events), else: []
+      # Fetch global filter options (metadata)
+      %{countries: countries, cities: cities, months: months} =
+        Events.get_event_filter_options(user_id, user_level, socket.assigns.filter)
 
       socket
-      |> assign(:all_events, events)
-      |> assign(:total_results, length(events))
-      |> assign(:events, paginate_events(events, 1, @per_page))
+      |> stream(:events, events, reset: true)
+      |> assign(:total_results, total_results)
       |> assign(:countries, countries)
       |> assign(:cities, cities)
       |> assign(:months, months)
@@ -65,7 +85,6 @@ defmodule SahajyogWeb.EventsLive do
     else
       socket
       |> assign(:events, nil)
-      |> assign(:all_events, [])
       |> assign(:countries, [])
       |> assign(:cities, [])
       |> assign(:months, [])
@@ -75,7 +94,8 @@ defmodule SahajyogWeb.EventsLive do
   end
 
   @impl true
-  def handle_event("filter_time", %{"time_range" => time_range}, socket) do
+  def handle_event("filter_time_range", params, socket) do
+    time_range = params["time_range"]
     time_range = if time_range == "", do: nil, else: time_range
     socket = apply_filters(socket, %{time_range: time_range})
     {:noreply, socket}
@@ -103,15 +123,13 @@ defmodule SahajyogWeb.EventsLive do
   end
 
   @impl true
-  def handle_event("search", %{"query" => query}, socket) do
+  def handle_event("search", %{"value" => query}, socket) do
     socket = apply_filters(socket, %{search: query})
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("clear_filters", _, socket) do
-    all_events = socket.assigns.all_events
-
     {:noreply,
      socket
      |> assign(:selected_time_range, nil)
@@ -119,19 +137,17 @@ defmodule SahajyogWeb.EventsLive do
      |> assign(:selected_city, nil)
      |> assign(:search_query, "")
      |> assign(:current_page, 1)
-     |> assign(:total_results, length(all_events))
-     |> assign(:events, paginate_events(all_events, 1, socket.assigns.per_page))}
+     |> load_events()}
   end
 
   @impl true
   def handle_event("goto_page", %{"page" => page}, socket) do
     page_num = String.to_integer(page)
-    filtered_events = get_filtered_events(socket)
 
     {:noreply,
      socket
      |> assign(:current_page, page_num)
-     |> assign(:events, paginate_events(filtered_events, page_num, socket.assigns.per_page))}
+     |> load_events()}
   end
 
   @impl true
@@ -141,12 +157,11 @@ defmodule SahajyogWeb.EventsLive do
 
     if current_page < total_pages do
       next_page = current_page + 1
-      filtered_events = get_filtered_events(socket)
 
       {:noreply,
        socket
        |> assign(:current_page, next_page)
-       |> assign(:events, paginate_events(filtered_events, next_page, socket.assigns.per_page))}
+       |> load_events()}
     else
       {:noreply, socket}
     end
@@ -158,139 +173,29 @@ defmodule SahajyogWeb.EventsLive do
 
     if current_page > 1 do
       prev_page = current_page - 1
-      filtered_events = get_filtered_events(socket)
 
       {:noreply,
        socket
        |> assign(:current_page, prev_page)
-       |> assign(:events, paginate_events(filtered_events, prev_page, socket.assigns.per_page))}
+       |> load_events()}
     else
       {:noreply, socket}
     end
   end
 
   defp apply_filters(socket, new_filters) do
-    socket =
-      socket
-      |> maybe_assign(:selected_time_range, new_filters[:time_range])
-      |> maybe_assign(:selected_month, new_filters[:month])
-      |> maybe_assign(:selected_country, new_filters[:country])
-      |> maybe_assign(:selected_city, new_filters[:city])
-      |> maybe_assign(:search_query, new_filters[:search])
-      |> assign(:current_page, 1)
-
-    filtered_events = get_filtered_events(socket)
-
     socket
-    |> assign(:total_results, length(filtered_events))
-    |> assign(:events, paginate_events(filtered_events, 1, socket.assigns.per_page))
+    |> maybe_assign(:selected_time_range, new_filters[:time_range])
+    |> maybe_assign(:selected_month, new_filters[:month])
+    |> maybe_assign(:selected_country, new_filters[:country])
+    |> maybe_assign(:selected_city, new_filters[:city])
+    |> maybe_assign(:search_query, new_filters[:search])
+    |> assign(:current_page, 1)
+    |> load_events()
   end
 
   defp maybe_assign(socket, _key, nil), do: socket
   defp maybe_assign(socket, key, value), do: assign(socket, key, value)
-
-  defp get_filtered_events(socket) do
-    socket.assigns.all_events
-    |> filter_by_time_range(socket.assigns.selected_time_range)
-    |> filter_by_month(socket.assigns.selected_month)
-    |> filter_by_country(socket.assigns.selected_country)
-    |> filter_by_city(socket.assigns.selected_city)
-    |> filter_by_search(socket.assigns.search_query)
-  end
-
-  defp filter_by_time_range(events, nil), do: events
-
-  defp filter_by_time_range(events, time_range) do
-    today = Date.utc_today()
-
-    end_date =
-      case time_range do
-        "1_month" -> Date.add(today, 30)
-        "3_months" -> Date.add(today, 90)
-        "6_months" -> Date.add(today, 180)
-        "1_year" -> Date.add(today, 365)
-        _ -> nil
-      end
-
-    if end_date do
-      Enum.filter(events, fn event ->
-        event.event_date && Date.compare(event.event_date, today) != :lt &&
-          Date.compare(event.event_date, end_date) != :gt
-      end)
-    else
-      events
-    end
-  end
-
-  defp filter_by_month(events, nil), do: events
-
-  defp filter_by_month(events, month_str) do
-    [year_s, month_s] = String.split(month_str, "-")
-    year = String.to_integer(year_s)
-    month = String.to_integer(month_s)
-
-    Enum.filter(events, fn e ->
-      e.event_date && e.event_date.year == year && e.event_date.month == month
-    end)
-  end
-
-  defp filter_by_country(events, nil), do: events
-
-  defp filter_by_country(events, country) do
-    Enum.filter(events, &(&1.country == country))
-  end
-
-  defp filter_by_city(events, nil), do: events
-
-  defp filter_by_city(events, city) do
-    Enum.filter(events, &(&1.city == city))
-  end
-
-  defp filter_by_search(events, nil), do: events
-  defp filter_by_search(events, ""), do: events
-
-  defp filter_by_search(events, query) do
-    query = String.downcase(query)
-
-    Enum.filter(events, fn event ->
-      String.contains?(String.downcase(event.title || ""), query) ||
-        String.contains?(String.downcase(event.city || ""), query) ||
-        String.contains?(String.downcase(event.country || ""), query)
-    end)
-  end
-
-  defp paginate_events(events, page, per_page) do
-    events
-    |> Enum.slice((page - 1) * per_page, per_page)
-  end
-
-  defp extract_countries(events) do
-    events
-    |> Enum.map(& &1.country)
-    |> Enum.reject(&is_nil/1)
-    |> Enum.uniq()
-    |> Enum.sort()
-  end
-
-  defp extract_cities(events) do
-    events
-    |> Enum.map(& &1.city)
-    |> Enum.reject(&is_nil/1)
-    |> Enum.uniq()
-    |> Enum.sort()
-  end
-
-  defp extract_months(events) do
-    events
-    |> Enum.map(& &1.event_date)
-    |> Enum.reject(&is_nil/1)
-    |> Enum.map(fn date ->
-      {Calendar.strftime(date, "%B %Y"),
-       "#{date.year}-#{String.pad_leading("#{date.month}", 2, "0")}"}
-    end)
-    |> Enum.uniq()
-    |> Enum.sort_by(fn {_, val} -> val end, :desc)
-  end
 
   defp days_until(event_date) do
     today = Date.utc_today()
@@ -371,91 +276,72 @@ defmodule SahajyogWeb.EventsLive do
 
         <%!-- Filters Section --%>
         <div class="mb-6 p-4 bg-base-200/50 rounded-xl border border-base-content/10">
-          <div class="flex flex-wrap gap-3 items-center">
+          <div class="flex flex-wrap gap-3 items-center relative">
             <%!-- Search --%>
             <div class="flex-1 min-w-[200px]">
               <form phx-change="search" phx-submit="search">
-                <div class="relative">
-                  <.icon
-                    name="hero-magnifying-glass"
-                    class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40"
-                  />
-                  <input
-                    type="text"
-                    name="query"
-                    value={@search_query}
-                    placeholder={gettext("Search events...")}
-                    class="w-full pl-10 pr-4 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content placeholder-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    phx-debounce="300"
-                  />
-                </div>
+                <.input
+                  type="text"
+                  name="value"
+                  value={@search_query}
+                  placeholder={gettext("Search events...")}
+                  phx-debounce="300"
+                />
               </form>
             </div>
 
             <%!-- Time/Month Filter --%>
             <div class="w-full sm:w-auto">
-              <%= if @filter == "past" do %>
-                <select
-                  name="month"
-                  class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
-                  phx-change="filter_month"
-                >
-                  <option value="">{gettext("All months")}</option>
-                  <%= for {label, value} <- @months do %>
-                    <option value={value} selected={@selected_month == value}>
-                      {label}
-                    </option>
-                  <% end %>
-                </select>
-              <% else %>
+              <form phx-change="filter_time_range">
                 <select
                   name="time_range"
                   class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
-                  phx-change="filter_time"
                 >
-                  <option value="">{gettext("All time")}</option>
+                  <option value="">{gettext("Duration")}</option>
                   <%= for {label, value} <- @time_ranges do %>
                     <option value={value} selected={@selected_time_range == value}>
                       {label}
                     </option>
                   <% end %>
                 </select>
-              <% end %>
+              </form>
             </div>
 
             <%!-- Country Filter --%>
             <%= if @countries != [] do %>
               <div class="w-full sm:w-auto">
-                <select
-                  name="country"
-                  class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
-                  phx-change="filter_country"
-                >
-                  <option value="">{gettext("All countries")}</option>
-                  <%= for country <- @countries do %>
-                    <option value={country} selected={@selected_country == country}>
-                      {country}
-                    </option>
-                  <% end %>
-                </select>
+                <form phx-change="filter_country">
+                  <select
+                    name="country"
+                    class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">{gettext("Countries")}</option>
+                    <%= for country <- @countries do %>
+                      <option value={country} selected={@selected_country == country}>
+                        {country}
+                      </option>
+                    <% end %>
+                  </select>
+                </form>
               </div>
             <% end %>
 
             <%!-- City Filter --%>
             <%= if @cities != [] do %>
               <div class="w-full sm:w-auto">
-                <select
-                  name="city"
-                  class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
-                  phx-change="filter_city"
-                >
-                  <option value="">{gettext("All cities")}</option>
-                  <%= for city <- @cities do %>
-                    <option value={city} selected={@selected_city == city}>
-                      {city}
-                    </option>
-                  <% end %>
-                </select>
+                <form phx-change="filter_city">
+                  <select
+                    name="city"
+                    class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">{gettext("Cities")}</option>
+                    <%= for city <- @cities do %>
+                      <option value={city} selected={@selected_city == city}>
+                        {city}
+                      </option>
+                    <% end %>
+                  </select>
+                </form>
               </div>
             <% end %>
 
@@ -471,7 +357,7 @@ defmodule SahajyogWeb.EventsLive do
           </div>
 
           <%!-- Results Count --%>
-          <%= if @events != nil do %>
+          <%= if @loading == false do %>
             <p class="text-sm text-base-content/60 mt-3">
               {ngettext(
                 "Showing %{count} event",
@@ -487,9 +373,14 @@ defmodule SahajyogWeb.EventsLive do
         <%= if @loading do %>
           <.events_skeleton_grid count={6} />
         <% else %>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div
+            id="events"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+            phx-update="stream"
+          >
             <.card
-              :for={event <- @events}
+              :for={{id, event} <- @streams.events}
+              id={id}
               hover
               class="group overflow-hidden sm:hover:-translate-y-1 animate-fade-in"
             >
@@ -656,7 +547,7 @@ defmodule SahajyogWeb.EventsLive do
         <% end %>
 
         <%!-- Empty State --%>
-        <%= if @events != nil and @events == [] do %>
+        <%= if @total_results == 0 and @loading == false do %>
           <.empty_state
             icon="hero-calendar"
             title={
