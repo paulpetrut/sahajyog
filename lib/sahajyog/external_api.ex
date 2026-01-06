@@ -16,14 +16,9 @@ defmodule Sahajyog.ExternalApi do
   @telemetry_prefix [:sahajyog, :external_api]
 
   def fetch_talks(filters \\ %{}) do
-    search_query = filters[:search_query]
-
-    url =
-      if search_query && search_query != "" do
-        build_search_url(search_query)
-      else
-        build_talks_url(filters)
-      end
+    # Always use the talks endpoint with filters
+    # Search is handled client-side in the LiveView
+    url = build_talks_url(filters)
 
     case make_request(url) do
       {:ok, %{"results" => results, "total_results" => total}} when is_list(results) ->
@@ -222,15 +217,6 @@ defmodule Sahajyog.ExternalApi do
         Logger.error("Failed to fetch spoken languages: #{inspect(reason)}")
         {:error, reason}
     end
-  end
-
-  defp build_search_url(query) do
-    params = %{"q" => query, "lang" => "en"}
-
-    "#{@base_url}/search"
-    |> URI.parse()
-    |> URI.append_query(URI.encode_query(params))
-    |> URI.to_string()
   end
 
   defp build_talks_url(filters) do

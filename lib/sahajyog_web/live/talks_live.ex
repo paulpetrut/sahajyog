@@ -13,6 +13,7 @@ defmodule SahajyogWeb.TalksLive do
       socket
       |> assign(:page_title, "Talks")
       |> assign(:search_query, "")
+      |> assign(:applied_search_query, "")
       |> assign(:selected_country, "")
       |> assign(:selected_year, "")
       |> assign(:selected_category, "")
@@ -169,7 +170,7 @@ defmodule SahajyogWeb.TalksLive do
 
   defp build_filters_from_assigns(socket) do
     %{
-      search_query: socket.assigns.search_query,
+      search_query: socket.assigns.applied_search_query,
       country: socket.assigns.selected_country,
       year: socket.assigns.selected_year,
       category: socket.assigns.selected_category,
@@ -184,10 +185,11 @@ defmodule SahajyogWeb.TalksLive do
   defp build_url_params(socket) do
     params = %{}
 
-    params =
-      if socket.assigns.search_query != "",
-        do: Map.put(params, "q", socket.assigns.search_query),
-        else: params
+    # Don't persist search query in URL - it should be cleared on refresh
+    # params =
+    #   if socket.assigns.applied_search_query != "",
+    #     do: Map.put(params, "q", socket.assigns.applied_search_query),
+    #     else: params
 
     params =
       if socket.assigns.selected_country != "",
@@ -231,16 +233,26 @@ defmodule SahajyogWeb.TalksLive do
   defp get_paginated_talks(socket, filters) do
     case get_or_fetch_talks(socket, filters) do
       {:ok, raw_results, socket} ->
-        # Apply client-side filtering if searching
+        # Apply client-side search filtering if search query exists
         filtered_results =
           if filters[:search_query] != nil and filters[:search_query] != "" do
+            search_query = String.downcase(filters[:search_query])
+
             raw_results
+            |> Enum.filter(fn talk ->
+              title = String.downcase(Map.get(talk, "title", ""))
+              String.contains?(title, search_query)
+            end)
             |> filter_by_country(filters[:country])
             |> filter_by_year(filters[:year])
             |> filter_by_category(filters[:category])
             |> filter_by_spoken_language(filters[:spoken_language])
           else
             raw_results
+            |> filter_by_country(filters[:country])
+            |> filter_by_year(filters[:year])
+            |> filter_by_category(filters[:category])
+            |> filter_by_spoken_language(filters[:spoken_language])
           end
 
         # Apply sorting
@@ -268,10 +280,11 @@ defmodule SahajyogWeb.TalksLive do
   defp get_or_fetch_talks(socket, filters) do
     fetch_params = get_fetch_params(filters)
 
-    if socket.assigns[:last_fetch_params] == fetch_params and socket.assigns[:cached_results] do
-      {:ok, socket.assigns.cached_results, socket}
-    else
-      # Use ApiCache for talks data with 10-minute TTL
+    # Check if we need to re-fetch (params changed)
+    needs_refetch = socket.assigns[:last_fetch_params] != fetch_params
+
+    if needs_refetch or socket.assigns[:cached_results] == nil do
+      # Fetch from API (uses ApiCache internally)
       case Sahajyog.ApiCache.get_talks(filters) do
         {:ok, results, _total} ->
           socket =
@@ -284,21 +297,22 @@ defmodule SahajyogWeb.TalksLive do
         {:error, reason} ->
           {:error, reason}
       end
+    else
+      # Use cached results
+      {:ok, socket.assigns.cached_results, socket}
     end
   end
 
   defp get_fetch_params(filters) do
-    if filters[:search_query] && filters[:search_query] != "" do
-      %{search_query: filters[:search_query]}
-    else
-      Map.take(filters, [
-        :country,
-        :year,
-        :category,
-        :spoken_language,
-        :translation_language
-      ])
-    end
+    # Always fetch based on translation_language and other filters
+    # Search is applied client-side on the fetched results
+    Map.take(filters, [
+      :country,
+      :year,
+      :category,
+      :spoken_language,
+      :translation_language
+    ])
   end
 
   defp apply_sorting(results, "date_asc") do
@@ -444,15 +458,48 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   def handle_event("apply_all_filters", params, socket) do
+    search_query = params["search"] || ""
+
+    # Helper to preserve existing value if param is nil or empty string
+    preserve_or_use = fn param_value, existing_value ->
+      if param_value in [nil, ""], do: existing_value, else: param_value
+    end
+
+    new_translation_language =
+      preserve_or_use.(
+        params["translation_language"],
+        socket.assigns.selected_translation_language
+      )
+
+    # Clear cached results if translation language changed
+    socket =
+      if new_translation_language != socket.assigns.selected_translation_language do
+        socket
+        |> assign(:cached_results, nil)
+        |> assign(:last_fetch_params, nil)
+      else
+        socket
+      end
+
     socket =
       socket
-      |> assign(:search_query, params["search"] || "")
-      |> assign(:selected_country, params["country"] || "")
-      |> assign(:selected_year, params["year"] || "")
-      |> assign(:selected_category, params["category"] || "")
-      |> assign(:selected_spoken_language, params["spoken_language"] || "")
-      |> assign(:selected_translation_language, params["translation_language"] || "")
-      |> assign(:sort_by, params["sort_by"] || "date_asc")
+      |> assign(:search_query, search_query)
+      |> assign(:applied_search_query, search_query)
+      |> assign(
+        :selected_country,
+        preserve_or_use.(params["country"], socket.assigns.selected_country)
+      )
+      |> assign(:selected_year, preserve_or_use.(params["year"], socket.assigns.selected_year))
+      |> assign(
+        :selected_category,
+        preserve_or_use.(params["category"], socket.assigns.selected_category)
+      )
+      |> assign(
+        :selected_spoken_language,
+        preserve_or_use.(params["spoken_language"], socket.assigns.selected_spoken_language)
+      )
+      |> assign(:selected_translation_language, new_translation_language)
+      |> assign(:sort_by, preserve_or_use.(params["sort_by"], socket.assigns.sort_by))
 
     apply_filters(socket)
   end
@@ -505,6 +552,7 @@ defmodule SahajyogWeb.TalksLive do
     socket =
       socket
       |> assign(:search_query, "")
+      |> assign(:applied_search_query, "")
       |> assign(:selected_country, "")
       |> assign(:selected_year, "")
       |> assign(:selected_category, "")
@@ -518,13 +566,28 @@ defmodule SahajyogWeb.TalksLive do
   def handle_event("clear_filter", %{"filter" => filter}, socket) do
     socket =
       case filter do
-        "search" -> assign(socket, :search_query, "")
-        "country" -> assign(socket, :selected_country, "")
-        "year" -> assign(socket, :selected_year, "")
-        "category" -> assign(socket, :selected_category, "")
-        "spoken_language" -> assign(socket, :selected_spoken_language, "")
-        "translation_language" -> assign(socket, :selected_translation_language, "")
-        _ -> socket
+        "search" ->
+          socket
+          |> assign(:search_query, "")
+          |> assign(:applied_search_query, "")
+
+        "country" ->
+          assign(socket, :selected_country, "")
+
+        "year" ->
+          assign(socket, :selected_year, "")
+
+        "category" ->
+          assign(socket, :selected_category, "")
+
+        "spoken_language" ->
+          assign(socket, :selected_spoken_language, "")
+
+        "translation_language" ->
+          assign(socket, :selected_translation_language, "")
+
+        _ ->
+          socket
       end
 
     apply_filters(socket)
@@ -838,7 +901,7 @@ defmodule SahajyogWeb.TalksLive do
 
           <%!-- Search and Filters --%>
           <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-base-content/10 shadow-xl">
-            <form phx-change="apply_all_filters" phx-submit="apply_all_filters" phx-debounce="1000">
+            <form phx-change="apply_all_filters" phx-submit="apply_all_filters">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                 <%!-- Search --%>
                 <div class="sm:col-span-2 lg:col-span-2">
@@ -852,7 +915,7 @@ defmodule SahajyogWeb.TalksLive do
                       name="search"
                       value={@search_query}
                       placeholder={gettext("Search talks...")}
-                      phx-debounce="1000"
+                      phx-debounce="500"
                       class="w-full px-4 py-3 pl-11 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content placeholder-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all"
                     />
                     <.icon
@@ -1007,14 +1070,14 @@ defmodule SahajyogWeb.TalksLive do
             </form>
 
             <%!-- Active filters and clear button --%>
-            <%= if @search_query != "" or @selected_country != "" or @selected_year != "" or @selected_category != "" or @selected_spoken_language != "" or @selected_translation_language != "" do %>
+            <%= if @applied_search_query != "" or @selected_country != "" or @selected_year != "" or @selected_category != "" or @selected_spoken_language != "" or @selected_translation_language != "" do %>
               <div class="mt-3 sm:mt-4 flex items-center gap-2 flex-wrap">
                 <span class="text-xs sm:text-sm text-base-content/60">
                   {gettext("Active filters:")}
                 </span>
-                <%= if @search_query != "" do %>
+                <%= if @applied_search_query != "" do %>
                   <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full group">
-                    <span>{gettext("Search")}: {@search_query}</span>
+                    <span>{gettext("Search")}: {@applied_search_query}</span>
                     <button
                       type="button"
                       phx-click="clear_filter"
