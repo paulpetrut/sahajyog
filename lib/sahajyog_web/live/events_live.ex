@@ -133,9 +133,41 @@ defmodule SahajyogWeb.EventsLive do
     {:noreply,
      socket
      |> assign(:selected_time_range, nil)
+     |> assign(:selected_month, nil)
      |> assign(:selected_country, nil)
      |> assign(:selected_city, nil)
      |> assign(:search_query, "")
+     |> assign(:current_page, 1)
+     |> load_events()}
+  end
+
+  @impl true
+  def handle_event("clear_filter", %{"filter" => filter}, socket) do
+    socket =
+      case filter do
+        "search" ->
+          assign(socket, :search_query, "")
+
+        "time_range" ->
+          assign(socket, :selected_time_range, nil)
+
+        "month" ->
+          assign(socket, :selected_month, nil)
+
+        "country" ->
+          socket
+          |> assign(:selected_country, nil)
+          |> assign(:selected_city, nil)
+
+        "city" ->
+          assign(socket, :selected_city, nil)
+
+        _ ->
+          socket
+      end
+
+    {:noreply,
+     socket
      |> assign(:current_page, 1)
      |> load_events()}
   end
@@ -275,29 +307,44 @@ defmodule SahajyogWeb.EventsLive do
         } />
 
         <%!-- Filters Section --%>
-        <div class="mb-6 p-4 bg-base-200/50 rounded-xl border border-base-content/10">
-          <div class="flex flex-wrap gap-3 items-center relative">
+        <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-base-content/10 shadow-xl mb-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
             <%!-- Search --%>
-            <div class="flex-1 min-w-[200px]">
-              <form phx-change="search" phx-submit="search">
-                <.input
-                  type="text"
-                  name="value"
-                  value={@search_query}
-                  placeholder={gettext("Search events...")}
-                  phx-debounce="300"
-                />
-              </form>
+            <div class="sm:col-span-2 lg:col-span-2">
+              <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2">
+                <.icon name="hero-magnifying-glass" class="w-4 h-4 text-primary" />
+                {gettext("Search")}
+              </label>
+              <div class="relative">
+                <form phx-change="search" phx-submit="search">
+                  <input
+                    type="text"
+                    name="value"
+                    value={@search_query}
+                    placeholder={gettext("Search events...")}
+                    phx-debounce="300"
+                    class="w-full px-4 py-2.5 pl-10 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content placeholder-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all font-medium"
+                  />
+                  <.icon
+                    name="hero-magnifying-glass"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-base-content/40"
+                  />
+                </form>
+              </div>
             </div>
 
-            <%!-- Time/Month Filter --%>
-            <div class="w-full sm:w-auto">
+            <%!-- Duration Filter --%>
+            <div>
+              <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2">
+                <.icon name="hero-clock" class="w-4 h-4 text-accent" />
+                {gettext("Duration")}
+              </label>
               <form phx-change="filter_time_range">
                 <select
                   name="time_range"
-                  class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
+                  class="w-full px-4 py-2.5 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium"
                 >
-                  <option value="">{gettext("Duration")}</option>
+                  <option value="">{gettext("Any Duration")}</option>
                   <%= for {label, value} <- @time_ranges do %>
                     <option value={value} selected={@selected_time_range == value}>
                       {label}
@@ -308,64 +355,160 @@ defmodule SahajyogWeb.EventsLive do
             </div>
 
             <%!-- Country Filter --%>
-            <%= if @countries != [] do %>
-              <div class="w-full sm:w-auto">
-                <form phx-change="filter_country">
-                  <select
-                    name="country"
-                    class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="">{gettext("Countries")}</option>
-                    <%= for country <- @countries do %>
-                      <option value={country} selected={@selected_country == country}>
-                        {country}
-                      </option>
-                    <% end %>
-                  </select>
-                </form>
-              </div>
-            <% end %>
+            <div>
+              <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2 uppercase tracking-wide">
+                <.icon name="hero-globe-alt" class="w-4 h-4 text-success" />
+                {gettext("Country")}
+              </label>
+              <form phx-change="filter_country">
+                <select
+                  name="country"
+                  disabled={@countries == []}
+                  class="w-full px-4 py-2.5 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium disabled:opacity-50"
+                >
+                  <option value="">{gettext("All Countries")}</option>
+                  <%= for country <- @countries do %>
+                    <option value={country} selected={@selected_country == country}>
+                      {country}
+                    </option>
+                  <% end %>
+                </select>
+              </form>
+            </div>
 
             <%!-- City Filter --%>
-            <%= if @cities != [] do %>
-              <div class="w-full sm:w-auto">
-                <form phx-change="filter_city">
-                  <select
-                    name="city"
-                    class="w-full px-3 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm text-base-content focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="">{gettext("Cities")}</option>
-                    <%= for city <- @cities do %>
-                      <option value={city} selected={@selected_city == city}>
-                        {city}
-                      </option>
-                    <% end %>
-                  </select>
-                </form>
-              </div>
-            <% end %>
-
-            <%!-- Clear Filters --%>
-            <%= if filters_active?(assigns) do %>
-              <button
-                phx-click="clear_filters"
-                class="px-3 py-2 text-sm text-primary hover:text-primary/80 font-medium whitespace-nowrap"
-              >
-                {gettext("Clear filters")}
-              </button>
-            <% end %>
+            <div>
+              <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2 uppercase tracking-wide">
+                <.icon name="hero-map-pin" class="w-4 h-4 text-warning" />
+                {gettext("City")}
+              </label>
+              <form phx-change="filter_city">
+                <select
+                  name="city"
+                  disabled={@cities == []}
+                  class="w-full px-4 py-2.5 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium disabled:opacity-50"
+                >
+                  <option value="">{gettext("All Cities")}</option>
+                  <%= for city <- @cities do %>
+                    <option value={city} selected={@selected_city == city}>
+                      {city}
+                    </option>
+                  <% end %>
+                </select>
+              </form>
+            </div>
           </div>
 
-          <%!-- Results Count --%>
-          <%= if @loading == false do %>
-            <p class="text-sm text-base-content/60 mt-3">
-              {ngettext(
-                "Showing %{count} event",
-                "Showing %{count} events",
-                @total_results,
-                count: @total_results
-              )}
-            </p>
+          <%!-- Active filters and clear button --%>
+          <%= if filters_active?(assigns) do %>
+            <div class="mt-6 pt-6 border-t border-base-content/10 flex items-center justify-between gap-4 flex-wrap animate-fade-in">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs sm:text-sm text-base-content/40 font-semibold uppercase tracking-wider">
+                  {gettext("Active filters")}
+                </span>
+
+                <%= if @search_query != "" do %>
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                    <span class="font-medium">{gettext("Search")}: {@search_query}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="search"
+                      class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                      aria-label={gettext("Clear search filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                <% end %>
+
+                <%= if @selected_time_range do %>
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                    <span class="font-medium">
+                      {Enum.find_value(@time_ranges, fn {l, v} -> v == @selected_time_range && l end)}
+                    </span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="time_range"
+                      class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                      aria-label={gettext("Clear duration filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                <% end %>
+
+                <%= if @selected_country do %>
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                    <span class="font-medium">{@selected_country}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="country"
+                      class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                      aria-label={gettext("Clear country filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                <% end %>
+
+                <%= if @selected_city do %>
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                    <span class="font-medium">{@selected_city}</span>
+                    <button
+                      type="button"
+                      phx-click="clear_filter"
+                      phx-value-filter="city"
+                      class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                      aria-label={gettext("Clear city filter")}
+                    >
+                      <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                <% end %>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <%= if @loading == false do %>
+                  <span class="hidden sm:inline text-xs sm:text-sm text-base-content/40 font-medium whitespace-nowrap">
+                    {ngettext(
+                      "Showing %{count} event",
+                      "Showing %{count} events",
+                      @total_results,
+                      count: @total_results
+                    )}
+                  </span>
+                <% end %>
+
+                <button
+                  type="button"
+                  phx-click="clear_filters"
+                  class="inline-flex items-center gap-1.5 px-3 py-2 bg-base-content/5 hover:bg-error/10 text-base-content/60 hover:text-error transition-all duration-200 rounded-lg border border-base-content/10 hover:border-error/20 text-xs sm:text-sm font-bold group"
+                >
+                  <.icon
+                    name="hero-arrow-path"
+                    class="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
+                  />
+                  {gettext("Clear all")}
+                </button>
+              </div>
+            </div>
+          <% end %>
+
+          <%!-- Simple count when no filters active --%>
+          <%= if !filters_active?(assigns) and @loading == false do %>
+            <div class="mt-4 flex justify-between items-center text-xs sm:text-sm text-base-content/40 border-t border-base-content/5 pt-4">
+              <span>
+                {ngettext(
+                  "Showing %{count} upcoming event",
+                  "Showing %{count} upcoming events",
+                  @total_results,
+                  count: @total_results
+                )}
+              </span>
+            </div>
           <% end %>
         </div>
 

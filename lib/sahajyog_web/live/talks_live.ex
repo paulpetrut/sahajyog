@@ -1071,109 +1071,115 @@ defmodule SahajyogWeb.TalksLive do
             </form>
 
             <%!-- Active filters and clear button --%>
-            <%= if @applied_search_query != "" or @selected_country != "" or @selected_year != "" or @selected_category != "" or @selected_spoken_language != "" or @selected_translation_language != "" do %>
-              <div class="mt-3 sm:mt-4 flex items-center gap-2 flex-wrap">
-                <span class="text-xs sm:text-sm text-base-content/60">
-                  {gettext("Active filters:")}
-                </span>
-                <%= if @applied_search_query != "" do %>
-                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full group">
-                    <span>{gettext("Search")}: {@applied_search_query}</span>
-                    <button
-                      type="button"
-                      phx-click="clear_filter"
-                      phx-value-filter="search"
-                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
-                      aria-label={gettext("Clear search filter")}
-                    >
-                      <.icon name="hero-x-mark" class="w-3 h-3" />
-                    </button>
+            <%= if @applied_search_query != "" or @selected_country != "" or @selected_year != "" or @selected_category != "" or @selected_spoken_language != "" or (@selected_translation_language != "" and @selected_translation_language != @default_translation_lang) do %>
+              <div class="mt-4 pt-4 border-t border-base-content/10 flex items-center justify-between gap-4 flex-wrap animate-fade-in">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs sm:text-sm text-base-content/40 font-semibold uppercase tracking-wider">
+                    {gettext("Active filters")}
                   </span>
-                <% end %>
-                <%= if @selected_country != "" do %>
-                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    <span>{@selected_country}</span>
-                    <button
-                      type="button"
-                      phx-click="clear_filter"
-                      phx-value-filter="country"
-                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
-                      aria-label={gettext("Clear country filter")}
-                    >
-                      <.icon name="hero-x-mark" class="w-3 h-3" />
-                    </button>
-                  </span>
-                <% end %>
-                <%= if @selected_year != "" do %>
-                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    <span>{@selected_year}</span>
-                    <button
-                      type="button"
-                      phx-click="clear_filter"
-                      phx-value-filter="year"
-                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
-                      aria-label={gettext("Clear year filter")}
-                    >
-                      <.icon name="hero-x-mark" class="w-3 h-3" />
-                    </button>
-                  </span>
-                <% end %>
-                <%= if @selected_category != "" do %>
-                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    <span>{@selected_category}</span>
-                    <button
-                      type="button"
-                      phx-click="clear_filter"
-                      phx-value-filter="category"
-                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
-                      aria-label={gettext("Clear category filter")}
-                    >
-                      <.icon name="hero-x-mark" class="w-3 h-3" />
-                    </button>
-                  </span>
-                <% end %>
-                <%= if @selected_spoken_language != "" do %>
-                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-primary text-primary-content text-xs sm:text-sm rounded-full">
-                    <span>{@selected_spoken_language}</span>
-                    <button
-                      type="button"
-                      phx-click="clear_filter"
-                      phx-value-filter="spoken_language"
-                      class="hover:bg-primary-content/20 rounded-full p-0.5 transition-colors"
-                      aria-label={gettext("Clear spoken language filter")}
-                    >
-                      <.icon name="hero-x-mark" class="w-3 h-3" />
-                    </button>
-                  </span>
-                <% end %>
-                <%= if @selected_translation_language != "" do %>
-                  <span class="inline-flex items-center gap-1 px-2 sm:px-3 py-1 bg-accent text-accent-content text-xs sm:text-sm rounded-full">
-                    <span>
-                      {Enum.find(@translation_languages, fn l ->
-                        l.code == @selected_translation_language
-                      end)
-                      |> case do
-                        %{name: name} -> name
-                        _ -> @selected_translation_language
-                      end}
+                  <%= if @applied_search_query != "" do %>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                      <span class="font-medium">{gettext("Search")}: {@applied_search_query}</span>
+                      <button
+                        type="button"
+                        phx-click="clear_filter"
+                        phx-value-filter="search"
+                        class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                        aria-label={gettext("Clear search filter")}
+                      >
+                        <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                      </button>
                     </span>
-                    <button
-                      type="button"
-                      phx-click="clear_filter"
-                      phx-value-filter="translation_language"
-                      class="hover:bg-accent-content/20 rounded-full p-0.5 transition-colors"
-                      aria-label={gettext("Clear translation language filter")}
-                    >
-                      <.icon name="hero-x-mark" class="w-3 h-3" />
-                    </button>
-                  </span>
-                <% end %>
+                  <% end %>
+                  <%= if @selected_country != "" do %>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                      <span class="font-medium">{@selected_country}</span>
+                      <button
+                        type="button"
+                        phx-click="clear_filter"
+                        phx-value-filter="country"
+                        class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                        aria-label={gettext("Clear country filter")}
+                      >
+                        <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  <% end %>
+                  <%= if @selected_year != "" do %>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                      <span class="font-medium">{@selected_year}</span>
+                      <button
+                        type="button"
+                        phx-click="clear_filter"
+                        phx-value-filter="year"
+                        class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                        aria-label={gettext("Clear year filter")}
+                      >
+                        <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  <% end %>
+                  <%= if @selected_category != "" do %>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                      <span class="font-medium">{@selected_category}</span>
+                      <button
+                        type="button"
+                        phx-click="clear_filter"
+                        phx-value-filter="category"
+                        class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                        aria-label={gettext("Clear category filter")}
+                      >
+                        <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  <% end %>
+                  <%= if @selected_spoken_language != "" do %>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                      <span class="font-medium">{@selected_spoken_language}</span>
+                      <button
+                        type="button"
+                        phx-click="clear_filter"
+                        phx-value-filter="spoken_language"
+                        class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                        aria-label={gettext("Clear spoken language filter")}
+                      >
+                        <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  <% end %>
+                  <%= if @selected_translation_language != "" and @selected_translation_language != @default_translation_lang do %>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs sm:text-sm rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
+                      <span class="font-medium">
+                        {Enum.find(@translation_languages, fn l ->
+                          l.code == @selected_translation_language
+                        end)
+                        |> case do
+                          %{name: name} -> name
+                          _ -> @selected_translation_language
+                        end}
+                      </span>
+                      <button
+                        type="button"
+                        phx-click="clear_filter"
+                        phx-value-filter="translation_language"
+                        class="hover:bg-primary/30 rounded-md p-0.5 transition-colors"
+                        aria-label={gettext("Clear translation language filter")}
+                      >
+                        <.icon name="hero-x-mark" class="w-3.5 h-3.5" />
+                      </button>
+                    </span>
+                  <% end %>
+                </div>
+
                 <button
                   type="button"
                   phx-click="clear_filters"
-                  class="px-2 sm:px-3 py-1 bg-base-100 hover:bg-error/20 hover:text-error text-base-content text-xs sm:text-sm rounded-full transition-colors flex items-center gap-1"
+                  class="inline-flex items-center gap-1.5 px-3 py-2 bg-base-content/5 hover:bg-error/10 text-base-content/60 hover:text-error transition-all duration-200 rounded-lg border border-base-content/10 hover:border-error/20 text-xs sm:text-sm font-bold group"
                 >
-                  <.icon name="hero-x-mark" class="w-3 h-3" />
+                  <.icon
+                    name="hero-arrow-path"
+                    class="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
+                  />
                   {gettext("Clear all")}
                 </button>
               </div>

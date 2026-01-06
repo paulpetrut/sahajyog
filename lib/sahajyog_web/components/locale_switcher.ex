@@ -27,10 +27,10 @@ defmodule SahajyogWeb.LocaleSwitcher do
       <div
         tabindex="0"
         role="button"
-        class="btn btn-ghost btn-sm btn-circle text-base-content/70 hover:text-base-content transition-colors"
+        class="btn btn-ghost btn-sm btn-circle text-base-content/70 hover:text-base-content transition-colors flex items-center justify-center"
         aria-label="Select language"
       >
-        <.icon name="hero-globe-alt" class="w-5 h-5" />
+        <span class="text-[10px] uppercase font-semibold leading-none">{@current_locale}</span>
       </div>
       <ul
         tabindex="0"

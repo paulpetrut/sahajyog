@@ -962,10 +962,9 @@ const updateActiveNavLink = () => {
   document.querySelectorAll(".nav-link").forEach((link) => {
     const navPath = link.dataset.navPath
     if (navPath && currentPath.startsWith(navPath)) {
-      link.classList.add("text-base-content", "border-b-2", "border-primary")
-      link.classList.remove("text-base-content/70")
+      link.classList.add("active")
     } else {
-      link.classList.remove("text-base-content", "border-b-2", "border-primary")
+      link.classList.remove("active")
     }
   })
 }
