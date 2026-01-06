@@ -39,10 +39,18 @@ defmodule SahajyogWeb.TalksLive do
       |> stream_configure(:talks, dom_id: fn talk -> "talk-#{talk["id"]}" end)
       |> stream(:talks, [])
 
-    # Preload filter options in background if connected
-    if connected?(socket) do
-      send(self(), :load_filter_options)
-    end
+    # Load initial data immediately if not connected (for faster initial render)
+    socket =
+      if connected?(socket) do
+        # Preload filter options in background
+        send(self(), :load_filter_options)
+        socket
+      else
+        # On initial mount, load talks immediately for faster perceived performance
+        socket
+        |> assign_params(%{})
+        |> load_initial_talks()
+      end
 
     {:ok, socket}
   rescue
@@ -57,6 +65,27 @@ defmodule SahajyogWeb.TalksLive do
        |> assign(:talks_empty?, true)
        |> assign(:loading, false)
        |> assign(:error, "An error occurred. Please try again later.")}
+  end
+
+  defp load_initial_talks(socket) do
+    filters = build_filters_from_assigns(socket)
+
+    case get_paginated_talks(socket, filters) do
+      {:ok, talks, total, socket} ->
+        socket
+        |> stream(:talks, talks, reset: true)
+        |> assign(:total_results, total)
+        |> assign(:talks_empty?, talks == [])
+        |> assign(:loading, false)
+        |> assign(:error, nil)
+
+      {:error, _reason, socket} ->
+        socket
+        |> stream(:talks, [], reset: true)
+        |> assign(:talks_empty?, false)
+        |> assign(:loading, true)
+        |> assign(:error, nil)
+    end
   end
 
   def handle_params(params, _uri, socket) do
@@ -323,18 +352,24 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   defp load_filter_options(socket) do
-    # Fetch all filter options in parallel using Task.async_stream for better performance
+    # Load filter options from cache (fast) or API (slower)
+    # Use Task.async_stream with ordered: false for better performance
     tasks = [
-      {:countries, fn -> Sahajyog.ExternalApi.fetch_countries() end},
-      {:years, fn -> Sahajyog.ExternalApi.fetch_years() end},
-      {:categories, fn -> Sahajyog.ExternalApi.fetch_categories() end},
-      {:spoken_languages, fn -> Sahajyog.ExternalApi.fetch_spoken_languages() end},
-      {:translation_languages, fn -> Sahajyog.ExternalApi.fetch_translation_languages() end}
+      {:countries, fn -> Sahajyog.ApiCache.get_countries() end},
+      {:years, fn -> Sahajyog.ApiCache.get_years() end},
+      {:categories, fn -> Sahajyog.ApiCache.get_categories() end},
+      {:spoken_languages, fn -> Sahajyog.ApiCache.get_spoken_languages() end},
+      {:translation_languages, fn -> Sahajyog.ApiCache.get_translation_languages() end}
     ]
 
     results =
       tasks
-      |> Task.async_stream(fn {key, func} -> {key, func.()} end, timeout: 15_000)
+      |> Task.async_stream(
+        fn {key, func} -> {key, func.()} end,
+        timeout: 10_000,
+        ordered: false,
+        max_concurrency: 5
+      )
       |> Enum.reduce(%{}, fn
         {:ok, {key, {:ok, data}}}, acc -> Map.put(acc, key, data)
         {:ok, {key, {:error, _}}}, acc -> Map.put(acc, key, [])
