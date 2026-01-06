@@ -458,12 +458,13 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   def handle_event("apply_all_filters", params, socket) do
-    search_query = params["search"] || ""
-
     # Helper to preserve existing value if param is nil or empty string
     preserve_or_use = fn param_value, existing_value ->
       if param_value in [nil, ""], do: existing_value, else: param_value
     end
+
+    # Preserve search query when changing other filters
+    search_query = preserve_or_use.(params["search"], socket.assigns.applied_search_query)
 
     new_translation_language =
       preserve_or_use.(
