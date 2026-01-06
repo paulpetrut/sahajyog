@@ -19,7 +19,7 @@ defmodule Sahajyog.ApiCache do
   @translation_languages_key :translation_languages
 
   # TTL configurations
-  @filter_ttl :timer.hours(1)
+  @filter_ttl :timer.hours(24)
   @talks_ttl :timer.hours(6)
 
   # Client API
