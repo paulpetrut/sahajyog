@@ -36,14 +36,17 @@ defmodule SahajyogWeb.TalksLive do
       |> assign(:params_applied, false)
       |> assign(:cached_results, nil)
       |> assign(:last_fetch_params, nil)
+      |> assign(:filters_loaded, false)
       |> stream_configure(:talks, dom_id: fn talk -> "talk-#{talk["id"]}" end)
       |> stream(:talks, [])
 
     # Load initial data immediately if not connected (for faster initial render)
     socket =
       if connected?(socket) do
-        # Preload filter options in background
-        send(self(), :load_filter_options)
+        # Load essential filters immediately (years only for fast initial load)
+        send(self(), :load_essential_filters)
+        # Load remaining filters in background after a short delay
+        Process.send_after(self(), :load_remaining_filters, 500)
         socket
       else
         # On initial mount, load talks immediately for faster perceived performance
@@ -382,6 +385,62 @@ defmodule SahajyogWeb.TalksLive do
     |> assign(:categories, Map.get(results, :categories, []))
     |> assign(:spoken_languages, Map.get(results, :spoken_languages, []))
     |> assign(:translation_languages, Map.get(results, :translation_languages, []))
+    |> assign(:filters_loaded, true)
+  end
+
+  defp load_essential_filters(socket) do
+    # Load only years and categories for fast initial page load
+    tasks = [
+      {:years, fn -> Sahajyog.ApiCache.get_years() end},
+      {:categories, fn -> Sahajyog.ApiCache.get_categories() end}
+    ]
+
+    results =
+      tasks
+      |> Task.async_stream(
+        fn {key, func} -> {key, func.()} end,
+        timeout: 5_000,
+        ordered: false,
+        max_concurrency: 2
+      )
+      |> Enum.reduce(%{}, fn
+        {:ok, {key, {:ok, data}}}, acc -> Map.put(acc, key, data)
+        {:ok, {key, {:error, _}}}, acc -> Map.put(acc, key, [])
+        {:exit, _reason}, acc -> acc
+      end)
+
+    socket
+    |> assign(:years, Map.get(results, :years, []))
+    |> assign(:categories, Map.get(results, :categories, []))
+  end
+
+  defp load_remaining_filters(socket) do
+    # Load remaining filters (countries, languages) in background
+    tasks = [
+      {:countries, fn -> Sahajyog.ApiCache.get_countries() end},
+      {:spoken_languages, fn -> Sahajyog.ApiCache.get_spoken_languages() end},
+      {:translation_languages, fn -> Sahajyog.ApiCache.get_translation_languages() end}
+    ]
+
+    results =
+      tasks
+      |> Task.async_stream(
+        fn {key, func} -> {key, func.()} end,
+        timeout: 10_000,
+        ordered: false,
+        max_concurrency: 3
+      )
+      |> Enum.reduce(%{}, fn
+        {:ok, {key, {:ok, data}}}, acc -> Map.put(acc, key, data)
+        {:ok, {key, {:error, _}}}, acc -> Map.put(acc, key, [])
+        {:exit, _reason}, acc -> acc
+      end)
+
+    socket
+    |> assign(:countries, Map.get(results, :countries, []))
+    |> assign(:spoken_languages, Map.get(results, :spoken_languages, []))
+    |> assign(:translation_languages, Map.get(results, :translation_languages, []))
+    |> assign(:filters_loaded, true)
   end
 
   def handle_event("apply_all_filters", params, socket) do
@@ -549,6 +608,18 @@ defmodule SahajyogWeb.TalksLive do
   def handle_info(:load_filter_options, socket) do
     # Load filter options asynchronously without blocking the main talks load
     socket = load_filter_options(socket)
+    {:noreply, socket}
+  end
+
+  def handle_info(:load_essential_filters, socket) do
+    # Load only essential filters (years and categories) for fast initial load
+    socket = load_essential_filters(socket)
+    {:noreply, socket}
+  end
+
+  def handle_info(:load_remaining_filters, socket) do
+    # Load remaining filters in background after page is interactive
+    socket = load_remaining_filters(socket)
     {:noreply, socket}
   end
 
