@@ -90,9 +90,17 @@ defmodule SahajyogWeb.ResourcesLive do
 
   defp filter_options do
     base = [{"all", gettext("All"), "hero-squares-2x2"}]
-    types = Enum.map(Resource.types(), fn type -> {type, type, type_icon(type)} end)
+
+    types =
+      Enum.map(Resource.types(), fn type -> {type, translate_type(type), type_icon(type)} end)
+
     base ++ types
   end
+
+  defp translate_type("Photos"), do: gettext("Photos")
+  defp translate_type("Books"), do: gettext("Books")
+  defp translate_type("Music"), do: gettext("Music")
+  defp translate_type(type), do: type
 
   @impl true
   def render(assigns) do
@@ -100,7 +108,18 @@ defmodule SahajyogWeb.ResourcesLive do
     <.page_container phx-hook="PreviewHandler" id="resources-container">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <%!-- Header --%>
-        <.page_header title={gettext("Resources")} centered />
+        <div class="mb-8 sm:mb-12 relative animate-fade-in">
+          <div class="text-center">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-base-content mb-3 tracking-tight">
+              {gettext("Resources")}
+            </h1>
+            <p class="text-base sm:text-lg text-base-content/60 max-w-2xl mx-auto font-medium leading-relaxed">
+              {gettext(
+                "Access a curated collection of photos, books, and music specifically chosen to support and deepen your spiritual growth."
+              )}
+            </p>
+          </div>
+        </div>
 
         <%!-- Filter Tabs --%>
         <.filter_tabs
@@ -108,6 +127,7 @@ defmodule SahajyogWeb.ResourcesLive do
           selected={@selected_type}
           on_select="filter"
           param_name="type"
+          class="flex justify-center"
         />
 
         <%!-- Resources Grid --%>

@@ -53,41 +53,50 @@ defmodule SahajyogWeb.Layouts do
 
   def events_nav(assigns) do
     ~H"""
-    <nav class="flex items-center gap-2 sm:gap-4 mb-6 sm:mb-8 border-b border-base-content/10 pb-4 overflow-x-auto">
-      <.link
-        navigate={~p"/events"}
-        class={[
-          "px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap",
-          @current_page == :list && "bg-primary text-primary-content",
-          @current_page != :list && "text-base-content/70 hover:bg-base-200 hover:text-base-content"
-        ]}
-      >
-        {gettext("All Events")}
-      </.link>
+    <nav class="flex justify-center mb-8 sm:mb-12">
+      <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-1.5 border border-base-content/10 shadow-xl flex flex-wrap justify-center gap-1.5 w-full sm:w-max mx-auto px-1.5">
+        <.link
+          navigate={~p"/events"}
+          class={[
+            "px-4 py-2.5 rounded-lg transition-all duration-200 font-bold text-sm sm:text-base flex items-center justify-center gap-2 flex-grow sm:flex-grow-0 sm:flex-none min-w-[120px] sm:min-w-0 md:min-w-[140px]",
+            if(@current_page == :list,
+              do: "bg-primary text-primary-content shadow-lg shadow-primary/20",
+              else: "text-base-content/60 hover:bg-base-100/50 hover:text-base-content"
+            )
+          ]}
+        >
+          <.icon name="hero-calendar" class="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>{gettext("All Events")}</span>
+        </.link>
 
-      <.link
-        navigate={~p"/events?filter=my_events"}
-        class={[
-          "px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap",
-          @current_page == :my_events && "bg-primary text-primary-content",
-          @current_page != :my_events &&
-            "text-base-content/70 hover:bg-base-200 hover:text-base-content"
-        ]}
-      >
-        {gettext("My Events")}
-      </.link>
+        <.link
+          navigate={~p"/events?filter=my_events"}
+          class={[
+            "px-4 py-2.5 rounded-lg transition-all duration-200 font-bold text-sm sm:text-base flex items-center justify-center gap-2 flex-grow sm:flex-grow-0 sm:flex-none min-w-[120px] sm:min-w-0 md:min-w-[140px]",
+            if(@current_page == :my_events,
+              do: "bg-primary text-primary-content shadow-lg shadow-primary/20",
+              else: "text-base-content/60 hover:bg-base-100/50 hover:text-base-content"
+            )
+          ]}
+        >
+          <.icon name="hero-user-group" class="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>{gettext("My Events")}</span>
+        </.link>
 
-      <.link
-        navigate={~p"/events?filter=past"}
-        class={[
-          "px-3 sm:px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap",
-          @current_page == :past && "bg-primary text-primary-content",
-          @current_page != :past &&
-            "text-base-content/70 hover:bg-base-200 hover:text-base-content"
-        ]}
-      >
-        {gettext("Past Events")}
-      </.link>
+        <.link
+          navigate={~p"/events?filter=past"}
+          class={[
+            "px-4 py-2.5 rounded-lg transition-all duration-200 font-bold text-sm sm:text-base flex items-center justify-center gap-2 flex-grow sm:flex-grow-0 sm:flex-none min-w-[120px] sm:min-w-0 md:min-w-[140px]",
+            if(@current_page == :past,
+              do: "bg-primary text-primary-content shadow-lg shadow-primary/20",
+              else: "text-base-content/60 hover:bg-base-100/50 hover:text-base-content"
+            )
+          ]}
+        >
+          <.icon name="hero-clock" class="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>{gettext("Past Events")}</span>
+        </.link>
+      </div>
     </nav>
     """
   end

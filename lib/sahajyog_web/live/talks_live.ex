@@ -458,23 +458,21 @@ defmodule SahajyogWeb.TalksLive do
   end
 
   def handle_event("apply_all_filters", params, socket) do
-    # Helper to preserve existing value if param is nil or empty string
-    preserve_or_use = fn param_value, existing_value ->
-      if param_value in [nil, ""], do: existing_value, else: param_value
-    end
+    # Get values from params, defaulting to current value if not present
+    search_query = Map.get(params, "search", socket.assigns.applied_search_query)
+    country = Map.get(params, "country", socket.assigns.selected_country)
+    year = Map.get(params, "year", socket.assigns.selected_year)
+    category = Map.get(params, "category", socket.assigns.selected_category)
+    spoken_language = Map.get(params, "spoken_language", socket.assigns.selected_spoken_language)
 
-    # Preserve search query when changing other filters
-    search_query = preserve_or_use.(params["search"], socket.assigns.applied_search_query)
+    translation_language =
+      Map.get(params, "translation_language", socket.assigns.selected_translation_language)
 
-    new_translation_language =
-      preserve_or_use.(
-        params["translation_language"],
-        socket.assigns.selected_translation_language
-      )
+    sort_by = Map.get(params, "sort_by", socket.assigns.sort_by)
 
     # Clear cached results if translation language changed
     socket =
-      if new_translation_language != socket.assigns.selected_translation_language do
+      if translation_language != socket.assigns.selected_translation_language do
         socket
         |> assign(:cached_results, nil)
         |> assign(:last_fetch_params, nil)
@@ -486,21 +484,12 @@ defmodule SahajyogWeb.TalksLive do
       socket
       |> assign(:search_query, search_query)
       |> assign(:applied_search_query, search_query)
-      |> assign(
-        :selected_country,
-        preserve_or_use.(params["country"], socket.assigns.selected_country)
-      )
-      |> assign(:selected_year, preserve_or_use.(params["year"], socket.assigns.selected_year))
-      |> assign(
-        :selected_category,
-        preserve_or_use.(params["category"], socket.assigns.selected_category)
-      )
-      |> assign(
-        :selected_spoken_language,
-        preserve_or_use.(params["spoken_language"], socket.assigns.selected_spoken_language)
-      )
-      |> assign(:selected_translation_language, new_translation_language)
-      |> assign(:sort_by, preserve_or_use.(params["sort_by"], socket.assigns.sort_by))
+      |> assign(:selected_country, country)
+      |> assign(:selected_year, year)
+      |> assign(:selected_category, category)
+      |> assign(:selected_spoken_language, spoken_language)
+      |> assign(:selected_translation_language, translation_language)
+      |> assign(:sort_by, sort_by)
 
     apply_filters(socket)
   end
@@ -934,12 +923,17 @@ defmodule SahajyogWeb.TalksLive do
                   </label>
                   <select
                     name="sort_by"
-                    value={@sort_by}
                     class="w-full px-4 py-3 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all cursor-pointer"
                   >
-                    <option value="relevance">{gettext("Relevance")}</option>
-                    <option value="date_desc">{gettext("Newest")}</option>
-                    <option value="date_asc">{gettext("Oldest")}</option>
+                    <option value="relevance" selected={@sort_by == "relevance"}>
+                      {gettext("Relevance")}
+                    </option>
+                    <option value="date_desc" selected={@sort_by == "date_desc"}>
+                      {gettext("Newest")}
+                    </option>
+                    <option value="date_asc" selected={@sort_by == "date_asc"}>
+                      {gettext("Oldest")}
+                    </option>
                   </select>
                 </div>
 
@@ -951,7 +945,6 @@ defmodule SahajyogWeb.TalksLive do
                   </label>
                   <select
                     name="translation_language"
-                    value={@selected_translation_language}
                     class="w-full px-4 py-3 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all cursor-pointer"
                   >
                     <option value="" selected={@selected_translation_language == ""}>
@@ -973,12 +966,11 @@ defmodule SahajyogWeb.TalksLive do
                   </label>
                   <select
                     name="year"
-                    value={@selected_year}
                     class="w-full px-4 py-3 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all cursor-pointer"
                   >
-                    <option value="">{gettext("All Years")}</option>
+                    <option value="" selected={@selected_year == ""}>{gettext("All Years")}</option>
                     <%= for year <- @years do %>
-                      <option value={year}>
+                      <option value={year} selected={@selected_year == year}>
                         {year}
                       </option>
                     <% end %>
@@ -1016,12 +1008,13 @@ defmodule SahajyogWeb.TalksLive do
                       </label>
                       <select
                         name="country"
-                        value={@selected_country}
                         class="w-full px-3 sm:px-4 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                       >
-                        <option value="">{gettext("All Countries")}</option>
+                        <option value="" selected={@selected_country == ""}>
+                          {gettext("All Countries")}
+                        </option>
                         <%= for country <- @countries do %>
-                          <option value={country}>
+                          <option value={country} selected={@selected_country == country}>
                             {country}
                           </option>
                         <% end %>
@@ -1035,12 +1028,13 @@ defmodule SahajyogWeb.TalksLive do
                       </label>
                       <select
                         name="category"
-                        value={@selected_category}
                         class="w-full px-3 sm:px-4 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                       >
-                        <option value="">{gettext("All Categories")}</option>
+                        <option value="" selected={@selected_category == ""}>
+                          {gettext("All Categories")}
+                        </option>
                         <%= for category <- @categories do %>
-                          <option value={category}>
+                          <option value={category} selected={@selected_category == category}>
                             {category}
                           </option>
                         <% end %>
@@ -1054,12 +1048,13 @@ defmodule SahajyogWeb.TalksLive do
                       </label>
                       <select
                         name="spoken_language"
-                        value={@selected_spoken_language}
                         class="w-full px-3 sm:px-4 py-2 bg-base-100 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                       >
-                        <option value="">{gettext("All Languages")}</option>
+                        <option value="" selected={@selected_spoken_language == ""}>
+                          {gettext("All Languages")}
+                        </option>
                         <%= for language <- @spoken_languages do %>
-                          <option value={language}>
+                          <option value={language} selected={@selected_spoken_language == language}>
                             {language}
                           </option>
                         <% end %>
@@ -1067,6 +1062,11 @@ defmodule SahajyogWeb.TalksLive do
                     </div>
                   </div>
                 </div>
+              <% else %>
+                <%!-- Hidden inputs to preserve advanced filter values when section is collapsed --%>
+                <input type="hidden" name="country" value={@selected_country} />
+                <input type="hidden" name="category" value={@selected_category} />
+                <input type="hidden" name="spoken_language" value={@selected_spoken_language} />
               <% end %>
             </form>
 

@@ -55,13 +55,13 @@
         </div>
 
         <%!-- Desktop Navigation --%>
-        <div class="hidden lg:flex items-center text-base-content shrink-0 px-2">
+        <div class="hidden lg:flex items-center text-base-content shrink-0 px-2 lg:gap-2 xl:gap-4">
           <%!-- Main Links Group --%>
-          <div class="flex items-center gap-1 xl:gap-2 2xl:text-lg mr-2 xl:mr-4">
+          <div class="flex items-center gap-1 xl:gap-2 mr-2 xl:mr-3">
             <.link
               href={~p"/talks"}
               data-nav-path="/talks"
-              class="nav-link px-3 py-2 rounded-lg font-medium hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px]"
+              class="nav-link px-3 py-2 rounded-lg font-semibold text-sm hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px] h-10"
             >
               {gettext("Talks")}
             </.link>
@@ -70,7 +70,7 @@
               <.link
                 href={~p"/steps"}
                 data-nav-path="/steps"
-                class="nav-link px-3 py-2 rounded-lg font-medium hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px]"
+                class="nav-link px-3 py-2 rounded-lg font-semibold text-sm hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px] h-10"
               >
                 {gettext("Steps")}
               </.link>
@@ -78,7 +78,7 @@
               <.link
                 href={~p"/topics"}
                 data-nav-path="/topics"
-                class="nav-link px-3 py-2 rounded-lg font-medium hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px]"
+                class="nav-link px-3 py-2 rounded-lg font-semibold text-sm hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px] h-10"
               >
                 {gettext("Topics")}
               </.link>
@@ -86,7 +86,7 @@
               <.link
                 href={~p"/resources"}
                 data-nav-path="/resources"
-                class="nav-link px-3 py-2 rounded-lg font-medium hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px]"
+                class="nav-link px-3 py-2 rounded-lg font-semibold text-sm hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px] h-10"
               >
                 {gettext("Resources")}
               </.link>
@@ -95,7 +95,7 @@
                 <.link
                   href={~p"/events"}
                   data-nav-path="/events"
-                  class="nav-link px-3 py-2 rounded-lg font-medium hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px]"
+                  class="nav-link px-3 py-2 rounded-lg font-semibold text-sm hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px] h-10"
                 >
                   {gettext("Events")}
                 </.link>
@@ -104,7 +104,7 @@
               <.link
                 href={~p"/store"}
                 data-nav-path="/store"
-                class="nav-link px-3 py-2 rounded-lg font-medium hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px]"
+                class="nav-link px-3 py-2 rounded-lg font-semibold text-sm hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px] h-10"
               >
                 {gettext("Store")}
               </.link>
@@ -113,7 +113,7 @@
                 <.link
                   href={~p"/admin/videos"}
                   data-nav-path="/admin"
-                  class="nav-link px-3 py-2 rounded-lg font-medium hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px]"
+                  class="nav-link px-3 py-2 rounded-lg font-semibold text-sm hover:bg-base-200 transition-all flex items-center justify-center min-h-[44px] h-10"
                 >
                   {gettext("Admin")}
                 </.link>
@@ -193,13 +193,13 @@
               <div class="flex items-center gap-2 ml-2">
                 <.link
                   href={~p"/users/register"}
-                  class="btn btn-primary btn-sm rounded-lg font-semibold px-4 h-10"
+                  class="btn btn-primary btn-sm rounded-lg font-semibold text-sm px-4 h-10"
                 >
                   {gettext("Register")}
                 </.link>
                 <.link
                   href={~p"/users/log-in"}
-                  class="btn btn-ghost btn-sm rounded-lg font-medium px-4 h-10 hover:bg-base-200 transition-colors"
+                  class="btn btn-ghost btn-sm rounded-lg font-semibold text-sm px-4 h-10 hover:bg-base-200 transition-colors"
                 >
                   {gettext("Log in")}
                 </.link>

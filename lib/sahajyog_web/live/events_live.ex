@@ -7,19 +7,21 @@ defmodule SahajyogWeb.EventsLive do
   alias Sahajyog.Events
 
   @per_page 21
-  @time_ranges [
-    {"1 month", "1_month"},
-    {"3 months", "3_months"},
-    {"6 months", "6_months"},
-    {"1 year", "1_year"}
-  ]
+  defp time_ranges do
+    [
+      {gettext("1 month"), "1_month"},
+      {gettext("3 months"), "3_months"},
+      {gettext("6 months"), "6_months"},
+      {gettext("1 year"), "1_year"}
+    ]
+  end
 
   @impl true
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(:page_title, "Events")
-      |> assign(:time_ranges, @time_ranges)
+      |> assign(:page_title, gettext("Events"))
+      |> assign(:time_ranges, time_ranges())
       |> assign(:selected_time_range, nil)
       |> assign(:selected_month, nil)
       |> assign(:selected_country, nil)
@@ -217,17 +219,23 @@ defmodule SahajyogWeb.EventsLive do
 
   defp apply_filters(socket, new_filters) do
     socket
-    |> maybe_assign(:selected_time_range, new_filters[:time_range])
-    |> maybe_assign(:selected_month, new_filters[:month])
-    |> maybe_assign(:selected_country, new_filters[:country])
-    |> maybe_assign(:selected_city, new_filters[:city])
-    |> maybe_assign(:search_query, new_filters[:search])
+    |> maybe_assign(:selected_time_range, new_filters, :time_range)
+    |> maybe_assign(:selected_month, new_filters, :month)
+    |> maybe_assign(:selected_country, new_filters, :country)
+    |> maybe_assign(:selected_city, new_filters, :city)
+    |> maybe_assign(:search_query, new_filters, :search)
     |> assign(:current_page, 1)
     |> load_events()
   end
 
-  defp maybe_assign(socket, _key, nil), do: socket
-  defp maybe_assign(socket, key, value), do: assign(socket, key, value)
+  # Only assign if the key exists in the filters map (allows nil values to clear filters)
+  defp maybe_assign(socket, assign_key, filters, filter_key) do
+    if Map.has_key?(filters, filter_key) do
+      assign(socket, assign_key, filters[filter_key])
+    else
+      socket
+    end
+  end
 
   defp days_until(event_date) do
     today = Date.utc_today()
@@ -279,36 +287,39 @@ defmodule SahajyogWeb.EventsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <.page_container>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <%!-- Header --%>
-        <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="text-center sm:text-left">
-            <h1 class="text-3xl sm:text-4xl font-bold text-base-content mb-2">
+    <div class="min-h-screen bg-gradient-to-br from-base-300 via-base-200 to-base-300 noise-overlay">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 font-sans">
+        <div class="mb-8 sm:mb-12 relative px-2 sm:px-0">
+          <div class="text-center lg:px-48">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-base-content mb-3 tracking-tight">
               {gettext("Events")}
             </h1>
-            <p class="text-base text-base-content/70">
+            <p class="text-base sm:text-lg text-base-content/60 max-w-xl mx-auto font-medium leading-relaxed">
               {gettext("Discover and join upcoming Sahaja Yoga events")}
             </p>
           </div>
-          <div>
+
+          <%!-- Header Actions --%>
+          <div class="lg:absolute right-0 top-0 flex items-center gap-3 mt-6 lg:mt-0 justify-center">
             <.primary_button navigate="/events/propose" icon="hero-plus">
               {gettext("Propose Event")}
             </.primary_button>
           </div>
         </div>
 
-        <Layouts.events_nav current_page={
-          cond do
-            @filter == "my_events" -> :my_events
-            @filter == "past" -> :past
-            true -> :list
-          end
-        } />
+        <div class="flex justify-center">
+          <Layouts.events_nav current_page={
+            cond do
+              @filter == "my_events" -> :my_events
+              @filter == "past" -> :past
+              true -> :list
+            end
+          } />
+        </div>
 
         <%!-- Filters Section --%>
         <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-base-content/10 shadow-xl mb-8">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 items-end">
             <%!-- Search --%>
             <div class="sm:col-span-2 lg:col-span-2">
               <label class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-base-content/80 mb-2">
@@ -323,11 +334,11 @@ defmodule SahajyogWeb.EventsLive do
                     value={@search_query}
                     placeholder={gettext("Search events...")}
                     phx-debounce="300"
-                    class="w-full px-4 py-2.5 pl-10 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content placeholder-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all font-medium"
+                    class="w-full px-4 py-3 pl-11 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content placeholder-base-content/40 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:bg-base-100 transition-all font-medium"
                   />
                   <.icon
                     name="hero-magnifying-glass"
-                    class="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-base-content/40"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content/40"
                   />
                 </form>
               </div>
@@ -342,9 +353,11 @@ defmodule SahajyogWeb.EventsLive do
               <form phx-change="filter_time_range">
                 <select
                   name="time_range"
-                  class="w-full px-4 py-2.5 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium"
+                  class="w-full px-4 py-3 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium"
                 >
-                  <option value="">{gettext("Any Duration")}</option>
+                  <option value="" selected={@selected_time_range == nil}>
+                    {gettext("Any Duration")}
+                  </option>
                   <%= for {label, value} <- @time_ranges do %>
                     <option value={value} selected={@selected_time_range == value}>
                       {label}
@@ -364,9 +377,11 @@ defmodule SahajyogWeb.EventsLive do
                 <select
                   name="country"
                   disabled={@countries == []}
-                  class="w-full px-4 py-2.5 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium disabled:opacity-50"
+                  class="w-full px-4 py-3 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium disabled:opacity-50"
                 >
-                  <option value="">{gettext("All Countries")}</option>
+                  <option value="" selected={@selected_country == nil}>
+                    {gettext("All Countries")}
+                  </option>
                   <%= for country <- @countries do %>
                     <option value={country} selected={@selected_country == country}>
                       {country}
@@ -386,9 +401,9 @@ defmodule SahajyogWeb.EventsLive do
                 <select
                   name="city"
                   disabled={@cities == []}
-                  class="w-full px-4 py-2.5 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium disabled:opacity-50"
+                  class="w-full px-4 py-3 bg-base-100/50 border border-base-content/20 rounded-lg text-sm sm:text-base text-base-content focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer font-medium disabled:opacity-50"
                 >
-                  <option value="">{gettext("All Cities")}</option>
+                  <option value="" selected={@selected_city == nil}>{gettext("All Cities")}</option>
                   <%= for city <- @cities do %>
                     <option value={city} selected={@selected_city == city}>
                       {city}
@@ -474,8 +489,8 @@ defmodule SahajyogWeb.EventsLive do
                 <%= if @loading == false do %>
                   <span class="hidden sm:inline text-xs sm:text-sm text-base-content/40 font-medium whitespace-nowrap">
                     {ngettext(
-                      "Showing %{count} event",
-                      "Showing %{count} events",
+                      "%{count} event",
+                      "%{count} events",
                       @total_results,
                       count: @total_results
                     )}
@@ -502,8 +517,8 @@ defmodule SahajyogWeb.EventsLive do
             <div class="mt-4 flex justify-between items-center text-xs sm:text-sm text-base-content/40 border-t border-base-content/5 pt-4">
               <span>
                 {ngettext(
-                  "Showing %{count} upcoming event",
-                  "Showing %{count} upcoming events",
+                  "%{count} upcoming event",
+                  "%{count} upcoming events",
                   @total_results,
                   count: @total_results
                 )}
@@ -525,21 +540,22 @@ defmodule SahajyogWeb.EventsLive do
               :for={{id, event} <- @streams.events}
               id={id}
               hover
-              class="group overflow-hidden sm:hover:-translate-y-1 animate-fade-in"
+              size="sm"
+              class="group overflow-hidden hover:-translate-y-1.5 animate-fade-in"
             >
-              <.link navigate={~p"/events/#{event.slug}"} class="block">
-                <div class="p-4 sm:p-6">
+              <.link navigate={~p"/events/#{event.slug}"} class="block h-full">
+                <div class="h-full flex flex-col">
                   <%!-- Status & Date Badge --%>
                   <div class="flex items-center justify-between mb-3">
                     <%= if event.status != "public" do %>
                       <span class={[
-                        "px-2 py-1 rounded-full text-xs font-medium",
+                        "px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
                         event_status_class(event.status)
                       ]}>
                         {event.status}
                       </span>
                     <% else %>
-                      <span class="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium border border-primary/20">
+                      <span class="px-2 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-wider border border-primary/20">
                         <%= if event.event_date do %>
                           <% days = days_until(event.event_date) %>
                           <%= cond do %>
@@ -562,15 +578,15 @@ defmodule SahajyogWeb.EventsLive do
                   </div>
 
                   <%!-- Title --%>
-                  <h3 class="text-lg sm:text-xl font-bold text-base-content mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                  <h3 class="text-lg sm:text-xl font-bold text-base-content mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
                     {event.title}
                   </h3>
 
                   <%!-- Location --%>
                   <%= if event.city || event.country do %>
-                    <div class="flex items-center gap-2 text-sm text-base-content/60 mb-3">
-                      <.icon name="hero-map-pin" class="w-4 h-4" />
-                      <span>
+                    <div class="flex items-center gap-2 text-sm text-base-content/60 mb-3 font-medium">
+                      <.icon name="hero-map-pin" class="w-4 h-4 text-primary/60" />
+                      <span class="truncate">
                         {[event.city, event.country] |> Enum.reject(&is_nil/1) |> Enum.join(", ")}
                       </span>
                     </div>
@@ -578,8 +594,8 @@ defmodule SahajyogWeb.EventsLive do
 
                   <%!-- Date & Time --%>
                   <%= if event.event_date do %>
-                    <div class="flex items-center gap-2 text-sm text-base-content/60 mb-3">
-                      <.icon name="hero-calendar" class="w-4 h-4" />
+                    <div class="flex items-center gap-2 text-sm text-base-content/60 mb-3 font-medium">
+                      <.icon name="hero-calendar" class="w-4 h-4 text-accent/60" />
                       <span>{format_event_date(event.event_date)}</span>
                       <%= if event.event_time do %>
                         <span class="text-base-content/40">•</span>
@@ -590,21 +606,21 @@ defmodule SahajyogWeb.EventsLive do
 
                   <%!-- Participants --%>
                   <%= if event.estimated_participants do %>
-                    <div class="flex items-center gap-2 text-sm text-base-content/60">
-                      <.icon name="hero-users" class="w-4 h-4" />
+                    <div class="flex items-center gap-2 text-sm text-base-content/60 font-medium">
+                      <.icon name="hero-users" class="w-4 h-4 text-success/60" />
                       <span>{event.estimated_participants} {gettext("expected")}</span>
                     </div>
                   <% end %>
 
                   <%!-- Footer --%>
-                  <div class="flex items-center justify-between text-xs text-base-content/50 pt-4 mt-4 border-t border-base-content/10">
+                  <div class="flex items-center justify-between text-[10px] text-base-content/40 pt-4 mt-auto border-t border-base-content/5 uppercase font-bold tracking-widest">
                     <div class="flex items-center gap-2">
-                      <.icon name="hero-user" class="w-3 h-3" />
+                      <.icon name="hero-user" class="w-3.5 h-3.5" />
                       <span>{event.user.email |> String.split("@") |> List.first()}</span>
                     </div>
                     <.icon
                       name="hero-arrow-right"
-                      class="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                      class="w-4 h-4 text-primary transition-all duration-300 transform group-hover:translate-x-1"
                     />
                   </div>
                 </div>
@@ -718,7 +734,7 @@ defmodule SahajyogWeb.EventsLive do
           </.empty_state>
         <% end %>
       </div>
-    </.page_container>
+    </div>
     """
   end
 

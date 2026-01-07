@@ -27,10 +27,10 @@ defmodule SahajyogWeb.LocaleSwitcher do
       <div
         tabindex="0"
         role="button"
-        class="btn btn-ghost btn-sm btn-circle text-base-content/70 hover:text-base-content transition-colors flex items-center justify-center"
+        class="btn btn-ghost btn-sm h-10 px-3 rounded-lg text-base-content/70 hover:text-base-content transition-colors flex items-center justify-center font-semibold text-sm"
         aria-label="Select language"
       >
-        <span class="text-[10px] uppercase font-semibold leading-none">{@current_locale}</span>
+        <span class="uppercase">{@current_locale}</span>
       </div>
       <ul
         tabindex="0"

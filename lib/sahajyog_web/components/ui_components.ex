@@ -184,24 +184,24 @@ defmodule SahajyogWeb.UIComponents do
   def filter_tabs(assigns) do
     ~H"""
     <div class={["mb-6 sm:mb-8", @class]}>
-      <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-2 border border-base-content/10 shadow-xl inline-flex flex-wrap gap-2 w-full sm:w-auto">
+      <div class="bg-gradient-to-br from-base-200/80 to-base-300/80 backdrop-blur-sm rounded-xl p-1.5 sm:p-2 border border-base-content/10 shadow-xl flex flex-wrap justify-center gap-1.5 sm:gap-2 w-full sm:w-max mx-auto">
         <button
           :for={{value, label, icon} <- @options}
           phx-click={@on_select}
           phx-value-type={if @param_name == "type", do: value}
           phx-value-status={if @param_name == "status", do: value}
           class={[
-            "px-4 py-2.5 rounded-lg transition-all duration-200 font-semibold text-sm sm:text-base flex items-center gap-2",
+            "px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg transition-all duration-200 font-bold text-xs sm:text-base flex items-center justify-center gap-2 flex-grow sm:flex-grow-0 sm:flex-none min-w-[100px] sm:min-w-0 md:min-w-[120px]",
             "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-base-300",
             if(@selected == value,
-              do: "bg-base-100 text-base-content border-2 border-base-content/50",
+              do: "bg-primary text-primary-content shadow-md shadow-primary/20",
               else:
-                "bg-base-100/50 text-base-content/70 hover:bg-base-100 hover:text-base-content border-2 border-transparent"
+                "bg-base-100/50 text-base-content/70 hover:bg-base-100 hover:text-base-content border border-transparent"
             )
           ]}
         >
-          <.icon name={icon} class="w-4 h-4" />
-          {label}
+          <.icon name={icon} class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span>{label}</span>
         </button>
       </div>
     </div>
@@ -226,10 +226,15 @@ defmodule SahajyogWeb.UIComponents do
       type_badge_color(@type),
       @class
     ]}>
-      {@type}
+      {translate_type(@type)}
     </span>
     """
   end
+
+  defp translate_type("Photos"), do: gettext("Photos")
+  defp translate_type("Books"), do: gettext("Books")
+  defp translate_type("Music"), do: gettext("Music")
+  defp translate_type(type), do: type
 
   defp type_badge_color("Books"), do: "bg-info/10 text-info border-info/20"
   defp type_badge_color("Photos"), do: "bg-secondary/10 text-secondary border-secondary/20"
@@ -663,7 +668,7 @@ defmodule SahajyogWeb.UIComponents do
       <%!-- Button to switch to Light mode (visible when in Dark mode) --%>
       <button
         type="button"
-        class="btn btn-ghost btn-sm btn-circle hidden [[data-theme=dark]_&]:inline-flex text-base-content/70 hover:text-base-content transition-colors"
+        class="btn btn-ghost btn-sm h-10 w-10 rounded-lg hidden [[data-theme=dark]_&]:inline-flex text-base-content/70 hover:text-base-content transition-colors items-center justify-center p-0"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
         aria-label={gettext("Switch to light theme")}
@@ -674,7 +679,7 @@ defmodule SahajyogWeb.UIComponents do
       <%!-- Button to switch to Dark mode (visible when in Light mode) --%>
       <button
         type="button"
-        class="btn btn-ghost btn-sm btn-circle inline-flex [[data-theme=dark]_&]:hidden text-base-content/70 hover:text-base-content transition-colors"
+        class="btn btn-ghost btn-sm h-10 w-10 rounded-lg inline-flex [[data-theme=dark]_&]:hidden text-base-content/70 hover:text-base-content transition-colors items-center justify-center p-0"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
         aria-label={gettext("Switch to dark theme")}
